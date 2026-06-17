@@ -1,0 +1,185 @@
+/* ==========================================================================
+   1. VARIÁVEIS DE CORES E RESET
+   ========================================================================== */
+:root {
+    --bg: #f8f7f2;
+    --black: #000000;
+    --blue: #004a94;
+    --gray: #7a7a7a;
+    --white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+}
+
+/* ==========================================================================
+   2. CABEÇALHO (HEADER)
+   ========================================================================== */
+.cabecalho-site {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;            
+    padding: 20px 50px;             
+    background-color: var(--bg); 
+}
+
+.logo a {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--black); 
+    text-decoration: none;
+}
+
+.logo span {
+    color: var(--blue); 
+}
+
+.navegacao ul {
+    display: flex;
+    list-style: none; 
+    gap: 30px;        
+}
+
+.navegacao a {
+    text-decoration: none;
+    color: var(--black); 
+    font-size: 18px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navegacao a:hover {
+    color: var(--blue); 
+}
+
+.botao-azul {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--blue); 
+    border: 2px solid var(--blue); 
+    padding: 10px 25px;
+    border-radius: 12px; 
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.botao-azul:hover {
+    background-color: var(--blue); 
+    color: var(--white); 
+}
+
+/* ==========================================================================
+   3. CORPO CENTRAL (ROBÔ + CARD LADO A LADO)
+   ========================================================================== */
+.conteudo-login {
+    display: flex;
+    justify-content: center; /* Centraliza o conjunto na tela */
+    align-items: center;     /* Alinha o robô e o card verticalmente */
+    gap: 450px;              /* Distância perfeita entre o robô e o card */
+    flex: 1;                 /* Ocupa o espaço restante da tela horizontalmente */
+    padding: 40px 50px;
+}
+
+/* Ajustado: O Flexbox agora controla o alinhamento do GIF */
+.gif {
+    width: 450px;          
+    max-width: 90%;        
+    height: auto;          
+}
+
+/* Ajustado: Removido o 'margin auto' antigo para não quebrar o Flexbox */
+.area-login {
+    background-color: var(--white);
+    padding: 45px 40px;
+    border-radius: 32px; /* Cantos bem arredondados como na imagem */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.478); /* Sombra bem suave */
+    width: 100%;
+    max-width: 450px;    /* Largura confortável do card */
+}
+
+.area-login h1 {
+    text-align: center;
+    font-size: 32px;
+    color: var(--black);
+    margin-bottom: 30px; 
+}
+
+/* ==========================================================================
+   4. CAMPOS DE ENTRADA, LINKS E BOTÃO INTERNAL
+   ========================================================================== */
+.grupo-campo {
+    margin-bottom: 20px; 
+}
+
+.grupo-campo label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--black);
+    font-size: 16px;
+}
+
+.grupo-campo input {
+    width: 100%;
+    padding: 15px 20px;   
+    border: 1.5px solid var(--blue); 
+    border-radius: 14px;  
+    font-size: 16px;
+    outline: none;
+}
+
+.link-esqueceu {
+    display: inline-block;
+    color: var(--blue);
+    text-decoration: none; 
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 30px;  
+}
+
+.link-esqueceu:hover {
+    text-decoration: underline; 
+}
+
+.botao-entrar {
+    display: block;
+    width: 65%;           
+    margin: 0 auto 25px;  
+    background-color: var(--blue);
+    color: var(--white);
+    border: none;
+    padding: 13px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50px;  /* Formato de pílula idêntico ao modelo */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.botao-entrar:hover {
+    filter: brightness(1.2);
+}
+
+.texto-politica {
+    font-size: 12px;
+    color: var(--gray);
+    text-align: center;
+    line-height: 1.6;     
+}
+
+.texto-politica a {
+    color: var(--gray);
+    text-decoration: underline; 
+}

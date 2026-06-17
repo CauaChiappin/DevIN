@@ -1,0 +1,316 @@
+/* Reset Global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: #004aad;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Container de Tela Dividida Dupla */
+.main-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: #004aad;
+    overflow: hidden;
+}
+
+/* LADO ESQUERDO: FORMULÁRIO BRANCO */
+.left-side {
+    flex: 1.1;
+    background-color: #ffffff;
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
+    padding: 40px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+}
+
+/* LADO DIREITO: AZUL CORPORATIVO */
+.right-side {
+    flex: 0.9;
+    background-color: #004aad;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Logo DevIN */
+.brand-logo {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #000000;
+    letter-spacing: -1px;
+}
+
+.brand-logo span { color: #004aad; }
+
+/* Alternador Pessoal / Empresa */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+/* Substitua ou adicione estas linhas no seu cadastro.css existente */
+
+/* Alternador Pessoal / Empresa */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+/* 1. Estilo padrão para QUALQUER botão do alternador (Desativado) */
+.toggle-btn {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 10px 35px;
+    border-radius: 30px;
+    transition: all 0.2s ease;
+    color: #004aad;
+    border: 2px solid #004aad;
+    background-color: transparent;
+}
+
+/* 2. O estado ATIVO fica por último para garantir que ele ganhe a disputa e pinte o botão */
+.toggle-btn.active {
+    color: #ffffff;
+    background-color: #004aad;
+    border: 2px solid #004aad;
+}
+
+.toggle-divider {
+    color: #a0aec0;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+/* Grid de Duas Colunas */
+.register-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-columns {
+    display: flex;
+    gap: 40px;
+}
+
+.form-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Elementos de Input em Formato de Pílula */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+}
+
+.input-group label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #000000;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1.5px solid #000000;
+    border-radius: 30px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #004aad;
+    box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
+}
+
+/* Container do ícone do olho */
+.input-icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* Container do ícone do olho com suporte a imagens físicas */
+/* Container do ícone do olho com suporte a imagens físicas */
+.toggle-password-eye {
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    user-select: none;
+    width: 22px;         /* Define um tamanho proporcional perfeito dentro da pílula */
+    height: auto;        /* Mantém a proporção correta da imagem */
+    opacity: 0.55;       /* Efeito suave e discreto */
+    transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.toggle-password-eye:hover {
+    opacity: 0.9;        /* Destaca o ícone quando o mouse passa por cima */
+    transform: scale(1.05); /* Leve feedback de clique */
+}
+
+/* Mensagem de Erro "Senhas não coincidem" */
+.error-message-text {
+    color: #ef4444;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 4px;
+    padding-left: 10px;
+    display: none;
+}
+
+.error-message-text.visible {
+    display: block;
+}
+
+/* Estados Dinâmicos dos Requisitos (Verde / Vermelho) */
+.password-requirements {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
+.requirement-item {
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+}
+
+/* Classe quando o requisito NÃO está cumprido */
+.requirement-item.req-invalid {
+    color: #ef4444; /* Vermelho */
+}
+
+/* Classe quando o requisito ESTÁ cumprido */
+.requirement-item.req-valid {
+    color: #10b981; /* Verde */
+}
+
+/* Área de Ação e Botão Enviar */
+.form-footer-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 35px;
+    gap: 15px;
+}
+
+.btn-submit {
+    background-color: #004aad;
+    color: #ffffff;
+    border: none;
+    padding: 12px 60px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover { background-color: #00357a; }
+.login-redirect { font-size: 0.9rem; color: #000000; }
+.login-redirect a { color: #004aad; font-weight: 700; text-decoration: none; }
+.login-redirect a:hover { text-decoration: underline; }
+
+/* Botão de Login Superior Direito */
+.btn-top-login {
+    position: absolute;
+    top: 40px;
+    right: 60px;
+    text-decoration: none;
+    color: #004aad;
+    background-color: #ffffff;
+    padding: 8px 35px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.btn-top-login:hover { transform: scale(1.03); }
+
+/* Espaço do Robô */
+.mascot-container {
+    width: 70%;
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mascot-placeholder-graphic {
+    width: 100%;
+    height: 100%;
+    background-image: url('robo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+/* Rodapé */
+.page-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #000000;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+.page-footer span { color: #004aad; }
+
+/* Mensagens do PHP */
+.php-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+.error-toast { background-color: #ef4444; }
+.success-toast { background-color: #10b981; }
+
+/* Responsividade */
+@media (max-width: 950px) {
+    .main-container { flex-direction: column; height: auto; overflow: visible; }
+    .right-side { display: none; }
+    .left-side { border-radius: 0; padding: 40px 25px; }
+    .form-columns { flex-direction: column; gap: 18px; }
+}

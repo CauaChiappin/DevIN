@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <title>Devin|Login</title>
+</head>
+<body>
+
+    <header class="cabecalho-site">
+        <div class="logo">
+            <a href="#index">Dev<span>IN</span></a>
+        </div>
+
+        <nav class="navegacao">
+            <ul>
+                <li><a href="#conheca">Conheça o DevIN</a></li>
+                <li><a href="etapas">Etapas</a></li>
+                <li><a href="contatos">Contato</a></li>
+            </ul>
+        </nav>
+
+        <div class="acoes">
+            <a class="botao-azul" href="#cadastro">Cadastrar-se</a>
+        </div>
+    </header>
+
+    <main class="conteudo-login">
+        
+        <img class="gif-robo" src="IMG/robologin.gif" alt="Robô DevIN">
+
+        <div class="area-login">
+            <h1>Login</h1>
+            <form>
+                <div class="grupo-campo">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Seu email...">
+                </div>
+                <div class="grupo-campo">
+                    
+                    <label for="senha">Senha:</label>
+
+                    <input type="password" id="senha" placeholder="Sua senha...">
+                </div>
+
+                <button type="button" id="btn-mostrar">Mostrar</button>
+
+                <a href="#" class="link-esqueceu">Esqueceu a Senha?</a>
+
+                <button type="submit" class="botao-entrar">Entrar</button>
+            </form>
+            
+            <p class="texto-politica">
+                Ao continuar, você reconhece a <a href="#">Política de Privacidade</a> do DevIN.
+            </p>
+        </div>
+<script src="login.js"></script>
+    </main>
+</body>
+</html>
