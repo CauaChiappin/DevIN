@@ -1,0 +1,21 @@
+    <footer class="footer">
+        <div class="footer-inner">
+            <h2 class="footer-brand">DevIN</h2>
+            <div class="footer-links">
+                <a href="#conheca">Conheça o DevIN</a>
+                <a href="#etapas">Etapas</a>
+                <div>
+                    <a href="#contato">Contato</a>
+                    <p>devin@gmail.com</p>
+                    <p>11 xxxxx-xxxx</p>
+                </div>
+            </div>
+            <div class="school-icons" aria-label="Ícones da escola e GitHub">
+                <img src="img/escola.svg" alt="Escola Proa">
+                <img src="img/github.svg" alt="GitHub">
+            </div>
+            <p class="copyright">DevIN | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
