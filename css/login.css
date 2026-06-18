@@ -85,28 +85,26 @@ body {
    ========================================================================== */
 .conteudo-login {
     display: flex;
-    justify-content: center; /* Centraliza o conjunto na tela */
-    align-items: center;     /* Alinha o robô e o card verticalmente */
-    gap: 450px;              /* Distância perfeita entre o robô e o card */
-    flex: 1;                 /* Ocupa o espaço restante da tela horizontalmente */
+    justify-content: center; 
+    align-items: center;     
+    gap: 550px; 
+    flex: 1;                 
     padding: 40px 50px;
 }
 
-/* Ajustado: O Flexbox agora controla o alinhamento do GIF */
-.gif {
+.gif-robo {
     width: 450px;          
     max-width: 90%;        
     height: auto;          
 }
 
-/* Ajustado: Removido o 'margin auto' antigo para não quebrar o Flexbox */
 .area-login {
     background-color: var(--white);
     padding: 45px 40px;
-    border-radius: 32px; /* Cantos bem arredondados como na imagem */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.478); /* Sombra bem suave */
+    border-radius: 32px; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra suavizada para um visual mais limpo */
     width: 100%;
-    max-width: 450px;    /* Largura confortável do card */
+    max-width: 450px;    
 }
 
 .area-login h1 {
@@ -117,7 +115,7 @@ body {
 }
 
 /* ==========================================================================
-   4. CAMPOS DE ENTRADA, LINKS E BOTÃO INTERNAL
+   4. CAMPOS DE ENTRADA, LINKS E BOTÃO INTERNO
    ========================================================================== */
 .grupo-campo {
     margin-bottom: 20px; 
@@ -163,7 +161,7 @@ body {
     padding: 13px;
     font-size: 18px;
     font-weight: bold;
-    border-radius: 50px;  /* Formato de pílula idêntico ao modelo */
+    border-radius: 50px;  
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -182,4 +180,37 @@ body {
 .texto-politica a {
     color: var(--gray);
     text-decoration: underline; 
+}
+
+/* ==========================================================================
+   5. POSICIONAMENTO DO BOTÃO MOSTRAR SENHA (OLHO)
+   ========================================================================== */
+.input-container {
+    position: relative; /* Define que os filhos absolutos se alinham por aqui */
+}
+
+/* Dá um espaço no final do texto do input para não ficar embaixo do olho */
+.input-container input {
+    padding-right: 50px; 
+}
+
+#btn-mostrar {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    /* O calc puxa o olho para baixo compensando a altura do label 'Senha:' */
+    transform: translateY(calc(-50% + 12px)); 
+    background: none;
+    border: none;
+    cursor: pointer; 
+    display: flex;
+    align-items: center;
+    padding: 0;
+    z-index: 5;
+}
+
+#btn-mostrar img {
+    width: 24px;
+    height: 24px;
+    display: block;
 }
