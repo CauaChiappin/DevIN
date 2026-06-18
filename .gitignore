@@ -1,0 +1,37 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment and local config
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+vendor/
+
+# Logs and runtime files
+*.log
+logs/
+tmp/
+temp/
+cache/
+
+# Build and coverage output
+dist/
+build/
+coverage/
+
+# PHP / Composer artifacts
+composer.phar
+
+# XAMPP / local database exports
+*.sql
+*.sqlite
+*.sqlite3
