@@ -58,13 +58,15 @@ gsap.fromTo('.arte-principal',
   }
 );
 
-function revelar(selector, entrada, saida) {
+function revelar(selector, entrada) {
   gsap.utils.toArray(selector).forEach((elemento) => {
     gsap.set(elemento, entrada);
 
     ScrollTrigger.create({
       trigger: elemento,
-      start: 'top 82%',
+      start: 'top 85%', // Entra um pouquinho mais tarde para dar tempo de ver
+      
+      // 1. Rolando para BAIXO: O elemento entra lindamente
       onEnter: () => {
         gsap.to(elemento, {
           x: 0,
@@ -75,11 +77,13 @@ function revelar(selector, entrada, saida) {
           overwrite: true
         });
       },
+      
+      // 2. Rolando para CIMA: O elemento volta para o estado inicial mais rápido
       onLeaveBack: () => {
         gsap.to(elemento, {
-          ...saida,
-          duration: 0.55,
-          ease: 'power2.in',
+          ...entrada, 
+          duration: 0.4, // Mais rápido para acompanhar o scroll de subida!
+          ease: 'power2.out',
           overwrite: true
         });
       }
@@ -96,7 +100,29 @@ function revelarGrupo(selector, entrada, saida) {
     ScrollTrigger.create({
       trigger: grupo,
       start: 'top 82%',
+      end: 'bottom 18%',
+      
       onEnter: () => {
+        gsap.to(itens, {
+          x: 0,
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: 'power3.out',
+          stagger: 0.12,
+          overwrite: true
+        });
+      },
+      onLeave: () => {
+        gsap.to(itens, {
+          ...saida,
+          duration: 0.5,
+          ease: 'power3.in',
+          stagger: 0.08,
+          overwrite: true
+        });
+      },
+      onEnterBack: () => {
         gsap.to(itens, {
           x: 0,
           y: 0,
@@ -109,9 +135,9 @@ function revelarGrupo(selector, entrada, saida) {
       },
       onLeaveBack: () => {
         gsap.to(itens, {
-          ...saida,
-          duration: 0.5,
-          ease: 'power2.in',
+          ...entrada, // Volta para o estado inicial de ENTRADA com stagger
+          duration: 0.6,
+          ease: 'power3.out',
           stagger: 0.08,
           overwrite: true
         });
