@@ -187,7 +187,16 @@ summary:focus-visible {
     position: relative;
     overflow: hidden;
     box-shadow: 0 0 0 rgba(0, 74, 148, 0);
-    transition: color .28s ease, background-color .28s ease, border-color .28s ease, box-shadow .28s ease, transform .28s ease;
+    
+    /* ADICIONAMOS AS TRANSIÇÕES DE HEIGHT, PADDING E FONT-SIZE AQUI */
+    transition: height .35s ease, 
+                padding .35s ease, 
+                font-size .35s ease, 
+                color .28s ease, 
+                background-color .28s ease, 
+                border-color .28s ease, 
+                box-shadow .28s ease, 
+                transform .28s ease;
 }
 
 .botao-azul {
