@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 405" role="img" aria-label="Equipe comemorando">
+  <rect width="620" height="405" fill="#ead7c5"/>
+  <rect x="0" y="0" width="620" height="405" fill="#f3eee8"/>
+  <rect x="24" y="28" width="112" height="320" fill="#3d342d" opacity=".72"/>
+  <rect x="470" y="0" width="78" height="405" fill="#b76d4d" opacity=".8"/>
+  <rect x="70" y="256" width="440" height="96" rx="8" fill="#ffffff"/>
+  <circle cx="103" cy="130" r="42" fill="#d39b73"/>
+  <path d="M64 105c18-43 76-35 85 8-31-8-57-5-85-8z" fill="#1d1d1d"/>
+  <path d="M51 252c10-80 112-82 134 0z" fill="#313741"/>
+  <circle cx="225" cy="122" r="40" fill="#f2c4a1"/>
+  <path d="M185 114c10-47 79-45 83 4-23-7-48-10-83-4z" fill="#2a211e"/>
+  <path d="M172 252c13-75 104-75 128 0z" fill="#42556b"/>
+  <circle cx="328" cy="127" r="38" fill="#b97855"/>
+  <path d="M292 116c8-44 72-42 77 3-24-10-46-10-77-3z" fill="#151515"/>
+  <path d="M285 252c10-75 96-74 118 0z" fill="#21252e"/>
+  <circle cx="429" cy="150" r="34" fill="#f0bd95"/>
+  <path d="M401 141c8-36 63-34 67 3-20-7-39-8-67-3z" fill="#6d4a38"/>
+  <path d="M385 252c8-62 88-65 106 0z" fill="#d86c5e"/>
+  <circle cx="510" cy="125" r="42" fill="#f0c19c"/>
+  <path d="M473 115c11-50 83-47 87 4-25-8-51-10-87-4z" fill="#33251f"/>
+  <path d="M455 252c14-78 111-76 132 0z" fill="#d7dce7"/>
+  <path d="M353 73l25-53 32 55z" fill="#60b84d"/>
+  <path d="M265 265h190M92 291h390M145 320h295" stroke="#d7d7d7" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="350" cy="190" r="10" fill="#ffcf57"/>
+  <circle cx="375" cy="181" r="10" fill="#ff9f3a"/>
+  <circle cx="398" cy="191" r="10" fill="#e84d4d"/>
+</svg>

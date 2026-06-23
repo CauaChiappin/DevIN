@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 320" role="img" aria-label="Pessoa programando">
+  <rect width="430" height="320" fill="none"/>
+  <circle cx="214" cy="158" r="122" fill="#eef3fa"/>
+  <path d="M84 254h274" stroke="#004a94" stroke-width="3" stroke-linecap="round"/>
+  <path d="M96 164l44 15 4 84h-29z" fill="#dce9f4" stroke="#9db7d4" stroke-width="3"/>
+  <path d="M116 185h88v68h-88z" fill="#f0f5fb"/>
+  <rect x="246" y="130" width="112" height="124" rx="6" fill="#0f477f"/>
+  <path d="M262 147h72M262 162h55M262 178h64M262 194h46M262 210h62" stroke="#60b5ff" stroke-width="3"/>
+  <path d="M289 153h20M302 172h19M286 198h22" stroke="#ffb33d" stroke-width="3"/>
+  <circle cx="209" cy="92" r="25" fill="#ffd2a6"/>
+  <path d="M185 83c11-31 54-25 57 1-14-5-30-6-57-1z" fill="#13233d"/>
+  <path d="M188 110c16 18 36 17 52 1l-4 33h-31z" fill="#ffd2a6"/>
+  <path d="M171 148c19-29 59-29 79 0l-7 74h-75z" fill="#004a94"/>
+  <path d="M166 154l-46 42 18 15 44-31zM244 154l48 43-18 17-43-34z" fill="#ffd2a6"/>
+  <path d="M167 222l-25 72h45l28-67z" fill="#d9a36e"/>
+  <path d="M207 222l37 72h48l-46-84z" fill="#c88f5a"/>
+  <path d="M137 294h55M238 294h68" stroke="#004a94" stroke-width="3" stroke-linecap="round"/>
+  <rect x="55" y="76" width="70" height="48" rx="8" fill="#2d80c4"/>
+  <text x="90" y="107" fill="#fff" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">{+}</text>
+  <rect x="278" y="56" width="65" height="47" rx="8" fill="#2d80c4"/>
+  <text x="310" y="87" fill="#fff" text-anchor="middle" font-family="Arial" font-size="25" font-weight="700">&lt;/&gt;</text>
+  <circle cx="370" cy="133" r="20" fill="#ffd569"/>
+  <path d="M370 107v-18M395 118l14-13M403 145h20M340 118l-14-13M337 145h-20" stroke="#65a8dc" stroke-width="3" stroke-linecap="round"/>
+  <path d="M162 106l-14-7M154 120l-15 4M156 86l-11-12" stroke="#ffb33d" stroke-width="4" stroke-linecap="round"/>
+  <path d="M78 139l10-10 10 10-10 10zM66 167l8-8 8 8-8 8z" fill="#6da9dc"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 58">
+  <rect width="76" height="58" fill="none"/>
+  <path d="M8 48c10-12 18-12 28 0 10-12 22-12 33 0" fill="none" stroke="#ffffff" stroke-width="4"/>
+  <path d="M16 42h34l-8 10H8z" fill="#ffffff" opacity=".85"/>
+  <circle cx="38" cy="10" r="8" fill="#e32727"/>
+  <circle cx="48" cy="22" r="7" fill="#ffb300"/>
+  <circle cx="28" cy="24" r="6" fill="#2456a6"/>
+  <text x="38" y="55" text-anchor="middle" font-family="Arial" font-size="9" font-weight="700" fill="#ffffff">ALCINA</text>
+</svg>
