@@ -1,14 +1,13 @@
-// Seleciona os elementos do HTML
 const campoSenha = document.getElementById('senha');
-const botaoMostrar = document.getElementById('btn-mostrar');
+const btnMostrar = document.getElementById('btn-mostrar');
+const imgOlho = document.getElementById('img-olho');
 
-// Adiciona o evento de clique no botão
-botaoMostrar.addEventListener('click', () => {
+btnMostrar.addEventListener('click', () => {
     if (campoSenha.type === 'password') {
         campoSenha.type = 'text';
-        botaoMostrar.textContent = 'Esconder';
+        imgOlho.src = '/img/olho_aberto.png'; // Verifique se o nome do arquivo é este mesmo
     } else {
         campoSenha.type = 'password';
-        botaoMostrar.textContent = 'Mostrar';
+        imgOlho.src = '/img/olho_fechado.png';
     }
 });
