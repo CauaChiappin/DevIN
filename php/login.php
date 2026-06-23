@@ -68,7 +68,7 @@
 $host = "localhost";       
 $usuario_db = "root";      
 $senha_db = "";            
-$nome_db = "devin_db"; // Ajuste para o nome do seu banco de dados
+$nome_db = "devin"; 
 
 session_start();
 
@@ -86,10 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($email) && !empty($senha)) {
         
         // --------------------------------------------------
-        // 1ª TENTATIVA: Procurar na tabela de Administradores
+        // 1ª TENTATIVA: Procurar na tabela administrador
         // --------------------------------------------------
-        // IMPORTANTE: Ajuste o nome da tabela (ex: 'administradores') e das colunas conforme seu banco
-        $sql_administrador = "SELECT id, nome, senha FROM adm WHERE email = ? LIMIT 1";
+        $sql_adm = "SELECT id_administrador AS id, nome, senha_hash AS senha FROM administrador WHERE email = ? LIMIT 1";
         $stmt = $conn->prepare($sql_adm);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -115,8 +114,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // --------------------------------------------------
         // 2ª TENTATIVA: Se não achou no ADM, procura em Empresa
         // --------------------------------------------------
-        // IMPORTANTE: Ajuste o nome da tabela (ex: 'empresas') e das colunas (ex: se usa 'razao_social' em vez de 'nome')
-        $sql_empresa = "SELECT id, nome, senha FROM empresa WHERE email = ? LIMIT 1";
+        // ADAPTADO: Usando id_empresa e senha_hash vindos da sua tabela 'empresa'
+        $sql_empresa = "SELECT id_empresa AS id, nome, senha_hash AS senha FROM empresa WHERE email = ? LIMIT 1";
         $stmt = $conn->prepare($sql_empresa);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -140,10 +139,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
 
         // --------------------------------------------------
-        // 3ª TENTATIVA: Se não achou nos outros, procura em Pessoa
+        // 3ª TENTATIVA: Se não achou nos outros, procura em Pessoa Física
         // --------------------------------------------------
-        // IMPORTANTE: Ajuste o nome da tabela (ex: 'pessoas' ou 'usuarios') conforme seu banco
-        $sql_pessoa = "SELECT id, nome, senha FROM pessoa WHERE email = ? LIMIT 1";
+        // ADAPTADO: Usando id_pessoa, tabela 'pessoa_fisica' e senha_hash
+        $sql_pessoa = "SELECT id_pessoa AS id, nome, senha_hash AS senha FROM pessoa_fisica WHERE email = ? LIMIT 1";
         $stmt = $conn->prepare($sql_pessoa);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -167,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
 
         // --------------------------------------------------
-        // FIM DO FLUXO: Se chegou aqui, não existe em nenhuma tabela
+        // FIM DO FLUXO: Se chegou aqui, não existe em nenhuma das 3 tabelas
         // --------------------------------------------------
         header("Location: login.html?erro=usuario_nao_encontrado");
         exit();
