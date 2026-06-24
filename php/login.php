@@ -42,14 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <header class="cabecalho-site">
         <div class="logo">
-            <a href="#index">Dev<span>IN</span></a>
+            <a href="/index.php">Dev<span>IN</span></a>
         </div>
 
         <nav class="navegacao">
             <ul>
-                <li><a href="#conheca">Conheca o DevIN</a></li>
-                <li><a href="etapas">Etapas</a></li>
-                <li><a href="contatos">Contato</a></li>
+                <li><a href="/index.php#conheca">Conheca o DevIN</a></li>
+                <li><a href="/index.php#etapas">Etapas</a></li>
+                <li><a href="/index.php#contato">Contato</a></li>
             </ul>
         </nav>
 

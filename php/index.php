@@ -1,2 +1,2 @@
 <?php
-readfile(__DIR__ . '/index.html');
+readfile(__DIR__ . '/../html/index.html');
