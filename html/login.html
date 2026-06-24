@@ -22,13 +22,13 @@
         </nav>
 
         <div class="acoes">
-            <a class="botao-azul" href="#cadastro">Cadastrar-se</a>
+            <a class="botao-azul" href="cadastro_pessoa.html">Cadastrar-se</a>
         </div>
     </header>
 
     <main class="conteudo-login">
         
-        <img class="gif-robo" src="IMG/robologin.gif" alt="Robô DevIN">
+        <img class="gif-robo" src="/img/robologin.gif" alt="Robô DevIN">
 
         <div class="area-login">
             <h1>Login</h1>
@@ -37,14 +37,15 @@
                     <label for="email">Email:</label>
                     <input type="email" id="email" placeholder="Seu email...">
                 </div>
-                <div class="grupo-campo">
-                    
+                
+                <div class="grupo-campo campo-senha input-container">
                     <label for="senha">Senha:</label>
-
                     <input type="password" id="senha" placeholder="Sua senha...">
+                    
+                    <button type="button" id="btn-mostrar">
+                        <img id="img-olho" src="/img/olho_fechado.png" alt="Mostrar Senha">
+                    </button>
                 </div>
-
-                <button type="button" id="btn-mostrar">Mostrar</button>
 
                 <a href="#" class="link-esqueceu">Esqueceu a Senha?</a>
 
@@ -55,7 +56,8 @@
                 Ao continuar, você reconhece a <a href="#">Política de Privacidade</a> do DevIN.
             </p>
         </div>
-<script src="/js/login.js"></script>
+<script src="login.js"></script>
     </main>
+
 </body>
 </html>

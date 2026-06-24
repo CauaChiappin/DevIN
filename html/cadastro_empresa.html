@@ -17,7 +17,7 @@
             </div>
 
             <div class="toggle-container">
-                <a href="cadastro_pessoa.php" class="toggle-btn pessoal">Pessoal</a>
+                <a href="cadastro_pessoa.html" class="toggle-btn pessoal">Pessoal</a>
                 <span class="toggle-divider">OU</span>
                 <a href="cadastro_empresa.php" class="toggle-btn empresa active">Empresa</a>
             </div>
@@ -47,7 +47,7 @@
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="confirme_senha" name="confirme_senha" required>
-                                <img src="imagens/olho.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                             <span id="error-match" class="error-message-text">Senhas não coincidem</span>
                         </div>
@@ -68,7 +68,7 @@
                             <label for="senha">Senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="senha" name="senha" required>
-                                <img src="imagens/olho.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                         </div>
 
@@ -88,7 +88,7 @@
 
                 <div class="form-footer-action">
                     <button type="submit" class="btn-submit">Cadastrar</button>
-                    <p class="login-redirect">Já tem conta? <a href="login.php">Faça login</a></p>
+                    <p class="login-redirect">Já tem conta? <a href="login.html">Faça login</a></p>
                 </div>
 
             </form>
@@ -100,7 +100,7 @@
         </section>
 
         <section class="right-side">
-            <a href="login.php" class="btn-top-login">LogIn</a>
+            <a href="login.html" class="btn-top-login">LogIn</a>
             
             <div class="mascot-container">
                 <div class="mascot-placeholder-graphic"></div>
@@ -110,74 +110,6 @@
     </div>
 
     <div id="status-alert-container"></div>
-
-    <script>
-        const senhaInput = document.getElementById('senha');
-        const confirmeSenhaInput = document.getElementById('confirme_senha');
-        
-        const reqLength = document.getElementById('req-length');
-        const reqUpper = document.getElementById('req-upper');
-        const reqSpecial = document.getElementById('req-special');
-        const errorMatch = document.getElementById('error-match');
-
-        // Função Atualizada para alternar visibilidade trocando as imagens fornecidas
-        function togglePasswordVisibility(inputId, imgElement) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                imgElement.src = 'imagens/olho.png'; // Imagem para o estado VISÍVEL
-            } else {
-                input.type = 'password';
-                imgElement.src = 'imagens/olho_senha.png';       // Imagem para o estado OCULTO
-            }
-        }
-
-        function updateRequirement(element, isValid) {
-            const icon = element.querySelector('.req-icon');
-            if (isValid) {
-                element.classList.remove('req-invalid');
-                element.classList.add('req-valid');
-                icon.textContent = '✅';
-            } else {
-                element.classList.remove('req-valid');
-                element.classList.add('req-invalid');
-                icon.textContent = '⚠️';
-            }
-        }
-
-        senhaInput.addEventListener('input', () => {
-            const val = senhaInput.value;
-            updateRequirement(reqLength, val.length >= 8);
-            updateRequirement(reqUpper, /[A-Z]/.test(val));
-            updateRequirement(reqSpecial, /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\\/]/.test(val));
-            checkPasswordMatch();
-        });
-
-        function checkPasswordMatch() {
-            if (confirmeSenhaInput.value === '') {
-                errorMatch.classList.remove('visible');
-                return;
-            }
-            if (senhaInput.value !== confirmeSenhaInput.value) {
-                errorMatch.classList.add('visible');
-            } else {
-                errorMatch.classList.remove('visible');
-            }
-        }
-
-        confirmeSenhaInput.addEventListener('input', checkPasswordMatch);
-
-        document.getElementById('formCadastro').addEventListener('submit', function(e) {
-            const val = senhaInput.value;
-            const isAllValid = (val.length >= 8) && /[A-Z]/.test(val) && /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\\/]/.test(val);
-            const isMatch = senhaInput.value === confirmeSenhaInput.value;
-
-            if (!isAllValid || !isMatch) {
-                e.preventDefault();
-                alert('Por favor, corrija os erros nos campos de senha antes de prosseguir.');
-            }
-        });
-    </script>
-
+<script src="/js/cadastro.js"></script>
 </body>
 </html>
