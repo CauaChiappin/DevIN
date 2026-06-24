@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Criar Conta Pessoal</title>
-<<<<<<< HEAD
-    <link rel="stylesheet" href="css/cadastrostyle.css">
-=======
     <link rel="stylesheet" href="/css/cadastrostyle.css">
->>>>>>> f9e8f48676da460abf18c8d786037debdce06af1
 </head>
 <body>
 
@@ -23,11 +19,7 @@
             <div class="toggle-container">
                 <a href="cadastro_pessoa.php" class="toggle-btn pessoal active">Pessoal</a>
                 <span class="toggle-divider">OU</span>
-<<<<<<< HEAD
-                <a href="cadastro_empresa.php" class="toggle-btn empresa">Empresa</a>
-=======
                 <a href="cadastro_empresa.html" class="toggle-btn empresa">Empresa</a>
->>>>>>> f9e8f48676da460abf18c8d786037debdce06af1
             </div>
 
             <h1 class="page-title">Criar conta</h1>
@@ -55,11 +47,7 @@
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="confirme_senha" name="confirme_senha" required>
-<<<<<<< HEAD
-                                <img src="imagens/olho.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
-=======
-                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
->>>>>>> f9e8f48676da460abf18c8d786037debdce06af1
+                                <img src="/img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                             <span id="error-match" class="error-message-text">Senhas não coincidem</span>
                         </div>
@@ -80,11 +68,7 @@
                             <label for="senha">Senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="senha" name="senha" required>
-<<<<<<< HEAD
-                                <img src="imagens/olho.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
-=======
-                                <img src="/img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
->>>>>>> f9e8f48676da460abf18c8d786037debdce06af1
+                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                         </div>
 
@@ -104,11 +88,7 @@
 
                 <div class="form-footer-action">
                     <button type="submit" class="btn-submit">Cadastrar</button>
-<<<<<<< HEAD
-                    <p class="login-redirect">Já tem conta? <a href="login.php">Faça login</a></p>
-=======
-                    <p class="login-redirect">Já tem conta? <a href="login.html">Faça login</a></p>
->>>>>>> f9e8f48676da460abf18c8d786037debdce06af1
+                    <p class="login-redirect">Já tem conta? <a href="/html/login.html">Faça login</a></p>
                 </div>
 
             </form>
@@ -120,11 +100,7 @@
         </section>
 
         <section class="right-side">
-<<<<<<< HEAD
-            <a href="login.php" class="btn-top-login">LogIn</a>
-=======
-            <a href="login.html" class="btn-top-login">LogIn</a>
->>>>>>> f9e8f48676da460abf18c8d786037debdce06af1
+            <a href="/html/login.html" class="btn-top-login">LogIn</a>
             
             <div class="mascot-container">
                 <div class="mascot-placeholder-graphic"></div>
@@ -135,7 +111,6 @@
 
     <div id="status-alert-container"></div>
 
-<<<<<<< HEAD
     <script>
         const senhaInput = document.getElementById('senha');
         const confirmeSenhaInput = document.getElementById('confirme_senha');
@@ -149,10 +124,10 @@
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
                 input.type = 'text';
-                imgElement.src = 'imagens/olho.png';
+                imgElement.src = '/img/olho_aberto.png';
             } else {
                 input.type = 'password';
-                imgElement.src = 'imagens/olho_senha.png';
+                imgElement.src = '/img/olho_fechado.png';
             }
         }
 
@@ -205,9 +180,3 @@
 
 </body>
 </html>
-=======
-<script src="/js/cadastro.js"></script>
-</body>
-</html>
-
->>>>>>> f9e8f48676da460abf18c8d786037debdce06af1

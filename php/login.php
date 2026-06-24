@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // --------------------------------------------------
         // IMPORTANTE: Ajuste o nome da tabela (ex: 'administradores') e das colunas conforme seu banco
         $sql_administrador = "SELECT id, nome, senha FROM adm WHERE email = ? LIMIT 1";
-        $stmt = $conn->prepare($sql_adm);
+        $stmt = $conn->prepare($sql_administrador);
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $resultado = $stmt->get_result();
