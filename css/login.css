@@ -114,6 +114,18 @@ body {
     margin-bottom: 30px; 
 }
 
+.mensagem-erro {
+    background-color: #ffe7e7;
+    border: 1px solid #d93434;
+    border-radius: 10px;
+    color: #8a1414;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    text-align: center;
+}
+
 /* ==========================================================================
    4. CAMPOS DE ENTRADA, LINKS E BOTÃO INTERNO
    ========================================================================== */

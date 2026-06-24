@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $senha_pura = $_POST['senha'];
     $senha_hash = password_hash($senha_pura, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO Pessoa (nome, cpf, cep, email, senha, telefone) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO Pessoa (nome, cpf, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssisss", $nome, $cpf, $cep, $email, $senha_hash, $telefone);

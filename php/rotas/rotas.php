@@ -17,28 +17,28 @@ switch ($url) {
     case '/index':
     case '/index.html':
     case '/index.php':
-    require __DIR__ . '/index.html'; // Quando colocar em php, mude aqui para php.
+        require __DIR__ . '/../index.php';
         break;
 
     // Rota da Página de Login
     case '/login':
     case '/login.html':
     case '/login.php':
-        require __DIR__ . '/login.html';
+        require __DIR__ . '/../login.php';
         break;
 
     // Rota de Cadastro de Pessoa Física
     case '/cadastro-pessoa':
     case '/cadastro_pessoa.html':
     case '/cadastro_pessoa.php':
-        require __DIR__ . '/cadastro_pessoa.html';
+        require __DIR__ . '/../cadastro_pessoa.php';
         break;
 
     // Rota de Cadastro de Empresa
     case '/cadastro-empresa':
     case '/cadastro_empresa.html':
     case '/cadastro_empresa.php':
-        require __DIR__ . '/cadastro_empresa.html';
+        require __DIR__ . '/../cadastro_empresa.php';
         break;
 
     // Se o usuário digitar qualquer outra coisa, dá erro 404

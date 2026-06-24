@@ -209,7 +209,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $conn->real_escape_string($_POST['email']);
     $senha_hash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO Empresa (nome, cnpj, cep, email, senha, telefone) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO Empresa (nome, cnpj, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssisss", $nome, $cnpj, $cep, $email, $senha_hash, $telefone);
