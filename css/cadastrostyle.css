@@ -65,18 +65,6 @@ body {
     margin: 20px 0;
 }
 
-/* Substitua ou adicione estas linhas no seu cadastro.css existente */
-
-/* Alternador Pessoal / Empresa */
-.toggle-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-}
-
-/* 1. Estilo padrão para QUALQUER botão do alternador (Desativado) */
 .toggle-btn {
     text-decoration: none;
     font-weight: 700;
@@ -89,7 +77,6 @@ body {
     background-color: transparent;
 }
 
-/* 2. O estado ATIVO fica por último para garantir que ele ganhe a disputa e pinte o botão */
 .toggle-btn.active {
     color: #ffffff;
     background-color: #004aad;
@@ -159,22 +146,20 @@ body {
     width: 100%;
 }
 
-/* Container do ícone do olho com suporte a imagens físicas */
-/* Container do ícone do olho com suporte a imagens físicas */
 .toggle-password-eye {
     position: absolute;
     right: 20px;
     cursor: pointer;
     user-select: none;
-    width: 22px;         /* Define um tamanho proporcional perfeito dentro da pílula */
-    height: auto;        /* Mantém a proporção correta da imagem */
-    opacity: 0.55;       /* Efeito suave e discreto */
+    width: 22px;
+    height: auto;
+    opacity: 0.55;
     transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
 .toggle-password-eye:hover {
-    opacity: 0.9;        /* Destaca o ícone quando o mouse passa por cima */
-    transform: scale(1.05); /* Leve feedback de clique */
+    opacity: 0.9;
+    transform: scale(1.05);
 }
 
 /* Mensagem de Erro "Senhas não coincidem" */
@@ -209,14 +194,12 @@ body {
     transition: color 0.2s ease;
 }
 
-/* Classe quando o requisito NÃO está cumprido */
 .requirement-item.req-invalid {
-    color: #ef4444; /* Vermelho */
+    color: #ef4444;
 }
 
-/* Classe quando o requisito ESTÁ cumprido */
 .requirement-item.req-valid {
-    color: #10b981; /* Verde */
+    color: #10b981;
 }
 
 /* Área de Ação e Botão Enviar */
@@ -265,20 +248,20 @@ body {
 
 /* Espaço do Robô */
 .mascot-container {
-    width: 70%;
-    height: 60%;
+    width: 90%; /* Aumentado um pouco para o robô ter mais presença */
+    height: 80%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    margin-left: -81px; /* Isso faz ele colar na linha e entrar um pouco atrás da curva branca */
+    z-index: 1;
 }
 
-.mascot-placeholder-graphic {
-    width: 100%;
-    height: 100%;
-    background-image: url('robo.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
+/* Nova estilização da tag IMG para se comportar perfeitamente */
+.mascot-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 /* Rodapé */
