@@ -12,7 +12,7 @@
         
         <section class="left-side">
             
-            <div class="brand-logo">
+            <div class="brand-logo"  <a href="/html/cadastro_empresa.html" class="toggle-btn empresa active">Empresa</a>
                 Dev<span>IN</span>
             </div>
 
@@ -47,7 +47,7 @@
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="confirme_senha" name="confirme_senha" required>
-                                <img src="imagens/olho.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                             <span id="error-match" class="error-message-text">Senhas não coincidem</span>
                         </div>
@@ -68,7 +68,7 @@
                             <label for="senha">Senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="senha" name="senha" required>
-                                <img src="imagens/olho.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                         </div>
 
@@ -88,7 +88,7 @@
 
                 <div class="form-footer-action">
                     <button type="submit" class="btn-submit">Cadastrar</button>
-                    <p class="login-redirect">Já tem conta? <a href="login.php">Faça login</a></p>
+                    <p class="login-redirect">Já tem conta? <a href="/html/login.html">Faça login</a></p>
                 </div>
 
             </form>
@@ -100,7 +100,7 @@
         </section>
 
         <section class="right-side">
-            <a href="login.php" class="btn-top-login">LogIn</a>
+            <a href="/html/login.html" class="btn-top-login">LogIn</a>
             
             <div class="mascot-container">
                 <div class="mascot-placeholder-graphic"></div>
@@ -125,10 +125,10 @@
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
                 input.type = 'text';
-                imgElement.src = 'imagens/olho.png'; // Imagem para o estado VISÍVEL
+                imgElement.src = '/img/olho_aberto.png'; // Imagem para o estado VISÍVEL
             } else {
                 input.type = 'password';
-                imgElement.src = 'imagens/olho_senha.png';       // Imagem para o estado OCULTO
+                imgElement.src = '/img/olho_fechado.png';       // Imagem para o estado OCULTO
             }
         }
 
