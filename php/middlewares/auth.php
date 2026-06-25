@@ -26,7 +26,7 @@ function authUser(): array
     return Jwt::decode($token, JWT_SECRET);
 }
 
-function requireAuth(): array
+function requireAuth(): array // metodo utilizado para proteger rotas, caso o usuario nao esteja autenticado, retorna 401
 {
     try {
         return authUser();
