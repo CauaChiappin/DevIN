@@ -52,7 +52,13 @@ body {
     font-weight: 800;
     color: #000000;
     letter-spacing: -1px;
+      text-decoration: none;
+       color: var(--blue)
 }
+.brand-logo a { 
+    text-decoration: none
+    ; color: #000000;
+ }
 
 .brand-logo span { color: #004aad; }
 
