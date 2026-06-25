@@ -124,13 +124,6 @@ class AuthController
 
         return $routes[$tipo] ?? 'index.php';
     }
-    {
-        $routes = [
-            'adm' => 'dashboard_adm.php',
-            'empresa' => 'dashboard_empresa.php',
-            'pessoa' => 'dashboard_pessoa.php',
-        ];
-
-        return $routes[$tipo] ?? 'index.php';
-    }
+    
+      
 }
