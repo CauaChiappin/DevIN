@@ -1,72 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/login.css">
-    <title>Devin|Login</title>
-</head>
-<body>
-
-    <header class="cabecalho-site">
-        <div class="logo">
-            <a href="index.html">Dev<span>IN</span></a>
-        </div>
-
-        <nav class="navegacao">
-            <ul>
-                <li><a href="#conheca">Conheça o DevIN</a></li>
-                <li><a href="etapas">Etapas</a></li>
-                <li><a href="contatos">Contato</a></li>
-            </ul>
-        </nav>
-
-        <div class="acoes">
-            <a class="botao-azul" href="cadastro_pessoa.html">Cadastrar-se</a>
-        </div>
-    </header>
-
-    <main class="conteudo-login">
-        
-        <img class="gif-robo" src="/img/robologin.gif" alt="Robô DevIN">
-
-        <div class="area-login">
-            <h1>Login</h1>
-            
-            <?php if ($erro): ?>
-                <p class="mensagem-erro" style="color: red; font-weight: bold; margin-bottom: 10px;"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></p>
-            <?php endif; ?>
-
-            <form action="/php/login.php" method="POST">
-                <div class="grupo-campo">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Seu email..." required>
-                </div>
-                
-                <div class="grupo-campo campo-senha input-container">
-                    <label for="senha">Senha:</label>
-                    <input type="password" id="senha" name="senha" placeholder="Sua senha..." required>
-                    
-                    <button type="button" id="btn-mostrar">
-                        <img id="img-olho" src="/img/olho_fechado.png" alt="Mostrar Senha">
-                    </button>
-                </div>
-
-                <a href="#" class="link-esqueceu">Esqueceu a Senha?</a>
-
-                <button type="submit" class="botao-entrar">Entrar</button>
-            </form>
-            
-            <p class="texto-politica">
-                Ao continuar, você reconhece a <a href="#">Política de Privacidade</a> do DevIN.
-            </p>
-        </div>
-        <script src="/js/login.js"></script>
-    </main>
-
-</body>
-</html>
-
 <?php
 // Traz as funções de autenticação para este ficheiro. O "__DIR__" garante que 
 // o caminho é absoluto e não falha dependendo de onde o ficheiro é chamado.
@@ -126,3 +57,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/login.css">
+    <title>Devin|Login</title>
+</head>
+<body>
+
+    <header class="cabecalho-site">
+        <div class="logo">
+            <a href="../html/index.html">Dev<span>IN</span></a>
+        </div>
+
+        <nav class="navegacao">
+            <ul>
+                <li><a href="#conheca">Conheça o DevIN</a></li>
+                <li><a href="etapas">Etapas</a></li>
+                <li><a href="contatos">Contato</a></li>
+            </ul>
+        </nav>
+
+        <div class="acoes">
+            <a class="botao-azul" href="cadastro_pessoa.html">Cadastrar-se</a>
+        </div>
+    </header>
+
+    <main class="conteudo-login">
+        
+        <img class="gif-robo" src="../img/robologin.gif" alt="Robô DevIN">
+
+        <div class="area-login">
+            <h1>Login</h1>
+            
+            <?php if ($erro): ?>
+                <p class="mensagem-erro" style="color: red; font-weight: bold; margin-bottom: 10px;"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></p>
+            <?php endif; ?>
+
+            <form action="/php/login.php" method="POST">
+                <div class="grupo-campo">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Seu email..." required>
+                </div>
+                
+                <div class="grupo-campo campo-senha input-container">
+                    <label for="senha">Senha:</label>
+                    <input type="password" id="senha" name="senha" placeholder="Sua senha..." required>
+                    
+                    <button type="button" id="btn-mostrar">
+                        <img id="img-olho" src="../img/olho_fechado.png" alt="Mostrar Senha">
+                    </button>
+                </div>
+
+                <a href="#" class="link-esqueceu">Esqueceu a Senha?</a>
+
+                <button type="submit" class="botao-entrar">Entrar</button>
+            </form>
+            
+            <p class="texto-politica">
+                Ao continuar, você reconhece a <a href="#">Política de Privacidade</a> do DevIN.
+            </p>
+        </div>
+        <script src="../js/login.js"></script>
+    </main>
+
+</body>
+</html>
+

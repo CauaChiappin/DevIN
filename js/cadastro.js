@@ -1,3 +1,4 @@
+ console.log("cadastro.js carregou");
  const senhaInput = document.getElementById('senha');
         const confirmeSenhaInput = document.getElementById('confirme_senha');
         
@@ -62,3 +63,58 @@
                 alert('Por favor, corrija os erros nos campos de senha antes de prosseguir.');
             }
         });
+
+        // =====================
+// MÁSCARA CPF
+// =====================
+const cpf = document.getElementById('cpf');
+
+cpf.addEventListener('input', () => {
+    let valor = cpf.value.replace(/\D/g, '');
+
+    valor = valor.substring(0, 11);
+
+    valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+    valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+    valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+    cpf.value = valor;
+});
+
+
+// =====================
+// MÁSCARA TELEFONE
+// =====================
+const telefone = document.getElementById('telefone');
+
+telefone.addEventListener('input', () => {
+    let valor = telefone.value.replace(/\D/g, '');
+
+    valor = valor.substring(0, 11);
+
+    if (valor.length <= 10) {
+        valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
+        valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+    } else {
+        valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
+        valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+    }
+
+    telefone.value = valor;
+});
+
+
+// =====================
+// MÁSCARA CEP
+// =====================
+const cep = document.getElementById('cep');
+
+cep.addEventListener('input', () => {
+    let valor = cep.value.replace(/\D/g, '');
+
+    valor = valor.substring(0, 8);
+
+    valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+
+    cep.value = valor;
+});
