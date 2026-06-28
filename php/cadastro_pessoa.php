@@ -182,10 +182,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </section>
 
         <section class="right-side">
-            <a href="login.php" class="btn-top-login">LogIn</a>
+            <a href="login.php" class="btn-top-login">Login</a>
             
             <div class="mascot-container">
-                <div class="mascot-placeholder-graphic"></div>
+                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
             </div>
         </section>
 

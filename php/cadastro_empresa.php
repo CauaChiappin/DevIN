@@ -1,10 +1,57 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "devin";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
+
+    if ($conn->connect_error) {
+        die("Falha de conexão com o banco de dados.");
+    }
+
+    if ($_POST['senha'] !== $_POST['confirme_senha']) {
+        echo "<script>
+            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
+        </script>";
+        exit();
+    }
+
+    $nome = $conn->real_escape_string($_POST['nome']);
+    $cnpj = $conn->real_escape_string($_POST['cnpj']);
+    $cep = (int) preg_replace('/[^0-9]/', '', $_POST['cep']);
+    $telefone = (int) preg_replace('/[^0-9]/', '', $_POST['telefone']);
+    $email = $conn->real_escape_string($_POST['email']);
+    $senha_hash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO Empresa (nome, cnpj, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssisss", $nome, $cnpj, $cep, $email, $senha_hash, $telefone);
+
+    if ($stmt->execute()) {
+        echo "<script>
+            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast success-toast'>Empresa cadastrada com sucesso!</div>\";
+        </script>";
+    } else {
+        echo "<script>
+            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>Erro ao cadastrar: CNPJ ou E-mail já existentes.</div>\";
+        </script>";
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Criar Conta</title>
-    <link rel="stylesheet" href="/css/cadastrostyle.css" >
+    <link rel="stylesheet" href="../css/cadastrostyle.css" >
 </head>
 <body>
 
@@ -47,7 +94,7 @@
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="confirme_senha" name="confirme_senha" required>
-                                <img src="/img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                             <span id="error-match" class="error-message-text">Senhas não coincidem</span>
                         </div>
@@ -68,7 +115,7 @@
                             <label for="senha">Senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="senha" name="senha" required>
-                                <img src="/img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                         </div>
 
@@ -100,10 +147,10 @@
         </section>
 
         <section class="right-side">
-            <a href="login.php" class="btn-top-login">LogIn</a>
+            <a href="login.php" class="btn-top-login">Login</a>
             
             <div class="mascot-container">
-                <div class="mascot-placeholder-graphic"></div>
+                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
             </div>
         </section>
 
@@ -182,49 +229,4 @@
 </body>
 </html>
 
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $dbname = "devin";
 
-    $conn = new mysqli($host, $user, $pass, $dbname);
-
-    if ($conn->connect_error) {
-        die("Falha de conexão com o banco de dados.");
-    }
-
-    if ($_POST['senha'] !== $_POST['confirme_senha']) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
-        </script>";
-        exit();
-    }
-
-    $nome = $conn->real_escape_string($_POST['nome']);
-    $cnpj = $conn->real_escape_string($_POST['cnpj']);
-    $cep = (int) preg_replace('/[^0-9]/', '', $_POST['cep']);
-    $telefone = (int) preg_replace('/[^0-9]/', '', $_POST['telefone']);
-    $email = $conn->real_escape_string($_POST['email']);
-    $senha_hash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
-
-    $sql = "INSERT INTO Empresa (nome, cnpj, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssisss", $nome, $cnpj, $cep, $email, $senha_hash, $telefone);
-
-    if ($stmt->execute()) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast success-toast'>Empresa cadastrada com sucesso!</div>\";
-        </script>";
-    } else {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>Erro ao cadastrar: CNPJ ou E-mail já existentes.</div>\";
-        </script>";
-    }
-
-    $stmt->close();
-    $conn->close();
-}
-?>
