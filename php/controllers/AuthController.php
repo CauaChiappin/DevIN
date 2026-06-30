@@ -19,7 +19,7 @@ class AuthController
         $conn->close();
 
         if (!$usuario) {
-            throw new RuntimeException('Usuario nao encontrado.');
+            throw new RuntimeException('Usuario não encontrado.');
         }
 
         if (!password_verify($senha, $usuario['senha_hash'])) {
