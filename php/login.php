@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </nav>
 
         <div class="acoes">
-            <a class="botao-azul" href="cadastro_pessoa.html">Cadastrar-se</a>
+            <a class="botao-azul" href="../php/cadastro_pessoa.php">Cadastrar-se</a>
         </div>
     </header>
 
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </button>
                 </div>
 
-                <a href="#" class="link-esqueceu">Esqueceu a Senha?</a>
+                <a href="../php/recuperacao.php" class="link-esqueceu">Esqueceu a Senha?</a>
 
                 <button type="submit" class="botao-entrar">Entrar</button>
             </form>

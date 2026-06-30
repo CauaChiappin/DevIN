@@ -1,50 +1,3 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $dbname = "devin";
-
-    $conn = new mysqli($host, $user, $pass, $dbname);
-
-    if ($conn->connect_error) {
-        die("Falha de conexão com o banco de dados.");
-    }
-
-    if ($_POST['senha'] !== $_POST['confirme_senha']) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
-        </script>";
-        exit();
-    }
-
-    $nome = $conn->real_escape_string($_POST['nome']);
-    $cnpj = $conn->real_escape_string($_POST['cnpj']);
-    $cep = (int) preg_replace('/[^0-9]/', '', $_POST['cep']);
-    $telefone = (int) preg_replace('/[^0-9]/', '', $_POST['telefone']);
-    $email = $conn->real_escape_string($_POST['email']);
-    $senha_hash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
-
-    $sql = "INSERT INTO Empresa (nome, cnpj, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssisss", $nome, $cnpj, $cep, $email, $senha_hash, $telefone);
-
-    if ($stmt->execute()) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast success-toast'>Empresa cadastrada com sucesso!</div>\";
-        </script>";
-    } else {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>Erro ao cadastrar: CNPJ ou E-mail já existentes.</div>\";
-        </script>";
-    }
-
-    $stmt->close();
-    $conn->close();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -59,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         <section class="left-side">
             
-            <div class="brand-logo">
-                Dev<span>IN</span>
+             <div class="brand-logo">
+          <a href="../php/index.php">Dev<span>IN</span></a>
             </div>
 
             <div class="toggle-container">
@@ -135,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="form-footer-action">
                     <button type="submit" class="btn-submit">Cadastrar</button>
-                    <p class="login-redirect">Já tem conta? <a href="login.php">Faça login</a></p>
+                    <p class="login-redirect">Já tem conta? <a href="../php/login.php">Faça login</a></p>
                 </div>
 
             </form>
@@ -147,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </section>
 
         <section class="right-side">
-            <a href="login.php" class="btn-top-login">Login</a>
+            <a href="../php/login.php" class="btn-top-login">Login</a>
             
             <div class="mascot-container">
                 <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
@@ -229,4 +182,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 </html>
 
+
+
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "devin";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
+
+    if ($conn->connect_error) {
+        die("Falha de conexão com o banco de dados.");
+    }
+
+    if ($_POST['senha'] !== $_POST['confirme_senha']) {
+        echo "<script>
+            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
+        </script>";
+        exit();
+    }
+
+    $nome = $conn->real_escape_string($_POST['nome']);
+    $cnpj = $conn->real_escape_string($_POST['cnpj']);
+    $cep = (int) preg_replace('/[^0-9]/', '', $_POST['cep']);
+    $telefone = (int) preg_replace('/[^0-9]/', '', $_POST['telefone']);
+    $email = $conn->real_escape_string($_POST['email']);
+    $senha_hash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO Empresa (nome, cnpj, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssisss", $nome, $cnpj, $cep, $email, $senha_hash, $telefone);
+
+    if ($stmt->execute()) {
+        echo "<script>
+            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast success-toast'>Empresa cadastrada com sucesso!</div>\";
+        </script>";
+    } else {
+        echo "<script>
+            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>Erro ao cadastrar: CNPJ ou E-mail já existentes.</div>\";
+        </script>";
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
 
