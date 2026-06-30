@@ -745,7 +745,8 @@ summary:focus-visible {
 }
 
 .imagem-suporte {
-    width: 300px;
+    width: 350px;
+    border-radius: 50px;
 }
 
 .perguntas {

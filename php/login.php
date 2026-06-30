@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <header class="cabecalho-site">
         <div class="logo">
-            <a href="../html/index.html">Dev<span>IN</span></a>
+            <a href="index.php">Dev<span>IN</span></a>
         </div>
 
         <nav class="navegacao">
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </nav>
 
         <div class="acoes">
-            <a class="botao-azul" href="cadastro_pessoa.html">Cadastrar-se</a>
+            <a class="botao-azul" href="cadastro_pessoa.php">Cadastrar-se</a>
         </div>
     </header>
 
