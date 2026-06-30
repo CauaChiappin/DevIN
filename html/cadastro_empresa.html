@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Criar Conta</title>
-    <link rel="stylesheet" href="/css/cadastrostyle.css" >
+    <link rel="stylesheet" href="../css/cadastrostyle.css" >
 </head>
 <body>
 
@@ -17,14 +17,14 @@
             </div>
 
             <div class="toggle-container">
-                <a href="/html/cadastro_pessoa.html" class="toggle-btn pessoal">Pessoal</a>
+                <a href="../html/cadastro_pessoa.html" class="toggle-btn pessoal">Pessoal</a>
                 <span class="toggle-divider">OU</span>
-                <a href="/html/cadastro_empresa.html" class="toggle-btn empresa active">Empresa</a>
+                <a href="../html/cadastro_empresa.html" class="toggle-btn empresa active">Empresa</a>
             </div>
 
             <h1 class="page-title">Criar conta</h1>
 
-            <form action="/php/cadastro_empresa.php" method="POST" class="register-form" id="formCadastro">
+            <form action="../php/cadastro_empresa.php" method="POST" class="register-form" id="formCadastro">
                 
                 <div class="form-columns">
                     <div class="form-column">
@@ -47,7 +47,7 @@
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="confirme_senha" name="confirme_senha" required>
-                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="../img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                             <span id="error-match" class="error-message-text">Senhas não coincidem</span>
                         </div>
@@ -68,7 +68,7 @@
                             <label for="senha">Senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="senha" name="senha" required>
-                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="../img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                         </div>
 
@@ -88,7 +88,7 @@
 
                 <div class="form-footer-action">
                     <button type="submit" class="btn-submit">Cadastrar</button>
-                    <p class="login-redirect">Já tem conta? <a href="/html/login.html">Faça login</a></p>
+                    <p class="login-redirect">Já tem conta? <a href="../html/login.html">Faça login</a></p>
                 </div>
 
             </form>
@@ -100,17 +100,17 @@
         </section>
 
    <section class="right-side">
-            <a href="/html/login.html" class="btn-top-login">Login</a>
+            <a href="../html/login.html" class="btn-top-login">Login</a>
             
             <div class="mascot-container">
-                <img src="/img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
+                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
             </div>
         </section>
 
     </div>
 
     <div id="status-alert-container"></div>
-<script src="/js/cadastro.js"></script>
+<script src="../js/cadastro.js"></script>
 </body>
 </html>
 <php src="/php/cadastro_empresa.php"></php>
