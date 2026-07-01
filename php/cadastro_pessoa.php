@@ -1,85 +1,3 @@
-<?php
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $dbname = "devin";
-
-    $conn = new mysqli($host, $user, $pass, $dbname);
-
-    if ($conn->connect_error) {
-        die("Falha de conexão com o banco de dados: " . $conn->connect_error);
-    }
-
-    if ($_POST['senha'] !== $_POST['confirme_senha']) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML =
-            \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
-        </script>";
-        exit();
-    }
-
-    $nome = trim($_POST['nome']);
-    $cpf = trim($_POST['cpf']);
-    $cep = preg_replace('/[^0-9]/', '', $_POST['cep']);
-    $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone']);
-    $email = trim($_POST['email']);
-
-    $senha_pura = $_POST['senha'];
-    $senha_hash = password_hash($senha_pura, PASSWORD_DEFAULT);
-
-    $sql = "INSERT INTO pessoa_fisica
-            (nome, cpf, cep, email, senha_hash, telefone)
-            VALUES (?, ?, ?, ?, ?, ?)";
-
-    $stmt = $conn->prepare($sql);
-
-    if (!$stmt) {
-        die("Erro no SQL: " . $conn->error);
-    }
-
-    $stmt->bind_param(
-        "ssisss",
-        $nome,
-        $cpf,
-        $cep,
-        $email,
-        $senha_hash,
-        $telefone
-    );
-
-    if ($stmt->execute()) {
-
-        if ($senha_pura === "admin@CAJE") {
-
-            echo "<script>
-                alert('Conta de administrador criada com sucesso!');
-                window.location.href='pagina_adm.php';
-            </script>";
-
-        } else {
-
-            echo "<script>
-                alert('Conta criada com sucesso!');
-            </script>";
-
-        }
-
-    } else {
-
-        echo "<script>
-            alert('Erro ao cadastrar: " . addslashes($stmt->error) . "');
-        </script>";
-
-    }
-
-    $stmt->close();
-    $conn->close();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -94,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         <section class="left-side">
             
-            <div class="brand-logo">
-                Dev<span>IN</span>
+             <div class="brand-logo">
+          <a href="../php/index.php">Dev<span>IN</span></a>
             </div>
 
             <div class="toggle-container">
@@ -196,6 +114,89 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script src="../js/cadastro.js"></script>
 </body>
 </html>
+
+<?php
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "devin";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
+
+    if ($conn->connect_error) {
+        die("Falha de conexão com o banco de dados: " . $conn->connect_error);
+    }
+
+    if ($_POST['senha'] !== $_POST['confirme_senha']) {
+        echo "<script>
+            document.getElementById('status-alert-container').innerHTML =
+            \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
+        </script>";
+        exit();
+    }
+
+    $nome = trim($_POST['nome']);
+    $cpf = trim($_POST['cpf']);
+    $cep = preg_replace('/[^0-9]/', '', $_POST['cep']);
+    $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone']);
+    $email = trim($_POST['email']);
+
+    $senha_pura = $_POST['senha'];
+    $senha_hash = password_hash($senha_pura, PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO pessoa
+            (nome, cpf, cep, email, senha_hash, telefone)
+            VALUES (?, ?, ?, ?, ?, ?)";
+
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        die("Erro no SQL: " . $conn->error);
+    }
+
+    $stmt->bind_param(
+        "ssisss",
+        $nome,
+        $cpf,
+        $cep,
+        $email,
+        $senha_hash,
+        $telefone
+    );
+
+    if ($stmt->execute()) {
+
+        if ($senha_pura === "admin@CAJE") {
+
+            echo "<script>
+                alert('Conta de administrador criada com sucesso!');
+                window.location.href='pagina_adm.php';
+            </script>";
+
+        } else {
+
+            echo "<script>
+                alert('Conta criada com sucesso!');
+            </script>";
+
+        }
+
+    } else {
+
+        echo "<script>
+            alert('Erro ao cadastrar: " . addslashes($stmt->error) . "');
+        </script>";
+
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+
 
 
 
