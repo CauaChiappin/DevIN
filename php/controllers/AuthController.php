@@ -124,4 +124,6 @@ class AuthController
 
         return $routes[$tipo] ?? 'index.php';
     }
+    
+      
 }

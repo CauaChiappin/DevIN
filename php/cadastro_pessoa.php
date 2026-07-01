@@ -1,10 +1,92 @@
+<?php
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "devin";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
+
+    if ($conn->connect_error) {
+        die("Falha de conexão com o banco de dados: " . $conn->connect_error);
+    }
+
+    if ($_POST['senha'] !== $_POST['confirme_senha']) {
+        echo "<script>
+            document.getElementById('status-alert-container').innerHTML =
+            \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
+        </script>";
+        exit();
+    }
+
+    $nome = trim($_POST['nome']);
+    $cpf = trim($_POST['cpf']);
+    $cep = preg_replace('/[^0-9]/', '', $_POST['cep']);
+    $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone']);
+    $email = trim($_POST['email']);
+
+    $senha_pura = $_POST['senha'];
+    $senha_hash = password_hash($senha_pura, PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO pessoa_fisica
+            (nome, cpf, cep, email, senha_hash, telefone)
+            VALUES (?, ?, ?, ?, ?, ?)";
+
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        die("Erro no SQL: " . $conn->error);
+    }
+
+    $stmt->bind_param(
+        "ssisss",
+        $nome,
+        $cpf,
+        $cep,
+        $email,
+        $senha_hash,
+        $telefone
+    );
+
+    if ($stmt->execute()) {
+
+        if ($senha_pura === "admin@CAJE") {
+
+            echo "<script>
+                alert('Conta de administrador criada com sucesso!');
+                window.location.href='pagina_adm.php';
+            </script>";
+
+        } else {
+
+            echo "<script>
+                alert('Conta criada com sucesso!');
+            </script>";
+
+        }
+
+    } else {
+
+        echo "<script>
+            alert('Erro ao cadastrar: " . addslashes($stmt->error) . "');
+        </script>";
+
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevIN | Criar Conta Pessoal</title>
-    <link rel="stylesheet" href="/css/cadastrostyle.css">
+    <title><a href="../html/index.html">DevIN</a> | Criar Conta Pessoal</title>
+    <link rel="stylesheet" href="../css/cadastrostyle.css">
 </head>
 <body>
 
@@ -24,7 +106,7 @@
 
             <h1 class="page-title">Criar conta</h1>
 
-            <form action="" method="POST" class="register-form" id="formCadastro">
+                <form action="../php/cadastro_pessoa.php" method="POST" class="register-form" id="formCadastro">
                 
                 <div class="form-columns">
                     <div class="form-column">
@@ -47,7 +129,7 @@
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="confirme_senha" name="confirme_senha" required>
-                                <img src="/img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="../img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                             <span id="error-match" class="error-message-text">Senhas não coincidem</span>
                         </div>
@@ -68,7 +150,7 @@
                             <label for="senha">Senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="senha" name="senha" required>
-                                <img src="/img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                         </div>
 
@@ -100,10 +182,10 @@
         </section>
 
         <section class="right-side">
-            <a href="login.php" class="btn-top-login">LogIn</a>
+            <a href="login.php" class="btn-top-login">Login</a>
             
             <div class="mascot-container">
-                <div class="mascot-placeholder-graphic"></div>
+                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
             </div>
         </section>
 
@@ -111,70 +193,9 @@
 
     <div id="status-alert-container"></div>
 
-<script src="/js/cadastro.js"></script>
+<script src="../js/cadastro.js"></script>
 </body>
 </html>
 
 
 
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $dbname = "devin";
-
-    $conn = new mysqli($host, $user, $pass, $dbname);
-    if ($conn->connect_error) {
-        die("Falha de conexão com o banco de dados.");
-    }
-
-    if ($_POST['senha'] !== $_POST['confirme_senha']) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
-        </script>";
-        exit();
-    }
-
-    $nome = $conn->real_escape_string($_POST['nome']);
-    $cpf = $conn->real_escape_string($_POST['cpf']);
-    $cep = (int) preg_replace('/[^0-9]/', '', $_POST['cep']);
-    $telefone = (int) preg_replace('/[^0-9]/', '', $_POST['telefone']);
-    $email = $conn->real_escape_string($_POST['email']);
-    
-    // Guardamos a senha pura em uma variável antes de criptografar para fazer a validação do Admin
-    $senha_pura = $_POST['senha'];
-    $senha_hash = password_hash($senha_pura, PASSWORD_DEFAULT);
-
-    $sql = "INSERT INTO Pessoa (nome, cpf, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssisss", $nome, $cpf, $cep, $email, $senha_hash, $telefone);
-
-    if ($stmt->execute()) {
-        // VERIFICAÇÃO SE A SENHA CADASTRADA É A DO ADMIN
-        if ($senha_pura === "admin@CAJE") {
-            // Se for a senha secreta, mostra o Toast de sucesso e redireciona direto para a página do ADM após 1.5 segundos
-            echo "<script>
-                document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast success-toast'>Conta de Administrador criada com sucesso! Redirecionando...</div>\";
-                setTimeout(function() {
-                    window.location.href = 'pagina_adm.php';
-                }, 1500);
-            </script>";
-        } else {
-            // Se for um usuário comum, mostra apenas o Toast de sucesso normal
-            echo "<script>
-                document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast success-toast'>Conta criada com sucesso!</div>\";
-            </script>";
-        }
-    } else {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>Erro ao cadastrar: CPF ou E-mail já existentes.</div>\";
-        </script>";
-    }
-
-    $stmt->close();
-    $conn->close();
-}
-?>
-    
