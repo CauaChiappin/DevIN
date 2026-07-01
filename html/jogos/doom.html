@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevIN Arcade - Doom</title>
+    
+    <link href="https://v8.js-dos.com/latest/js-dos.css" rel="stylesheet">
+    <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0b0b; /* Fundo escuro estilo fliperama */
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .arcade-card {
+            background: #141414;
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 840px;
+            box-shadow: 0 8px 32px rgba(0, 69, 149, 0.4);
+            text-align: center;
+            border: 2px solid #004595;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .logo span {
+            color: #004595;
+        }
+
+        h2 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        /* Container ajustado para o emulador nativo */
+        .game-container {
+            width: 100%;
+            height: 450px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            margin-top: 25px;
+            background-color: #004595;
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-voltar:hover {
+            background-color: #002d62;
+        }
+
+        footer {
+            color: #666;
+            margin-top: 30px;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="arcade-card">
+        <div class="logo">Dev<span>IN</span> Arcade</div>
+        <h2>DOOM (1993) - Shareware</h2>
+        
+        <div id="dosbox" class="game-container"></div>
+
+        <a href="./php/cadastro_empresa.php" class="btn-voltar">← Voltar para o Site</a>
+    </div>
+
+    <footer>
+        DevIN | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
+    </footer>
+
+    <script>
+        // Configura o motor do DOSBox usando a CDN estável deles
+        Dos.configure({
+            wdosboxUrl: "https://v8.js-dos.com/latest/wdosbox.js"
+        });
+
+        // Carrega o pacote oficial de demonstração do DOOM diretamente da CDN do JS-DOS
+        Dos(document.getElementById("dosbox")).run("https://v8.js-dos.com/latest/pkgs/doom.zip");
+    </script>
+
+</body>
+</html>
