@@ -125,7 +125,7 @@
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
                 input.type = 'text';
-                imgElement.src = '/img/olho_aberto.png'; // Imagem para o estado VISÍVEL
+                imgElement.src = '/img/olho_fechado.png'; // Imagem para o estado VISÍVEL
             } else {
                 input.type = 'password';
                 imgElement.src = '/img/olho_fechado.png';       // Imagem para o estado OCULTO
