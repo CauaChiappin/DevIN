@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <header class="cabecalho-site">
         <div class="logo">
-            <a href="../html/index.html">Dev<span>IN</span></a>
+            <a href="../php/index.php">Dev<span>IN</span></a>
         </div>
 
         <nav class="navegacao">
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </nav>
 
         <div class="acoes">
-            <a class="botao-azul" href="cadastro_pessoa.html">Cadastrar-se</a>
+            <a class="botao-azul" href="cadastro_pessoa.php">Cadastrar-se</a>
         </div>
     </header>
 
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="mensagem-erro" style="color: red; font-weight: bold; margin-bottom: 10px;"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></p>
             <?php endif; ?>
 
-            <form action="/php/login.php" method="POST">
+            <form action="" method="POST">
                 <div class="grupo-campo">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" placeholder="Seu email..." required>

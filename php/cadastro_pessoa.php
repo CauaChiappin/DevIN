@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $senha_pura = $_POST['senha'];
     $senha_hash = password_hash($senha_pura, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO pessoa_fisica
+    $sql = "INSERT INTO pessoa
             (nome, cpf, cep, email, senha_hash, telefone)
             VALUES (?, ?, ?, ?, ?, ?)";
 
