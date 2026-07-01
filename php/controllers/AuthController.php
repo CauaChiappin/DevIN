@@ -117,9 +117,9 @@ class AuthController
     public static function redirectByUserType(string $tipo): string // metodo que redireciona o usuario para a pagina correspondente ao seu tipo, retorna a url da pagina
     {
         $routes = [ // array que contem as rotas correspondentes a cada tipo de usuario
-            'adm' => 'dashboard_adm.php',
-            'empresa' => 'dashboard_empresa.php',
-            'pessoa' => 'dashboard_pessoa.php',
+            'adm' => 'dashboard.php',
+            'empresa' => 'dashboard.php',
+            'pessoa' => 'dashboard.php',
         ];
 
         return $routes[$tipo] ?? 'index.php';
