@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/controllers/ProfileController.php';
 
 if (empty($_SESSION['logado'])) {
     header('Location: login.php');
@@ -10,6 +11,36 @@ $tipo = $_SESSION['usuario_tipo'] ?? 'pessoa';
 $nome = $_SESSION['usuario_nome'] ?? 'Usuario';
 $email = $_SESSION['usuario_email'] ?? 'email@devin.com';
 $pagina = $_GET['pagina'] ?? 'inicio';
+
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) exit('Solicitação inválida.');
+    try {
+        $action = $_POST['action'] ?? '';
+        if ($action === 'update_profile') {
+            updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
+            $_SESSION['usuario_nome'] = trim($_POST['nome']);
+            $_SESSION['usuario_email'] = trim($_POST['email']);
+            header('Location: dashboard.php?perfil=meu'); exit;
+        }
+        if ($action === 'update_settings') {
+            updateLanguage($tipo, (int) $_SESSION['usuario_id'], $_POST['idioma'] ?? 'pt-BR');
+            header('Location: dashboard.php?configuracoes=1'); exit;
+        }
+        if ($action === 'delete_account') {
+            deleteProfile($tipo, (int) $_SESSION['usuario_id']);
+            session_destroy();
+            header('Location: login.php'); exit;
+        }
+    } catch (Throwable $exception) {
+        $_SESSION['profile_error'] = $exception->getMessage();
+        header('Location: dashboard.php?perfil=meu'); exit;
+    }
+}
+
+$perfilAtual = findProfile($tipo, (int) $_SESSION['usuario_id']);
+if (!$perfilAtual) { header('Location: logout.php'); exit; }
 
 $paginasPermitidas = [
     'empresa' => ['inicio', 'candidatos', 'sobre', 'perfil'],
@@ -105,16 +136,13 @@ function h(string $valor): string
             </nav>
 
             <div class="conta">
-                <a class="perfil-link <?= ativo($pagina, 'perfil') ?>" href="?pagina=perfil">
-                    <span class="avatar-mini"></span>
-                    <span class="menu-text">Perfil</span>
-                </a>
-                <?php if ($pagina === 'perfil'): ?>
+                <details class="perfil-dropdown">
+                    <summary class="perfil-link"><span class="avatar-mini"></span><span class="menu-text">Perfil</span></summary>
                     <div class="perfil-menu">
-                        <a href="?pagina=perfil"><span class="avatar-foto"></span><span class="menu-text">Meu perfil</span></a>
+                        <button type="button" data-open-profile><span class="avatar-foto"></span><span class="menu-text">Meu perfil</span></button>
                         <button type="button" data-open-settings><span class="gear-icon"></span><span class="menu-text">Configuracoes</span></button>
                     </div>
-                <?php endif; ?>
+                </details>
                 <a class="sair" href="logout.php"><span class="exit-icon"></span><span class="menu-text">Sair da Conta</span></a>
             </div>
         </aside>
@@ -297,19 +325,50 @@ function h(string $valor): string
         </aside>
     </main>
 
+    <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">
+        <form method="post" class="modal-form profile-form" enctype="multipart/form-data">
+            <button class="modal-close" type="button" data-close-modal aria-label="Fechar">×</button>
+            <h2 class="sr-only" id="profileModalTitle">Meu perfil</h2>
+            <?php if (!empty($_SESSION['profile_error'])): ?><p class="form-error"><?= h($_SESSION['profile_error']); unset($_SESSION['profile_error']); ?></p><?php endif; ?>
+            <input type="hidden" name="action" value="update_profile"><input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+            <div class="profile-summary">
+                <label class="profile-photo" aria-label="Alterar foto de perfil">
+                    <span class="profile-photo-preview"><?= !empty($perfilAtual['foto']) ? '<img src="' . h('../' . $perfilAtual['foto']) . '" alt="">' : '' ?></span>
+                    <span class="photo-edit" aria-hidden="true">✎</span>
+                    <input name="foto" type="file" accept="image/png,image/jpeg,image/webp">
+                </label>
+                <div>
+                    <strong><?= h($perfilAtual['nome']) ?></strong>
+                    <small><?= h($perfilAtual['email']) ?></small>
+                </div>
+            </div>
+            <div class="profile-fields">
+                <label>Nome<input name="nome" type="text" value="<?= h($perfilAtual['nome']) ?>" required></label>
+                <label>E-mail account<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" required></label>
+                <?php if ($tipo !== 'adm'): ?>
+                    <label>Celular<input name="telefone" type="tel" value="<?= h($perfilAtual['telefone']) ?>" required></label>
+                    <label>CEP<input name="cep" type="text" value="<?= h($perfilAtual['cep']) ?>" required></label>
+                <?php endif; ?>
+            </div>
+            <button class="profile-save" type="submit">Save</button>
+        </form>
+    </dialog>
+
     <dialog class="settings-modal" id="settingsModal">
-        <form method="dialog">
+        <form method="post" class="modal-form">
             <button class="modal-close" value="close" aria-label="Fechar">x</button>
             <h2>Configuracoes</h2>
             <label>Idioma
-                <select>
-                    <option>Portugues</option>
-                    <option>Ingles</option>
-                    <option>Espanhol</option>
+                <select name="idioma">
+                    <option value="pt-BR" <?= $perfilAtual['idioma'] === 'pt-BR' ? 'selected' : '' ?>>Português</option>
+                    <option value="en" <?= $perfilAtual['idioma'] === 'en' ? 'selected' : '' ?>>Inglês</option>
+                    <option value="es" <?= $perfilAtual['idioma'] === 'es' ? 'selected' : '' ?>>Espanhol</option>
                 </select>
             </label>
-            <button class="btn danger" type="button">Excluir conta</button>
+            <input type="hidden" name="action" value="update_settings"><input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+            <button class="btn primary" type="submit">Salvar idioma</button>
         </form>
+        <form method="post" class="modal-form account-delete-form"><input type="hidden" name="action" value="delete_account"><input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>"><button class="btn danger" type="submit" data-delete-account>Excluir conta</button></form>
     </dialog>
 
     <script src="../js/dashboard.js"></script>

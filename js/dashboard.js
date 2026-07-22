@@ -1,6 +1,7 @@
 const detailText = document.querySelector("#detailText");
 const cards = document.querySelectorAll(".item-card[data-detail]");
 const settingsModal = document.querySelector("#settingsModal");
+const profileModal = document.querySelector("#profileModal");
 const settingsButtons = document.querySelectorAll("[data-open-settings]");
 const dashboardShell = document.querySelector(".dashboard-shell");
 const menuToggle = document.querySelector("[data-toggle-menu]");
@@ -37,3 +38,31 @@ settingsButtons.forEach((button) => {
         }
     });
 });
+
+document.querySelector("[data-open-profile]")?.addEventListener("click", () => {
+    document.querySelector(".perfil-dropdown")?.removeAttribute("open");
+    profileModal?.showModal();
+});
+
+document.querySelector(".profile-photo input")?.addEventListener("change", (event) => {
+    const [photo] = event.target.files;
+    const preview = document.querySelector(".profile-photo-preview");
+
+    if (photo && preview) {
+        preview.innerHTML = "";
+        const image = document.createElement("img");
+        image.src = URL.createObjectURL(photo);
+        image.alt = "Prévia da foto de perfil";
+        preview.appendChild(image);
+    }
+});
+
+document.querySelectorAll("[data-close-modal]").forEach((button) => {
+    button.addEventListener("click", () => button.closest("dialog")?.close());
+});
+
+document.querySelector("[data-delete-account]")?.addEventListener("click", (event) => {
+    if (!confirm("Tem certeza? Esta ação exclui sua conta permanentemente.")) event.preventDefault();
+});
+
+if (new URLSearchParams(window.location.search).get("perfil") === "meu") profileModal?.showModal();

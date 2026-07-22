@@ -90,6 +90,10 @@ a {
     white-space: nowrap;
 }
 
+.perfil-dropdown { width: 100%; }
+.perfil-dropdown > summary { list-style: none; }
+.perfil-dropdown > summary::-webkit-details-marker { display: none; }
+
 .menu-toggle {
     width: 34px;
     height: 34px;
@@ -726,6 +730,11 @@ a {
     padding: 30px;
 }
 
+.modal-form label { display: grid; gap: 5px; font-size: 13px; font-weight: 600; }
+.modal-form input, .modal-form select { width: 100%; height: 34px; border: 1px solid #c5c5c5; border-radius: 6px; padding: 0 9px; outline-color: var(--blue); }
+.modal-form .btn { justify-self: start; }
+.form-error { margin: 0; color: var(--red); font-size: 13px; }
+
 .settings-modal h2 {
     margin: 0;
 }
@@ -738,6 +747,166 @@ a {
     background: transparent;
     font-size: 20px;
     cursor: pointer;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Painel exibido ao selecionar "Meu perfil" no menu lateral. */
+.profile-modal {
+    width: min(380px, calc(100% - 32px));
+    border: 1px solid #4f8bd1;
+    border-radius: 15px;
+    box-shadow: 0 22px 52px rgba(0, 57, 116, .2);
+}
+
+.profile-modal .profile-form {
+    gap: 0;
+    padding: 40px 28px 27px;
+}
+
+.profile-modal .modal-close {
+    right: 10px;
+    top: 7px;
+    padding: 2px 6px;
+    color: #111;
+    font-size: 27px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.profile-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #d2d2d2;
+}
+
+.profile-summary strong,
+.profile-summary small {
+    display: block;
+}
+
+.profile-summary strong {
+    margin-bottom: 2px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.profile-summary small {
+    color: #aaa;
+    font-size: 10px;
+}
+
+.profile-photo {
+    width: 47px;
+    height: 47px;
+    position: relative;
+    display: block;
+    flex: 0 0 auto;
+    cursor: pointer;
+}
+
+.profile-photo input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.profile-photo-preview {
+    width: 47px;
+    height: 47px;
+    display: block;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 2px solid #d7d7d7;
+    background: radial-gradient(circle at 50% 38%, #ffffff 0 17%, #111111 18% 33%, transparent 34%), radial-gradient(circle at 50% 82%, #111111 0 32%, transparent 33%), #8cc9ef;
+}
+
+.profile-photo-preview img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.photo-edit {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: -3px;
+    bottom: -1px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #fff;
+    color: #e99a28;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.profile-fields {
+    display: grid;
+    padding-top: 13px;
+}
+
+.profile-fields label {
+    display: grid;
+    gap: 5px;
+    padding: 7px 0 8px;
+    color: #151515;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.profile-fields input {
+    width: 100%;
+    height: 18px;
+    padding: 0;
+    border: 0;
+    border-bottom: 2px solid #d2d2d2;
+    border-radius: 0;
+    outline: 0;
+    background: transparent;
+    color: #252525;
+    font-size: 12px;
+}
+
+.profile-fields input:focus {
+    border-bottom-color: var(--blue);
+}
+
+.profile-save {
+    min-width: 88px;
+    height: 36px;
+    margin-top: 31px;
+    padding: 0 20px;
+    justify-self: start;
+    border: 0;
+    border-radius: 15px;
+    background: #2f68b5;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.profile-save:hover,
+.profile-save:focus-visible {
+    background: #1f559d;
 }
 
 @media (max-width: 980px) {
