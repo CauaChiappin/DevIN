@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN Arcade - Doom</title>
-    
-    <link href="https://v8.js-dos.com/latest/js-dos.css" rel="stylesheet">
-    <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
 
     <style>
         * {
@@ -54,14 +51,20 @@
             font-size: 20px;
         }
 
-        /* Container ajustado para o emulador nativo */
         .game-container {
             width: 100%;
-            height: 450px;
+            height: 480px;
             background: #000;
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid #333;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
 
         .btn-voltar {
@@ -94,24 +97,19 @@
         <div class="logo">Dev<span>IN</span> Arcade</div>
         <h2>DOOM (1993) - Shareware</h2>
         
-        <div id="dosbox" class="game-container"></div>
+        <div class="game-container">
+            <iframe 
+                src="https://emupedia.net/emupedia-game-doom1/" 
+                allowfullscreen="true">
+            </iframe>
+        </div>
 
-        <a href="../recuperacao.php" class="btn-voltar">← Voltar para o Site</a>
+        <a href="/DevIN/php/cadastro_empresa.php" class="btn-voltar">← Voltar para o Site</a>
     </div>
 
     <footer>
         DevIN | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
     </footer>
-
-    <script>
-        // Configura o motor do DOSBox usando a CDN estável deles
-        Dos.configure({
-            wdosboxUrl: "https://v8.js-dos.com/latest/wdosbox.js"
-        });
-
-        // Carrega o pacote oficial de demonstração do DOOM diretamente da CDN do JS-DOS
-        Dos(document.getElementById("dosbox")).run("https://v8.js-dos.com/latest/pkgs/doom.zip");
-    </script>
 
 </body>
 </html>
