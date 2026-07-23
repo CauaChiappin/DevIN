@@ -46,15 +46,17 @@ document.querySelector("[data-open-profile]")?.addEventListener("click", () => {
 
 document.querySelector(".profile-photo input")?.addEventListener("change", (event) => {
     const [photo] = event.target.files;
-    const preview = document.querySelector(".profile-photo-preview");
 
-    if (photo && preview) {
+    if (!photo) return;
+
+    const previewUrl = URL.createObjectURL(photo);
+    document.querySelectorAll(".current-user-avatar").forEach((preview) => {
         preview.innerHTML = "";
         const image = document.createElement("img");
-        image.src = URL.createObjectURL(photo);
+        image.src = previewUrl;
         image.alt = "Prévia da foto de perfil";
         preview.appendChild(image);
-    }
+    });
 });
 
 document.querySelectorAll("[data-close-modal]").forEach((button) => {

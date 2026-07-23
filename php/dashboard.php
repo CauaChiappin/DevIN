@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_nome'] = trim($_POST['nome']);
             $_SESSION['usuario_email'] = trim($_POST['email']);
+            $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.';
             header('Location: dashboard.php?perfil=meu'); exit;
         }
         if ($action === 'update_settings') {
@@ -97,6 +98,36 @@ function h(string $valor): string
 {
     return htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
 }
+
+function profileAvatar(array $perfil, string $classes): string
+{
+    $foto = $perfil['foto'] ?? '';
+    $imagem = is_string($foto) && str_starts_with($foto, 'uploads/')
+        ? '<img src="' . h($foto) . '" alt="Foto de perfil">'
+        : '';
+
+    return '<span class="' . h($classes) . ' current-user-avatar">' . $imagem . '</span>';
+}
+
+function dashboardIcon(string $name): string
+{
+    $paths = match ($name) {
+        'brand' => '<path d="M4 5.5h16v13H4z"/><path d="M12 5.5v13"/>',
+        'home' => '<path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-6h6v6"/>',
+        'users' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+        'user' => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+        'building' => '<path d="M3 21h18M5 21V5h10v16M15 9h4v12M8 9h4M8 13h4M8 17h4"/>',
+        'briefcase' => '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>',
+        'info' => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+        'settings' => '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-3v-.08A1.7 1.7 0 0 0 10.68 18.36a1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7.02 14.7 1.7 1.7 0 0 0 5.46 13.7H5v-3h.08a1.7 1.7 0 0 0 1.56-1.03A1.7 1.7 0 0 0 6.3 7.8l-.06-.06 2.12-2.12.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 11.3 4.46V4h3v.08a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.12 2.12-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03H20v3h-.08A1.7 1.7 0 0 0 18.36 14.36z"/>',
+        'logout' => '<path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6"/>',
+        'edit' => '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>',
+        'trash' => '<path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6"/>',
+        default => '',
+    };
+
+    return '<svg class="ui-icon ui-icon-' . h($name) . '" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $paths . '</svg>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -104,14 +135,14 @@ function h(string $valor): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Dashboard</title>
-    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
 </head>
 <body>
-    <main class="dashboard-shell" data-tipo="<?= h($tipo) ?>">
+    <main class="dashboard-shell page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
         <aside class="sidebar">
             <div class="sidebar-topo">
                 <a class="brand" href="dashboard.php">
-                    <span class="brand-mark"></span>
+                    <?= dashboardIcon('brand') ?>
                     <span class="brand-text">Dev<span>IN</span></span>
                 </a>
                 <button class="menu-toggle" type="button" aria-label="Abrir ou fechar menu" aria-expanded="true" data-toggle-menu>
@@ -123,31 +154,32 @@ function h(string $valor): string
 
             <nav class="menu-principal" aria-label="Menu principal">
                 <?php if ($tipo === 'empresa'): ?>
-                    <a class="<?= ativo($pagina, 'inicio') ?>" href="?pagina=inicio"><span class="icon home"></span><span class="menu-text">Inicio</span></a>
-                    <a class="<?= ativo($pagina, 'candidatos') ?>" href="?pagina=candidatos"><span class="icon users"></span><span class="menu-text">Candidatos</span></a>
+                    <a class="<?= ativo($pagina, 'inicio') ?>" href="?pagina=inicio"><?= dashboardIcon('home') ?><span class="menu-text">Inicio</span></a>
+                    <a class="<?= ativo($pagina, 'candidatos') ?>" href="?pagina=candidatos"><?= dashboardIcon('users') ?><span class="menu-text">Candidatos</span></a>
                 <?php elseif ($tipo === 'adm'): ?>
-                    <a class="<?= ativo($pagina, 'inicio') ?>" href="?pagina=inicio"><span class="icon building"></span><span class="menu-text">Empresas</span></a>
-                    <a class="<?= ativo($pagina, 'candidatos') ?>" href="?pagina=candidatos"><span class="icon users"></span><span class="menu-text">Candidatos</span></a>
+                    <a class="<?= ativo($pagina, 'inicio') ?>" href="?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a>
+                    <a class="<?= ativo($pagina, 'candidatos') ?>" href="?pagina=candidatos"><?= dashboardIcon('users') ?><span class="menu-text">Candidatos</span></a>
                 <?php else: ?>
-                    <a class="<?= ativo($pagina, 'inicio') ?>" href="?pagina=inicio"><span class="icon home"></span><span class="menu-text">Inicio</span></a>
-                    <a class="<?= ativo($pagina, 'vagas') ?>" href="?pagina=vagas"><span class="icon briefcase"></span><span class="menu-text">Vagas</span></a>
+                    <a class="<?= ativo($pagina, 'inicio') ?>" href="?pagina=inicio"><?= dashboardIcon('home') ?><span class="menu-text">Inicio</span></a>
+                    <a class="<?= ativo($pagina, 'vagas') ?>" href="?pagina=vagas"><?= dashboardIcon('briefcase') ?><span class="menu-text">Vagas</span></a>
                 <?php endif; ?>
-                <a class="<?= ativo($pagina, 'sobre') ?>" href="?pagina=sobre"><span class="icon info"></span><span class="menu-text">Sobre nos</span></a>
+                <a class="<?= ativo($pagina, 'sobre') ?>" href="?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nos</span></a>
             </nav>
 
             <div class="conta">
                 <details class="perfil-dropdown">
-                    <summary class="perfil-link"><span class="avatar-mini"></span><span class="menu-text">Perfil</span></summary>
+                    <summary class="perfil-link"><?= profileAvatar($perfilAtual, 'avatar-mini') ?><span class="menu-text">Perfil</span></summary>
                     <div class="perfil-menu">
-                        <button type="button" data-open-profile><span class="avatar-foto"></span><span class="menu-text">Meu perfil</span></button>
-                        <button type="button" data-open-settings><span class="gear-icon"></span><span class="menu-text">Configuracoes</span></button>
+                        <button type="button" data-open-profile><?= profileAvatar($perfilAtual, 'avatar-foto') ?><span class="menu-text">Meu perfil</span></button>
+                        <button type="button" data-open-settings><?= dashboardIcon('settings') ?><span class="menu-text">Configuracoes</span></button>
                     </div>
                 </details>
-                <a class="sair" href="logout.php"><span class="exit-icon"></span><span class="menu-text">Sair da Conta</span></a>
+                <a class="sair" href="logout.php"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>
             </div>
         </aside>
 
         <section class="lista-area">
+            <?php if ($pagina !== 'sobre'): ?>
             <header class="dashboard-header">
                 <div>
                     <span>Painel DevIN</span>
@@ -162,6 +194,7 @@ function h(string $valor): string
                     <input type="search" name="q" placeholder="Pesquise">
                 </label>
             </form>
+            <?php endif; ?>
 
             <?php if ($pagina === 'sobre'): ?>
                 <section class="sobre-intro">
@@ -198,24 +231,18 @@ function h(string $valor): string
                 <section class="perfil-card">
                     <a class="fechar-card" href="?pagina=inicio">x</a>
                     <div class="perfil-topo">
-                        <span class="avatar-grande"></span>
+                        <?= profileAvatar($perfilAtual, 'avatar-grande') ?>
                         <div>
                             <strong><?= h($nome) ?></strong>
                             <small><?= h($email) ?></small>
                         </div>
                     </div>
-                    <form class="form-perfil">
-                        <label>Nome<input type="text" value="<?= h($nome) ?>"></label>
-                        <label>E-mail account<input type="email" value="<?= h($email) ?>"></label>
-                        <label>CEP<input type="text" placeholder="00000-000"></label>
-                        <label>Celular<input type="tel" placeholder="(00) 00000-0000"></label>
-                        <button type="button">save</button>
-                    </form>
+                    <button class="btn primary" type="button" data-open-profile>Editar perfil</button>
                 </section>
             <?php elseif ($tipo === 'empresa' && $pagina === 'candidatos'): ?>
                 <?php foreach ($candidatos as $candidato): ?>
                     <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>">
-                        <span class="avatar-mini"></span>
+                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($candidato['nome']) ?></h2>
                             <p><?= h($candidato['resumo']) ?></p>
@@ -230,20 +257,20 @@ function h(string $valor): string
                 <button class="criar-post" type="button">Criar post</button>
                 <?php foreach ($empresaPosts as $post): ?>
                     <article class="item-card" data-detail="<?= h($post['detalhe']) ?>">
-                        <span class="avatar-mini"></span>
+                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($post['titulo']) ?></h2>
                             <p><?= h($post['resumo']) ?></p>
                         </div>
                         <div class="post-tools">
-                            <button class="edit" type="button" aria-label="Editar post"></button>
-                            <button class="delete" type="button" aria-label="Excluir post"></button>
+                            <button class="edit" type="button" aria-label="Editar post"><?= dashboardIcon('edit') ?></button>
+                            <button class="delete" type="button" aria-label="Excluir post"><?= dashboardIcon('trash') ?></button>
                         </div>
                     </article>
                 <?php endforeach; ?>
                 <?php foreach ($talentos as $talento): ?>
                     <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>">
-                        <span class="avatar-mini"></span>
+                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($talento['nome']) ?></h2>
                             <p><?= h($talento['resumo']) ?></p>
@@ -254,7 +281,7 @@ function h(string $valor): string
             <?php elseif ($tipo === 'adm' && $pagina === 'candidatos'): ?>
                 <?php foreach ($usuariosAdmin as $usuario): ?>
                     <article class="item-card" data-detail="<?= h($usuario['detalhe']) ?>">
-                        <span class="avatar-mini"></span>
+                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($usuario['nome']) ?></h2>
                             <p><?= h($usuario['resumo']) ?></p>
@@ -265,7 +292,7 @@ function h(string $valor): string
             <?php elseif ($tipo === 'adm'): ?>
                 <?php foreach ($postsAdmin as $post): ?>
                     <article class="item-card" data-detail="<?= h($post['detalhe']) ?>">
-                        <span class="avatar-mini"></span>
+                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($post['empresa']) ?></h2>
                             <p><?= h($post['titulo']) ?></p>
@@ -277,7 +304,7 @@ function h(string $valor): string
             <?php elseif ($pagina === 'vagas'): ?>
                 <?php foreach ($vagasPessoa as $vaga): ?>
                     <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>">
-                        <span class="avatar-mini"></span>
+                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['resumo']) ?></p>
@@ -288,7 +315,7 @@ function h(string $valor): string
             <?php else: ?>
                 <?php foreach ($vagasPessoa as $vaga): ?>
                     <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>">
-                        <span class="avatar-mini"></span>
+                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['resumo']) ?></p>
@@ -330,10 +357,11 @@ function h(string $valor): string
             <button class="modal-close" type="button" data-close-modal aria-label="Fechar">×</button>
             <h2 class="sr-only" id="profileModalTitle">Meu perfil</h2>
             <?php if (!empty($_SESSION['profile_error'])): ?><p class="form-error"><?= h($_SESSION['profile_error']); unset($_SESSION['profile_error']); ?></p><?php endif; ?>
+            <?php if (!empty($_SESSION['profile_success'])): ?><p class="form-success"><?= h($_SESSION['profile_success']); unset($_SESSION['profile_success']); ?></p><?php endif; ?>
             <input type="hidden" name="action" value="update_profile"><input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
             <div class="profile-summary">
                 <label class="profile-photo" aria-label="Alterar foto de perfil">
-                    <span class="profile-photo-preview"><?= !empty($perfilAtual['foto']) ? '<img src="' . h('../' . $perfilAtual['foto']) . '" alt="">' : '' ?></span>
+                    <?= profileAvatar($perfilAtual, 'profile-photo-preview') ?>
                     <span class="photo-edit" aria-hidden="true">✎</span>
                     <input name="foto" type="file" accept="image/png,image/jpeg,image/webp">
                 </label>
