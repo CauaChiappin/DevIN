@@ -1,3 +1,10 @@
+<?php
+ob_start();
+require_once __DIR__ . '/controllers/AuthController.php';
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -169,20 +176,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->execute()) {
 
-        if ($senha_pura === "admin@CAJE") {
-
-            echo "<script>
-                alert('Conta de administrador criada com sucesso!');
-                window.location.href='pagina_adm.php';
-            </script>";
-
-        } else {
-
-            echo "<script>
-                alert('Conta criada com sucesso!');
-            </script>";
-
-        }
+        $auth = AuthController::login($email, $senha_pura);
+        AuthController::establishSession($auth);
+        header('Location: ' . AuthController::redirectByUserType('pessoa'));
+        exit;
 
     } else {
 

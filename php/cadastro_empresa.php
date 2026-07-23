@@ -1,3 +1,10 @@
+<?php
+ob_start();
+require_once __DIR__ . '/controllers/AuthController.php';
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -226,9 +233,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("ssisss", $nome, $cnpj, $cep, $email, $senha_hash, $telefone);
 
     if ($stmt->execute()) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast success-toast'>Empresa cadastrada com sucesso!</div>\";
-        </script>";
+        $auth = AuthController::login($email, $_POST['senha']);
+        AuthController::establishSession($auth);
+        header('Location: ' . AuthController::redirectByUserType('empresa'));
+        exit;
     } else {
         echo "<script>
             document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>Erro ao cadastrar: CNPJ ou E-mail já existentes.</div>\";
