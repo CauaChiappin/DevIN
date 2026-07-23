@@ -6,6 +6,27 @@ require_once __DIR__ . '/../auth/Jwt.php';
 
 class AuthController
 {
+    public static function establishSession(array $auth): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $_SESSION['usuario_id'] = $auth['usuario']['id'];
+        $_SESSION['usuario_nome'] = $auth['usuario']['nome'];
+        $_SESSION['usuario_email'] = $auth['usuario']['email'];
+        $_SESSION['usuario_tipo'] = $auth['usuario']['tipo'];
+        $_SESSION['jwt'] = $auth['token'];
+        $_SESSION['logado'] = true;
+
+        setcookie(JWT_COOKIE_NAME, $auth['token'], [
+            'expires' => time() + JWT_EXPIRATION_SECONDS,
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+    }
+
     public static function login(string $email, string $senha): array // metodo que valida email e senha, busca usuario no banco de dados, gera token JWT e retorna um array com token e dados do usuario
     {
         $email = filter_var($email, FILTER_VALIDATE_EMAIL);
@@ -117,9 +138,9 @@ class AuthController
     public static function redirectByUserType(string $tipo): string // metodo que redireciona o usuario para a pagina correspondente ao seu tipo, retorna a url da pagina
     {
         $routes = [ // array que contem as rotas correspondentes a cada tipo de usuario
-            'adm' => 'dashboard_adm.php',
-            'empresa' => 'dashboard_empresa.php',
-            'pessoa' => 'dashboard_pessoa.php',
+            'adm' => 'dashboard.php',
+            'empresa' => 'dashboard.php',
+            'pessoa' => 'dashboard.php',
         ];
 
         return $routes[$tipo] ?? 'index.php';

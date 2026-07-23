@@ -1,4 +1,4 @@
-<html src="/html/login.html"></html>
+<html src="../html/login.html"></html>
 <?php
 // Traz as funções de autenticação para este ficheiro. O "__DIR__" garante que 
 // o caminho é absoluto e não falha dependendo de onde o ficheiro é chamado.
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="mensagem-erro" style="color: red; font-weight: bold; margin-bottom: 10px;"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></p>
             <?php endif; ?>
 
-            <form action="/php/login.php" method="POST">
+            <form action="login.php" method="POST">
                 <div class="grupo-campo">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" placeholder="Seu email..." required>

@@ -1,3 +1,10 @@
+<?php
+ob_start();
+require_once __DIR__ . '/controllers/AuthController.php';
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -24,7 +31,7 @@
 
             <h1 class="page-title">Criar conta</h1>
 
-            <form action="" method="POST" class="register-form" id="formCadastro">
+            <form action="../php/cadastro_empresa.php" method="POST" class="register-form" id="formCadastro">
                 
                 <div class="form-columns">
                     <div class="form-column">
@@ -111,7 +118,10 @@
 
     <div id="status-alert-container"></div>
 
+    <!-- A validação e as máscaras são compartilhadas com o cadastro pessoal. -->
+    <script src="../js/cadastro.js"></script>
     <script>
+        /* Código mantido apenas como referência; o arquivo compartilhado acima é o ativo.
         const senhaInput = document.getElementById('senha');
         const confirmeSenhaInput = document.getElementById('confirme_senha');
         
@@ -177,6 +187,7 @@
                 alert('Por favor, corrija os erros nos campos de senha antes de prosseguir.');
             }
         });
+        */
     </script>
 
 </body>
@@ -204,22 +215,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    $nome = $conn->real_escape_string($_POST['nome']);
-    $cnpj = $conn->real_escape_string($_POST['cnpj']);
-    $cep = (int) preg_replace('/[^0-9]/', '', $_POST['cep']);
-    $telefone = (int) preg_replace('/[^0-9]/', '', $_POST['telefone']);
-    $email = $conn->real_escape_string($_POST['email']);
+    $nome = trim($_POST['nome']);
+    $cnpj = preg_replace('/[^0-9]/', '', $_POST['cnpj']);
+    $cep = preg_replace('/[^0-9]/', '', $_POST['cep']);
+    $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone']);
+    $email = trim($_POST['email']);
     $senha_hash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
 
     $sql = "INSERT INTO Empresa (nome, cnpj, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)";
     
     $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        die("Erro no SQL: " . $conn->error);
+    }
+
     $stmt->bind_param("ssisss", $nome, $cnpj, $cep, $email, $senha_hash, $telefone);
 
     if ($stmt->execute()) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast success-toast'>Empresa cadastrada com sucesso!</div>\";
-        </script>";
+        $auth = AuthController::login($email, $_POST['senha']);
+        AuthController::establishSession($auth);
+        header('Location: ' . AuthController::redirectByUserType('empresa'));
+        exit;
     } else {
         echo "<script>
             document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>Erro ao cadastrar: CNPJ ou E-mail já existentes.</div>\";

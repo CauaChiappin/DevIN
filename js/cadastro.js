@@ -1,7 +1,5 @@
-console.log("cadastro.js carregou");
 const senhaInput = document.getElementById('senha');
 const confirmeSenhaInput = document.getElementById('confirme_senha');
-
 const reqLength = document.getElementById('req-length');
 const reqUpper = document.getElementById('req-upper');
 const reqSpecial = document.getElementById('req-special');
@@ -9,112 +7,88 @@ const errorMatch = document.getElementById('error-match');
 
 function togglePasswordVisibility(inputId, imgElement) {
     const input = document.getElementById(inputId);
+
     if (input.type === 'password') {
         input.type = 'text';
-        imgElement.src = '../img/olho_fechado.png';
+        imgElement.src = '../img/olho_aberto.png';
     } else {
         input.type = 'password';
-        imgElement.src = '../img/olho_aberto.png';
+        imgElement.src = '../img/olho_fechado.png';
     }
 }
 
 function updateRequirement(element, isValid) {
     const icon = element.querySelector('.req-icon');
-    if (isValid) {
-        element.classList.remove('req-invalid');
-        element.classList.add('req-valid');
-        icon.textContent = '✅';
-    } else {
-        element.classList.remove('req-valid');
-        element.classList.add('req-invalid');
-        icon.textContent = '⚠️';
-    }
+    element.classList.toggle('req-valid', isValid);
+    element.classList.toggle('req-invalid', !isValid);
+    icon.textContent = isValid ? '✅' : '⚠️';
 }
 
-senhaInput.addEventListener('input', () => {
-    const val = senhaInput.value;
-    updateRequirement(reqLength, val.length >= 8);
-    updateRequirement(reqUpper, /[A-Z]/.test(val));
-    updateRequirement(reqSpecial, /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\\/]/.test(val));
-    checkPasswordMatch();
-});
-
 function checkPasswordMatch() {
-    if (confirmeSenhaInput.value === '') {
+    if (!confirmeSenhaInput.value) {
         errorMatch.classList.remove('visible');
         return;
     }
-    if (senhaInput.value !== confirmeSenhaInput.value) {
-        errorMatch.classList.add('visible');
-    } else {
-        errorMatch.classList.remove('visible');
-    }
+
+    errorMatch.classList.toggle('visible', senhaInput.value !== confirmeSenhaInput.value);
 }
 
-confirmeSenhaInput.addEventListener('input', checkPasswordMatch);
+if (senhaInput && confirmeSenhaInput) {
+    senhaInput.addEventListener('input', () => {
+        const senha = senhaInput.value;
+        updateRequirement(reqLength, senha.length >= 8);
+        updateRequirement(reqUpper, /[A-Z]/.test(senha));
+        updateRequirement(reqSpecial, /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\/]/.test(senha));
+        checkPasswordMatch();
+    });
 
-document.getElementById('formCadastro').addEventListener('submit', function (e) {
-    const val = senhaInput.value;
-    const isAllValid = (val.length >= 8) && /[A-Z]/.test(val) && /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\\/]/.test(val);
-    const isMatch = senhaInput.value === confirmeSenhaInput.value;
+    confirmeSenhaInput.addEventListener('input', checkPasswordMatch);
 
-    if (!isAllValid || !isMatch) {
-        e.preventDefault();
-        alert('Por favor, corrija os erros nos campos de senha antes de prosseguir.');
-    }
-});
+    document.getElementById('formCadastro').addEventListener('submit', (event) => {
+        const senha = senhaInput.value;
+        const senhaValida = senha.length >= 8
+            && /[A-Z]/.test(senha)
+            && /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\/]/.test(senha);
 
-// =====================
-// MÁSCARA CPF
-// =====================
-const cpf = document.getElementById('cpf');
+        if (!senhaValida || senha !== confirmeSenhaInput.value) {
+            event.preventDefault();
+            alert('Por favor, corrija os erros nos campos de senha antes de prosseguir.');
+        }
+    });
+}
 
-cpf.addEventListener('input', () => {
-    let valor = cpf.value.replace(/\D/g, '');
+function aplicarMascara(id, limite, formatar) {
+    const campo = document.getElementById(id);
 
-    valor = valor.substring(0, 11);
+    if (!campo) return;
 
-    valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-    valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-    valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    campo.addEventListener('input', () => {
+        const numeros = campo.value.replace(/\D/g, '').slice(0, limite);
+        campo.value = formatar(numeros);
+    });
+}
 
-    cpf.value = valor;
-});
+aplicarMascara('cpf', 11, (valor) => valor
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2'));
 
+aplicarMascara('cnpj', 14, (valor) => valor
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+    .replace(/(\d{4})(\d)/, '$1-$2'));
 
-// =====================
-// MÁSCARA TELEFONE
-// =====================
-const telefone = document.getElementById('telefone');
-
-telefone.addEventListener('input', () => {
-    let valor = telefone.value.replace(/\D/g, '');
-
-    valor = valor.substring(0, 11);
-
+aplicarMascara('telefone', 11, (valor) => {
     if (valor.length <= 10) {
-        valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
-        valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
-    } else {
-        valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
-        valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+        return valor
+            .replace(/(\d{2})(\d)/, '($1) $2')
+            .replace(/(\d{4})(\d)/, '$1-$2');
     }
 
-    telefone.value = valor;
+    return valor
+        .replace(/(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2');
 });
 
-
-// =====================
-// MÁSCARA CEP
-// =====================
-const cep = document.getElementById('cep');
-
-cep.addEventListener('input', () => {
-    let valor = cep.value.replace(/\D/g, '');
-
-    valor = valor.substring(0, 8);
-
-    valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
-
-    cep.value = valor;
-});
+aplicarMascara('cep', 8, (valor) => valor.replace(/(\d{5})(\d)/, '$1-$2'));
