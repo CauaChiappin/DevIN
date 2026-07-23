@@ -1,0 +1,247 @@
+/* Reset Global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: #f8f7f2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: #333333;
+}
+
+/* Card Principal */
+.card {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 25px;
+    padding: 35px 30px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+.card h2 {
+    font-size: 1.8rem;
+    color: black;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.logo span {
+    color: #004aad;
+}
+
+/* Formulário e Inputs */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+}
+
+label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #000000;
+    margin-top: 4px;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-container .icon {
+    position: absolute;
+    left: 18px;
+    font-size: 1.1rem;
+    color: #666666;
+    pointer-events: none;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 12px 45px 12px 48px;
+    border: 1.5px solid #000000;
+    border-radius: 30px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-container input:focus {
+    border-color: #004aad;
+    box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
+}
+
+/* Ícone de Olho para Mostrar/Ocultar Senha */
+.toggle-password-eye {
+    width: 22px;
+    height: auto;
+    cursor: pointer;
+    position: absolute;
+    right: 16px;
+    user-select: none;
+    transition: transform 0.15s ease;
+}
+
+.toggle-password-eye:hover {
+    transform: scale(1.1);
+}
+
+/* Requisitos de Senha */
+.password-requirements {
+    margin-top: 6px;
+    font-size: 0.82rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+}
+
+.req-invalid {
+    color: #dc2626;
+}
+
+.req-valid {
+    color: #16a34a;
+}
+
+/* Mensagem de Senhas Não Coincidem */
+.error-message-text {
+    color: #dc2626;
+    font-size: 0.82rem;
+    font-weight: 700;
+    display: none;
+    margin-top: -6px;
+    margin-bottom: 4px;
+}
+
+.error-message-text.visible {
+    display: block;
+}
+
+/* Grupo de Botões (Layout Flex) */
+.actions-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.btn-enviar {
+    flex: 1;
+    background-color: #004aad;
+    color: #ffffff;
+    border: 2px solid #004aad;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0, 74, 173, 0.2);
+}
+
+.btn-cancelar {
+    flex: 1;
+    background-color: transparent;
+    color: #004aad;
+    border: 2px solid #004aad;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Dinâmica HOVER nos botões */
+.actions-group:hover .btn-enviar,
+.actions-group:hover .btn-cancelar {
+    background-color: transparent;
+    color: #004aad;
+    box-shadow: none;
+    transform: none;
+}
+
+.actions-group .btn-enviar:hover,
+.actions-group .btn-cancelar:hover {
+    background-color: #004aad;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 74, 173, 0.3);
+}
+
+.btn-enviar:disabled {
+    background-color: #a0aec0 !important;
+    border-color: #a0aec0 !important;
+    color: #ffffff !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Caixas de Feedback */
+.msg-status {
+    margin-top: 18px;
+    padding: 12px 15px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: none;
+    text-align: left;
+    word-break: break-word;
+}
+
+.msg-sucesso {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.msg-erro {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+/* Rodapé */
+footer {
+    margin-top: 30px;
+    font-size: 0.8rem;
+    color: #ffffff;
+    text-align: center;
+    opacity: 0.95;
+    font-weight: 600;
+}
