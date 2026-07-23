@@ -53,6 +53,14 @@ if (!in_array($pagina, $paginasPermitidas[$tipo] ?? $paginasPermitidas['pessoa']
     $pagina = 'inicio';
 }
 
+$tituloPagina = [
+    'inicio' => $tipo === 'empresa' ? 'Vagas' : ($tipo === 'adm' ? 'Empresas' : 'Vagas'),
+    'candidatos' => 'Candidatos',
+    'vagas' => 'Vagas',
+    'sobre' => 'Sobre nós',
+    'perfil' => 'Meu perfil',
+][$pagina] ?? 'Dashboard';
+
 $empresaPosts = [
     ['titulo' => 'Desenvolvedor Front-end', 'resumo' => 'HTML, CSS, JavaScript e portfolio simples.', 'detalhe' => 'Vaga para criar telas responsivas, manter paginas existentes e colaborar com a equipe de design.'],
     ['titulo' => 'Analista de Suporte', 'resumo' => 'Atendimento, redes basicas e organizacao.', 'detalhe' => 'Buscamos uma pessoa comunicativa para registrar chamados, orientar usuarios e resolver problemas iniciais.'],
@@ -181,18 +189,17 @@ function dashboardIcon(string $name): string
         <section class="lista-area">
             <?php if ($pagina !== 'sobre'): ?>
             <header class="dashboard-header">
-                <div>
-                    <span>Painel DevIN</span>
-                    <h1>Dashboard</h1>
-                </div>
+                <h1><?= h($tituloPagina) ?></h1>
+                <span class="result-count">3 candidatos</span>
             </header>
 
             <form class="busca" action="" method="get">
                 <input type="hidden" name="pagina" value="<?= h($pagina) ?>">
                 <label>
                     <span></span>
-                    <input type="search" name="q" placeholder="Pesquise">
+                    <input type="search" name="q" placeholder="Pesquisar por nome ou habilidade...">
                 </label>
+                <button type="button" class="filter-button">Filtros</button>
             </form>
             <?php endif; ?>
 
