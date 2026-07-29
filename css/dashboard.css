@@ -937,6 +937,106 @@ a {
     cursor: pointer;
 }
 
+/* Painel profissional */
+.dashboard-shell:not(.page-sobre) {
+    grid-template-columns: var(--sidebar-width) minmax(340px, 42%) minmax(420px, 1fr);
+    background: #fff;
+}
+
+.dashboard-shell:not(.page-sobre) .sidebar {
+    padding: 18px 12px;
+    background: #004a94;
+    border-right: 0;
+    color: #dbeeff;
+}
+
+.dashboard-shell:not(.page-sobre) .brand { color: #fff; font-size: 18px; }
+.dashboard-shell:not(.page-sobre) .brand > .ui-icon { color: #fff; width: 25px; height: 25px; }
+.dashboard-shell:not(.page-sobre) .brand-text span { color: #a9d6ff; }
+.dashboard-shell:not(.page-sobre) .menu-toggle { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.35); }
+.dashboard-shell:not(.page-sobre) .menu-toggle span { background: #fff; }
+.dashboard-shell:not(.page-sobre) .menu-principal { padding-top: 20px; }
+.dashboard-shell:not(.page-sobre) .menu-principal a,
+.dashboard-shell:not(.page-sobre) .perfil-link,
+.dashboard-shell:not(.page-sobre) .perfil-menu button { min-height: 38px; color: #dbeeff; font-size: 12px; font-weight: 500; }
+.dashboard-shell:not(.page-sobre) .menu-principal a.ativo { padding: 5px 10px; background: rgba(255,255,255,.16); color: #fff; }
+.dashboard-shell:not(.page-sobre) .conta { border-top-color: rgba(255,255,255,.16); padding-top: 14px; }
+.dashboard-shell:not(.page-sobre) .perfil-menu { border-color: rgba(255,255,255,.14); background: #003d7a; box-shadow: none; }
+.dashboard-shell:not(.page-sobre) .sair { color: #b8dcfb; font-size: 12px; text-decoration: none; }
+
+.dashboard-shell:not(.page-sobre) .lista-area {
+    padding: 16px 12px 30px;
+    background: #fbfbfa;
+    border-right: 1px solid #dce4eb;
+}
+
+.dashboard-shell:not(.page-sobre) .dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 32px;
+    margin: 0 0 10px;
+}
+
+.dashboard-shell:not(.page-sobre) .dashboard-header h1 {
+    margin: 0;
+    color: #0b4d89;
+    font-family: Georgia, serif;
+    font-size: 18px;
+}
+
+.result-count {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #eaf3ff;
+    color: #2570b8;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.dashboard-shell:not(.page-sobre) .busca {
+    justify-content: stretch;
+    gap: 8px;
+    margin: 0 -12px 14px;
+    padding: 10px 12px;
+    border-top: 1px solid #dce4eb;
+    border-bottom: 1px solid #dce4eb;
+    background: #fff;
+}
+
+.dashboard-shell:not(.page-sobre) .busca label { width: auto; height: 28px; flex: 1; border: 1px solid #dbe3eb; border-radius: 7px; background: #fafafa; }
+.dashboard-shell:not(.page-sobre) .busca input { font-size: 10px; }
+.filter-button { height: 28px; padding: 0 12px; border: 1px solid #dbe3eb; border-radius: 7px; background: #fafafa; color: #6d7782; font-size: 10px; cursor: pointer; }
+
+.dashboard-shell:not(.page-sobre) .item-card {
+    width: 100%;
+    min-height: 94px;
+    margin: 0 0 8px;
+    padding: 13px 12px;
+    gap: 10px;
+    border: 1px solid #dde6ee;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.dashboard-shell:not(.page-sobre) .item-card.selecionado { border-color: #1976d2; box-shadow: 0 0 0 2px rgba(25,118,210,.08); }
+.dashboard-shell:not(.page-sobre) .item-card h2 { margin-bottom: 3px; font-size: 12px; }
+.dashboard-shell:not(.page-sobre) .item-card p { color: #677483; font-size: 10px; font-weight: 400; }
+.dashboard-shell:not(.page-sobre) .card-avatar { width: 30px; height: 30px; border: 0; background: #eaf3ff; color: #0b67b2; }
+.dashboard-shell:not(.page-sobre) .btn,
+.dashboard-shell:not(.page-sobre) .status { min-width: 72px; min-height: 23px; padding: 3px 9px; font-size: 10px; }
+.dashboard-shell:not(.page-sobre) .criar-post { width: 100%; min-width: 0; height: 30px; margin: 0 0 12px; border: 1px solid #176cc0; border-radius: 7px; color: #176cc0; font-size: 11px; }
+
+.dashboard-shell:not(.page-sobre) .detalhe-area {
+    padding: 22px 24px;
+    background: #fff;
+    border-left: 0;
+}
+
+.dashboard-shell:not(.page-sobre) .detalhe-area h2 { margin: 0 0 16px; color: #1e2c39; font-family: Georgia, serif; font-size: 20px; }
+.dashboard-shell:not(.page-sobre) .detalhe-area p { max-width: 620px; color: #5f6b77; font-size: 12px; font-weight: 400; line-height: 1.55; }
+.dashboard-shell:not(.page-sobre) .detalhe-area::before { content: "DETALHES"; display: block; margin-bottom: 14px; color: #7f8c99; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+
 @media (max-width: 980px) {
     body {
         overflow: auto;
