@@ -92,15 +92,15 @@ $link_redefinicao = "http://localhost:8080/DevIN/php/redefinir.php?token=" . $to
         $mail->SMTPAuth   = true;
         
         // ⚙️ Altere aqui para o e-mail do bot e a Senha de App gerada no Google
-        $mail->Username   = 'devinalcina@gmail.com';
-        $mail->Password   = 'Devin3D123456@'; 
+        $mail->Username   = 'devin.alcinabot@gmail.com';
+        $mail->Password   = 'fxrp qgxe izqo rncx'; 
         
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
         // Nome e e-mail exibidos ao destinatário
-        $mail->setFrom('devinalcina@gmail.com', 'DevIN Suporte');
+        $mail->setFrom('devin.alcinabot@gmail.com', 'DevIN Suporte');
         $mail->addAddress($email, $nome_usuario);
 
         // Assunto e layout HTML da mensagem
