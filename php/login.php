@@ -1,4 +1,3 @@
-<html src="../html/login.html"></html>
 <?php
 // Traz as funções de autenticação para este ficheiro. O "__DIR__" garante que 
 // o caminho é absoluto e não falha dependendo de onde o ficheiro é chamado.
@@ -6,7 +5,14 @@ require_once __DIR__ . '/controllers/AuthController.php';
 
 // Inicia a sessão do PHP. Isto é obrigatório sempre que queremos usar a variável 
 // $_SESSION para guardar dados do utilizador (como o ID e o nome) entre as várias páginas.
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($_SESSION['logado'])) {
+    header('Location: ' . AuthController::redirectByUserType($_SESSION['usuario_tipo'] ?? ''));
+    exit;
+}
 
 // Verifica se existe alguma mensagem de erro a vir pelo link (URL, tipo login.php?erro=x).
 // Se não existir (??), a variável $erro fica com um texto vazio ('').
