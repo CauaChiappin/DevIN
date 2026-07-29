@@ -1,32 +1,56 @@
 <?php
+// Inicia ou recupera a sessão do usuário (a "memória" que mantém o usuário logado)
 session_start();
+
+// Carrega o controlador de perfil (regras de atualização, busca de dados, etc.)
 require_once __DIR__ . '/controllers/ProfileController.php';
+
+// Carrega o arquivo de funções auxiliares (como ícones, formatação de textos e fotos)
 require_once __DIR__ . '/helpers.php';
 
-// Proteção da página
+// --- PROTEÇÃO DA PÁGINA ---
+// Verifica se o usuário NÃO está logado OU se o tipo de usuário NÃO é 'empresa'.
+// Se alguma dessas condições for verdadeira, manda o usuário direto para a tela de login.
 if (empty($_SESSION['logado']) || ($_SESSION['usuario_tipo'] ?? '') !== 'empresa') {
-    header('Location: login.php');
-    exit;
+    header('Location: login.php'); // Redireciona para o login
+    exit; // Encerra o script para não carregar mais nada por segurança
 }
 
+// Define o tipo de perfil atual como 'empresa'
 $tipo = 'empresa';
+
+// Pega o nome do usuário da sessão (se não existir, usa 'Usuario' como padrão)
 $nome = $_SESSION['usuario_nome'] ?? 'Usuario';
+
+// Pega o e-mail do usuário da sessão (se não existir, usa um e-mail padrão)
 $email = $_SESSION['usuario_email'] ?? 'email@devin.com';
+
+// Pega a página informada na URL (ex: ?pagina=candidatos). Se não houver nada na URL, carrega 'inicio'
 $pagina = $_GET['pagina'] ?? 'inicio';
 
-// Verifica páginas permitidas
+// --- VERIFICAÇÃO DE PÁGINAS PERMITIDAS (SEGURANÇA) ---
+// Lista de páginas que o sistema realmente aceita exibir
 $paginasPermitidas = ['inicio', 'candidatos', 'sobre', 'perfil'];
+
+// Se a página vinda da URL não estiver na lista permitida, força o usuário a ir para 'inicio'
 if (!in_array($pagina, $paginasPermitidas, true)) {
     $pagina = 'inicio';
 }
 
+// --- PROTEÇÃO CONTRA ATAQUES CSRF ---
+// Se ainda não existir um token de segurança para esta sessão, gera um código aleatório e seguro
 if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-// Lógica de POST (Atualizar perfil, config, deletar conta)
+// --- LÓGICA DE ENVIO DE FORMULÁRIOS (QUANDO É UM POST) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Valida se o código de segurança do formulário bate com o código da sessão (evita envios maliciosos)
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) exit('Solicitação inválida.');
+    
     try {
+        // Descobre qual ação o formulário pediu para executar
         $action = $_POST['action'] ?? '';
+
+        // Ação 1: Atualizar o perfil da empresa (dados pessoais e foto)
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_nome'] = trim($_POST['nome']);
@@ -34,33 +58,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.';
             header('Location: empresa.php?perfil=meu'); exit;
         }
+
+        // Ação 2: Atualizar as configurações de idioma
         if ($action === 'update_settings') {
             updateLanguage($tipo, (int) $_SESSION['usuario_id'], $_POST['idioma'] ?? 'pt-BR');
             header('Location: empresa.php?configuracoes=1'); exit;
         }
+
+        // Ação 3: Excluir a conta
         if ($action === 'delete_account') {
             deleteProfile($tipo, (int) $_SESSION['usuario_id']);
-            session_destroy();
+            session_destroy(); // Destrói todas as informações guardadas na sessão
             header('Location: login.php'); exit;
         }
     } catch (Throwable $exception) {
+        // Se acontecer qualquer erro durante os processos acima, guarda a mensagem de erro
         $_SESSION['profile_error'] = $exception->getMessage();
         header('Location: empresa.php?perfil=meu'); exit;
     }
 }
 
+// Busca no banco de dados todas as informações da empresa conectada
 $perfilAtual = findProfile($tipo, (int) $_SESSION['usuario_id']);
+
+// Se por algum motivo o perfil não existir mais no banco, encerra a sessão
 if (!$perfilAtual) { header('Location: logout.php'); exit; }
 
-// Dados simulados da Empresa
+// --- DADOS SIMULADOS (Para exibição na tela) ---
+// Lista de vagas criadas pela empresa
 $empresaPosts = [
     ['titulo' => 'Desenvolvedor Front-end', 'resumo' => 'HTML, CSS, JavaScript e portfolio simples.', 'detalhe' => 'Vaga para criar telas responsivas, manter paginas existentes e colaborar com a equipe de design.'],
     ['titulo' => 'Analista de Suporte', 'resumo' => 'Atendimento, redes basicas e organizacao.', 'detalhe' => 'Buscamos uma pessoa comunicativa para registrar chamados, orientar usuarios e resolver problemas iniciais.'],
 ];
+
+// Lista de talentos/desenvolvedores disponíveis na plataforma
 $talentos = [
     ['nome' => 'Marina Santos', 'resumo' => 'React, CSS e comunicacao clara.', 'detalhe' => 'Marina tem interesse em vagas de front-end junior e disponibilidade para conversar esta semana.'],
     ['nome' => 'Lucas Pereira', 'resumo' => 'PHP, MySQL e logica de programacao.', 'detalhe' => 'Lucas procura primeira oportunidade em desenvolvimento web e ja criou projetos escolares com banco de dados.'],
 ];
+
+// Lista de candidatos que se inscreveram nas vagas da empresa
 $candidatos = [
     ['nome' => 'Ana Clara', 'vaga' => 'Desenvolvedor Front-end', 'resumo' => 'Boa base de HTML, CSS e Git.', 'detalhe' => 'A candidata se inscreveu para Front-end e enviou portfolio com paginas responsivas.'],
     ['nome' => 'Pedro Lima', 'vaga' => 'Analista de Suporte', 'resumo' => 'Conhecimento em atendimento e manutencao.', 'detalhe' => 'O candidato descreveu experiencia em suporte tecnico escolar e disponibilidade integral.'],
@@ -76,6 +113,7 @@ $candidatos = [
 </head>
 <body>
     <main class="dashboard-shell page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
+        
         <aside class="sidebar">
             <div class="sidebar-topo">
                 <a class="brand" href="empresa.php">
@@ -128,7 +166,8 @@ $candidatos = [
                     <h1>Conectando talentos ao futuro da tecnologia</h1>
                     <p>A DevIN nasceu para transformar a forma como desenvolvedores encontram oportunidades: simples, rapido e eficiente.</p>
                 </section>
-                <?php elseif ($pagina === 'perfil'): ?>
+
+            <?php elseif ($pagina === 'perfil'): ?>
                 <section class="perfil-card">
                     <a class="fechar-card" href="empresa.php?pagina=inicio">x</a>
                     <div class="perfil-topo">
@@ -140,6 +179,7 @@ $candidatos = [
                     </div>
                     <button class="btn primary" type="button" data-open-profile>Editar perfil</button>
                 </section>
+
             <?php elseif ($pagina === 'candidatos'): ?>
                 <?php foreach ($candidatos as $candidato): ?>
                     <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>">
@@ -154,8 +194,10 @@ $candidatos = [
                         </div>
                     </article>
                 <?php endforeach; ?>
+
             <?php else: ?>
                 <button class="criar-post" type="button">Criar post</button>
+
                 <?php foreach ($empresaPosts as $post): ?>
                     <article class="item-card" data-detail="<?= h($post['detalhe']) ?>">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
@@ -169,6 +211,7 @@ $candidatos = [
                         </div>
                     </article>
                 <?php endforeach; ?>
+
                 <?php foreach ($talentos as $talento): ?>
                     <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
@@ -207,9 +250,18 @@ $candidatos = [
         <form method="post" class="modal-form profile-form" enctype="multipart/form-data">
             <button class="modal-close" type="button" data-close-modal aria-label="Fechar">×</button>
             <h2 class="sr-only" id="profileModalTitle">Meu perfil</h2>
-            <?php if (!empty($_SESSION['profile_error'])): ?><p class="form-error"><?= h($_SESSION['profile_error']); unset($_SESSION['profile_error']); ?></p><?php endif; ?>
-            <?php if (!empty($_SESSION['profile_success'])): ?><p class="form-success"><?= h($_SESSION['profile_success']); unset($_SESSION['profile_success']); ?></p><?php endif; ?>
-            <input type="hidden" name="action" value="update_profile"><input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+            
+            <?php if (!empty($_SESSION['profile_error'])): ?>
+                <p class="form-error"><?= h($_SESSION['profile_error']); unset($_SESSION['profile_error']); ?></p>
+            <?php endif; ?>
+
+            <?php if (!empty($_SESSION['profile_success'])): ?>
+                <p class="form-success"><?= h($_SESSION['profile_success']); unset($_SESSION['profile_success']); ?></p>
+            <?php endif; ?>
+
+            <input type="hidden" name="action" value="update_profile">
+            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+
             <div class="profile-summary">
                 <label class="profile-photo" aria-label="Alterar foto de perfil">
                     <?= profileAvatar($perfilAtual, 'profile-photo-preview') ?>
@@ -221,6 +273,7 @@ $candidatos = [
                     <small><?= h($perfilAtual['email']) ?></small>
                 </div>
             </div>
+
             <div class="profile-fields">
                 <label>Nome<input name="nome" type="text" value="<?= h($perfilAtual['nome']) ?>" required></label>
                 <label>E-mail account<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" required></label>
@@ -242,9 +295,11 @@ $candidatos = [
                     <option value="es" <?= ($perfilAtual['idioma'] ?? '') === 'es' ? 'selected' : '' ?>>Espanhol</option>
                 </select>
             </label>
-            <input type="hidden" name="action" value="update_settings"><input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+            <input type="hidden" name="action" value="update_settings">
+            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
             <button class="btn primary" type="submit">Salvar idioma</button>
         </form>
+
         <form method="post" class="modal-form account-delete-form">
             <input type="hidden" name="action" value="delete_account">
             <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
