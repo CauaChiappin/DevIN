@@ -1,4 +1,3 @@
-<html src="../html/login.html"></html>
 <?php
 // Traz as funções de autenticação para este ficheiro. O "__DIR__" garante que 
 // o caminho é absoluto e não falha dependendo de onde o ficheiro é chamado.
@@ -13,47 +12,66 @@ session_start();
 $erro = $_GET['erro'] ?? '';
 
 // Verifica se o formulário foi enviado. O botão "Entrar" do HTML usa o método POST.
-// Ou seja, o código dentro deste 'if' só corre quando o utilizador tenta fazer login.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-    // O 'try' tenta executar o código seguinte. Se houver algum problema (ex: senha errada), 
-    // ele salta imediatamente para o bloco 'catch' lá em baixo.
     try {
         // Vai buscar o email e a senha que o utilizador digitou no formulário ($_POST).
         // Chama a função login() que vai à base de dados verificar se os dados estão corretos.
         $auth = AuthController::login($_POST['email'] ?? '', $_POST['senha'] ?? '');
 
-        // Se chegou até aqui, a senha está correta! 
-        // Agora guardamos os dados do utilizador na memória do servidor (Sessão).
-        // Assim, nas outras páginas do site, saberemos quem está logado.
+        // Guarda os dados do utilizador na memória do servidor (Sessão).
         $_SESSION['usuario_id'] = $auth['usuario']['id'];
         $_SESSION['usuario_nome'] = $auth['usuario']['nome'];
         $_SESSION['usuario_email'] = $auth['usuario']['email'];
         $_SESSION['usuario_tipo'] = $auth['usuario']['tipo'];
         $_SESSION['jwt'] = $auth['token'];
-        $_SESSION['logado'] = true; // Flag simples para dizer que está autenticado.
+        $_SESSION['logado'] = true;
 
-        // Cria um "cookie" (um pequeno ficheiro) no navegador do utilizador com o Token JWT.
-        // Isto é uma medida de segurança muito moderna para APIs.
+        // Cria um cookie no navegador do utilizador com o Token JWT.
         setcookie(JWT_COOKIE_NAME, $auth['token'], [
-            'expires' => time() + JWT_EXPIRATION_SECONDS, // Define a validade do cookie.
-            'path' => '/', // O cookie vai funcionar em todo o site.
-            'httponly' => true, // Segurança: impede que hackers roubem o cookie via JavaScript (XSS).
-            'samesite' => 'Lax', // Segurança: protege contra ataques onde outros sites forçam ações (CSRF).
+            'expires' => time() + JWT_EXPIRATION_SECONDS,
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
         ]);
 
-        // Redireciona o utilizador para a página correta (ex: dashboard) 
-        // dependendo do seu tipo (ex: aluno, professor, administrador).
+        // VERIFICAÇÃO NA TABELA 'CURRICULO' SE O USUÁRIO FOR DO TIPO 'PESSOA'
+        if ($auth['usuario']['tipo'] === 'pessoa') {
+            $host = "localhost";
+            $user = "root";
+            $pass = "";
+            $dbname = "devin";
+            
+            $conn = new mysqli($host, $user, $pass, $dbname);
+            if (!$conn->connect_error) {
+                $idPessoa = $auth['usuario']['id'];
+                
+                // Busca se já existe um currículo cadastrado para esta pessoa
+                $sql = "SELECT id_curriculo FROM curriculo WHERE id_pessoa = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $idPessoa);
+                $stmt->execute();
+                $res = $stmt->get_result();
+
+                // Se encontrou um currículo cadastrado, manda para o Dashboard
+                if ($res && $res->num_rows > 0) {
+                    header('Location: dashboard_pessoa.php');
+                } else {
+                    // Se não tiver currículo registrado, obriga a cadastrar
+                    header('Location: cadastrar_curriculo.php');
+                }
+                $stmt->close();
+                $conn->close();
+                exit;
+            }
+        }
+
+        // Se for outro tipo de usuário (ex: empresa), usa o redirecionamento padrão
         header('Location: ' . AuthController::redirectByUserType($auth['usuario']['tipo']));
-        
-        // O 'exit' garante que o PHP para imediatamente após o redirecionamento, 
-        // poupando recursos do servidor.
         exit;
         
     } catch (Throwable $exception) {
-        // Se a função de login() detetar um erro (ex: utilizador não existe ou senha errada),
-        // o erro é apanhado aqui. Guardamos a mensagem na variável $erro para que 
-        // o HTML mais abaixo consiga mostrar essa mensagem em vermelho no ecrã.
+        // Se houver erro no login, guarda a mensagem na variável $erro
         $erro = $exception->getMessage();
     }
 }
@@ -65,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/login.css">
-    <title>Devin|Login</title>
+    <title>Devin | Login</title>
 </head>
 <body>
 
@@ -94,8 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="area-login">
             <h1>Login</h1>
             
-            <?php if ($erro): ?>
-                <p class="mensagem-erro" style="color: red; font-weight: bold; margin-bottom: 10px;"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></p>
+            <?php if (!empty($erro)): ?>
+                <p class="mensagem-erro" style="color: red; font-weight: bold; margin-bottom: 10px;">
+                    <?php echo htmlspecialchars($erro, ENT_QUOTES, 'UTF-8'); ?>
+                </p>
             <?php endif; ?>
 
             <form action="login.php" method="POST">
@@ -127,4 +147,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
-
