@@ -834,7 +834,7 @@ summary:focus-visible {
 .rodape {
     background: var(--blue);
     color: var(--white);
-    padding: 56px 0 28px;
+    padding: 56px 0 0;
     height: auto;
 }
 
@@ -844,7 +844,6 @@ summary:focus-visible {
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    gap: 40px;
     position: static;
     padding: 0;
     height: auto;
@@ -915,13 +914,13 @@ summary:focus-visible {
     grid-column: 1 / -1;
     border: none;
     border-top: 1px solid rgba(255, 255, 255, .18);
-    margin: 32px 0 16px;
+    margin: 16px 0 10px; /* Diminuído o espaço acima da linha de 32px para 16px */
 }
 
 .direitos {
     grid-column: 1 / -1;
     position: static;
-    margin: 0;
+    margin: 0 0 22px 0; /* Adicionado espaço embaixo para manter a altura total do footer */
     text-align: center;
     font-size: 13px;
     font-weight: 500;
