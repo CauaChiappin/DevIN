@@ -1,0 +1,181 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8f6f0; /* Fundo off-white */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    text-align: center;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.logo {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 25px;
+}
+
+.logo span {
+    color: #004595; /* Azul DevIN */
+}
+
+form {
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #222;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.icon {
+    position: absolute;
+    left: 14px;
+    color: #666;
+    font-size: 16px;
+}
+
+input {
+    width: 100%;
+    padding: 12px 12px 12px 42px;
+    border: 1px solid #777;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input:focus {
+    border-color: #004595;
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
+/* Grupo de Botões */
+.botoes-grupo {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    align-items: center;
+}
+
+.btn-enviar {
+    display: block;
+    width: 100%;
+    background-color: #004595;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.btn-enviar:hover {
+    background-color: #002d62;
+}
+
+.link-cancelar {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #004595;
+    text-decoration: underline;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn-voltar {
+    display: inline-block;
+    width: 40%;
+    text-align: center;
+    border: 2px solid #004595;
+    color: #004595;
+    padding: 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+
+.btn-voltar:hover {
+    background-color: #eef4fc;
+}
+
+/* Requisitos de senha */
+.password-requirements {
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.req-item {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.req-invalid {
+    color: #777;
+}
+
+.req-invalid .req-icon {
+    color: #d93025;
+}
+
+.req-valid {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.req-valid .req-icon {
+    color: #2e7d32;
+}
+
+footer {
+    position: absolute;
+    bottom: 20px;
+    font-size: 11px;
+    color: #333;
+    text-align: center;
+}
