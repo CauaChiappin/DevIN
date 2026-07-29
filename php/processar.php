@@ -80,7 +80,7 @@ if ($acao === 'solicitar' && $_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt_update->execute();
 
     // Monta o link para o formulário de redefinição de senha
-    $link_redefinicao = "http://localhost/DevIN/php/redefinir.php?token=" . $token;
+$link_redefinicao = "http://localhost:8080/DevIN/php/redefinir.php?token=" . $token;
 
     // --- DISPARO DO E-MAIL VIA PHPMailer ---
     $mail = new PHPMailer(true);
