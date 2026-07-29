@@ -634,6 +634,21 @@ a {
     gap: 12px;
 }
 
+/* Mantem os botoes de aprovar e recusar alinhados dentro do card. */
+.candidate-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Aviso exibido quando a empresa ainda nao recebeu candidaturas. */
+.empty-state {
+    margin: 28px auto;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+}
+
 .post-tools button {
     /* grid + place-items deixam o ícone exatamente no centro do botão. */
     display: grid;
