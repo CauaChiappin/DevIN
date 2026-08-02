@@ -126,6 +126,7 @@
     color: currentColor;
 }
 
+/* O SVG é o único desenho dos ícones de editar e excluir. */
 .post-tools .ui-icon {
     width: 20px;
     height: 20px;
@@ -133,6 +134,7 @@
 
 .post-tools .edit { color: #e89b00; }
 .post-tools .delete { color: var(--red); }
+/* Impede que os pseudo-elementos legados desenhem um segundo ícone sobre o SVG. */
 .post-tools .edit::before,
 .post-tools .delete::before { content: none; display: none; }
 
@@ -386,8 +388,8 @@ a {
 }
 
 .conta {
-    border-top: 2px solid var(--line);
-    padding-top: 22px;
+    /* Remove a antiga borda horizontal que aparecia como uma linha na sidebar. */
+    padding-top: 14px;
 }
 
 .sair {
@@ -632,34 +634,43 @@ a {
     gap: 12px;
 }
 
+/* Mantem os botoes de aprovar e recusar alinhados dentro do card. */
+.candidate-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Aviso exibido quando a empresa ainda nao recebeu candidaturas. */
+.empty-state {
+    margin: 28px auto;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+}
+
 .post-tools button {
-    width: 24px;
-    height: 24px;
-    border: 0;
+    /* grid + place-items deixam o ícone exatamente no centro do botão. */
+    display: grid;
+    /* A área de 32px facilita clicar, mesmo que o SVG seja menor. */
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    padding: 0;
+    /* A borda transparente evita mudança de tamanho quando ela aparece no hover. */
+    border: 1px solid transparent;
+    border-radius: 8px;
     background: transparent;
     cursor: pointer;
+    transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
 
-.post-tools .edit::before {
-    content: "";
-    display: block;
-    width: 18px;
-    height: 7px;
-    border-radius: 3px;
-    background: #ffb42b;
-    transform: rotate(-42deg);
-}
-
-.post-tools .delete::before {
-    content: "";
-    display: block;
-    width: 15px;
-    height: 18px;
-    margin: 2px auto 0;
-    border-radius: 2px;
-    background: var(--red);
-    box-shadow: 0 -4px 0 -1px var(--red);
-}
+/* Feedback visual discreto ao passar o mouse sobre os botões de ação. */
+.post-tools button:hover { transform: translateY(-1px); }
+.post-tools .edit:hover { border-color: #f3d18a; background: #fff7e6; }
+.post-tools .delete:hover { border-color: #f1b9bf; background: #fff0f1; }
+/* Mantém a navegação por teclado visível e acessível. */
+.post-tools button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 .btn,
 .status {
@@ -944,9 +955,12 @@ a {
 }
 
 .dashboard-shell:not(.page-sobre) .sidebar {
+    /* Esta é a sidebar azul do dashboard. */
     padding: 18px 12px;
     background: #004a94;
-    border-right: 0;
+    /* border e box-shadow zerados removem qualquer linha na lateral do painel. */
+    border: 0;
+    box-shadow: none;
     color: #dbeeff;
 }
 
@@ -960,7 +974,9 @@ a {
 .dashboard-shell:not(.page-sobre) .perfil-link,
 .dashboard-shell:not(.page-sobre) .perfil-menu button { min-height: 38px; color: #dbeeff; font-size: 12px; font-weight: 500; }
 .dashboard-shell:not(.page-sobre) .menu-principal a.ativo { padding: 5px 10px; background: rgba(255,255,255,.16); color: #fff; }
-.dashboard-shell:not(.page-sobre) .conta { border-top-color: rgba(255,255,255,.16); padding-top: 14px; }
+/* Garante que os componentes internos da sidebar também não recriem uma linha. */
+.dashboard-shell:not(.page-sobre) .conta { border: 0; padding-top: 14px; box-shadow: none; }
+.dashboard-shell:not(.page-sobre) .perfil-dropdown { border: 0; box-shadow: none; }
 .dashboard-shell:not(.page-sobre) .perfil-menu { border-color: rgba(255,255,255,.14); background: #003d7a; box-shadow: none; }
 .dashboard-shell:not(.page-sobre) .sair { color: #b8dcfb; font-size: 12px; text-decoration: none; }
 

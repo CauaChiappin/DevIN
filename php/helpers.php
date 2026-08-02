@@ -9,13 +9,21 @@ function h(?string $valor): string
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+/*
+ * Monta o avatar reutilizado no menu, no modal e no perfil.
+ * Se não houver foto válida, retorna somente o span com o fundo padrão do CSS.
+ */
 function profileAvatar(array $perfil, string $classes): string
 {
+    // Pega o caminho salvo no banco; string vazia é usada quando não existe foto.
     $foto = $perfil['foto'] ?? '';
-    $imagem = is_string($foto) && str_starts_with($foto, 'uploads/')
+    // Só renderiza a tag img para caminhos de upload existentes; caso contrário, mantém o avatar padrão.
+    $imagem = is_string($foto) && str_starts_with($foto, 'uploads/') && is_file(__DIR__ . '/' . $foto)
+        // h() escapa o caminho antes de colocá-lo no HTML, evitando injeção de código.
         ? '<img src="' . h($foto) . '" alt="Foto de perfil">'
         : '';
 
+    // Junta as classes visuais e a imagem (quando válida) dentro de um único avatar.
     return '<span class="' . h($classes) . ' current-user-avatar">' . $imagem . '</span>';
 }
 

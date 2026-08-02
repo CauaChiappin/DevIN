@@ -44,17 +44,35 @@ document.querySelector("[data-open-profile]")?.addEventListener("click", () => {
     profileModal?.showModal();
 });
 
-document.querySelector(".profile-photo input")?.addEventListener("change", (event) => {
-    const [photo] = event.target.files;
+// Escuta somente o campo de arquivo usado pela foto de perfil.
+document.querySelector(".profile-photo input[type='file']")?.addEventListener("change", (event) => {
+    // Lê o primeiro arquivo de forma segura; evita erro se não houver seleção.
+    const photo = event.currentTarget.files?.[0];
 
+    // Se a pessoa fechar o seletor sem escolher arquivo, não há nada para fazer.
     if (!photo) return;
 
+    // Repete no navegador os formatos permitidos no servidor antes de criar a prévia.
+    if (!/^image\/(jpeg|png|webp)$/.test(photo.type)) {
+        // Limpa a seleção inválida para ela não ser enviada pelo formulário.
+        event.currentTarget.value = "";
+        alert("Selecione uma imagem JPG, PNG ou WEBP.");
+        return;
+    }
+
+    // Cria uma URL temporária para exibir a imagem escolhida sem enviá-la ainda.
     const previewUrl = URL.createObjectURL(photo);
+    // Atualiza todos os avatares da tela: modal, menu lateral e cartão de perfil.
     document.querySelectorAll(".current-user-avatar").forEach((preview) => {
-        preview.innerHTML = "";
+        // Remove a imagem anterior e injeta uma única tag img no avatar.
+        preview.replaceChildren();
+        // Cria a tag <img> pelo JavaScript em vez de montar HTML em texto.
         const image = document.createElement("img");
+        // Define a URL temporária da imagem que acabou de ser selecionada.
         image.src = previewUrl;
+        // Texto alternativo usado por leitores de tela e se a imagem falhar.
         image.alt = "Prévia da foto de perfil";
+        // Coloca a nova imagem dentro do avatar.
         preview.appendChild(image);
     });
 });
