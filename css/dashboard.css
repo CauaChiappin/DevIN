@@ -199,7 +199,6 @@ a {
     display: grid;
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr) minmax(320px, 42vw);
     margin: 0 auto;
-    border-left: 1px solid #eeeeee;
     border-right: 1px solid #eeeeee;
     overflow: hidden;
     transition: grid-template-columns .25s ease;
@@ -221,6 +220,198 @@ a {
 
 .page-sobre .lista-area {
     padding: 52px 36px;
+}
+/* =========================================
+   ESTILOS DA PÁGINA SOBRE NÓS (SEM SCROLL)
+========================================= */
+
+/* Trava a tela inteira para não ter rolagem */
+.page-sobre {
+    height: 100vh;
+    overflow: hidden; 
+}
+
+/* Força a área principal a ocupar a tela toda */
+.page-sobre .lista-area {
+    padding: 0 !important;
+    background-color: #ffffff !important;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.sobre-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* SEÇÃO SUPERIOR (BEGE) */
+.sobre-top-section {
+    background-color: #f8f7f3; /* Cor bege fiel à imagem 1 */
+    flex: 1; /* Ocupa exatamente 50% da altura da tela */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+}
+
+.badge-historia {
+    background-color: #e6effc;
+    color: #0056b3;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.sobre-title {
+    font-size: 1.8rem;
+    color: #111;
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+.text-blue {
+    color: #0056b3;
+}
+
+.sobre-subtitle {
+    font-size: 0.9rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* CARDS VISÃO E MISSÃO */
+.sobre-cards {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.sobre-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 15px 20px;
+    flex: 1;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.icon-placeholder {
+    width: 25px;
+    height: 25px;
+    background-color: #e6effc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.sobre-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #111;
+}
+
+.sobre-card p {
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* SEÇÃO INFERIOR (BRANCA) */
+.sobre-bottom-section {
+    background-color: #ffffff;
+    flex: 1; /* Ocupa os outros 50% da tela */
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.sobre-about-text {
+    flex: 1;
+    max-width: 400px;
+}
+
+.sobre-about-text h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #111;
+}
+
+.sobre-about-text p {
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* CARD TIME FUNDADOR */
+.sobre-team-card {
+    flex: 1;
+    max-width: 400px;
+    background-color: #f8f7f3; /* Fundo levemente bege */
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.team-header {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.team-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.team-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.team-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.team-avatar {
+    width: 35px;
+    height: 35px;
+    background-color: #0056b3; /* Bolinha azul */
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.team-info strong {
+    font-size: 0.85rem;
+    display: block;
+    color: #111;
+}
+
+.team-info span {
+    font-size: 0.75rem;
+    color: #888;
 }
 
 .page-sobre .sobre-intro,
@@ -248,7 +439,6 @@ a {
     gap: 28px;
     padding: 30px 22px 18px;
     background: var(--bg);
-    border-right: 2px solid var(--line);
     overflow: hidden;
 }
 
