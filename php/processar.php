@@ -144,9 +144,11 @@ $link_redefinicao = "http://localhost:8080/DevIN/php/redefinir.php?token=" . $to
 }
 
 // ==========================================
-// AÇÃO 2: SALVAR A NOVA SENHA
+// AÇÃO 2: SALVAR A NOVA SENHA E ENVIAR CONFIRMAÇÃO
 // ==========================================
 if ($acao === 'salvar' && $_SERVER["REQUEST_METHOD"] === "POST") {
+    require_once __DIR__ . '/MailerHelper.php';
+
     $token = $conn->real_escape_string($_POST['token']);
     $nova_senha = $_POST['senha'];
 
@@ -158,9 +160,11 @@ if ($acao === 'salvar' && $_SERVER["REQUEST_METHOD"] === "POST") {
     $tabela_alvo = "";
     $campo_id_alvo = "";
     $id_usuario = 0;
+    $email_usuario = "";
+    $nome_usuario = "";
 
-    // 1. Procura o token válido na tabela 'pessoa'
-    $sql_p = "SELECT id_pessoa FROM pessoa WHERE token_recuperacao = ? AND token_expiracao > ?";
+    // 1. Procura o token na tabela 'pessoa'
+    $sql_p = "SELECT id_pessoa, nome, email FROM pessoa WHERE token_recuperacao = ? AND token_expiracao > ?";
     $stmt_p = $conn->prepare($sql_p);
     $stmt_p->bind_param("ss", $token, $agora);
     $stmt_p->execute();
@@ -171,9 +175,11 @@ if ($acao === 'salvar' && $_SERVER["REQUEST_METHOD"] === "POST") {
         $tabela_alvo = "pessoa";
         $campo_id_alvo = "id_pessoa";
         $id_usuario = $user_p['id_pessoa'];
+        $nome_usuario = $user_p['nome'];
+        $email_usuario = $user_p['email'];
     } else {
-        // 2. Se não estiver em pessoa, procura na tabela 'empresa'
-        $sql_e = "SELECT id_empresa FROM empresa WHERE token_recuperacao = ? AND token_expiracao > ?";
+        // 2. Procura na tabela 'empresa'
+        $sql_e = "SELECT id_empresa, nome, email FROM empresa WHERE token_recuperacao = ? AND token_expiracao > ?";
         $stmt_e = $conn->prepare($sql_e);
         $stmt_e->bind_param("ss", $token, $agora);
         $stmt_e->execute();
@@ -184,10 +190,11 @@ if ($acao === 'salvar' && $_SERVER["REQUEST_METHOD"] === "POST") {
             $tabela_alvo = "empresa";
             $campo_id_alvo = "id_empresa";
             $id_usuario = $user_e['id_empresa'];
+            $nome_usuario = $user_e['nome'];
+            $email_usuario = $user_e['email'];
         }
     }
 
-    // Se o token for inválido ou já estiver expirado
     if (empty($tabela_alvo)) {
         echo "<script>
             alert('Este link de recuperação é inválido ou expirou!');
@@ -196,15 +203,27 @@ if ($acao === 'salvar' && $_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    // Gera o Hash seguro com BCRYPT
     $nova_senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
 
-    // Salva na coluna 'senha_hash' e remove o token para não ser reutilizado
     $sql_final = "UPDATE $tabela_alvo SET senha_hash = ?, token_recuperacao = NULL, token_expiracao = NULL WHERE $campo_id_alvo = ?";
     $stmt_final = $conn->prepare($sql_final);
     $stmt_final->bind_param("si", $nova_senha_hash, $id_usuario);
 
     if ($stmt_final->execute()) {
+        
+        // ✉️ ENVIA E-MAIL AVISANDO QUE A SENHA FOI ALTERADA
+        $corpoAviso = "
+            <div style='font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 12px; padding: 25px;'>
+                <h2 style='color: #004595; text-align: center;'>Dev<span style='color:#000;'>IN</span></h2>
+                <hr style='border: 0; border-top: 1px solid #eee; margin: 15px 0;'>
+                <p>Olá, <strong>{$nome_usuario}</strong>!</p>
+                <p>Sua senha na plataforma <strong>DevIN</strong> foi <strong>alterada com sucesso</strong>.</p>
+                <p style='color: #666; font-size: 13px;'>Se foi você quem alterou, nenhuma ação adicional é necessária.</p>
+                <p style='color: #e53e3e; font-size: 12px;'>⚠️ Caso você NÃO tenha solicitado a alteração, entre em contato com nosso suporte imediatamente.</p>
+            </div>
+        ";
+        MailerHelper::enviar($email_usuario, $nome_usuario, 'Senha Alterada com Sucesso - DevIN', $corpoAviso);
+
         echo "<script>
             alert('Senha alterada com sucesso! Você já pode entrar com sua nova senha.');
             window.location.href = 'login.php'; 

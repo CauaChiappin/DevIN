@@ -1,8 +1,84 @@
 <?php
 ob_start();
-require_once __DIR__ . '/controllers/AuthController.php';
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
+}
+
+require_once __DIR__ . '/controllers/AuthController.php';
+
+if (file_exists(__DIR__ . '/config/database.php')) {
+    require_once __DIR__ . '/config/database.php';
+} elseif (file_exists(__DIR__ . '/../config/database.php')) {
+    require_once __DIR__ . '/../config/database.php';
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    try {
+        $conn = getDatabaseConnection();
+    } catch (Exception $e) {
+        echo "<script>
+                alert('Erro ao conectar com o banco de dados.');
+                window.history.back();
+              </script>";
+        exit;
+    }
+
+    $nome          = trim($_POST['nome'] ?? '');
+    $email         = trim($_POST['email'] ?? '');
+    $cpf           = trim($_POST['cpf'] ?? '');
+    $telefone      = trim($_POST['telefone'] ?? '');
+    $cep           = trim($_POST['cep'] ?? '');
+    $senha         = $_POST['senha'] ?? '';
+    $confirmeSenha = $_POST['confirme_senha'] ?? '';
+
+    if (!empty($confirmeSenha) && $senha !== $confirmeSenha) {
+        echo "<script>
+                alert('As senhas não coincidem!');
+                window.history.back();
+              </script>";
+        exit;
+    }
+
+    $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+    try {
+        // Insere salvando a data atual em created_at e definindo lembrete_enviado = 0
+        $sql = "INSERT INTO pessoa (nome, email, cpf, telefone, cep, senha_hash, created_at, lembrete_enviado) 
+                VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssss", $nome, $email, $cpf, $telefone, $cep, $senhaHash);
+        $stmt->execute();
+
+        // Pega o ID da pessoa recém-cadastrada e salva na sessão para o preenchimento do currículo
+        $_SESSION['id_pessoa']   = $stmt->insert_id;
+        $_SESSION['pessoa_nome'] = $nome;
+
+        // Redireciona DIRETO para a página de formulário do currículo
+        header("Location: cadastrar_curriculo.php");
+        exit;
+
+    } catch (mysqli_sql_exception $e) {
+        if ($e->getCode() === 1062) {
+            echo "<script>
+                    alert('Atenção: Este CPF ou E-mail já está cadastrado no sistema!');
+                    window.history.back();
+                  </script>";
+        } else {
+            echo "<script>
+                    alert('Erro ao salvar no banco de dados. Tente novamente.');
+                    window.history.back();
+                  </script>";
+        }
+        exit;
+    } finally {
+        if (isset($conn) && $conn instanceof mysqli) {
+            $conn->close();
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -16,9 +92,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 <body>
 
     <div class="main-container">
-        
         <section class="left-side">
-            
             <div class="brand-logo">
                 <a href="../php/index.php">Dev<span>IN</span></a>
             </div>
@@ -31,8 +105,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
             <h1 class="page-title">Criar conta</h1>
 
-            <form action="../php/cadastro_pessoa.php" method="POST" class="register-form" id="formCadastro">
-                
+            <form action="cadastro_pessoa.php" method="POST" class="register-form" id="formCadastro">
                 <div class="form-columns">
                     <div class="form-column">
                         <div class="input-group">
@@ -97,101 +170,22 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                     <button type="submit" class="btn-submit">Cadastrar</button>
                     <p class="login-redirect">Já tem conta? <a href="login.php">Faça login</a></p>
                 </div>
-
             </form>
 
             <footer class="page-footer">
                 Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
             </footer>
-
         </section>
 
         <section class="right-side">
             <a href="login.php" class="btn-top-login">Login</a>
-            
             <div class="mascot-container">
                 <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
             </div>
         </section>
-
     </div>
 
     <div id="status-alert-container"></div>
-
 <script src="../js/cadastro.js"></script>
 </body>
 </html>
-
-<?php
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $dbname = "devin";
-
-    $conn = new mysqli($host, $user, $pass, $dbname);
-
-    if ($conn->connect_error) {
-        die("Falha de conexão com o banco de dados: " . $conn->connect_error);
-    }
-
-    if ($_POST['senha'] !== $_POST['confirme_senha']) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML =
-            \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
-        </script>";
-        exit();
-    }
-
-    $nome = trim($_POST['nome']);
-    $cpf = trim($_POST['cpf']);
-    $cep = preg_replace('/[^0-9]/', '', $_POST['cep']);
-    $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone']);
-    $email = trim($_POST['email']);
-
-    $senha_pura = $_POST['senha'];
-    $senha_hash = password_hash($senha_pura, PASSWORD_DEFAULT);
-
-    $sql = "INSERT INTO pessoa
-            (nome, cpf, cep, email, senha_hash, telefone)
-            VALUES (?, ?, ?, ?, ?, ?)";
-
-    $stmt = $conn->prepare($sql);
-
-    if (!$stmt) {
-        die("Erro no SQL: " . $conn->error);
-    }
-
-    $stmt->bind_param(
-        "ssisss",
-        $nome,
-        $cpf,
-        $cep,
-        $email,
-        $senha_hash,
-        $telefone
-    );
-
-    if ($stmt->execute()) {
-
-        $auth = AuthController::login($email, $senha_pura);
-        AuthController::establishSession($auth);
-        
-        // MUDANÇA: Redireciona para o formulário de cadastro de currículo
-        header('Location: cadastrar_curriculo.php');
-        exit;
-
-    } else {
-
-        echo "<script>
-            alert('Erro ao cadastrar: " . addslashes($stmt->error) . "');
-        </script>";
-
-    }
-
-    $stmt->close();
-    $conn->close();
-}
-?>
