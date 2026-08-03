@@ -238,11 +238,7 @@ unset($candidato);
             <?php endif; ?>
 
             <?php if ($pagina === 'sobre'): ?>
-                <section class="sobre-intro">
-                    <span class="tag">Nossa historia</span>
-                    <h1>Conectando talentos ao futuro da tecnologia</h1>
-                    <p>A DevIN nasceu para transformar a forma como desenvolvedores encontram oportunidades: simples, rapido e eficiente.</p>
-                </section>
+                <?= aboutPage() ?>
 
             <?php elseif ($pagina === 'perfil'): ?>
                 <section class="perfil-card">

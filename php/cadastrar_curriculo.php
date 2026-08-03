@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("isssss", $idPessoa, $nome_social, $grau_escolaridade, $cursos, $experiencia, $idiomas);
 
             if ($stmt->execute()) {
-                header('Location: dashboard_pessoa.php');
+                header('Location: pessoa.php');
                 exit;
             } else {
                 $mensagemErro = "Erro ao salvar currículo: " . $stmt->error;
