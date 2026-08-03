@@ -262,16 +262,16 @@ a {
 .badge-historia {
     background-color: #e6effc;
     color: #0056b3;
-    padding: 5px 15px;
+    padding: 6px 18px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: bold;
     margin-bottom: 15px;
     text-align: center;
 }
 
 .sobre-title {
-    font-size: 28px;
+    font-size: clamp(28px, 1.7vw, 34px);
     color: #111;
     text-align: center;
     margin-bottom: 10px;
@@ -283,7 +283,7 @@ a {
 }
 
 .sobre-subtitle {
-    font-size: 14px;
+    font-size: 16px;
     color: #333;
     text-align: center;
     margin-bottom: 25px;
@@ -295,40 +295,40 @@ a {
     gap: 20px;
     justify-content: center;
     width: 100%;
-    max-width: 800px;
+    max-width: 960px;
 }
 
 .sobre-card {
     background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 12px;
-    min-height: 147px;
-    padding: 15px 16px;
+    min-height: 190px;
+    padding: 22px;
     flex: 1;
     box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
 .icon-placeholder {
-    width: 25px;
-    height: 25px;
+    width: 32px;
+    height: 32px;
     background-color: #e6effc;
     border-radius: 6px;
     margin-bottom: 10px;
     display: grid;
     place-items: center;
     color: #176cc0;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
 }
 
 .sobre-card h3 {
-    font-size: 17px;
+    font-size: 19px;
     margin-bottom: 8px;
     color: #111;
 }
 
 .sobre-card p {
-    font-size: 13px;
+    font-size: 15px;
     color: #555;
     line-height: 1.4;
     margin: 0;
@@ -339,27 +339,29 @@ a {
     background-color: var(--bg);
     flex: 1;
     display: grid;
-    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
-    gap: 14px;
+    /* Os dois blocos formam uma composição compacta e visualmente centrada. */
+    grid-template-columns: minmax(0, 510px) minmax(0, 510px);
+    gap: 48px;
     justify-content: center;
-    align-items: start;
-    padding: 20px max(32px, calc((100% - 1080px) / 2));
+    /* Centraliza os dois blocos no espaço inferior, evitando que fiquem colados ao divisor. */
+    align-items: center;
+    padding: 20px 32px;
     border-top: 1px solid #d9d4ca;
 }
 
 .sobre-about-text {
     flex: 1;
-    max-width: 470px;
+    max-width: 510px;
 }
 
 .sobre-about-text h2 {
-    font-size: 24px;
+    font-size: 26px;
     margin: 0 0 15px;
     color: #111;
 }
 
 .sobre-about-text p {
-    font-size: 15px;
+    font-size: 16px;
     color: #555;
     line-height: 1.5;
     margin-bottom: 10px;
@@ -372,14 +374,14 @@ a {
     background-color: #f8f7f3; /* Fundo levemente bege */
     border: 1px solid #e0e0e0;
     border-radius: 12px;
-    padding: 14px;
+    padding: 20px;
 }
 
 .team-header {
     font-weight: 600;
     color: #555;
     margin: 0 0 10px;
-    font-size: 12px;
+    font-size: 13px;
     text-transform: uppercase;
 }
 
@@ -406,8 +408,8 @@ a {
 }
 
 .team-avatar {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     background-color: #0056b3; /* Bolinha azul */
     border-radius: 50%;
     flex-shrink: 0;
@@ -416,17 +418,26 @@ a {
     color: #fff;
     font-size: 9px;
     font-weight: 700;
+    object-fit: cover;
 }
 
 .team-info strong {
-    font-size: 14px;
+    font-size: 15px;
     display: block;
     color: #111;
 }
 
-.team-info span {
-    font-size: 12px;
+.team-info span,
+.team-info a {
+    display: block;
+    font-size: 13px;
     color: #888;
+}
+
+.team-info a:hover,
+.team-info a:focus-visible {
+    color: var(--blue);
+    text-decoration: underline;
 }
 
 .page-sobre .sobre-intro,
@@ -1289,6 +1300,12 @@ a {
     .fundadores {
         gap: 24px;
     }
+
+    .sobre-bottom-section {
+        grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+        gap: 20px;
+        padding: 28px 32px;
+    }
 }
 
 @media (max-width: 720px) {
@@ -1307,7 +1324,10 @@ a {
     /* A página institucional ocupa toda a largura em telas estreitas. */
     .page-sobre .sidebar { display: none; }
     .page-sobre .lista-area { grid-column: 1; }
-    .page-sobre .sobre-bottom-section { padding: 20px 15px; }
+    .page-sobre .sobre-bottom-section {
+        align-items: start;
+        padding: 20px 15px;
+    }
 
     .menu-principal {
         padding-top: 0;
