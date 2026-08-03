@@ -1,3 +1,7 @@
+/* =========================================================
+   DASHBOARD — ESTILOS GERAIS COMPARTILHADOS
+   Usados por empresa, pessoa e administrador.
+========================================================= */
 :root {
     --bg: #f7f5f0;
     --line: #9a9a9a;
@@ -11,6 +15,7 @@
     --sidebar-width: 240px;
 }
 
+/* ----- Perfil, modais e ícones (geral) ----- */
 /* Modal e foto do perfil */
 .profile-modal { width: min(460px, calc(100% - 32px)); }
 .profile-modal .modal-form { gap: 18px; }
@@ -193,6 +198,7 @@ a {
     text-decoration: none;
 }
 
+/* ----- Estrutura, navegação e listagem (geral) ----- */
 .dashboard-shell {
     width: 100%;
     height: 100vh;
@@ -226,6 +232,7 @@ a {
 ========================================= */
 
 /* Trava a tela inteira para não ter rolagem */
+/* ----- Página Sobre nós (geral) ----- */
 .page-sobre {
     height: 100vh;
     overflow: hidden; 
@@ -832,6 +839,11 @@ a {
     transform: skewY(-18deg);
 }
 
+/* =========================================================
+   EMPRESA
+   Publicação e edição de vagas, além do gerenciamento
+   de candidaturas.
+========================================================= */
 .post-tools,
 .acoes-card {
     display: flex;
@@ -986,6 +998,11 @@ a {
 .edit-job-form textarea { min-height: 70px; resize: vertical; }
 .edit-job-form .btn { justify-self: start; }
 
+/* =========================================================
+   PESSOA
+   A pessoa utiliza os componentes gerais de vagas, perfil,
+   busca e detalhes. Os status abaixo aparecem nas candidaturas.
+========================================================= */
 .btn,
 .status {
     min-width: 90px;
@@ -1023,6 +1040,7 @@ a {
     background: #777777;
 }
 
+/* ----- Detalhes e ações de vagas/candidaturas (pessoa e geral) ----- */
 .detalhe-area {
     height: 100vh;
     position: relative;
@@ -1062,6 +1080,7 @@ a {
     gap: 22px;
 }
 
+/* ----- Perfil exibido na área central (geral) ----- */
 .perfil-card {
     width: min(430px, 100%);
     margin: 24px auto 0;
@@ -1224,6 +1243,7 @@ a {
     background: var(--blue);
 }
 
+/* ----- Configurações e formulário de perfil (geral) ----- */
 .settings-modal {
     width: min(420px, calc(100% - 32px));
     border: 0;
@@ -1264,6 +1284,11 @@ a {
 
 /* Tema visual compartilhado por todas as páginas do dashboard, inclusive “Sobre nós”.
    Assim, a troca de rota não altera cores nem escala tipográfica da interface. */
+/* =========================================================
+   ADMINISTRADOR
+   O administrador utiliza os componentes compartilhados:
+   cards, exclusão de registros e painel de detalhes.
+========================================================= */
 .dashboard-shell {
     grid-template-columns: var(--sidebar-width) minmax(340px, 42%) minmax(420px, 1fr);
     background: #fff;
@@ -1368,6 +1393,9 @@ a {
 .dashboard-shell .detalhe-area p { max-width: 620px; color: #5f6b77; font-size: 12px; font-weight: 400; line-height: 1.55; }
 .dashboard-shell .detalhe-area::before { content: "DETALHES"; display: block; margin-bottom: 14px; color: #7f8c99; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
 
+/* =========================================================
+   RESPONSIVIDADE — GERAL
+========================================================= */
 @media (max-width: 980px) {
     body {
         overflow: auto;
