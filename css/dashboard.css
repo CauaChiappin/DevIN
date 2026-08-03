@@ -839,6 +839,75 @@ a {
     text-align: center;
 }
 
+/* Formulario usado pela empresa para criar vagas reais. */
+.create-job-panel {
+    width: min(500px, 100%);
+    margin: 0 auto 14px;
+}
+
+.create-job-panel > summary {
+    list-style: none;
+}
+
+.create-job-panel > summary::-webkit-details-marker {
+    display: none;
+}
+
+.create-job-form {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid #dbe3eb;
+    border-radius: 8px;
+    background: var(--white);
+}
+
+.create-job-form label {
+    display: grid;
+    gap: 4px;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.create-job-form input,
+.create-job-form textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px;
+    font: inherit;
+    font-size: 12px;
+}
+
+.create-job-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.create-job-form .btn {
+    justify-self: start;
+}
+
+/* Area exclusiva para popular a lista com dados locais de teste. */
+.test-candidates-form {
+    width: min(500px, 100%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto 14px;
+    padding: 10px 12px;
+    border: 1px dashed #9ec4e8;
+    border-radius: 8px;
+    background: #f4f9ff;
+}
+
+.test-candidates-form small {
+    color: #52677a;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
 .post-tools button {
     /* grid + place-items deixam o ícone exatamente no centro do botão. */
     display: grid;
@@ -861,6 +930,46 @@ a {
 .post-tools .delete:hover { border-color: #f1b9bf; background: #fff0f1; }
 /* Mantém a navegação por teclado visível e acessível. */
 .post-tools button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+/* O summary vira o botao de editar da vaga, sem o marcador padrao do details. */
+.job-editor {
+    position: relative;
+}
+
+.job-editor > summary {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.job-editor > summary::-webkit-details-marker { display: none; }
+.job-editor > summary:hover { border-color: #f3d18a; background: #fff7e6; }
+
+/* Formulario compacto aberto ao clicar no icone de editar. */
+.edit-job-form {
+    position: absolute;
+    z-index: 2;
+    top: 38px;
+    right: 0;
+    display: grid;
+    width: 260px;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, .16);
+}
+
+.edit-job-form label { display: grid; gap: 4px; font-size: 11px; font-weight: 600; }
+.edit-job-form input, .edit-job-form textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px; font: inherit; font-size: 11px; }
+.edit-job-form textarea { min-height: 70px; resize: vertical; }
+.edit-job-form .btn { justify-self: start; }
 
 .btn,
 .status {

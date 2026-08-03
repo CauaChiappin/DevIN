@@ -46,6 +46,17 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($upload['tmp_name']);
     // Define quais tipos são permitidos e qual extensão será usada no nome final.
     $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+    // Empresa usa MEDIUMBLOB: le os bytes da imagem para salvar direto na coluna foto.
+    if ($tipo === 'empresa') {
+        if (!isset($extensions[$mime])) {
+            throw new InvalidArgumentException('Envie uma imagem JPG, PNG ou WEBP.');
+        }
+        $photoBlob = file_get_contents($temporaryFile);
+        if ($photoBlob === false) {
+            throw new RuntimeException('Nao foi possivel ler a foto enviada.');
+        }
+        return $photoBlob;
+    }
     if (!isset($extensions[$mime])) throw new InvalidArgumentException('Envie uma imagem JPG, PNG ou WEBP.');
 
     // Caminho físico da pasta onde as fotos ficam salvas dentro do projeto.
@@ -65,12 +76,20 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     $nome = trim($data['nome'] ?? '');
     $email = filter_var(trim($data['email'] ?? ''), FILTER_VALIDATE_EMAIL);
 
-    if ($nome === '' || !$email) {
+    // Empresa nao envia nome no formulario: o nome cadastrado nao pode ser alterado.
+    if (($tipo !== 'empresa' && $nome === '') || !$email) {
         throw new InvalidArgumentException('Informe um nome e e-mail válidos.');
     }
 
     // Busca o perfil atual para manter a foto anterior caso uma nova não seja enviada.
     $currentProfile = findProfile($tipo, $id);
+    if (!$currentProfile) {
+        throw new RuntimeException('Perfil nao encontrado.');
+    }
+    // Ignora qualquer nome enviado manualmente e preserva o nome oficial da empresa.
+    if ($tipo === 'empresa') {
+        $nome = $currentProfile['nome'];
+    }
     // Salva a nova foto (ou mantém a anterior) e recebe o caminho final.
     $foto = saveProfilePhoto($tipo, $id, $upload, $currentProfile['foto'] ?? null);
     $conn = getDatabaseConnection();
@@ -82,6 +101,19 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
             throw new RuntimeException('NÃ£o foi possÃ­vel preparar a atualizaÃ§Ã£o do perfil: ' . $conn->error);
         }
         $stmt->bind_param('sssi', $nome, $email, $foto, $id);
+    } elseif ($tipo === 'empresa') {
+        $cep = preg_replace('/\D/', '', $data['cep'] ?? '');
+        $telefone = preg_replace('/\D/', '', $data['telefone'] ?? '');
+        if ($cep === '' || $telefone === '') {
+            throw new InvalidArgumentException('Informe CEP e telefone validos.');
+        }
+
+        // A consulta da empresa nao possui nome: nem o formulario nem uma requisicao manual podem muda-lo.
+        $stmt = $conn->prepare("UPDATE {$table} SET email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?");
+        if (!$stmt) {
+            throw new RuntimeException('Nao foi possivel preparar a atualizacao do perfil: ' . $conn->error);
+        }
+        $stmt->bind_param('ssssi', $email, $cep, $telefone, $foto, $id);
     } else {
         $cep = preg_replace('/\D/', '', $data['cep'] ?? '');
         $telefone = preg_replace('/\D/', '', $data['telefone'] ?? '');
