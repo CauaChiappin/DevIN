@@ -10,7 +10,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><a href="../html/index.html">DevIN</a> | Criar Conta Pessoal</title>
+    <title>DevIN | Criar Conta Pessoal</title>
     <link rel="stylesheet" href="../css/cadastrostyle.css">
 </head>
 <body>
@@ -19,8 +19,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         
         <section class="left-side">
             
-             <div class="brand-logo">
-          <a href="../php/index.php">Dev<span>IN</span></a>
+            <div class="brand-logo">
+                <a href="../php/index.php">Dev<span>IN</span></a>
             </div>
 
             <div class="toggle-container">
@@ -31,7 +31,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
             <h1 class="page-title">Criar conta</h1>
 
-                <form action="../php/cadastro_pessoa.php" method="POST" class="register-form" id="formCadastro">
+            <form action="../php/cadastro_pessoa.php" method="POST" class="register-form" id="formCadastro">
                 
                 <div class="form-columns">
                     <div class="form-column">
@@ -178,7 +178,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $auth = AuthController::login($email, $senha_pura);
         AuthController::establishSession($auth);
-        header('Location: ' . AuthController::redirectByUserType($auth['usuario']['tipo']));
+        
+        // MUDANÇA: Redireciona para o formulário de cadastro de currículo
+        header('Location: cadastrar_curriculo.php');
         exit;
 
     } else {
@@ -193,7 +195,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
-
-
-
-
