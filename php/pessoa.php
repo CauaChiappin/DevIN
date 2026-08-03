@@ -134,7 +134,7 @@ $vagasPessoa = [
                 </form>
             <?php endif; ?>
 
-            <?php if ($pagina === 'sobre'): ?>
+            <?php if ($pagina === 'sobre'): ?><?= aboutPage() ?><?php elseif ($pagina === 'sobre'): ?>
                 <div class="sobre-container">
                     <!-- Parte Superior (Bege) -->
                     <div class="sobre-top-section">

@@ -9,6 +9,28 @@ function h(?string $valor): string
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+/** Conteúdo institucional compartilhado pelos três dashboards. */
+function aboutPage(): string
+{
+    return <<<'HTML'
+<div class="sobre-container">
+    <div class="sobre-top-section">
+        <span class="badge-historia">Nossa história</span>
+        <h1 class="sobre-title">Conectando talentos ao <span class="text-blue">futuro</span><br>da tecnologia</h1>
+        <p class="sobre-subtitle">A DevIN nasceu para transformar a forma como desenvolvedores<br>encontram oportunidades — simples, rápido e eficiente.</p>
+        <div class="sobre-cards">
+            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">⌁</span><h3>Visão</h3><p>Ser referência na conexão entre talentos de tecnologia e empresas, promovendo crescimento profissional e inovação no mercado digital.</p></article>
+            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">◎</span><h3>Missão</h3><p>Conectar desenvolvedores de todos os níveis a oportunidades de trabalho, tornando o processo de recrutamento mais simples e eficiente.</p></article>
+        </div>
+    </div>
+    <div class="sobre-bottom-section">
+        <div class="sobre-about-text"><h2>Quem somos <span class="text-blue">nós?</span></h2><p>A DevIN nasceu com o propósito de transformar a forma como profissionais de tecnologia encontram oportunidades. Desenvolvida no ambiente educacional da Escola Profª Alcina Dantas Feijão.</p><p>Hoje, a DevIN oferece um ambiente moderno onde empresas podem divulgar vagas e gerenciar candidatos, enquanto usuários criam perfis, buscam empregos, estágios e programas de aprendizagem.</p></div>
+        <section class="sobre-team-card"><h2 class="team-header">Time fundador</h2><ul class="team-list"><li><span class="team-avatar">CL</span><div class="team-info"><strong>Cauã Chiappin de Lima</strong><span>Cofundador · caua.lima@scseduca.com.br</span></div></li><li><span class="team-avatar">EC</span><div class="team-info"><strong>Enzo Vasconcelos de Camargo</strong><span>Cofundador · enzo.camargo@scseduca.com.br</span></div></li><li><span class="team-avatar">JS</span><div class="team-info"><strong>João Vitor da Silva e Sousa</strong><span>Cofundador · joao.sousa2@scseduca.com.br</span></div></li></ul></section>
+    </div>
+</div>
+HTML;
+}
+
 /*
  * Monta o avatar reutilizado no menu, no modal e no perfil.
  * Se não houver foto válida, retorna somente o span com o fundo padrão do CSS.
