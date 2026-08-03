@@ -46,8 +46,8 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($upload['tmp_name']);
     // Define quais tipos são permitidos e qual extensão será usada no nome final.
     $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
-    // Empresa usa MEDIUMBLOB: le os bytes da imagem para salvar direto na coluna foto.
-    if ($tipo === 'empresa') {
+    // Empresa e pessoa usam MEDIUMBLOB: le os bytes da imagem para salvar direto na coluna foto.
+    if (in_array($tipo, ['empresa', 'pessoa'], true)) {
         if (!isset($extensions[$mime])) {
             throw new InvalidArgumentException('Envie uma imagem JPG, PNG ou WEBP.');
         }
