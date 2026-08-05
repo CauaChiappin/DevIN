@@ -5,6 +5,7 @@ const profileModal = document.querySelector("#profileModal");
 const settingsButtons = document.querySelectorAll("[data-open-settings]");
 const dashboardShell = document.querySelector(".dashboard-shell");
 const menuToggle = document.querySelector("[data-toggle-menu]");
+const rotatingWord = document.querySelector("[data-rotating-word]");
 
 if (dashboardShell && menuToggle) {
     const menuFechado = localStorage.getItem("devin-menu-fechado") === "true";
@@ -31,6 +32,52 @@ cards.forEach((card) => {
         }
     });
 });
+
+if (rotatingWord) {
+    const words = ["futuro", "mundo", "universo", "avanço", "mercado", "amanhã"];
+    let currentWord = 0;
+    let changingWord = false;
+
+    const showWord = (word, entering = false) => {
+        rotatingWord.replaceChildren();
+
+        [...word].forEach((character, index) => {
+            const letter = document.createElement("span");
+            const distanceFromCenter = index - (word.length - 1) / 2;
+
+            letter.className = "palavra-letra";
+            letter.textContent = character;
+            letter.style.setProperty("--desvio-x", `${distanceFromCenter * 13}px`);
+            letter.style.setProperty("--desvio-y", `${-10 - (index % 3) * 7}px`);
+            letter.style.setProperty("--rotacao", `${distanceFromCenter * 12}deg`);
+            letter.style.setProperty("--queda", `${28 + (index % 3) * 7}px`);
+            letter.style.setProperty("--atraso", `${index * 38}ms`);
+
+            if (entering) letter.classList.add("entrando");
+            rotatingWord.append(letter);
+        });
+
+        if (entering) {
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                rotatingWord.querySelectorAll(".palavra-letra").forEach((letter) => letter.classList.remove("entrando"));
+            }));
+        }
+    };
+
+    showWord(words[currentWord]);
+
+    window.setInterval(() => {
+        if (changingWord) return;
+        changingWord = true;
+        rotatingWord.querySelectorAll(".palavra-letra").forEach((letter) => letter.classList.add("saindo"));
+
+        window.setTimeout(() => {
+            currentWord = (currentWord + 1) % words.length;
+            showWord(words[currentWord], true);
+            changingWord = false;
+        }, 800);
+    }, 3000);
+}
 
 settingsButtons.forEach((button) => {
     button.addEventListener("click", () => {

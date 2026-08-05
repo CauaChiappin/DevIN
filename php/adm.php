@@ -66,6 +66,8 @@ $usuariosAdmin = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Dashboard Administrativo</title>
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
 </head>
 <body>
@@ -73,7 +75,6 @@ $usuariosAdmin = [
         <aside class="sidebar">
             <div class="sidebar-topo">
                 <a class="brand" href="adm.php">
-                    <?= dashboardIcon('brand') ?>
                     <span class="brand-text">Dev<span>IN</span></span>
                 </a>
                 <button class="menu-toggle" type="button" aria-label="Abrir ou fechar menu" aria-expanded="true" data-toggle-menu>
@@ -83,7 +84,7 @@ $usuariosAdmin = [
 
             <nav class="menu-principal" aria-label="Menu principal">
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a>
-                <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('users') ?><span class="menu-text">Candidatos</span></a>
+                <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Candidatos</span></a>
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="adm.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nos</span></a>
             </nav>
 

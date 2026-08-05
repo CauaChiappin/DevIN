@@ -16,7 +16,7 @@ function aboutPage(): string
 <div class="sobre-container">
     <div class="sobre-top-section">
         <span class="badge-historia">Nossa história</span>
-        <h1 class="sobre-title">Conectando talentos ao <span class="text-blue">futuro</span><br>da tecnologia</h1>
+        <h1 class="sobre-title">Conectando talentos ao <span class="text-blue palavra-rotativa" data-rotating-word aria-live="polite">futuro</span><br>da tecnologia</h1>
         <p class="sobre-subtitle">A DevIN nasceu para transformar a forma como desenvolvedores<br>encontram oportunidades — simples, rápido e eficiente.</p>
         <div class="sobre-cards">
             <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">⌁</span><h3>Visão</h3><p>Ser referência na conexão entre talentos de tecnologia e empresas, promovendo crescimento profissional e inovação no mercado digital.</p></article>
@@ -63,7 +63,7 @@ function dashboardIcon(string $name): string
     $paths = match ($name) {
         'brand' => '<path d="M4 5.5h16v13H4z"/><path d="M12 5.5v13"/>',
         'home' => '<path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-6h6v6"/>',
-        'users' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 1 0 7.75"/>',
+        'users' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
         'user' => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
         'building' => '<path d="M3 21h18M5 21V5h10v16M15 9h4v12M8 9h4M8 13h4M8 17h4"/>',
         'briefcase' => '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>',
