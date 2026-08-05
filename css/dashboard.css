@@ -47,6 +47,11 @@
     background: radial-gradient(circle at 50% 38%, #ffffff 0 17%, #111111 18% 33%, transparent 34%), radial-gradient(circle at 50% 82%, #111111 0 32%, transparent 33%), #f3f3f3;
 }
 
+/* Fotos PNG/WebP transparentes usam uma base limpa, sem exibir o avatar-padrão por trás. */
+.current-user-avatar.has-photo {
+    background: #eef5ff;
+}
+
 .profile-photo-preview {
     display: block;
     width: 76px;
@@ -1403,7 +1408,6 @@ a {
 .empresa-dashboard .post-tools form { margin: 0; }
 .empresa-dashboard .post-tools button { width: 27px; height: 27px; }
 .empresa-dashboard .detalhe-area { padding-top: 44px; }
-.empresa-dashboard .detalhe-area::before { content: "VAGA SELECIONADA"; }
 .empresa-dashboard .form-success { margin: 0 0 10px; }
 
 .dashboard-shell .detalhe-area {
@@ -1415,6 +1419,7 @@ a {
 .dashboard-shell .detalhe-area h2 { margin: 0 0 16px; color: #1e2c39; font-family: Georgia, serif; font-size: 20px; }
 .dashboard-shell .detalhe-area p { max-width: 620px; color: #5f6b77; font-size: 12px; font-weight: 400; line-height: 1.55; }
 .dashboard-shell .detalhe-area::before { content: "DETALHES"; display: block; margin-bottom: 14px; color: #7f8c99; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+.empresa-dashboard .detalhe-area::before { content: "VAGA SELECIONADA"; }
 
 /* =========================================================
    RESPONSIVIDADE — GERAL

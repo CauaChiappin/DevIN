@@ -45,7 +45,7 @@ function profileAvatar(array $perfil, string $classes): string
         $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($foto);
         if (in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
             $imagem = '<img src="data:' . $mime . ';base64,' . base64_encode($foto) . '" alt="Foto de perfil">';
-            return '<span class="' . h($classes) . ' current-user-avatar">' . $imagem . '</span>';
+            return '<span class="' . h($classes) . ' current-user-avatar has-photo">' . $imagem . '</span>';
         }
     }
     // Só renderiza a tag img para caminhos de upload existentes; caso contrário, mantém o avatar padrão.
@@ -55,7 +55,7 @@ function profileAvatar(array $perfil, string $classes): string
         : '';
 
     // Junta as classes visuais e a imagem (quando válida) dentro de um único avatar.
-    return '<span class="' . h($classes) . ' current-user-avatar">' . $imagem . '</span>';
+    return '<span class="' . h($classes) . ' current-user-avatar' . ($imagem !== '' ? ' has-photo' : '') . '">' . $imagem . '</span>';
 }
 
 function dashboardIcon(string $name): string

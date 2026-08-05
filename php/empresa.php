@@ -290,14 +290,7 @@ if (!$perfilAtual) { header('Location: logout.php'); exit; }
 $conn = getDatabaseConnection();
 $hasDescricao = (bool) $conn->query("SHOW COLUMNS FROM vagas LIKE 'descricao'")->num_rows;
 $descricaoSql = $hasDescricao ? 'COALESCE(descricao, "")' : '""';
-$stmtVagas = $conn->prepare("SELECT id_vaga, titulo, $descricaoSql AS descricao FROM vagas WHERE id_empresa = ? ORDER BY id_vaga DESC");
-$empresaId = (int) $_SESSION['usuario_id'];
-$stmtVagas->bind_param('i', $empresaId);
-$stmtVagas->execute();
-$empresaPosts = $stmtVagas->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmtVagas->close();
-$conn->close();
-
+$stmtVagas = $conn->prepare("SELECT id_vaga, titulo, $descricaoSql AS descricao, tempo_vaga FROM vagas WHERE id_empresa = ? ORDER BY id_vaga DESC");
 $empresaId = (int) $_SESSION['usuario_id'];
 $stmtVagas->bind_param('i', $empresaId);
 $stmtVagas->execute();
@@ -376,9 +369,6 @@ unset($candidato);
                     <?= dashboardIcon('brand') ?>
                     <span class="brand-text">Dev<span>IN</span></span>
                 </a>
-                <button class="menu-toggle" type="button" aria-label="Abrir ou fechar menu" aria-expanded="true" data-toggle-menu>
-                    <span></span><span></span><span></span>
-                </button>
             </div>
 
             <nav class="menu-principal" aria-label="Menu principal">
@@ -538,8 +528,6 @@ unset($candidato);
                         </div>
                     </article>
                 <?php endforeach; ?>
-
-                <?php if (!$empresaPosts): ?><p class="empty-state">Voce ainda nao publicou nenhuma vaga.</p><?php endif; ?>
 
                 <?php foreach ($talentos as $talento): ?>
                     <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>">
