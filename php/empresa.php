@@ -532,8 +532,6 @@ unset($candidato);
                     </article>
                 <?php endforeach; ?>
 
-                <?php if (!$empresaPosts): ?><p class="empty-state">Voce ainda nao publicou nenhuma vaga.</p><?php endif; ?>
-
                 <?php foreach ($talentos as $talento): ?>
                     <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
