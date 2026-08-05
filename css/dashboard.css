@@ -1147,6 +1147,7 @@ a {
 
 .modal-form label { display: grid; gap: 5px; font-size: 13px; font-weight: 600; }
 .modal-form input, .modal-form select { width: 100%; height: 34px; border: 1px solid #c5c5c5; border-radius: 6px; padding: 0 9px; outline-color: var(--blue); }
+.modal-form textarea { width: 100%; resize: vertical; border: 1px solid #c5c5c5; border-radius: 6px; padding: 9px; outline-color: var(--blue); }
 .modal-form .btn { justify-self: start; }
 .form-error { margin: 0; color: var(--red); font-size: 13px; }
 
@@ -1259,6 +1260,17 @@ a {
 .dashboard-shell .btn,
 .dashboard-shell .status { min-width: 72px; min-height: 23px; padding: 3px 9px; font-size: 10px; }
 .dashboard-shell .criar-post { width: 100%; min-width: 0; height: 30px; margin: 0 0 12px; border: 1px solid #176cc0; border-radius: 7px; color: #176cc0; font-size: 11px; }
+
+/* Area de vagas da empresa: lista compacta e painel de leitura, como a referencia. */
+.empresa-dashboard .job-card { cursor: pointer; }
+.empresa-dashboard .job-card > div:nth-child(2) { min-width: 0; }
+.empresa-dashboard .job-card p { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.empresa-dashboard .post-tools { gap: 3px; align-self: center; }
+.empresa-dashboard .post-tools form { margin: 0; }
+.empresa-dashboard .post-tools button { width: 27px; height: 27px; }
+.empresa-dashboard .detalhe-area { padding-top: 44px; }
+.empresa-dashboard .detalhe-area::before { content: "VAGA SELECIONADA"; }
+.empresa-dashboard .form-success { margin: 0 0 10px; }
 
 .dashboard-shell .detalhe-area {
     padding: 22px 24px;

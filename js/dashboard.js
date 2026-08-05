@@ -27,6 +27,7 @@ cards.forEach((card) => {
 
         if (detailText) {
             detailText.textContent = card.dataset.detail;
+            if (card.dataset.jobTitle) document.querySelector("#detailTitle")?.replaceChildren(card.dataset.jobTitle);
         }
     });
 });
@@ -84,5 +85,48 @@ document.querySelectorAll("[data-close-modal]").forEach((button) => {
 document.querySelector("[data-delete-account]")?.addEventListener("click", (event) => {
     if (!confirm("Tem certeza? Esta ação exclui sua conta permanentemente.")) event.preventDefault();
 });
+
+const jobModal = document.querySelector("#jobModal");
+const jobTitle = document.querySelector("[data-job-title-input]");
+const jobDescription = document.querySelector("[data-job-description-input]");
+const jobAction = document.querySelector("[data-job-action]");
+const jobId = document.querySelector("[data-job-id]");
+const jobModalTitle = document.querySelector("#jobModalTitle");
+const jobSubmit = document.querySelector("[data-job-submit]");
+
+document.querySelector("[data-open-job-create]")?.addEventListener("click", () => {
+    jobAction.value = "create_job";
+    jobId.value = "";
+    jobTitle.value = "";
+    jobDescription.value = "";
+    jobModalTitle.textContent = "Criar vaga";
+    jobSubmit.textContent = "Publicar vaga";
+    jobModal?.showModal();
+});
+
+document.querySelectorAll("[data-open-job-edit]").forEach((button) => button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    jobAction.value = "update_job";
+    jobId.value = button.dataset.jobId;
+    jobTitle.value = button.dataset.jobTitle;
+    jobDescription.value = button.dataset.jobDescription;
+    jobModalTitle.textContent = "Editar vaga";
+    jobSubmit.textContent = "Salvar alteracoes";
+    jobModal?.showModal();
+}));
+
+document.querySelectorAll("[data-delete-job]").forEach((button) => button.addEventListener("click", (event) => {
+    if (!confirm("Excluir esta vaga? Esta acao nao pode ser desfeita.")) event.preventDefault();
+}));
+
+const searchInput = document.querySelector(".busca input[type='search']");
+searchInput?.addEventListener("input", () => {
+    const term = searchInput.value.trim().toLocaleLowerCase("pt-BR");
+    document.querySelectorAll(".lista-area .item-card").forEach((card) => {
+        card.hidden = term !== "" && !card.textContent.toLocaleLowerCase("pt-BR").includes(term);
+    });
+});
+
+document.querySelector(".busca")?.addEventListener("submit", (event) => event.preventDefault());
 
 if (new URLSearchParams(window.location.search).get("perfil") === "meu") profileModal?.showModal();

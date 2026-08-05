@@ -88,6 +88,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        // Vagas sempre sao manipuladas com a empresa da sessao, impedindo editar vagas de terceiros.
+        if (in_array($action, ['create_job', 'update_job', 'delete_job'], true)) {
+            $empresaId = (int) $_SESSION['usuario_id'];
+            $conn = getDatabaseConnection();
+            if ($action === 'delete_job') {
+                $idVaga = (int) ($_POST['id_vaga'] ?? 0);
+                $stmt = $conn->prepare('DELETE FROM vagas WHERE id_vaga = ? AND id_empresa = ?');
+                $stmt->bind_param('ii', $idVaga, $empresaId);
+                $stmt->execute();
+                if ($stmt->affected_rows !== 1) throw new RuntimeException('Vaga nao encontrada ou sem permissao para exclui-la.');
+                $_SESSION['job_success'] = 'Vaga excluida com sucesso.';
+            } else {
+                $titulo = trim($_POST['titulo'] ?? '');
+                $descricao = trim($_POST['descricao'] ?? '');
+                if ($titulo === '') throw new InvalidArgumentException('Informe o titulo da vaga.');
+                $hasDescricao = (bool) $conn->query("SHOW COLUMNS FROM vagas LIKE 'descricao'")->num_rows;
+                if ($action === 'create_job') {
+                    $stmt = $conn->prepare($hasDescricao ? 'INSERT INTO vagas (id_empresa, titulo, descricao) VALUES (?, ?, ?)' : 'INSERT INTO vagas (id_empresa, titulo) VALUES (?, ?)');
+                    $hasDescricao ? $stmt->bind_param('iss', $empresaId, $titulo, $descricao) : $stmt->bind_param('is', $empresaId, $titulo);
+                    $stmt->execute();
+                    $_SESSION['job_success'] = 'Vaga criada e publicada com sucesso.';
+                } else {
+                    $idVaga = (int) ($_POST['id_vaga'] ?? 0);
+                    $stmt = $conn->prepare($hasDescricao ? 'UPDATE vagas SET titulo = ?, descricao = ? WHERE id_vaga = ? AND id_empresa = ?' : 'UPDATE vagas SET titulo = ? WHERE id_vaga = ? AND id_empresa = ?');
+                    $hasDescricao ? $stmt->bind_param('ssii', $titulo, $descricao, $idVaga, $empresaId) : $stmt->bind_param('sii', $titulo, $idVaga, $empresaId);
+                    $stmt->execute();
+                    $_SESSION['job_success'] = 'Vaga atualizada com sucesso.';
+                }
+            }
+            $conn->close();
+            header('Location: empresa.php?pagina=inicio');
+            exit;
+        }
+
         // Ação 1: Atualizar o perfil da empresa (dados pessoais e foto)
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
@@ -129,10 +163,16 @@ if (!$perfilAtual) { header('Location: logout.php'); exit; }
 
 // --- DADOS SIMULADOS (Para exibição na tela) ---
 // Lista de vagas criadas pela empresa
-$empresaPosts = [
-    ['titulo' => 'Desenvolvedor Front-end', 'resumo' => 'HTML, CSS, JavaScript e portfolio simples.', 'detalhe' => 'Vaga para criar telas responsivas, manter paginas existentes e colaborar com a equipe de design.'],
-    ['titulo' => 'Analista de Suporte', 'resumo' => 'Atendimento, redes basicas e organizacao.', 'detalhe' => 'Buscamos uma pessoa comunicativa para registrar chamados, orientar usuarios e resolver problemas iniciais.'],
-];
+$conn = getDatabaseConnection();
+$hasDescricao = (bool) $conn->query("SHOW COLUMNS FROM vagas LIKE 'descricao'")->num_rows;
+$descricaoSql = $hasDescricao ? 'COALESCE(descricao, "")' : '""';
+$stmtVagas = $conn->prepare("SELECT id_vaga, titulo, $descricaoSql AS descricao FROM vagas WHERE id_empresa = ? ORDER BY id_vaga DESC");
+$empresaId = (int) $_SESSION['usuario_id'];
+$stmtVagas->bind_param('i', $empresaId);
+$stmtVagas->execute();
+$empresaPosts = $stmtVagas->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmtVagas->close();
+$conn->close();
 
 // Lista de talentos/desenvolvedores disponíveis na plataforma
 $talentos = [
@@ -189,7 +229,7 @@ unset($candidato);
     <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
 </head>
 <body>
-    <main class="dashboard-shell page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
+    <main class="dashboard-shell empresa-dashboard page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
         
         <aside class="sidebar">
             <div class="sidebar-topo">
@@ -224,9 +264,10 @@ unset($candidato);
             <?php if ($pagina !== 'sobre'): ?>
             <header class="dashboard-header">
                 <div>
-                    <span>Painel DevIN</span>
-                    <h1>Dashboard Empresa</h1>
+                    <span><?= $pagina === 'candidatos' ? 'GESTAO DE TALENTOS' : 'MINHAS VAGAS' ?></span>
+                    <h1><?= $pagina === 'candidatos' ? 'Candidatos' : 'Vagas publicadas' ?></h1>
                 </div>
+                <?php if ($pagina === 'inicio'): ?><span class="result-count"><?= count($empresaPosts) ?> vagas</span><?php endif; ?>
             </header>
 
             <form class="busca" action="" method="get">
@@ -290,21 +331,24 @@ unset($candidato);
                 <?php endforeach; ?>
 
             <?php else: ?>
-                <button class="criar-post" type="button">Criar post</button>
+                <?php if (!empty($_SESSION['job_success'])): ?><p class="form-success"><?= h($_SESSION['job_success']); unset($_SESSION['job_success']); ?></p><?php endif; ?>
+                <button class="criar-post" type="button" data-open-job-create>+ Criar vaga</button>
 
                 <?php foreach ($empresaPosts as $post): ?>
-                    <article class="item-card" data-detail="<?= h($post['detalhe']) ?>">
-                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
+                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descricao informada.') ?>" data-job-title="<?= h($post['titulo']) ?>">
+                        <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($post['titulo']) ?></h2>
-                            <p><?= h($post['resumo']) ?></p>
+                            <p><?= h($post['descricao'] ?: 'Sem descricao informada.') ?></p>
                         </div>
                         <div class="post-tools">
-                            <button class="edit" type="button" aria-label="Editar post"><?= dashboardIcon('edit') ?></button>
-                            <button class="delete" type="button" aria-label="Excluir post"><?= dashboardIcon('trash') ?></button>
+                            <button class="edit" type="button" aria-label="Editar vaga" data-open-job-edit data-job-id="<?= (int) $post['id_vaga'] ?>" data-job-title="<?= h($post['titulo']) ?>" data-job-description="<?= h($post['descricao']) ?>"><?= dashboardIcon('edit') ?></button>
+                            <form method="post"><input type="hidden" name="action" value="delete_job"><input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>"><input type="hidden" name="id_vaga" value="<?= (int) $post['id_vaga'] ?>"><button class="delete" type="submit" aria-label="Excluir vaga" data-delete-job><?= dashboardIcon('trash') ?></button></form>
                         </div>
                     </article>
                 <?php endforeach; ?>
+
+                <?php if (!$empresaPosts): ?><p class="empty-state">Voce ainda nao publicou nenhuma vaga.</p><?php endif; ?>
 
                 <?php foreach ($talentos as $talento): ?>
                     <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>">
@@ -328,8 +372,8 @@ unset($candidato);
                 <h2>Explicando tudo sobre a vaga selecionada</h2>
                 <p>Use este espaco para visualizar detalhes da vaga, pessoa ou post escolhido no painel.</p>
             <?php else: ?>
-                <h2><?= h($pagina === 'candidatos' ? 'Vaga em que o candidato se inscreveu' : 'Explicando tudo sobre a pessoa selecionada') ?></h2>
-                <p id="detailText">Selecione um card para ver a explicacao completa aqui.</p>
+                <h2 id="detailTitle"><?= h($pagina === 'candidatos' ? 'Vaga em que o candidato se inscreveu' : 'Detalhes da vaga') ?></h2>
+                <p id="detailText">Selecione uma vaga para ver sua descricao completa aqui.</p>
             <?php endif; ?>
         </aside>
     </main>
@@ -369,6 +413,19 @@ unset($candidato);
                 <label>CEP<input name="cep" type="text" value="<?= h($perfilAtual['cep'] ?? '') ?>" required></label>
             </div>
             <button class="profile-save" type="submit">Save</button>
+        </form>
+    </dialog>
+
+    <dialog class="settings-modal job-modal" id="jobModal" aria-labelledby="jobModalTitle">
+        <form method="post" class="modal-form">
+            <button class="modal-close" type="button" data-close-modal aria-label="Fechar">×</button>
+            <h2 id="jobModalTitle">Criar vaga</h2>
+            <input type="hidden" name="action" value="create_job" data-job-action>
+            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+            <input type="hidden" name="id_vaga" value="" data-job-id>
+            <label>Titulo da vaga<input name="titulo" type="text" maxlength="120" required data-job-title-input></label>
+            <label>Descricao<textarea name="descricao" rows="6" maxlength="2000" data-job-description-input></textarea></label>
+            <button class="btn primary" type="submit" data-job-submit>Publicar vaga</button>
         </form>
     </dialog>
 
