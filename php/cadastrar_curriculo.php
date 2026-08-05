@@ -23,6 +23,7 @@ if (file_exists(__DIR__ . '/config/database.php')) {
 
 $idPessoa = $_SESSION['id_pessoa'];
 $nomeUsuario = $_SESSION['pessoa_nome'] ?? 'Candidato';
+$mensagemErro = '';
 
 // 2. Processamento do Formulário via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -52,14 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 VALUES (?, ?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isssss", $idPessoa, $nomeSocial, $escolaridade, $cursos, $experiencia, $idiomas);
-        $stmt->execute();
 
-        // Limpa a sessão temporária de cadastro
-        unset($_SESSION['id_pessoa']);
-        unset($_SESSION['pessoa_nome']);
-
+        if ($stmt) {
+            $stmt->bind_param("isssss", $idPessoa, $nomeSocial, $escolaridade, $cursos, $experiencia, $idiomas);
+            
             if ($stmt->execute()) {
+                // Limpa a sessão temporária de cadastro após o sucesso da gravação
+                unset($_SESSION['id_pessoa']);
+                unset($_SESSION['pessoa_nome']);
+
+                $stmt->close();
                 header('Location: pessoa.php');
                 exit;
             } else {
@@ -69,8 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $mensagemErro = "Erro na query SQL: " . $conn->error;
         }
+    } catch (mysqli_sql_exception $e) {
+        $mensagemErro = "Erro no banco de dados: " . $e->getMessage();
     }
-    
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -93,6 +98,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <h1 class="page-title">Cadastrar Currículo</h1>
             <p class="subtitle">Olá, <strong><?= htmlspecialchars($nomeUsuario) ?></strong>! Preencha as informações do seu currículo para finalizar.</p>
+
+            <?php if (!empty($mensagemErro)): ?>
+                <div class="alert-error" style="color: red; margin-bottom: 15px;">
+                    <?= htmlspecialchars($mensagemErro) ?>
+                </div>
+            <?php endif; ?>
 
             <form action="cadastrar_curriculo.php" method="POST" class="register-form" id="formCurriculo">
                 
