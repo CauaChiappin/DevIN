@@ -17,7 +17,7 @@ class MailerHelper
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'seu_email_devin@gmail.com'; // Altere para seu e-mail
-        $mail->Password   = 'sua_senha_de_app';        // Altere para sua senha de app
+        $mail->Password   = '';        // Altere para sua senha de app
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';

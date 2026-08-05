@@ -11,21 +11,21 @@ if (!isset($_SESSION['id_pessoa'])) {
     exit;
 }
 
-$idPessoa   = (int) $_SESSION['id_pessoa'];
-$nomePessoa = $_SESSION['nome_pessoa'] ?? 'Candidato';
-$emailPessoa= $_SESSION['email_pessoa'] ?? '';
+$idPessoa    = (int) $_SESSION['id_pessoa'];
+$nomePessoa  = $_SESSION['nome_pessoa'] ?? 'Candidato';
+$emailPessoa = $_SESSION['email_pessoa'] ?? '';
 
 $mensagemSucesso = '';
 $mensagemErro    = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nomeSocial         = trim($_POST['nome_social'] ?? '');
-    $grauEscolaridade   = trim($_POST['grau_de_escolaridade'] ?? '');
-    $cursos             = trim($_POST['cursos'] ?? '');
-    $experiencia        = trim($_POST['experiencia'] ?? '');
-    $idiomas            = trim($_POST['idiomas'] ?? '');
+$conn = getDatabaseConnection();
 
-    $conn = getDatabaseConnection();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nomeSocial       = trim($_POST['nome_social'] ?? '');
+    $grauEscolaridade = trim($_POST['grau_de_escolaridade'] ?? '');
+    $cursos           = trim($_POST['cursos'] ?? '');
+    $experiencia      = trim($_POST['experiencia'] ?? '');
+    $idiomas          = trim($_POST['idiomas'] ?? '');
 
     // Verifica se a pessoa já possui currículo cadastrado
     $stmtCheck = $conn->prepare("SELECT id_curriculo FROM curriculo WHERE id_pessoa = ?");
@@ -69,9 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $mensagemErro = "Erro ao salvar o currículo. Tente novamente.";
     }
-
-    $conn->close();
 }
+
+// Busca os dados do currículo existente para preencher o formulário automaticamente
+$stmtFetch = $conn->prepare("SELECT nome_social, grau_de_escolaridade, cursos, experiencia, idiomas FROM curriculo WHERE id_pessoa = ?");
+$stmtFetch->bind_param('i', $idPessoa);
+$stmtFetch->execute();
+$dadosCurriculo = $stmtFetch->get_result()->fetch_assoc();
+$stmtFetch->close();
+$conn->close();
+
+$cNomeSocial       = $dadosCurriculo['nome_social'] ?? '';
+$cGrauEscolaridade = $dadosCurriculo['grau_de_escolaridade'] ?? '';
+$cCursos           = $dadosCurriculo['cursos'] ?? '';
+$cExperiencia      = $dadosCurriculo['experiencia'] ?? '';
+$cIdiomas          = $dadosCurriculo['idiomas'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -79,68 +91,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Currículo - DevIN</title>
-    <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f0f2f5; margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
-        .container { background: #fff; width: 100%; max-width: 650px; border-radius: 10px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { margin-top: 0; color: #1a1a1a; font-size: 24px; text-align: center; }
-        .alert-success { background-color: #d4edda; color: #155724; padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; }
-        .alert-error { background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; }
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-weight: 600; margin-bottom: 6px; color: #444; }
-        input[type="text"], select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
-        textarea { resize: vertical; min-height: 90px; }
-        .btn-submit { width: 100%; background-color: #2b56f5; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        .btn-submit:hover { background-color: #1e3ec7; }
-    </style>
+    <link rel="stylesheet" href="cadastrostyle.css">
 </head>
 <body>
-<div class="container">
-    <h1>Preenchimento de Currículo</h1>
 
-    <?php if ($mensagemSucesso): ?>
-        <div class="alert-success"><?= htmlspecialchars($mensagemSucesso) ?></div>
-    <?php endif; ?>
-
-    <?php if ($mensagemErro): ?>
-        <div class="alert-error"><?= htmlspecialchars($mensagemErro) ?></div>
-    <?php endif; ?>
-
-    <form method="POST" action="cadastrar_curriculo.php">
-        <div class="form-group">
-            <label for="nome_social">Nome Social / Como prefere ser chamado(a):</label>
-            <input type="text" id="nome_social" name="nome_social" placeholder="Ex: Alex Silva" required>
+<div class="main-container">
+    <div class="left-side">
+        <div class="brand-logo">
+            <a href="index.php">Dev<span>IN</span></a>
         </div>
 
-        <div class="form-group">
-            <label for="grau_de_escolaridade">Grau de Escolaridade:</label>
-            <select id="grau_de_escolaridade" name="grau_de_escolaridade" required>
-                <option value="">Selecione...</option>
-                <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
-                <option value="Ensino Médio Completo">Ensino Médio Completo</option>
-                <option value="Ensino Superior Incompleto">Ensino Superior Incompleto</option>
-                <option value="Ensino Superior Completo">Ensino Superior Completo</option>
-                <option value="Pós-graduação / Mapeamento">Pós-graduação / Especialização</option>
-            </select>
-        </div>
+        <?php if ($mensagemSucesso): ?>
+            <div class="php-toast success-toast"><?= htmlspecialchars($mensagemSucesso) ?></div>
+        <?php endif; ?>
 
-        <div class="form-group">
-            <label for="cursos">Cursos e Certificações:</label>
-            <textarea id="cursos" name="cursos" placeholder="Ex: Curso de PHP Avançado, HTML5/CSS3, MySQL"></textarea>
-        </div>
+        <?php if ($mensagemErro): ?>
+            <div class="php-toast error-toast"><?= htmlspecialchars($mensagemErro) ?></div>
+        <?php endif; ?>
 
-        <div class="form-group">
-            <label for="experiencia">Experiência Profissional:</label>
-            <textarea id="experiencia" name="experiencia" placeholder="Ex: Desenvolvedor Web na Empresa X (2022 - Atual)"></textarea>
-        </div>
+        <form method="POST" action="cadastrar_curriculo.php" class="register-form">
+            <h2 class="title-curriculo">Preenchimento de Currículo</h2>
 
-        <div class="form-group">
-            <label for="idiomas">Idiomas:</label>
-            <input type="text" id="idiomas" name="idiomas" placeholder="Ex: Português Nativo, Inglês Intermediário">
-        </div>
+            <div class="form-columns">
+                <div class="form-column">
+                    <div class="input-group">
+                        <label for="nome_social">Nome Social / Como prefere ser chamado(a):</label>
+                        <input type="text" id="nome_social" name="nome_social" placeholder="Ex: Alex Silva" value="<?= htmlspecialchars($cNomeSocial) ?>" required>
+                    </div>
 
-        <button type="submit" class="btn-submit">Finalizar e Salvar Currículo</button>
-    </form>
+                    <div class="input-group">
+                        <label for="grau_de_escolaridade">Grau de Escolaridade:</label>
+                        <select id="grau_de_escolaridade" name="grau_de_escolaridade" required>
+                            <option value="">Selecione...</option>
+                            <option value="Ensino Médio Incompleto" <?= $cGrauEscolaridade === 'Ensino Médio Incompleto' ? 'selected' : '' ?>>Ensino Médio Incompleto</option>
+                            <option value="Ensino Médio Completo" <?= $cGrauEscolaridade === 'Ensino Médio Completo' ? 'selected' : '' ?>>Ensino Médio Completo</option>
+                            <option value="Ensino Superior Incompleto" <?= $cGrauEscolaridade === 'Ensino Superior Incompleto' ? 'selected' : '' ?>>Ensino Superior Incompleto</option>
+                            <option value="Ensino Superior Completo" <?= $cGrauEscolaridade === 'Ensino Superior Completo' ? 'selected' : '' ?>>Ensino Superior Completo</option>
+                            <option value="Pós-graduação / Especialização" <?= $cGrauEscolaridade === 'Pós-graduação / Especialização' ? 'selected' : '' ?>>Pós-graduação / Especialização</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="idiomas">Idiomas:</label>
+                        <input type="text" id="idiomas" name="idiomas" placeholder="Ex: Português Nativo, Inglês Intermediário" value="<?= htmlspecialchars($cIdiomas) ?>">
+                    </div>
+                </div>
+
+                <div class="form-column">
+                    <div class="input-group">
+                        <label for="cursos">Cursos e Certificações:</label>
+                        <textarea id="cursos" name="cursos" placeholder="Ex: Curso de PHP Avançado, HTML5/CSS3, MySQL"><?= htmlspecialchars($cCursos) ?></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="experiencia">Experiência Profissional:</label>
+                        <textarea id="experiencia" name="experiencia" placeholder="Ex: Desenvolvedor Web na Empresa X (2022 - Atual)"><?= htmlspecialchars($cExperiencia) ?></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer-action">
+                <button type="submit" class="btn-submit">Finalizar e Salvar Currículo</button>
+                <div class="login-redirect">
+                    Deseja sair do sistema? <a href="logout.php">Clique aqui</a>
+                </div>
+            </div>
+        </form>
+
+        <div class="page-footer">
+            © <?= date('Y') ?> <span>DevIN</span>. Todos os direitos reservados.
+        </div>
+    </div>
+
+    <div class="right-side">
+        <a href="logout.php" class="btn-top-login">Sair</a>
+        <div class="mascot-container">
+            <img src="img/mascote.png" alt="Mascote DevIN" class="mascot-img">
+        </div>
+    </div>
 </div>
+
 </body>
 </html>

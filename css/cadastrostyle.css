@@ -303,3 +303,36 @@ body {
     .left-side { border-radius: 0; padding: 40px 25px; }
     .form-columns { flex-direction: column; gap: 18px; }
 }
+        /* Extensão de estilos para alinhar select e textarea ao design de pílula */
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1.5px solid #000000;
+            border-radius: 20px;
+            font-size: 1rem;
+            outline: none;
+            background-color: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .input-group select:focus,
+        .input-group textarea:focus {
+            border-color: #004aad;
+            box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 90px;
+            font-family: inherit;
+        }
+
+        .title-curriculo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #004aad;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+    
