@@ -159,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
 
         <section class="right-side">
-            <a href="login.php" class="btn-top-login">Login</a>
+            <a href="dashboard.php" class="btn-top-login">Login</a>
             
             <div class="mascot-container">
                 <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">

@@ -31,14 +31,14 @@ if ($result && $result->num_rows > 0) {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com'; 
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'seu_email@gmail.com'; 
-            $mail->Password   = 'sua_senha_de_app';    
+            $mail->Username   = 'devin.alcinabot@gmail.com'; 
+            $mail->Password   = 'fxrp qgxe izqo rncx';    
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
             $mail->CharSet    = 'UTF-8';
 
             // Destinatário
-            $mail->setFrom('seu_email@gmail.com', 'DevIN Suporte');
+            $mail->setFrom('devin.alcinabot@gmail.com', 'DevIN Suporte');
             $mail->addAddress($pessoa['email'], $pessoa['nome']);
 
             // Conteúdo do E-mail
@@ -47,7 +47,7 @@ if ($result && $result->num_rows > 0) {
             $mail->Body    = "Olá, <b>" . htmlspecialchars($pessoa['nome']) . "</b>!<br><br>" .
                              "Notamos que você iniciou seu cadastro na plataforma DevIN, mas ainda não cadastrou seu currículo.<br>" .
                              "Complete seu perfil para ter acesso às melhores vagas disponíveis!<br><br>" .
-                             "<a href='http://localhost:8080/DevIN/php/login.php'>Clique aqui para fazer login e completar</a>";
+                             "<a href='http://localhost:8080/DevIN/php/cadastrar_curriculo.php'>Clique aqui para fazer login e completar</a>";
 
             $mail->send();
 

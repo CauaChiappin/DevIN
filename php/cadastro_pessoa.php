@@ -13,6 +13,24 @@ if (file_exists(__DIR__ . '/config/database.php')) {
     require_once __DIR__ . '/../config/database.php';
 }
 
+// Função para validar os dígitos verificadores do CPF
+function validarCPF($cpf) {
+    $cpf = preg_replace('/[^0-9]/', '', $cpf);
+    if (strlen($cpf) != 11 || preg_match('/^(\d)\1{10}$/', $cpf)) {
+        return false;
+    }
+    for ($t = 9; $t < 11; $t++) {
+        for ($d = 0, $c = 0; $c < $t; $c++) {
+            $d += $cpf[$c] * (($t + 1) - $c);
+        }
+        $d = ((10 * $d) % 11) % 10;
+        if ($cpf[$c] != $d) {
+            return false;
+        }
+    }
+    return true;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
@@ -32,6 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cep           = trim($_POST['cep'] ?? '');
     $senha         = $_POST['senha'] ?? '';
     $confirmeSenha = $_POST['confirme_senha'] ?? '';
+
+    if (!validarCPF($cpf)) {
+        echo "<script>
+                alert('O CPF informado é inválido!');
+                window.history.back();
+              </script>";
+        exit;
+    }
 
     if (!empty($confirmeSenha) && $senha !== $confirmeSenha) {
         echo "<script>
