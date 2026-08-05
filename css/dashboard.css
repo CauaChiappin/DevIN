@@ -1,3 +1,7 @@
+/* =========================================================
+   DASHBOARD — ESTILOS GERAIS COMPARTILHADOS
+   Usados por empresa, pessoa e administrador.
+========================================================= */
 :root {
     --bg: #f7f5f0;
     --line: #9a9a9a;
@@ -11,6 +15,7 @@
     --sidebar-width: 240px;
 }
 
+/* ----- Perfil, modais e ícones (geral) ----- */
 /* Modal e foto do perfil */
 .profile-modal { width: min(460px, calc(100% - 32px)); }
 .profile-modal .modal-form { gap: 18px; }
@@ -193,6 +198,7 @@ a {
     text-decoration: none;
 }
 
+/* ----- Estrutura, navegação e listagem (geral) ----- */
 .dashboard-shell {
     width: 100%;
     height: 100vh;
@@ -226,6 +232,7 @@ a {
 ========================================= */
 
 /* Trava a tela inteira para não ter rolagem */
+/* ----- Página Sobre nós (geral) ----- */
 .page-sobre {
     height: 100vh;
     overflow: hidden; 
@@ -843,6 +850,11 @@ a {
     transform: skewY(-18deg);
 }
 
+/* =========================================================
+   EMPRESA
+   Publicação e edição de vagas, além do gerenciamento
+   de candidaturas.
+========================================================= */
 .post-tools,
 .acoes-card {
     display: flex;
@@ -863,6 +875,75 @@ a {
     color: var(--muted);
     font-size: 14px;
     text-align: center;
+}
+
+/* Formulario usado pela empresa para criar vagas reais. */
+.create-job-panel {
+    width: min(500px, 100%);
+    margin: 0 auto 14px;
+}
+
+.create-job-panel > summary {
+    list-style: none;
+}
+
+.create-job-panel > summary::-webkit-details-marker {
+    display: none;
+}
+
+.create-job-form {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid #dbe3eb;
+    border-radius: 8px;
+    background: var(--white);
+}
+
+.create-job-form label {
+    display: grid;
+    gap: 4px;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.create-job-form input,
+.create-job-form textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px;
+    font: inherit;
+    font-size: 12px;
+}
+
+.create-job-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.create-job-form .btn {
+    justify-self: start;
+}
+
+/* Area exclusiva para popular a lista com dados locais de teste. */
+.test-candidates-form {
+    width: min(500px, 100%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto 14px;
+    padding: 10px 12px;
+    border: 1px dashed #9ec4e8;
+    border-radius: 8px;
+    background: #f4f9ff;
+}
+
+.test-candidates-form small {
+    color: #52677a;
+    font-size: 11px;
+    line-height: 1.35;
 }
 
 .post-tools button {
@@ -888,6 +969,51 @@ a {
 /* Mantém a navegação por teclado visível e acessível. */
 .post-tools button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
+/* O summary vira o botao de editar da vaga, sem o marcador padrao do details. */
+.job-editor {
+    position: relative;
+}
+
+.job-editor > summary {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.job-editor > summary::-webkit-details-marker { display: none; }
+.job-editor > summary:hover { border-color: #f3d18a; background: #fff7e6; }
+
+/* Formulario compacto aberto ao clicar no icone de editar. */
+.edit-job-form {
+    position: absolute;
+    z-index: 2;
+    top: 38px;
+    right: 0;
+    display: grid;
+    width: 260px;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, .16);
+}
+
+.edit-job-form label { display: grid; gap: 4px; font-size: 11px; font-weight: 600; }
+.edit-job-form input, .edit-job-form textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px; font: inherit; font-size: 11px; }
+.edit-job-form textarea { min-height: 70px; resize: vertical; }
+.edit-job-form .btn { justify-self: start; }
+
+/* =========================================================
+   PESSOA
+   A pessoa utiliza os componentes gerais de vagas, perfil,
+   busca e detalhes. Os status abaixo aparecem nas candidaturas.
+========================================================= */
 .btn,
 .status {
     min-width: 90px;
@@ -925,6 +1051,7 @@ a {
     background: #777777;
 }
 
+/* ----- Detalhes e ações de vagas/candidaturas (pessoa e geral) ----- */
 .detalhe-area {
     height: 100vh;
     position: relative;
@@ -964,6 +1091,7 @@ a {
     gap: 22px;
 }
 
+/* ----- Perfil exibido na área central (geral) ----- */
 .perfil-card {
     width: min(430px, 100%);
     margin: 24px auto 0;
@@ -1126,6 +1254,7 @@ a {
     background: var(--blue);
 }
 
+/* ----- Configurações e formulário de perfil (geral) ----- */
 .settings-modal {
     width: min(420px, calc(100% - 32px));
     border: 0;
@@ -1167,6 +1296,11 @@ a {
 
 /* Tema visual compartilhado por todas as páginas do dashboard, inclusive “Sobre nós”.
    Assim, a troca de rota não altera cores nem escala tipográfica da interface. */
+/* =========================================================
+   ADMINISTRADOR
+   O administrador utiliza os componentes compartilhados:
+   cards, exclusão de registros e painel de detalhes.
+========================================================= */
 .dashboard-shell {
     grid-template-columns: var(--sidebar-width) minmax(340px, 42%) minmax(420px, 1fr);
     background: #fff;
@@ -1282,6 +1416,9 @@ a {
 .dashboard-shell .detalhe-area p { max-width: 620px; color: #5f6b77; font-size: 12px; font-weight: 400; line-height: 1.55; }
 .dashboard-shell .detalhe-area::before { content: "DETALHES"; display: block; margin-bottom: 14px; color: #7f8c99; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
 
+/* =========================================================
+   RESPONSIVIDADE — GERAL
+========================================================= */
 @media (max-width: 980px) {
     body {
         overflow: auto;

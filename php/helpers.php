@@ -39,6 +39,15 @@ function profileAvatar(array $perfil, string $classes): string
 {
     // Pega o caminho salvo no banco; string vazia é usada quando não existe foto.
     $foto = $perfil['foto'] ?? '';
+
+    // A foto da empresa agora fica no MEDIUMBLOB; transforma os bytes em uma imagem visivel no navegador.
+    if (is_string($foto) && $foto !== '' && !str_starts_with($foto, 'uploads/')) {
+        $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($foto);
+        if (in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
+            $imagem = '<img src="data:' . $mime . ';base64,' . base64_encode($foto) . '" alt="Foto de perfil">';
+            return '<span class="' . h($classes) . ' current-user-avatar">' . $imagem . '</span>';
+        }
+    }
     // Só renderiza a tag img para caminhos de upload existentes; caso contrário, mantém o avatar padrão.
     $imagem = is_string($foto) && str_starts_with($foto, 'uploads/') && is_file(__DIR__ . '/' . $foto)
         // h() escapa o caminho antes de colocá-lo no HTML, evitando injeção de código.

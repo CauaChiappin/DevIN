@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Se encontrou um currículo cadastrado, manda para o Dashboard
                 if ($res && $res->num_rows > 0) {
-                    header('Location: dashboard_pessoa.php');
+                    header('Location:pessoa.php');
                 } else {
                     // Se não tiver currículo registrado, obriga a cadastrar
                     header('Location: cadastrar_curriculo.php');

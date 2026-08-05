@@ -88,44 +88,163 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Vagas sempre sao manipuladas com a empresa da sessao, impedindo editar vagas de terceiros.
-        if (in_array($action, ['create_job', 'update_job', 'delete_job'], true)) {
+        // Cria uma vaga real para a empresa atualmente logada.
+        if ($action === 'create_job') {
+            $titulo = trim($_POST['titulo'] ?? '');
+            $descricao = trim($_POST['descricao'] ?? '');
+
+            if ($titulo === '' || $descricao === '' || strlen($titulo) > 25 || strlen($descricao) > 255) {
+                throw new InvalidArgumentException('Informe titulo (ate 25 caracteres) e descricao (ate 255 caracteres).');
+            }
+
+            $conn = getDatabaseConnection();
+            $stmt = $conn->prepare('INSERT INTO vagas (titulo, descricao, tempo_vaga, id_empresa) VALUES (?, ?, CURDATE(), ?)');
+            if (!$stmt) {
+                throw new RuntimeException('Nao foi possivel criar a vaga: ' . $conn->error);
+            }
+
+            $empresaId = (int) $_SESSION['usuario_id'];
+            $stmt->bind_param('ssi', $titulo, $descricao, $empresaId);
+            $stmt->execute();
+            $stmt->close();
+            $conn->close();
+
+            $_SESSION['job_success'] = 'Vaga publicada com sucesso.';
+            header('Location: empresa.php?pagina=inicio');
+            exit;
+        }
+
+        // Atualiza uma vaga, mas somente se ela pertencer a empresa logada.
+        if ($action === 'update_job') {
+            $vagaId = (int) ($_POST['id_vaga'] ?? 0);
+            $titulo = trim($_POST['titulo'] ?? '');
+            $descricao = trim($_POST['descricao'] ?? '');
+
+            if ($vagaId <= 0 || $titulo === '' || $descricao === '' || strlen($titulo) > 25 || strlen($descricao) > 255) {
+                throw new InvalidArgumentException('Dados da vaga invalidos.');
+            }
+
+            $conn = getDatabaseConnection();
+            $stmt = $conn->prepare('UPDATE vagas SET titulo = ?, descricao = ? WHERE id_vaga = ? AND id_empresa = ?');
+            if (!$stmt) {
+                throw new RuntimeException('Nao foi possivel editar a vaga: ' . $conn->error);
+            }
+
+            $empresaId = (int) $_SESSION['usuario_id'];
+            $stmt->bind_param('ssii', $titulo, $descricao, $vagaId, $empresaId);
+            $stmt->execute();
+            $stmt->close();
+            $conn->close();
+
+            $_SESSION['job_success'] = 'Vaga atualizada com sucesso.';
+            header('Location: empresa.php?pagina=inicio');
+            exit;
+        }
+
+        // Exclui uma vaga da empresa. As candidaturas relacionadas sao apagadas pelo banco.
+        if ($action === 'delete_job') {
+            $vagaId = (int) ($_POST['id_vaga'] ?? 0);
+            if ($vagaId <= 0) {
+                throw new InvalidArgumentException('Vaga invalida.');
+            }
+
+            $conn = getDatabaseConnection();
+            $stmt = $conn->prepare('DELETE FROM vagas WHERE id_vaga = ? AND id_empresa = ?');
+            if (!$stmt) {
+                throw new RuntimeException('Nao foi possivel excluir a vaga: ' . $conn->error);
+            }
+
+            $empresaId = (int) $_SESSION['usuario_id'];
+            $stmt->bind_param('ii', $vagaId, $empresaId);
+            $stmt->execute();
+            if ($stmt->affected_rows !== 1) {
+                throw new RuntimeException('Vaga nao encontrada ou sem permissao para exclui-la.');
+            }
+            $stmt->close();
+            $conn->close();
+
+            $_SESSION['job_success'] = 'Vaga excluida com sucesso.';
+            header('Location: empresa.php?pagina=inicio');
+            exit;
+        }
+
+        // Gera candidatos locais de teste para permitir testar aprovar e recusar.
+        if ($action === 'create_test_candidates') {
             $empresaId = (int) $_SESSION['usuario_id'];
             $conn = getDatabaseConnection();
-            if ($action === 'delete_job') {
-                $idVaga = (int) ($_POST['id_vaga'] ?? 0);
-                $stmt = $conn->prepare('DELETE FROM vagas WHERE id_vaga = ? AND id_empresa = ?');
-                $stmt->bind_param('ii', $idVaga, $empresaId);
-                $stmt->execute();
-                if ($stmt->affected_rows !== 1) throw new RuntimeException('Vaga nao encontrada ou sem permissao para exclui-la.');
-                $_SESSION['job_success'] = 'Vaga excluida com sucesso.';
-            } else {
-                $titulo = trim($_POST['titulo'] ?? '');
-                $descricao = trim($_POST['descricao'] ?? '');
-                if ($titulo === '') throw new InvalidArgumentException('Informe o titulo da vaga.');
-                $hasDescricao = (bool) $conn->query("SHOW COLUMNS FROM vagas LIKE 'descricao'")->num_rows;
-                if ($action === 'create_job') {
-                    $stmt = $conn->prepare($hasDescricao ? 'INSERT INTO vagas (id_empresa, titulo, descricao) VALUES (?, ?, ?)' : 'INSERT INTO vagas (id_empresa, titulo) VALUES (?, ?)');
-                    $hasDescricao ? $stmt->bind_param('iss', $empresaId, $titulo, $descricao) : $stmt->bind_param('is', $empresaId, $titulo);
-                    $stmt->execute();
-                    $_SESSION['job_success'] = 'Vaga criada e publicada com sucesso.';
+            $conn->begin_transaction();
+
+            $vagaStmt = $conn->prepare('SELECT id_vaga FROM vagas WHERE id_empresa = ? ORDER BY id_vaga ASC LIMIT 1');
+            $vagaStmt->bind_param('i', $empresaId);
+            $vagaStmt->execute();
+            $vaga = $vagaStmt->get_result()->fetch_assoc();
+            $vagaStmt->close();
+
+            if (!$vaga) {
+                throw new RuntimeException('Publique uma vaga antes de criar candidatos de teste.');
+            }
+
+            $buscarPessoa = $conn->prepare('SELECT id_pessoa FROM pessoa WHERE email = ? LIMIT 1');
+            $criarPessoa = $conn->prepare('INSERT INTO pessoa (nome, cpf, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)');
+            $buscarCandidatura = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_pessoa = ? AND id_vaga = ? LIMIT 1');
+            $criarCandidatura = $conn->prepare('INSERT INTO candidatura (data_candidatura, status, id_pessoa, id_vaga) VALUES (CURDATE(), "pendente", ?, ?)');
+            $resetarCandidatura = $conn->prepare('UPDATE candidatura SET status = "pendente" WHERE id_candidatura = ?');
+
+            if (!$buscarPessoa || !$criarPessoa || !$buscarCandidatura || !$criarCandidatura || !$resetarCandidatura) {
+                throw new RuntimeException('Nao foi possivel preparar os dados de teste: ' . $conn->error);
+            }
+
+            foreach ([1 => 'Ana Teste', 2 => 'Bruno Teste'] as $indice => $nomeTeste) {
+                $emailTeste = 'candidato.teste.' . $empresaId . '.' . $indice . '@devin.local';
+                $cpfTeste = sprintf('%011d', 90000000000 + ($empresaId * 10) + $indice);
+                $cepTeste = '01001000';
+                $telefoneTeste = '1199999000' . $indice;
+                $senhaTeste = password_hash('teste123', PASSWORD_DEFAULT);
+
+                $buscarPessoa->bind_param('s', $emailTeste);
+                $buscarPessoa->execute();
+                $pessoa = $buscarPessoa->get_result()->fetch_assoc();
+
+                if ($pessoa) {
+                    $pessoaId = (int) $pessoa['id_pessoa'];
                 } else {
-                    $idVaga = (int) ($_POST['id_vaga'] ?? 0);
-                    $stmt = $conn->prepare($hasDescricao ? 'UPDATE vagas SET titulo = ?, descricao = ? WHERE id_vaga = ? AND id_empresa = ?' : 'UPDATE vagas SET titulo = ? WHERE id_vaga = ? AND id_empresa = ?');
-                    $hasDescricao ? $stmt->bind_param('ssii', $titulo, $descricao, $idVaga, $empresaId) : $stmt->bind_param('sii', $titulo, $idVaga, $empresaId);
-                    $stmt->execute();
-                    $_SESSION['job_success'] = 'Vaga atualizada com sucesso.';
+                    $criarPessoa->bind_param('ssssss', $nomeTeste, $cpfTeste, $cepTeste, $emailTeste, $senhaTeste, $telefoneTeste);
+                    $criarPessoa->execute();
+                    $pessoaId = $conn->insert_id;
+                }
+
+                $vagaId = (int) $vaga['id_vaga'];
+                $buscarCandidatura->bind_param('ii', $pessoaId, $vagaId);
+                $buscarCandidatura->execute();
+                $candidatura = $buscarCandidatura->get_result()->fetch_assoc();
+
+                if ($candidatura) {
+                    $candidaturaId = (int) $candidatura['id_candidatura'];
+                    $resetarCandidatura->bind_param('i', $candidaturaId);
+                    $resetarCandidatura->execute();
+                } else {
+                    $criarCandidatura->bind_param('ii', $pessoaId, $vagaId);
+                    $criarCandidatura->execute();
                 }
             }
+
+            $buscarPessoa->close();
+            $criarPessoa->close();
+            $buscarCandidatura->close();
+            $criarCandidatura->close();
+            $resetarCandidatura->close();
+            $conn->commit();
             $conn->close();
-            header('Location: empresa.php?pagina=inicio');
+
+            $_SESSION['candidate_success'] = 'Dois candidatos de teste foram criados para a sua primeira vaga.';
+            header('Location: empresa.php?pagina=candidatos');
             exit;
         }
 
         // Ação 1: Atualizar o perfil da empresa (dados pessoais e foto)
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
-            $_SESSION['usuario_nome'] = trim($_POST['nome']);
+            // O nome da empresa e fixo; por isso a sessao tambem nao recebe nome vindo do formulario.
             $_SESSION['usuario_email'] = trim($_POST['email']);
             $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.';
             header('Location: empresa.php?perfil=meu'); exit;
@@ -145,9 +264,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (Throwable $exception) {
         // Se acontecer qualquer erro durante os processos acima, guarda a mensagem de erro
-        if ($action === 'update_application_status') {
+        if (in_array($action, ['update_application_status', 'create_test_candidates'], true)) {
             $_SESSION['candidate_error'] = $exception->getMessage();
             header('Location: empresa.php?pagina=candidatos'); exit;
+        }
+
+        if (in_array($action, ['create_job', 'update_job', 'delete_job'], true)) {
+            $_SESSION['job_error'] = $exception->getMessage();
+            header('Location: empresa.php?pagina=inicio'); exit;
         }
 
         $_SESSION['profile_error'] = $exception->getMessage();
@@ -174,11 +298,26 @@ $empresaPosts = $stmtVagas->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmtVagas->close();
 $conn->close();
 
-// Lista de talentos/desenvolvedores disponíveis na plataforma
+$empresaId = (int) $_SESSION['usuario_id'];
+$stmtVagas->bind_param('i', $empresaId);
+$stmtVagas->execute();
+$empresaPosts = $stmtVagas->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmtVagas->close();
+$conn->close();
+
+foreach ($empresaPosts as &$post) {
+    $post['resumo'] = 'Publicada em ' . date('d/m/Y', strtotime($post['tempo_vaga']));
+    $post['detalhe'] = $post['descricao'];
+}
+unset($post);
+
+// Pessoas de exemplo mantidas no inicio para a empresa visualizar a tela como no layout original.
 $talentos = [
     ['nome' => 'Marina Santos', 'resumo' => 'React, CSS e comunicacao clara.', 'detalhe' => 'Marina tem interesse em vagas de front-end junior e disponibilidade para conversar esta semana.'],
     ['nome' => 'Lucas Pereira', 'resumo' => 'PHP, MySQL e logica de programacao.', 'detalhe' => 'Lucas procura primeira oportunidade em desenvolvimento web e ja criou projetos escolares com banco de dados.'],
 ];
+
+// Lista de talentos/desenvolvedores disponíveis na plataforma
 
 // Lista de candidatos que se inscreveram nas vagas da empresa
 // Busca no banco somente quem se candidatou a vagas desta empresa.
@@ -305,6 +444,12 @@ unset($candidato);
                 <?php if (!$candidatos): ?>
                     <p class="empty-state">Ainda nao ha candidaturas para as suas vagas.</p>
                 <?php endif; ?>
+                <form method="post" class="test-candidates-form">
+                    <input type="hidden" name="action" value="create_test_candidates">
+                    <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                    <button class="btn primary" type="submit">Criar candidatos de teste</button>
+                    <small>Cria ou reinicia dois candidatos pendentes na primeira vaga da empresa.</small>
+                </form>
                 <?php foreach ($candidatos as $candidato): ?>
                     <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
@@ -331,8 +476,31 @@ unset($candidato);
                 <?php endforeach; ?>
 
             <?php else: ?>
-                <?php if (!empty($_SESSION['job_success'])): ?><p class="form-success"><?= h($_SESSION['job_success']); unset($_SESSION['job_success']); ?></p><?php endif; ?>
-                <button class="criar-post" type="button" data-open-job-create>+ Criar vaga</button>
+                <?php if (!empty($_SESSION['job_error'])): ?>
+                    <p class="form-error"><?= h($_SESSION['job_error']); unset($_SESSION['job_error']); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($_SESSION['job_success'])): ?>
+                    <p class="form-success"><?= h($_SESSION['job_success']); unset($_SESSION['job_success']); ?></p>
+                <?php endif; ?>
+
+                <details class="create-job-panel">
+                    <summary class="criar-post">Publicar nova vaga</summary>
+                    <form method="post" class="create-job-form">
+                        <input type="hidden" name="action" value="create_job">
+                        <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                        <label>Titulo da vaga
+                            <input name="titulo" type="text" maxlength="25" placeholder="Ex.: Desenvolvedor PHP" required>
+                        </label>
+                        <label>Descricao
+                            <textarea name="descricao" maxlength="255" placeholder="Descreva as atividades e requisitos da vaga." required></textarea>
+                        </label>
+                        <button class="btn primary" type="submit">Publicar vaga</button>
+                    </form>
+                </details>
+
+                <?php if (!$empresaPosts): ?>
+                    <p class="empty-state">Voce ainda nao publicou nenhuma vaga.</p>
+                <?php endif; ?>
 
                 <?php foreach ($empresaPosts as $post): ?>
                     <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descricao informada.') ?>" data-job-title="<?= h($post['titulo']) ?>">
@@ -342,8 +510,31 @@ unset($candidato);
                             <p><?= h($post['descricao'] ?: 'Sem descricao informada.') ?></p>
                         </div>
                         <div class="post-tools">
-                            <button class="edit" type="button" aria-label="Editar vaga" data-open-job-edit data-job-id="<?= (int) $post['id_vaga'] ?>" data-job-title="<?= h($post['titulo']) ?>" data-job-description="<?= h($post['descricao']) ?>"><?= dashboardIcon('edit') ?></button>
-                            <form method="post"><input type="hidden" name="action" value="delete_job"><input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>"><input type="hidden" name="id_vaga" value="<?= (int) $post['id_vaga'] ?>"><button class="delete" type="submit" aria-label="Excluir vaga" data-delete-job><?= dashboardIcon('trash') ?></button></form>
+                            <details class="job-editor">
+                                <summary class="edit" aria-label="Editar vaga" title="Editar vaga">
+                                    <?= dashboardIcon('edit') ?>
+                                </summary>
+                                <form method="post" class="edit-job-form">
+                                    <input type="hidden" name="action" value="update_job">
+                                    <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                                    <input type="hidden" name="id_vaga" value="<?= (int) $post['id_vaga'] ?>">
+                                    <label>Titulo
+                                        <input name="titulo" type="text" maxlength="25" value="<?= h($post['titulo']) ?>" required>
+                                    </label>
+                                    <label>Descricao
+                                        <textarea name="descricao" maxlength="255" required><?= h($post['descricao']) ?></textarea>
+                                    </label>
+                                    <button class="btn primary" type="submit">Salvar</button>
+                                </form>
+                            </details>
+                            <form method="post" onsubmit="return confirm('Excluir esta vaga e as candidaturas dela?');">
+                                <input type="hidden" name="action" value="delete_job">
+                                <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                                <input type="hidden" name="id_vaga" value="<?= (int) $post['id_vaga'] ?>">
+                                <button class="delete" type="submit" aria-label="Excluir vaga" title="Excluir vaga">
+                                    <?= dashboardIcon('trash') ?>
+                                </button>
+                            </form>
                         </div>
                     </article>
                 <?php endforeach; ?>
@@ -407,7 +598,8 @@ unset($candidato);
             </div>
 
             <div class="profile-fields">
-                <label>Nome<input name="nome" type="text" value="<?= h($perfilAtual['nome']) ?>" required></label>
+                <!-- Nome exibido apenas para consulta; ele nao e enviado nem pode ser editado. -->
+                <label>Nome da empresa<input type="text" value="<?= h($perfilAtual['nome']) ?>" readonly aria-readonly="true"></label>
                 <label>E-mail account<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" required></label>
                 <label>Celular<input name="telefone" type="tel" value="<?= h($perfilAtual['telefone'] ?? '') ?>" required></label>
                 <label>CEP<input name="cep" type="text" value="<?= h($perfilAtual['cep'] ?? '') ?>" required></label>
