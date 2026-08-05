@@ -290,14 +290,7 @@ if (!$perfilAtual) { header('Location: logout.php'); exit; }
 $conn = getDatabaseConnection();
 $hasDescricao = (bool) $conn->query("SHOW COLUMNS FROM vagas LIKE 'descricao'")->num_rows;
 $descricaoSql = $hasDescricao ? 'COALESCE(descricao, "")' : '""';
-$stmtVagas = $conn->prepare("SELECT id_vaga, titulo, $descricaoSql AS descricao FROM vagas WHERE id_empresa = ? ORDER BY id_vaga DESC");
-$empresaId = (int) $_SESSION['usuario_id'];
-$stmtVagas->bind_param('i', $empresaId);
-$stmtVagas->execute();
-$empresaPosts = $stmtVagas->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmtVagas->close();
-$conn->close();
-
+$stmtVagas = $conn->prepare("SELECT id_vaga, titulo, $descricaoSql AS descricao, tempo_vaga FROM vagas WHERE id_empresa = ? ORDER BY id_vaga DESC");
 $empresaId = (int) $_SESSION['usuario_id'];
 $stmtVagas->bind_param('i', $empresaId);
 $stmtVagas->execute();
