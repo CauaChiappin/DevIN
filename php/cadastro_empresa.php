@@ -119,7 +119,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     <div id="status-alert-container"></div>
 
     <script src="../js/cadastro.js"></script>
-
 </body>
 </html>
 
@@ -214,7 +213,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->execute()) {$auth = AuthController::login($email,$_POST['senha']);
         AuthController::establishSession($auth);
-        header('Location: ' . AuthController::redirectByUserType('empresa'));
+        header('Location: ' . AuthController::redirectByUserType($auth['usuario']['tipo']));
         exit;
     } else {
         echo "<script>

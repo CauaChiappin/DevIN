@@ -25,19 +25,48 @@ function findProfile(string $tipo, int $id): ?array
     return $profile;
 }
 
+/*
+ * Recebe a foto enviada pelo formulário, valida, move para php/uploads e devolve
+ * o caminho que será gravado na coluna foto do banco de dados.
+ */
 function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $currentPhoto): ?string
 {
+    // Sem arquivo novo, preserva o caminho da foto já salva no banco.
     if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) return $currentPhoto;
+    // Evita acessar uma chave inexistente caso o upload chegue incompleto.
+    $temporaryFile = $upload['tmp_name'] ?? '';
+    // Um caminho temporário vazio significa que o PHP não conseguiu receber o arquivo corretamente.
+    if (!is_string($temporaryFile) || $temporaryFile === '') {
+        throw new RuntimeException('Arquivo de imagem invÃ¡lido.');
+    }
+    // Confere o código do upload e garante que o arquivo veio realmente por HTTP POST.
     if (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK || !is_uploaded_file($upload['tmp_name'])) throw new RuntimeException('Não foi possível enviar a foto.');
 
+    // Confere o tipo real do arquivo no servidor, sem confiar apenas na extensão enviada.
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($upload['tmp_name']);
+    // Define quais tipos são permitidos e qual extensão será usada no nome final.
     $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+    // Empresa e pessoa usam MEDIUMBLOB: le os bytes da imagem para salvar direto na coluna foto.
+    if (in_array($tipo, ['empresa', 'pessoa'], true)) {
+        if (!isset($extensions[$mime])) {
+            throw new InvalidArgumentException('Envie uma imagem JPG, PNG ou WEBP.');
+        }
+        $photoBlob = file_get_contents($temporaryFile);
+        if ($photoBlob === false) {
+            throw new RuntimeException('Nao foi possivel ler a foto enviada.');
+        }
+        return $photoBlob;
+    }
     if (!isset($extensions[$mime])) throw new InvalidArgumentException('Envie uma imagem JPG, PNG ou WEBP.');
 
+    // Caminho físico da pasta onde as fotos ficam salvas dentro do projeto.
     $directory = __DIR__ . '/../uploads';
     if (!is_dir($directory) && !mkdir($directory, 0755, true)) throw new RuntimeException('Não foi possível preparar o armazenamento da foto.');
+    // Cria nome único: tipo de conta + id + parte aleatória + extensão permitida.
     $filename = sprintf('%s-%d-%s.%s', $tipo, $id, bin2hex(random_bytes(8)), $extensions[$mime]);
+    // Move o upload temporário para a pasta pública e retorna o caminho a salvar no banco.
     if (!move_uploaded_file($upload['tmp_name'], $directory . '/' . $filename)) throw new RuntimeException('Não foi possível salvar a foto.');
+    // Este caminho relativo é o valor salvo no banco e usado mais tarde pela tag img.
     return 'uploads/' . $filename;
 }
 
@@ -47,24 +76,57 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     $nome = trim($data['nome'] ?? '');
     $email = filter_var(trim($data['email'] ?? ''), FILTER_VALIDATE_EMAIL);
 
-    if ($nome === '' || !$email) {
+    // Empresa nao envia nome no formulario: o nome cadastrado nao pode ser alterado.
+    if (($tipo !== 'empresa' && $nome === '') || !$email) {
         throw new InvalidArgumentException('Informe um nome e e-mail válidos.');
     }
 
+    // Busca o perfil atual para manter a foto anterior caso uma nova não seja enviada.
     $currentProfile = findProfile($tipo, $id);
+    if (!$currentProfile) {
+        throw new RuntimeException('Perfil nao encontrado.');
+    }
+    // Ignora qualquer nome enviado manualmente e preserva o nome oficial da empresa.
+    if ($tipo === 'empresa') {
+        $nome = $currentProfile['nome'];
+    }
+    // Salva a nova foto (ou mantém a anterior) e recebe o caminho final.
     $foto = saveProfilePhoto($tipo, $id, $upload, $currentProfile['foto'] ?? null);
     $conn = getDatabaseConnection();
 
     if ($tipo === 'adm') {
         $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, foto = ? WHERE {$idColumn} = ?");
+        // prepare() retorna false se a consulta estiver inválida; não chame bind_param nesse caso.
+        if (!$stmt) {
+            throw new RuntimeException('NÃ£o foi possÃ­vel preparar a atualizaÃ§Ã£o do perfil: ' . $conn->error);
+        }
         $stmt->bind_param('sssi', $nome, $email, $foto, $id);
+    } elseif ($tipo === 'empresa') {
+        $cep = preg_replace('/\D/', '', $data['cep'] ?? '');
+        $telefone = preg_replace('/\D/', '', $data['telefone'] ?? '');
+        if ($cep === '' || $telefone === '') {
+            throw new InvalidArgumentException('Informe CEP e telefone validos.');
+        }
+
+        // A consulta da empresa nao possui nome: nem o formulario nem uma requisicao manual podem muda-lo.
+        $stmt = $conn->prepare("UPDATE {$table} SET email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?");
+        if (!$stmt) {
+            throw new RuntimeException('Nao foi possivel preparar a atualizacao do perfil: ' . $conn->error);
+        }
+        $stmt->bind_param('ssssi', $email, $cep, $telefone, $foto, $id);
     } else {
         $cep = preg_replace('/\D/', '', $data['cep'] ?? '');
         $telefone = preg_replace('/\D/', '', $data['telefone'] ?? '');
         if ($cep === '' || $telefone === '') {
             throw new InvalidArgumentException('Informe CEP e telefone válidos.');
         }
+        // Os ? são preenchidos depois por bind_param, sem concatenar dados do usuário no SQL.
         $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?");
+        // A coluna foto deve existir na tabela empresa (e pessoa) para salvar o caminho do upload.
+        if (!$stmt) {
+            throw new RuntimeException('NÃ£o foi possÃ­vel preparar a atualizaÃ§Ã£o do perfil: ' . $conn->error);
+        }
+        // 'sssssi' informa os tipos: cinco textos e, por último, o id inteiro.
         $stmt->bind_param('sssssi', $nome, $email, $cep, $telefone, $foto, $id);
     }
 

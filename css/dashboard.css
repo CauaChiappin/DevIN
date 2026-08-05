@@ -1,3 +1,7 @@
+/* =========================================================
+   DASHBOARD — ESTILOS GERAIS COMPARTILHADOS
+   Usados por empresa, pessoa e administrador.
+========================================================= */
 :root {
     --bg: #f7f5f0;
     --line: #9a9a9a;
@@ -11,6 +15,7 @@
     --sidebar-width: 240px;
 }
 
+/* ----- Perfil, modais e ícones (geral) ----- */
 /* Modal e foto do perfil */
 .profile-modal { width: min(460px, calc(100% - 32px)); }
 .profile-modal .modal-form { gap: 18px; }
@@ -126,6 +131,7 @@
     color: currentColor;
 }
 
+/* O SVG é o único desenho dos ícones de editar e excluir. */
 .post-tools .ui-icon {
     width: 20px;
     height: 20px;
@@ -133,6 +139,7 @@
 
 .post-tools .edit { color: #e89b00; }
 .post-tools .delete { color: var(--red); }
+/* Impede que os pseudo-elementos legados desenhem um segundo ícone sobre o SVG. */
 .post-tools .edit::before,
 .post-tools .delete::before { content: none; display: none; }
 
@@ -191,13 +198,13 @@ a {
     text-decoration: none;
 }
 
+/* ----- Estrutura, navegação e listagem (geral) ----- */
 .dashboard-shell {
     width: 100%;
     height: 100vh;
     display: grid;
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr) minmax(320px, 42vw);
     margin: 0 auto;
-    border-left: 1px solid #eeeeee;
     border-right: 1px solid #eeeeee;
     overflow: hidden;
     transition: grid-template-columns .25s ease;
@@ -220,6 +227,225 @@ a {
 .page-sobre .lista-area {
     padding: 52px 36px;
 }
+/* =========================================
+   ESTILOS DA PÁGINA SOBRE NÓS (SEM SCROLL)
+========================================= */
+
+/* Trava a tela inteira para não ter rolagem */
+/* ----- Página Sobre nós (geral) ----- */
+.page-sobre {
+    height: 100vh;
+    overflow: hidden; 
+}
+
+/* Força a área principal a ocupar a tela toda */
+.page-sobre .lista-area {
+    padding: 0 !important;
+    /* Mantém a área ao lado da sidebar na mesma base bege do site. */
+    background-color: var(--bg) !important;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.sobre-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* SEÇÃO SUPERIOR (BEGE) */
+.sobre-top-section {
+    background-color: #f8f7f3; /* Cor bege fiel à imagem 1 */
+    flex: 0 0 58%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+}
+
+.badge-historia {
+    background-color: #e6effc;
+    color: #0056b3;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.sobre-title {
+    font-size: clamp(28px, 1.7vw, 34px);
+    color: #111;
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+.text-blue {
+    color: #0056b3;
+}
+
+.sobre-subtitle {
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* CARDS VISÃO E MISSÃO */
+.sobre-cards {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 960px;
+}
+
+.sobre-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    min-height: 190px;
+    padding: 22px;
+    flex: 1;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.icon-placeholder {
+    width: 32px;
+    height: 32px;
+    background-color: #e6effc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    display: grid;
+    place-items: center;
+    color: #176cc0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.sobre-card h3 {
+    font-size: 19px;
+    margin-bottom: 8px;
+    color: #111;
+}
+
+.sobre-card p {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* SEÇÃO INFERIOR (BRANCA) */
+.sobre-bottom-section {
+    background-color: var(--bg);
+    flex: 1;
+    display: grid;
+    /* Os dois blocos formam uma composição compacta e visualmente centrada. */
+    grid-template-columns: minmax(0, 510px) minmax(0, 510px);
+    gap: 48px;
+    justify-content: center;
+    /* Centraliza os dois blocos no espaço inferior, evitando que fiquem colados ao divisor. */
+    align-items: center;
+    padding: 20px 32px;
+    border-top: 1px solid #d9d4ca;
+}
+
+.sobre-about-text {
+    flex: 1;
+    max-width: 510px;
+}
+
+.sobre-about-text h2 {
+    font-size: 26px;
+    margin: 0 0 15px;
+    color: #111;
+}
+
+.sobre-about-text p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* CARD TIME FUNDADOR */
+.sobre-team-card {
+    flex: 1;
+    max-width: none;
+    background-color: #f8f7f3; /* Fundo levemente bege */
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.team-header {
+    font-weight: 600;
+    color: #555;
+    margin: 0 0 10px;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.team-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.team-list li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid #eee;
+}
+
+.team-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.team-avatar {
+    width: 36px;
+    height: 36px;
+    background-color: #0056b3; /* Bolinha azul */
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    object-fit: cover;
+}
+
+.team-info strong {
+    font-size: 15px;
+    display: block;
+    color: #111;
+}
+
+.team-info span,
+.team-info a {
+    display: block;
+    font-size: 13px;
+    color: #888;
+}
+
+.team-info a:hover,
+.team-info a:focus-visible {
+    color: var(--blue);
+    text-decoration: underline;
+}
 
 .page-sobre .sobre-intro,
 .page-sobre .sobre-cards,
@@ -230,7 +456,7 @@ a {
 }
 
 .page-sobre .sobre-cards {
-    gap: 32px;
+    gap: 10px;
 }
 
 .page-sobre .fundadores {
@@ -246,7 +472,6 @@ a {
     gap: 28px;
     padding: 30px 22px 18px;
     background: var(--bg);
-    border-right: 2px solid var(--line);
     overflow: hidden;
 }
 
@@ -386,8 +611,8 @@ a {
 }
 
 .conta {
-    border-top: 2px solid var(--line);
-    padding-top: 22px;
+    /* Remove a antiga borda horizontal que aparecia como uma linha na sidebar. */
+    padding-top: 14px;
 }
 
 .sair {
@@ -625,6 +850,11 @@ a {
     transform: skewY(-18deg);
 }
 
+/* =========================================================
+   EMPRESA
+   Publicação e edição de vagas, além do gerenciamento
+   de candidaturas.
+========================================================= */
 .post-tools,
 .acoes-card {
     display: flex;
@@ -632,35 +862,158 @@ a {
     gap: 12px;
 }
 
+/* Mantem os botoes de aprovar e recusar alinhados dentro do card. */
+.candidate-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Aviso exibido quando a empresa ainda nao recebeu candidaturas. */
+.empty-state {
+    margin: 28px auto;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Formulario usado pela empresa para criar vagas reais. */
+.create-job-panel {
+    width: min(500px, 100%);
+    margin: 0 auto 14px;
+}
+
+.create-job-panel > summary {
+    list-style: none;
+}
+
+.create-job-panel > summary::-webkit-details-marker {
+    display: none;
+}
+
+.create-job-form {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid #dbe3eb;
+    border-radius: 8px;
+    background: var(--white);
+}
+
+.create-job-form label {
+    display: grid;
+    gap: 4px;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.create-job-form input,
+.create-job-form textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px;
+    font: inherit;
+    font-size: 12px;
+}
+
+.create-job-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.create-job-form .btn {
+    justify-self: start;
+}
+
+/* Area exclusiva para popular a lista com dados locais de teste. */
+.test-candidates-form {
+    width: min(500px, 100%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto 14px;
+    padding: 10px 12px;
+    border: 1px dashed #9ec4e8;
+    border-radius: 8px;
+    background: #f4f9ff;
+}
+
+.test-candidates-form small {
+    color: #52677a;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
 .post-tools button {
-    width: 24px;
-    height: 24px;
-    border: 0;
+    /* grid + place-items deixam o ícone exatamente no centro do botão. */
+    display: grid;
+    /* A área de 32px facilita clicar, mesmo que o SVG seja menor. */
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    padding: 0;
+    /* A borda transparente evita mudança de tamanho quando ela aparece no hover. */
+    border: 1px solid transparent;
+    border-radius: 8px;
     background: transparent;
     cursor: pointer;
+    transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
 
-.post-tools .edit::before {
-    content: "";
-    display: block;
-    width: 18px;
-    height: 7px;
-    border-radius: 3px;
-    background: #ffb42b;
-    transform: rotate(-42deg);
+/* Feedback visual discreto ao passar o mouse sobre os botões de ação. */
+.post-tools button:hover { transform: translateY(-1px); }
+.post-tools .edit:hover { border-color: #f3d18a; background: #fff7e6; }
+.post-tools .delete:hover { border-color: #f1b9bf; background: #fff0f1; }
+/* Mantém a navegação por teclado visível e acessível. */
+.post-tools button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+/* O summary vira o botao de editar da vaga, sem o marcador padrao do details. */
+.job-editor {
+    position: relative;
 }
 
-.post-tools .delete::before {
-    content: "";
-    display: block;
-    width: 15px;
-    height: 18px;
-    margin: 2px auto 0;
-    border-radius: 2px;
-    background: var(--red);
-    box-shadow: 0 -4px 0 -1px var(--red);
+.job-editor > summary {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    list-style: none;
 }
 
+.job-editor > summary::-webkit-details-marker { display: none; }
+.job-editor > summary:hover { border-color: #f3d18a; background: #fff7e6; }
+
+/* Formulario compacto aberto ao clicar no icone de editar. */
+.edit-job-form {
+    position: absolute;
+    z-index: 2;
+    top: 38px;
+    right: 0;
+    display: grid;
+    width: 260px;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, .16);
+}
+
+.edit-job-form label { display: grid; gap: 4px; font-size: 11px; font-weight: 600; }
+.edit-job-form input, .edit-job-form textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px; font: inherit; font-size: 11px; }
+.edit-job-form textarea { min-height: 70px; resize: vertical; }
+.edit-job-form .btn { justify-self: start; }
+
+/* =========================================================
+   PESSOA
+   A pessoa utiliza os componentes gerais de vagas, perfil,
+   busca e detalhes. Os status abaixo aparecem nas candidaturas.
+========================================================= */
 .btn,
 .status {
     min-width: 90px;
@@ -698,6 +1051,7 @@ a {
     background: #777777;
 }
 
+/* ----- Detalhes e ações de vagas/candidaturas (pessoa e geral) ----- */
 .detalhe-area {
     height: 100vh;
     position: relative;
@@ -737,6 +1091,7 @@ a {
     gap: 22px;
 }
 
+/* ----- Perfil exibido na área central (geral) ----- */
 .perfil-card {
     width: min(430px, 100%);
     margin: 24px auto 0;
@@ -899,6 +1254,7 @@ a {
     background: var(--blue);
 }
 
+/* ----- Configurações e formulário de perfil (geral) ----- */
 .settings-modal {
     width: min(420px, calc(100% - 32px));
     border: 0;
@@ -920,6 +1276,7 @@ a {
 
 .modal-form label { display: grid; gap: 5px; font-size: 13px; font-weight: 600; }
 .modal-form input, .modal-form select { width: 100%; height: 34px; border: 1px solid #c5c5c5; border-radius: 6px; padding: 0 9px; outline-color: var(--blue); }
+.modal-form textarea { width: 100%; resize: vertical; border: 1px solid #c5c5c5; border-radius: 6px; padding: 9px; outline-color: var(--blue); }
 .modal-form .btn { justify-self: start; }
 .form-error { margin: 0; color: var(--red); font-size: 13px; }
 
@@ -937,6 +1294,131 @@ a {
     cursor: pointer;
 }
 
+/* Tema visual compartilhado por todas as páginas do dashboard, inclusive “Sobre nós”.
+   Assim, a troca de rota não altera cores nem escala tipográfica da interface. */
+/* =========================================================
+   ADMINISTRADOR
+   O administrador utiliza os componentes compartilhados:
+   cards, exclusão de registros e painel de detalhes.
+========================================================= */
+.dashboard-shell {
+    grid-template-columns: var(--sidebar-width) minmax(340px, 42%) minmax(420px, 1fr);
+    background: #fff;
+}
+
+.dashboard-shell .sidebar {
+    /* Esta é a sidebar azul do dashboard. */
+    padding: 18px 12px;
+    background: #004a94;
+    /* border e box-shadow zerados removem qualquer linha na lateral do painel. */
+    border: 0;
+    box-shadow: none;
+    color: #dbeeff;
+}
+
+.dashboard-shell .brand { color: #fff; font-size: 18px; }
+.dashboard-shell .brand > .ui-icon { color: #fff; width: 25px; height: 25px; }
+.dashboard-shell .brand-text span { color: #a9d6ff; }
+.dashboard-shell .menu-toggle { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.35); }
+.dashboard-shell .menu-toggle span { background: #fff; }
+.dashboard-shell .menu-principal { padding-top: 20px; }
+.dashboard-shell .menu-principal a,
+.dashboard-shell .perfil-link,
+.dashboard-shell .perfil-menu button { min-height: 38px; color: #dbeeff; font-size: 12px; font-weight: 500; }
+.dashboard-shell .menu-principal a.ativo { padding: 5px 10px; background: rgba(255,255,255,.16); color: #fff; }
+/* Garante que os componentes internos da sidebar também não recriem uma linha. */
+.dashboard-shell .conta { border: 0; padding-top: 14px; box-shadow: none; }
+.dashboard-shell .perfil-dropdown { border: 0; box-shadow: none; }
+.dashboard-shell .perfil-menu { border-color: rgba(255,255,255,.14); background: #003d7a; box-shadow: none; }
+.dashboard-shell .sair { color: #b8dcfb; font-size: 12px; text-decoration: none; }
+
+.dashboard-shell .lista-area {
+    padding: 16px 12px 30px;
+    background: #fbfbfa;
+    border-right: 1px solid #dce4eb;
+}
+
+.dashboard-shell .dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 32px;
+    margin: 0 0 10px;
+}
+
+.dashboard-shell .dashboard-header h1 {
+    margin: 0;
+    color: #0b4d89;
+    font-family: Georgia, serif;
+    font-size: 18px;
+}
+
+.result-count {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #eaf3ff;
+    color: #2570b8;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.dashboard-shell .busca {
+    justify-content: stretch;
+    gap: 8px;
+    margin: 0 -12px 14px;
+    padding: 10px 12px;
+    border-top: 1px solid #dce4eb;
+    border-bottom: 1px solid #dce4eb;
+    background: #fff;
+}
+
+.dashboard-shell .busca label { width: auto; height: 28px; flex: 1; border: 1px solid #dbe3eb; border-radius: 7px; background: #fafafa; }
+.dashboard-shell .busca input { font-size: 10px; }
+.filter-button { height: 28px; padding: 0 12px; border: 1px solid #dbe3eb; border-radius: 7px; background: #fafafa; color: #6d7782; font-size: 10px; cursor: pointer; }
+
+.dashboard-shell .item-card {
+    width: 100%;
+    min-height: 94px;
+    margin: 0 0 8px;
+    padding: 13px 12px;
+    gap: 10px;
+    border: 1px solid #dde6ee;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.dashboard-shell .item-card.selecionado { border-color: #1976d2; box-shadow: 0 0 0 2px rgba(25,118,210,.08); }
+.dashboard-shell .item-card h2 { margin-bottom: 3px; font-size: 12px; }
+.dashboard-shell .item-card p { color: #677483; font-size: 10px; font-weight: 400; }
+.dashboard-shell .card-avatar { width: 30px; height: 30px; border: 0; background: #eaf3ff; color: #0b67b2; }
+.dashboard-shell .btn,
+.dashboard-shell .status { min-width: 72px; min-height: 23px; padding: 3px 9px; font-size: 10px; }
+.dashboard-shell .criar-post { width: 100%; min-width: 0; height: 30px; margin: 0 0 12px; border: 1px solid #176cc0; border-radius: 7px; color: #176cc0; font-size: 11px; }
+
+/* Area de vagas da empresa: lista compacta e painel de leitura, como a referencia. */
+.empresa-dashboard .job-card { cursor: pointer; }
+.empresa-dashboard .job-card > div:nth-child(2) { min-width: 0; }
+.empresa-dashboard .job-card p { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.empresa-dashboard .post-tools { gap: 3px; align-self: center; }
+.empresa-dashboard .post-tools form { margin: 0; }
+.empresa-dashboard .post-tools button { width: 27px; height: 27px; }
+.empresa-dashboard .detalhe-area { padding-top: 44px; }
+.empresa-dashboard .detalhe-area::before { content: "VAGA SELECIONADA"; }
+.empresa-dashboard .form-success { margin: 0 0 10px; }
+
+.dashboard-shell .detalhe-area {
+    padding: 22px 24px;
+    background: #fff;
+    border-left: 0;
+}
+
+.dashboard-shell .detalhe-area h2 { margin: 0 0 16px; color: #1e2c39; font-family: Georgia, serif; font-size: 20px; }
+.dashboard-shell .detalhe-area p { max-width: 620px; color: #5f6b77; font-size: 12px; font-weight: 400; line-height: 1.55; }
+.dashboard-shell .detalhe-area::before { content: "DETALHES"; display: block; margin-bottom: 14px; color: #7f8c99; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+
+/* =========================================================
+   RESPONSIVIDADE — GERAL
+========================================================= */
 @media (max-width: 980px) {
     body {
         overflow: auto;
@@ -967,6 +1449,12 @@ a {
     .fundadores {
         gap: 24px;
     }
+
+    .sobre-bottom-section {
+        grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+        gap: 20px;
+        padding: 28px 32px;
+    }
 }
 
 @media (max-width: 720px) {
@@ -980,6 +1468,14 @@ a {
         border-right: 0;
         border-bottom: 2px solid var(--line);
         overflow: visible;
+    }
+
+    /* A página institucional ocupa toda a largura em telas estreitas. */
+    .page-sobre .sidebar { display: none; }
+    .page-sobre .lista-area { grid-column: 1; }
+    .page-sobre .sobre-bottom-section {
+        align-items: start;
+        padding: 20px 15px;
     }
 
     .menu-principal {

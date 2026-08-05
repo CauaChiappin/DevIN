@@ -59,25 +59,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($_SESSION['id_pessoa']);
         unset($_SESSION['pessoa_nome']);
 
-        // Exibe o alerta final de sucesso e redireciona para a tela de login
-        echo "<script>
-                alert('Cadastro concluído com sucesso! Faça login para acessar sua conta.');
-                window.location.href = 'login.php';
-              </script>";
-        exit;
-
-    } catch (mysqli_sql_exception $e) {
-        echo "<script>
-                alert('Erro ao salvar o currículo no banco de dados. Tente novamente.');
-                window.history.back();
-              </script>";
-        exit;
-    } finally {
-        if (isset($conn) && $conn instanceof mysqli) {
-            $conn->close();
+            if ($stmt->execute()) {
+                header('Location: pessoa.php');
+                exit;
+            } else {
+                $mensagemErro = "Erro ao salvar currículo: " . $stmt->error;
+            }
+            $stmt->close();
+        } else {
+            $mensagemErro = "Erro na query SQL: " . $conn->error;
         }
     }
-}
+    
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">

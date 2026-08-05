@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="confirme_senha" name="confirme_senha" required>
-                                <img src="../img/olho_aberto.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
+                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
                             </div>
                             <span id="error-match" class="error-message-text">Senhas não coincidem</span>
                         </div>

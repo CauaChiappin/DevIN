@@ -5,7 +5,14 @@ require_once __DIR__ . '/controllers/AuthController.php';
 
 // Inicia a sessão do PHP. Isto é obrigatório sempre que queremos usar a variável 
 // $_SESSION para guardar dados do utilizador (como o ID e o nome) entre as várias páginas.
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($_SESSION['logado'])) {
+    header('Location: ' . AuthController::redirectByUserType($_SESSION['usuario_tipo'] ?? ''));
+    exit;
+}
 
 // Verifica se existe alguma mensagem de erro a vir pelo link (URL, tipo login.php?erro=x).
 // Se não existir (??), a variável $erro fica com um texto vazio ('').
@@ -55,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Se encontrou um currículo cadastrado, manda para o Dashboard
                 if ($res && $res->num_rows > 0) {
-                    header('Location: dashboard_pessoa.php');
+                    header('Location:pessoa.php');
                 } else {
                     // Se não tiver currículo registrado, obriga a cadastrar
                     header('Location: cadastrar_curriculo.php');
