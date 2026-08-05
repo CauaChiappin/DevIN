@@ -1,176 +1,146 @@
 <?php
-ob_start();
+// cadastrar_curriculo.php
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+session_start();
+require_once __DIR__ . '/php/config/database.php';
+require_once __DIR__ . '/MailerHelper.php';
 
-// Verifica se existe o ID da pessoa na sessão
+// Verifica se o usuário está logado como pessoa física
 if (!isset($_SESSION['id_pessoa'])) {
-    echo "<script>
-            alert('Sessão expirada ou cadastro não iniciado. Por favor, crie sua conta primeiro.');
-            window.location.href = 'cadastro_pessoa.php';
-          </script>";
+    header('Location: login.php');
     exit;
 }
 
-// 1. Inclui a conexão com o banco de dados
-if (file_exists(__DIR__ . '/config/database.php')) {
-    require_once __DIR__ . '/config/database.php';
-} elseif (file_exists(__DIR__ . '/../config/database.php')) {
-    require_once __DIR__ . '/../config/database.php';
-}
+$idPessoa   = (int) $_SESSION['id_pessoa'];
+$nomePessoa = $_SESSION['nome_pessoa'] ?? 'Candidato';
+$emailPessoa= $_SESSION['email_pessoa'] ?? '';
 
-$idPessoa = $_SESSION['id_pessoa'];
-$nomeUsuario = $_SESSION['pessoa_nome'] ?? 'Candidato';
-$mensagemErro = '';
+$mensagemSucesso = '';
+$mensagemErro    = '';
 
-// 2. Processamento do Formulário via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nomeSocial         = trim($_POST['nome_social'] ?? '');
+    $grauEscolaridade   = trim($_POST['grau_de_escolaridade'] ?? '');
+    $cursos             = trim($_POST['cursos'] ?? '');
+    $experiencia        = trim($_POST['experiencia'] ?? '');
+    $idiomas            = trim($_POST['idiomas'] ?? '');
 
-    try {
-        $conn = getDatabaseConnection();
-    } catch (Exception $e) {
-        echo "<script>
-                alert('Erro ao conectar com o banco de dados.');
-                window.history.back();
-              </script>";
-        exit;
+    $conn = getDatabaseConnection();
+
+    // Verifica se a pessoa já possui currículo cadastrado
+    $stmtCheck = $conn->prepare("SELECT id_curriculo FROM curriculo WHERE id_pessoa = ?");
+    $stmtCheck->bind_param('i', $idPessoa);
+    $stmtCheck->execute();
+    $resCheck = $stmtCheck->get_result();
+
+    if ($resCheck->num_rows > 0) {
+        // Atualiza o currículo existente
+        $stmtUpdate = $conn->prepare("
+            UPDATE curriculo 
+            SET nome_social = ?, grau_de_escolaridade = ?, cursos = ?, experiencia = ?, idiomas = ?
+            WHERE id_pessoa = ?
+        ");
+        $stmtUpdate->bind_param('sssssi', $nomeSocial, $grauEscolaridade, $cursos, $experiencia, $idiomas, $idPessoa);
+        $executou = $stmtUpdate->execute();
+        $stmtUpdate->close();
+    } else {
+        // Insere novo currículo
+        $stmtInsert = $conn->prepare("
+            INSERT INTO curriculo (id_pessoa, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $stmtInsert->bind_param('isssss', $idPessoa, $nomeSocial, $grauEscolaridade, $cursos, $experiencia, $idiomas);
+        $executou = $stmtInsert->execute();
+        $stmtInsert->close();
     }
 
-    // Recebe e sanitiza os campos do currículo
-    $nomeSocial   = trim($_POST['nome_social'] ?? '');
-    $escolaridade = trim($_POST['grau_de_escolaridade'] ?? '');
-    $cursos       = trim($_POST['cursos'] ?? '');
-    $experiencia  = trim($_POST['experiencia'] ?? '');
-    $idiomas      = trim($_POST['idiomas'] ?? '');
+    $stmtCheck->close();
 
-    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-    try {
-        // Insere o currículo associado ao id_pessoa
-        $sql = "INSERT INTO curriculo (id_pessoa, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas) 
-                VALUES (?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $conn->prepare($sql);
-
-        if ($stmt) {
-            $stmt->bind_param("isssss", $idPessoa, $nomeSocial, $escolaridade, $cursos, $experiencia, $idiomas);
-            
-            if ($stmt->execute()) {
-                // Limpa a sessão temporária de cadastro após o sucesso da gravação
-                unset($_SESSION['id_pessoa']);
-                unset($_SESSION['pessoa_nome']);
-
-                $stmt->close();
-                header('Location: pessoa.php');
-                exit;
-            } else {
-                $mensagemErro = "Erro ao salvar currículo: " . $stmt->error;
-            }
-            $stmt->close();
-        } else {
-            $mensagemErro = "Erro na query SQL: " . $conn->error;
+    if ($executou) {
+        // 1. Envia o e-mail de confirmação completa para o candidato
+        if (!empty($emailPessoa)) {
+            MailerHelper::enviarConfirmacaoCadastroCurriculo($emailPessoa, $nomePessoa);
         }
-    } catch (mysqli_sql_exception $e) {
-        $mensagemErro = "Erro no banco de dados: " . $e->getMessage();
+
+        // 2. Notifica as empresas cadastradas sobre o novo candidato
+        MailerHelper::notificarEmpresasNovoCandidato($conn, $nomePessoa);
+
+        $mensagemSucesso = "Currículo salvo com sucesso! Um e-mail de confirmação foi enviado para você.";
+    } else {
+        $mensagemErro = "Erro ao salvar o currículo. Tente novamente.";
     }
+
+    $conn->close();
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevIN | Cadastrar Currículo</title>
-    <link rel="stylesheet" href="../css/curriculo.css">
-    <link rel="stylesheet" href="../css/cadastrostyle.css">
+    <title>Cadastro de Currículo - DevIN</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f2f5; margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+        .container { background: #fff; width: 100%; max-width: 650px; border-radius: 10px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #1a1a1a; font-size: 24px; text-align: center; }
+        .alert-success { background-color: #d4edda; color: #155724; padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; }
+        .alert-error { background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; color: #444; }
+        input[type="text"], select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+        textarea { resize: vertical; min-height: 90px; }
+        .btn-submit { width: 100%; background-color: #2b56f5; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .btn-submit:hover { background-color: #1e3ec7; }
+    </style>
 </head>
 <body>
+<div class="container">
+    <h1>Preenchimento de Currículo</h1>
 
-    <div class="main-container">
-        
-        <section class="left-side">
-            
-            <div class="brand-logo">
-                <a href="../php/index.php">Dev<span>IN</span></a>
-            </div>
+    <?php if ($mensagemSucesso): ?>
+        <div class="alert-success"><?= htmlspecialchars($mensagemSucesso) ?></div>
+    <?php endif; ?>
 
-            <h1 class="page-title">Cadastrar Currículo</h1>
-            <p class="subtitle">Olá, <strong><?= htmlspecialchars($nomeUsuario) ?></strong>! Preencha as informações do seu currículo para finalizar.</p>
+    <?php if ($mensagemErro): ?>
+        <div class="alert-error"><?= htmlspecialchars($mensagemErro) ?></div>
+    <?php endif; ?>
 
-            <?php if (!empty($mensagemErro)): ?>
-                <div class="alert-error" style="color: red; margin-bottom: 15px;">
-                    <?= htmlspecialchars($mensagemErro) ?>
-                </div>
-            <?php endif; ?>
+    <form method="POST" action="cadastrar_curriculo.php">
+        <div class="form-group">
+            <label for="nome_social">Nome Social / Como prefere ser chamado(a):</label>
+            <input type="text" id="nome_social" name="nome_social" placeholder="Ex: Alex Silva" required>
+        </div>
 
-            <form action="cadastrar_curriculo.php" method="POST" class="register-form" id="formCurriculo">
-                
-                <div class="form-columns">
-                    <div class="form-column">
-                        
-                        <div class="input-group">
-                            <label for="nome_social">Nome Social (Opcional):</label>
-                            <input type="text" id="nome_social" name="nome_social" placeholder="Como prefere ser chamado(a)">
-                        </div>
+        <div class="form-group">
+            <label for="grau_de_escolaridade">Grau de Escolaridade:</label>
+            <select id="grau_de_escolaridade" name="grau_de_escolaridade" required>
+                <option value="">Selecione...</option>
+                <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
+                <option value="Ensino Médio Completo">Ensino Médio Completo</option>
+                <option value="Ensino Superior Incompleto">Ensino Superior Incompleto</option>
+                <option value="Ensino Superior Completo">Ensino Superior Completo</option>
+                <option value="Pós-graduação / Mapeamento">Pós-graduação / Especialização</option>
+            </select>
+        </div>
 
-                        <div class="input-group">
-                            <label for="grau_de_escolaridade">Grau de Escolaridade:*</label>
-                            <select id="grau_de_escolaridade" name="grau_de_escolaridade" required>
-                                <option value="">Selecione...</option>
-                                <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
-                                <option value="Ensino Médio Completo">Ensino Médio Completo</option>
-                                <option value="Ensino Técnico">Ensino Técnico</option>
-                                <option value="Superior Incompleto">Superior Incompleto</option>
-                                <option value="Superior Completo">Superior Completo</option>
-                                <option value="Pós-graduação / Especialização">Pós-graduação / Especialização</option>
-                            </select>
-                        </div>
+        <div class="form-group">
+            <label for="cursos">Cursos e Certificações:</label>
+            <textarea id="cursos" name="cursos" placeholder="Ex: Curso de PHP Avançado, HTML5/CSS3, MySQL"></textarea>
+        </div>
 
-                        <div class="input-group">
-                            <label for="idiomas">Idiomas:</label>
-                            <input type="text" id="idiomas" name="idiomas" placeholder="Ex: Inglês (Intermediário), Espanhol (Básico)">
-                        </div>
+        <div class="form-group">
+            <label for="experiencia">Experiência Profissional:</label>
+            <textarea id="experiencia" name="experiencia" placeholder="Ex: Desenvolvedor Web na Empresa X (2022 - Atual)"></textarea>
+        </div>
 
-                    </div>
+        <div class="form-group">
+            <label for="idiomas">Idiomas:</label>
+            <input type="text" id="idiomas" name="idiomas" placeholder="Ex: Português Nativo, Inglês Intermediário">
+        </div>
 
-                    <div class="form-column">
-                        
-                        <div class="input-group">
-                            <label for="cursos">Cursos e Certificações:</label>
-                            <textarea id="cursos" name="cursos" rows="3" placeholder="Descreva seus cursos relevantes..."></textarea>
-                        </div>
-
-                        <div class="input-group">
-                            <label for="experiencia">Experiência Profissional:</label>
-                            <textarea id="experiencia" name="experiencia" rows="3" placeholder="Descreva suas experiências de trabalho..."></textarea>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="form-footer-action">
-                    <button type="submit" class="btn-submit">Finalizar Cadastro</button>
-                </div>
-
-            </form>
-
-            <footer class="page-footer">
-                Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
-            </footer>
-
-        </section>
-
-        <section class="right-side">
-            <a href="pessoa.php" class="btn-top-login">Login</a>
-            
-            <div class="mascot-container">
-                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
-            </div>
-        </section>
-
-    </div>
-
+        <button type="submit" class="btn-submit">Finalizar e Salvar Currículo</button>
+    </form>
+</div>
 </body>
 </html>

@@ -1,217 +1,121 @@
 <?php
-ob_start();
+// cadastro_pessoa.php
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+session_start();
+require_once __DIR__ . '/php/config/database.php';
 
-require_once __DIR__ . '/controllers/AuthController.php';
-
-if (file_exists(__DIR__ . '/config/database.php')) {
-    require_once __DIR__ . '/config/database.php';
-} elseif (file_exists(__DIR__ . '/../config/database.php')) {
-    require_once __DIR__ . '/../config/database.php';
-}
-
-// Função para validar os dígitos verificadores do CPF
-function validarCPF($cpf) {
-    $cpf = preg_replace('/[^0-9]/', '', $cpf);
-    if (strlen($cpf) != 11 || preg_match('/^(\d)\1{10}$/', $cpf)) {
-        return false;
-    }
-    for ($t = 9; $t < 11; $t++) {
-        for ($d = 0, $c = 0; $c < $t; $c++) {
-            $d += $cpf[$c] * (($t + 1) - $c);
-        }
-        $d = ((10 * $d) % 11) % 10;
-        if ($cpf[$c] != $d) {
-            return false;
-        }
-    }
-    return true;
-}
+$mensagemErro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nome     = trim($_POST['nome'] ?? '');
+    $cpf      = trim($_POST['cpf'] ?? '');
+    $cep      = trim($_POST['cep'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $senha    = $_POST['senha'] ?? '';
+    $telefone = trim($_POST['telefone'] ?? '');
 
-    try {
+    if (!empty($nome) && !empty($cpf) && !empty($email) && !empty($senha)) {
         $conn = getDatabaseConnection();
-    } catch (Exception $e) {
-        echo "<script>
-                alert('Erro ao conectar com o banco de dados.');
-                window.history.back();
-              </script>";
-        exit;
-    }
 
-    $nome          = trim($_POST['nome'] ?? '');
-    $email         = trim($_POST['email'] ?? '');
-    $cpf           = trim($_POST['cpf'] ?? '');
-    $telefone      = trim($_POST['telefone'] ?? '');
-    $cep           = trim($_POST['cep'] ?? '');
-    $senha         = $_POST['senha'] ?? '';
-    $confirmeSenha = $_POST['confirme_senha'] ?? '';
-
-    if (!validarCPF($cpf)) {
-        echo "<script>
-                alert('O CPF informado é inválido!');
-                window.history.back();
-              </script>";
-        exit;
-    }
-
-    if (!empty($confirmeSenha) && $senha !== $confirmeSenha) {
-        echo "<script>
-                alert('As senhas não coincidem!');
-                window.history.back();
-              </script>";
-        exit;
-    }
-
-    $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-
-    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-    try {
-        // Insere salvando a data atual em created_at e definindo lembrete_enviado = 0
-        $sql = "INSERT INTO pessoa (nome, email, cpf, telefone, cep, senha_hash, created_at, lembrete_enviado) 
-                VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssss", $nome, $email, $cpf, $telefone, $cep, $senhaHash);
-        $stmt->execute();
-
-        // Pega o ID da pessoa recém-cadastrada e salva na sessão para o preenchimento do currículo
-        $_SESSION['id_pessoa']   = $stmt->insert_id;
-        $_SESSION['pessoa_nome'] = $nome;
-
-        // Redireciona DIRETO para a página de formulário do currículo
-        header("Location: cadastrar_curriculo.php");
-        exit;
-
-    } catch (mysqli_sql_exception $e) {
-        if ($e->getCode() === 1062) {
-            echo "<script>
-                    alert('Atenção: Este CPF ou E-mail já está cadastrado no sistema!');
-                    window.history.back();
-                  </script>";
+        // Verifica se e-mail ou CPF já existem
+        $stmtCheck = $conn->prepare("SELECT id_pessoa FROM pessoa WHERE email = ? OR cpf = ?");
+        $stmtCheck->bind_param('ss', $email, $cpf);
+        $stmtCheck->execute();
+        
+        if ($stmtCheck->get_result()->num_rows > 0) {
+            $mensagemErro = "E-mail ou CPF já cadastrado no sistema.";
         } else {
-            echo "<script>
-                    alert('Erro ao salvar no banco de dados. Tente novamente.');
-                    window.history.back();
-                  </script>";
+            $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+
+            // Grava com created_at = NOW() e lembrete_enviado = 0
+            $stmtInsert = $conn->prepare("
+                INSERT INTO pessoa (nome, cpf, cep, email, senha_hash, telefone, created_at, lembrete_enviado)
+                VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)
+            ");
+            $stmtInsert->bind_param('ssssss', $nome, $cpf, $cep, $email, $senhaHash, $telefone);
+
+            if ($stmtInsert->execute()) {
+                $novoId = $stmtInsert->insert_id;
+
+                $_SESSION['id_pessoa']    = $novoId;
+                $_SESSION['nome_pessoa']  = $nome;
+                $_SESSION['email_pessoa'] = $email;
+
+                // Redireciona imediatamente para o preenchimento do currículo
+                header('Location: cadastrar_curriculo.php');
+                exit;
+            } else {
+                $mensagemErro = "Erro ao cadastrar. Tente novamente.";
+            }
+            $stmtInsert->close();
         }
-        exit;
-    } finally {
-        if (isset($conn) && $conn instanceof mysqli) {
-            $conn->close();
-        }
+        $stmtCheck->close();
+        $conn->close();
+    } else {
+        $mensagemErro = "Por favor, preencha todos os campos obrigatórios.";
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevIN | Criar Conta Pessoal</title>
-    <link rel="stylesheet" href="../css/cadastrostyle.css">
+    <title>Cadastro - Pessoa Física | DevIN</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f2f5; margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+        .container { background: #fff; width: 100%; max-width: 500px; border-radius: 10px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #1a1a1a; font-size: 24px; text-align: center; }
+        .alert-error { background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; color: #444; }
+        input { width: 100%; padding: 10px 14px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+        .btn-submit { width: 100%; background-color: #2b56f5; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background-color: #1e3ec7; }
+    </style>
 </head>
 <body>
+<div class="container">
+    <h1>Criar Conta (Pessoa Física)</h1>
 
-    <div class="main-container">
-        <section class="left-side">
-            <div class="brand-logo">
-                <a href="../php/index.php">Dev<span>IN</span></a>
-            </div>
+    <?php if ($mensagemErro): ?>
+        <div class="alert-error"><?= htmlspecialchars($mensagemErro) ?></div>
+    <?php endif; ?>
 
-            <div class="toggle-container">
-                <a href="cadastro_pessoa.php" class="toggle-btn pessoal active">Pessoal</a>
-                <span class="toggle-divider">OU</span>
-                <a href="cadastro_empresa.php" class="toggle-btn empresa">Empresa</a>
-            </div>
+    <form method="POST" action="cadastro_pessoa.php">
+        <div class="form-group">
+            <label for="nome">Nome Completo:</label>
+            <input type="text" id="nome" name="nome" required>
+        </div>
 
-            <h1 class="page-title">Criar conta</h1>
+        <div class="form-group">
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" maxlength="14" placeholder="000.000.000-00" required>
+        </div>
 
-            <form action="cadastro_pessoa.php" method="POST" class="register-form" id="formCadastro">
-                <div class="form-columns">
-                    <div class="form-column">
-                        <div class="input-group">
-                            <label for="nome">Nome:*</label>
-                            <input type="text" id="nome" name="nome" required>
-                        </div>
+        <div class="form-group">
+            <label for="cep">CEP:</label>
+            <input type="text" id="cep" name="cep" maxlength="9" placeholder="00000-000">
+        </div>
 
-                        <div class="input-group">
-                            <label for="cpf">CPF:*</label>
-                            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
-                        </div>
+        <div class="form-group">
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+        </div>
 
-                        <div class="input-group">
-                            <label for="cep">CEP:*</label>
-                            <input type="text" id="cep" name="cep" placeholder="00000-000" required>
-                        </div>
+        <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
 
-                        <div class="input-group password-wrapper">
-                            <label for="confirme_senha">Confirme a sua senha:*</label>
-                            <div class="input-icon-container">
-                                <input type="password" id="confirme_senha" name="confirme_senha" required>
-                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Ocultar/Mostrar Senha">
-                            </div>
-                            <span id="error-match" class="error-message-text">Senhas não coincidem</span>
-                        </div>
-                    </div>
+        <div class="form-group">
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required>
+        </div>
 
-                    <div class="form-column">
-                        <div class="input-group">
-                            <label for="email">E-mail:*</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-
-                        <div class="input-group">
-                            <label for="telefone">Telefone:*</label>
-                            <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
-                        </div>
-
-                        <div class="input-group password-wrapper">
-                            <label for="senha">Senha:*</label>
-                            <div class="input-icon-container">
-                                <input type="password" id="senha" name="senha" required>
-                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Ocultar/Mostrar Senha">
-                            </div>
-                        </div>
-
-                        <div class="password-requirements">
-                            <div class="requirement-item req-invalid" id="req-length">
-                                <span class="req-icon">⚠️</span> No mínimo 8 caracteres
-                            </div>
-                            <div class="requirement-item req-invalid" id="req-upper">
-                                <span class="req-icon">⚠️</span> Pelo menos 1 letra maiúscula (A-Z)
-                            </div>
-                            <div class="requirement-item req-invalid" id="req-special">
-                                <span class="req-icon">⚠️</span> Pelo menos 1 caracter especial (como ! @ # $)
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-footer-action">
-                    <button type="submit" class="btn-submit">Cadastrar</button>
-                    <p class="login-redirect">Já tem conta? <a href="login.php">Faça login</a></p>
-                </div>
-            </form>
-
-            <footer class="page-footer">
-                Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
-            </footer>
-        </section>
-
-        <section class="right-side">
-            <a href="login.php" class="btn-top-login">Login</a>
-            <div class="mascot-container">
-                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
-            </div>
-        </section>
-    </div>
-
-    <div id="status-alert-container"></div>
-<script src="../js/cadastro.js"></script>
+        <button type="submit" class="btn-submit">Avançar para o Currículo</button>
+    </form>
+</div>
 </body>
 </html>
