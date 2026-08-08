@@ -186,19 +186,3 @@ revelarGrupo('.perguntas', {
   y: -35,
   opacity: 0
 });
-
-// Faz o Lenis assumir o controle dos links do menu (âncoras)
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault(); // Impede o "teletransporte" nativo do navegador
-        
-        const destino = this.getAttribute('href');
-        
-        // Manda o Lenis deslizar até a seção com um offset para o header não cobrir o título
-        lenis.scrollTo(destino, {
-            offset: -80, // Ajuste esse valor com base na altura do seu cabeçalho
-            duration: 1.2, // Tempo em segundos para a rolagem (pode ajustar para ficar mais rápido ou lento)
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) // Curva de aceleração elegante
-        });
-    });
-});
