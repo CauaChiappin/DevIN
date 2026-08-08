@@ -1,51 +1,69 @@
 <?php
 ob_start();
-session_start();
 
-// Barreira de autenticação
-if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    header('Location: login.php?erro=Faça login para continuar');
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+// Verifica se existe o ID da pessoa na sessão
+if (!isset($_SESSION['id_pessoa'])) {
+    echo "<script>
+            alert('Sessão expirada ou cadastro não iniciado. Por favor, crie sua conta primeiro.');
+            window.location.href = 'cadastro_pessoa.php';
+          </script>";
     exit;
 }
 
-// Garante que apenas usuários do tipo 'pessoa' preencham
-if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] !== 'pessoa') {
-    header('Location: login.php');
-    exit;
+// 1. Inclui a conexão com o banco de dados
+if (file_exists(__DIR__ . '/config/database.php')) {
+    require_once __DIR__ . '/config/database.php';
+} elseif (file_exists(__DIR__ . '/../config/database.php')) {
+    require_once __DIR__ . '/../config/database.php';
 }
 
+$idPessoa = $_SESSION['id_pessoa'];
+$nomeUsuario = $_SESSION['pessoa_nome'] ?? 'Candidato';
 $mensagemErro = '';
 
+// 2. Processamento do Formulário via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $dbname = "devin";
 
-    $conn = new mysqli($host, $user, $pass, $dbname);
+    try {
+        $conn = getDatabaseConnection();
+    } catch (Exception $e) {
+        echo "<script>
+                alert('Erro ao conectar com o banco de dados.');
+                window.history.back();
+              </script>";
+        exit;
+    }
 
-    if ($conn->connect_error) {
-        $mensagemErro = "Falha de conexão com o banco de dados: " . $conn->connect_error;
-    } else {
-        $idPessoa = $_SESSION['usuario_id'];
-        $nome_social = trim($_POST['nome_social'] ?? '');
-        $grau_escolaridade = trim($_POST['grau_de_escolaridade'] ?? '');
-        $cursos = trim($_POST['cursos'] ?? '');
-        $experiencia = trim($_POST['experiencia'] ?? '');
-        $idiomas = trim($_POST['idiomas'] ?? '');
+    // Recebe e sanitiza os campos do currículo
+    $nomeSocial   = trim($_POST['nome_social'] ?? '');
+    $escolaridade = trim($_POST['grau_de_escolaridade'] ?? '');
+    $cursos       = trim($_POST['cursos'] ?? '');
+    $experiencia  = trim($_POST['experiencia'] ?? '');
+    $idiomas      = trim($_POST['idiomas'] ?? '');
 
-        // Prepara a gravação mantendo a integridade com a tabela 'curriculo' do seu MySQL
-        $sql = "INSERT INTO curriculo 
-                (id_pessoa, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas) 
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+    try {
+        // Insere o currículo associado ao id_pessoa
+        $sql = "INSERT INTO curriculo (id_pessoa, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas) 
                 VALUES (?, ?, ?, ?, ?, ?)";
-
+        
         $stmt = $conn->prepare($sql);
 
         if ($stmt) {
-            $stmt->bind_param("isssss", $idPessoa, $nome_social, $grau_escolaridade, $cursos, $experiencia, $idiomas);
-
+            $stmt->bind_param("isssss", $idPessoa, $nomeSocial, $escolaridade, $cursos, $experiencia, $idiomas);
+            
             if ($stmt->execute()) {
-                header('Location: dashboard_pessoa.php');
+                // Limpa a sessão temporária de cadastro após o sucesso da gravação
+                unset($_SESSION['id_pessoa']);
+                unset($_SESSION['pessoa_nome']);
+
+                $stmt->close();
+                header('Location: pessoa.php');
                 exit;
             } else {
                 $mensagemErro = "Erro ao salvar currículo: " . $stmt->error;
@@ -54,72 +72,107 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $mensagemErro = "Erro na query SQL: " . $conn->error;
         }
-
-        $conn->close();
+    } catch (mysqli_sql_exception $e) {
+        $mensagemErro = "Erro no banco de dados: " . $e->getMessage();
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Preencher Currículo</title>
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../css/curriculo.css">
+    <link rel="stylesheet" href="../css/cadastrostyle.css">
 </head>
 <body>
 
-    <div class="curriculo-card">
-
-        <?php if (!empty($mensagemErro)): ?>
-            <div class="msg-erro-box">
-                <?php echo htmlspecialchars($mensagemErro, ENT_QUOTES, 'UTF-8'); ?>
-            </div>
-        <?php endif; ?>
-
-        <form action="cadastrar_curriculo.php" method="POST">
+    <div class="main-container">
+        
+        <section class="left-side">
             
-            <div class="form-group">
-                <label for="nome_social">Nome social</label>
-                <input type="text" id="nome_social" name="nome_social">
+            <div class="brand-logo">
+                <a href="../php/index.php">Dev<span>IN</span></a>
             </div>
 
-            <div class="form-group">
-                <label for="objetivo_profissional">Objetivo Profissional<span class="asterisk">*</span></label>
-                <input type="text" id="objetivo_profissional" name="objetivo_profissional" required>
-            </div>
+            <h1 class="page-title">Cadastrar Currículo</h1>
+            <p class="subtitle">Olá, <strong><?= htmlspecialchars($nomeUsuario) ?></strong>! Preencha as informações do seu currículo para finalizar.</p>
 
-            <div class="form-group">
-                <label for="grau_de_escolaridade">Grau de Escolaridade<span class="asterisk">*</span></label>
-                <input type="text" id="grau_de_escolaridade" name="grau_de_escolaridade" required>
-            </div>
+            <?php if (!empty($mensagemErro)): ?>
+                <div class="alert-error" style="color: red; margin-bottom: 15px;">
+                    <?= htmlspecialchars($mensagemErro) ?>
+                </div>
+            <?php endif; ?>
 
-            <div class="form-group">
-                <label for="cursos">Cursos</label>
-                <input type="text" id="cursos" name="cursos">
-            </div>
+            <form action="cadastrar_curriculo.php" method="POST" class="register-form" id="formCurriculo">
+                
+                <div class="form-columns">
+                    <div class="form-column">
+                        
+                        <div class="input-group">
+                            <label for="nome_social">Nome Social (Opcional):</label>
+                            <input type="text" id="nome_social" name="nome_social" placeholder="Como prefere ser chamado(a)">
+                        </div>
 
-            <div class="form-group">
-                <label for="experiencia">Experiência<span class="asterisk">*</span></label>
-                <input type="text" id="experiencia" name="experiencia" required>
-            </div>
+                        <div class="input-group">
+                            <label for="grau_de_escolaridade">Grau de Escolaridade:*</label>
+                            <select id="grau_de_escolaridade" name="grau_de_escolaridade" required>
+                                <option value="">Selecione...</option>
+                                <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
+                                <option value="Ensino Médio Completo">Ensino Médio Completo</option>
+                                <option value="Ensino Técnico">Ensino Técnico</option>
+                                <option value="Superior Incompleto">Superior Incompleto</option>
+                                <option value="Superior Completo">Superior Completo</option>
+                                <option value="Pós-graduação / Especialização">Pós-graduação / Especialização</option>
+                            </select>
+                        </div>
 
-            <div class="form-group">
-                <label for="idiomas">Idiomas</label>
-                <input type="text" id="idiomas" name="idiomas">
-            </div>
+                        <div class="input-group">
+                            <label for="idiomas">Idiomas:</label>
+                            <input type="text" id="idiomas" name="idiomas" placeholder="Ex: Inglês (Intermediário), Espanhol (Básico)">
+                        </div>
 
-            <div class="button-container">
-                <button type="submit" class="btn-enviar">Enviar</button>
-            </div>
+                    </div>
 
-        </form>
+                    <div class="form-column">
+                        
+                        <div class="input-group">
+                            <label for="cursos">Cursos e Certificações:</label>
+                            <textarea id="cursos" name="cursos" rows="3" placeholder="Descreva seus cursos relevantes..."></textarea>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="experiencia">Experiência Profissional:</label>
+                            <textarea id="experiencia" name="experiencia" rows="3" placeholder="Descreva suas experiências de trabalho..."></textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="form-footer-action">
+                    <button type="submit" class="btn-submit">Finalizar Cadastro</button>
+                </div>
+
+            </form>
+
+            <footer class="page-footer">
+                Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
+            </footer>
+
+        </section>
+
+        <section class="right-side">
+            <a href="pessoa.php" class="btn-top-login">Login</a>
+            
+            <div class="mascot-container">
+                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
+            </div>
+        </section>
+
     </div>
-
-    <footer>
-        DevIN | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
-    </footer>
 
 </body>
 </html>
