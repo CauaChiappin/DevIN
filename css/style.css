@@ -259,27 +259,6 @@ summary:focus-visible {
     color: var(--blue);
 }
 
-.palavra-rotativa-index {
-    display: inline-block;
-    min-width: 8.5ch;
-    height: 1.2em;
-    overflow: hidden;
-    text-align: left;
-    vertical-align: bottom;
-}
-
-.palavra-rotativa-index.saindo { animation: palavra-index-sai .48s cubic-bezier(.5, 0, .8, .35) forwards; }
-.palavra-rotativa-index.entrando { animation: palavra-index-entra .52s cubic-bezier(.16, 1, .3, 1) both; }
-
-@keyframes palavra-index-sai {
-    to { opacity: 0; filter: blur(3px); transform: translateY(30px) rotate(1deg); }
-}
-
-@keyframes palavra-index-entra {
-    from { opacity: 0; filter: blur(5px); transform: translateY(-18px); }
-    to { opacity: 1; filter: blur(0); transform: translateY(0); }
-}
-
 .texto-principal p {
     margin: 58px 0 0 52px;
     color: var(--gray);
@@ -767,9 +746,6 @@ summary:focus-visible {
 
 .imagem-suporte {
     width: 300px;
-    border-radius: 23px; /* Mesmo arredondamento da caixa de SAC */
-    object-fit: cover; /* Garante que a imagem não distorça */
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.05); /* Sombra super leve para destacar (opcional) */
 }
 
 .perguntas {
@@ -852,172 +828,69 @@ summary:focus-visible {
     padding: 34px 37px 0;
 }
 
-.rodape {
-    background: var(--blue);
-    color: var(--white);
-    padding: 56px 0 0;
-    height: auto;
-}
-
-.conteudo-rodape {
-    width: 1194px;
-    max-width: calc(100% - 64px);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    position: static;
-    padding: 0;
-    height: auto;
-}
-
-.marca-rodape h2 {
-    margin: 0 0 12px;
-    font-size: 26px;
-    font-weight: 700;
+.rodape h2 {
+    margin: 0;
+    font-size: 30px;
     line-height: 1;
 }
 
-
-.marca-rodape span {
-    color: rgba(255, 255, 255, .55);
+.navegacao-rodape {
+    width: 603px;
+    margin: 49px auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 80px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
 }
 
-.marca-rodape p {
-    margin: 0;
-    max-width: 260px;
-    font-size: 14px;
-    line-height: 1.6;
+.navegacao-rodape p,
+.link-rodape-contato {
+    margin: 15px 0 0;
+    color: rgba(255, 255, 255, .7);
     font-weight: 400;
-    color: rgba(255, 255, 255, .72);
 }
 
-.coluna-rodape h3 {
-    margin: 0 0 16px;
-    font-size: 15px;
-    font-weight: 600;
-}
-
-.coluna-rodape a {
+.link-rodape-contato {
+    width: max-content;
+    max-width: 100%;
     display: block;
-    margin-bottom: 10px;
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(255, 255, 255, .72);
-    transition: color .2s ease, transform .2s ease;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    transition: color .28s ease, transform .28s ease;
 }
 
-.coluna-rodape a:hover {
+.link-rodape-contato:hover {
     color: var(--white);
-    transform: translateX(2px);
+    transform: translateY(-1px);
 }
 
 .icones-rodape {
-    grid-column: 1 / -1;
+    position: absolute;
+    left: 42px;
+    bottom: 64px;
     display: flex;
+    gap: 30px;
     align-items: center;
-    gap: 16px;
-    margin-top: 4px;
 }
 
 .icones-rodape img {
-    width: 40px;
-    height: 40px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
-    border-radius: 8px;
-    transition: transform .2s ease;
-}
-
-.icones-rodape a:hover img {
-    transform: translateY(-2px);
-}
-
-.linha-rodape {
-    grid-column: 1 / -1;
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, .18);
-    margin: 16px 0 10px; /* Diminuído o espaço acima da linha de 32px para 16px */
 }
 
 .direitos {
-    grid-column: 1 / -1;
-    position: static;
-    margin: 0 0 22px 0; /* Adicionado espaço embaixo para manter a altura total do footer */
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    margin: 0;
     text-align: center;
     font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, .72);
-}
-
-.marca-rodape h3 {
-    margin: 0 0 12px;
-    font-size: 20px;
     font-weight: 700;
-    color: var(--white);
-}
-
-.icones-rodape {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.icone-social {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, .1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background .2s ease, transform .2s ease;
-}
-
-.icone-social:hover {
-    background: rgba(255, 255, 255, .2);
-    transform: translateY(-2px);
-}
-
-.icone-social img {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    border-radius: 4px;
-}
-
-.coluna-rodape a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.icone-contato {
-    width: 14px;
-    height: 14px;
-    display: inline-block;
-    opacity: .65;
-    flex-shrink: 0;
-}
-
-.icone-mail { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 5h20v14H2z" fill="none" stroke="white" stroke-width="2"/><path d="M2 5l10 8 10-8" fill="none" stroke="white" stroke-width="2"/></svg>') no-repeat center / contain; background: white; }
-.icone-fone { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 2c1 4 2 6 4 8s4 3 8 4l2-3c2 1 4 2 4 4v3c0 2-2 3-4 3C10 21 3 14 3 4c0-2 1-4 3-4h3l2 4-2 2z" fill="none" stroke="white" stroke-width="1.5"/></svg>') no-repeat center / contain; background: white; }
-.icone-ajuda { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="white" stroke-width="2"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4" fill="none" stroke="white" stroke-width="2"/><circle cx="12" cy="17" r="1" fill="white"/></svg>') no-repeat center / contain; background: white; }
-
-@media (max-width: 900px) {
-    .conteudo-rodape {
-        grid-template-columns: 1fr 1fr;
-        text-align: left;
-    }
-    .marca-rodape {
-        grid-column: 1 / -1;
-        text-align: center;
-        margin-bottom: 8px;
-    }
-    .marca-rodape p {
-        margin: 0 auto;
-    }
-    .icones-rodape {
-        justify-content: center;
-    }
 }
 
 @media (max-width: 900px) {

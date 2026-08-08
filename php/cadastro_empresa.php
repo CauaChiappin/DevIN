@@ -11,8 +11,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Criar Conta</title>
-    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../css/cadastrostyle.css" >
 </head>
 <body>
@@ -120,86 +118,107 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
     <div id="status-alert-container"></div>
 
+    <!-- A validação e as máscaras são compartilhadas com o cadastro pessoal. -->
     <script src="../js/cadastro.js"></script>
+    <script>
+        /* Código mantido apenas como referência; o arquivo compartilhado acima é o ativo.
+        const senhaInput = document.getElementById('senha');
+        const confirmeSenhaInput = document.getElementById('confirme_senha');
+        
+        const reqLength = document.getElementById('req-length');
+        const reqUpper = document.getElementById('req-upper');
+        const reqSpecial = document.getElementById('req-special');
+        const errorMatch = document.getElementById('error-match');
+
+        // Função Atualizada para alternar visibilidade trocando as imagens fornecidas
+        function togglePasswordVisibility(inputId, imgElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                imgElement.src = '/img/olho_aberto.png'; // Imagem para o estado VISÍVEL
+            } else {
+                input.type = 'password';
+                imgElement.src = '/img/olho_fechado.png';       // Imagem para o estado OCULTO
+            }
+        }
+
+        function updateRequirement(element, isValid) {
+            const icon = element.querySelector('.req-icon');
+            if (isValid) {
+                element.classList.remove('req-invalid');
+                element.classList.add('req-valid');
+                icon.textContent = '✅';
+            } else {
+                element.classList.remove('req-valid');
+                element.classList.add('req-invalid');
+                icon.textContent = '⚠️';
+            }
+        }
+
+        senhaInput.addEventListener('input', () => {
+            const val = senhaInput.value;
+            updateRequirement(reqLength, val.length >= 8);
+            updateRequirement(reqUpper, /[A-Z]/.test(val));
+            updateRequirement(reqSpecial, /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\\/]/.test(val));
+            checkPasswordMatch();
+        });
+
+        function checkPasswordMatch() {
+            if (confirmeSenhaInput.value === '') {
+                errorMatch.classList.remove('visible');
+                return;
+            }
+            if (senhaInput.value !== confirmeSenhaInput.value) {
+                errorMatch.classList.add('visible');
+            } else {
+                errorMatch.classList.remove('visible');
+            }
+        }
+
+        confirmeSenhaInput.addEventListener('input', checkPasswordMatch);
+
+        document.getElementById('formCadastro').addEventListener('submit', function(e) {
+            const val = senhaInput.value;
+            const isAllValid = (val.length >= 8) && /[A-Z]/.test(val) && /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\\/]/.test(val);
+            const isMatch = senhaInput.value === confirmeSenhaInput.value;
+
+            if (!isAllValid || !isMatch) {
+                e.preventDefault();
+                alert('Por favor, corrija os erros nos campos de senha antes de prosseguir.');
+            }
+        });
+        */
+    </script>
+
 </body>
 </html>
 
+
+
 <?php
-// Função para validar os dígitos verificadores do CNPJ
-function validarCNPJ($cnpj) {
-    $cnpj = preg_replace('/[^0-9]/', '',$cnpj);
-    if (strlen($cnpj) != 14 || preg_match('/^(\d)\1{13}$/',$cnpj)) {
-        return false;
-    }
-    for ($i = 0, $j = 5,$soma = 0; $i < 12; $i++) {
-        $soma +=$cnpj[$i] *$j;
-        $j = ($j == 2) ? 9 :$j - 1;
-    }
-    $resto =$soma % 11;
-    if ($cnpj[12] != ($resto < 2 ? 0 : 11 -$resto)) return false;
-
-    for ($i = 0, $j = 6,$soma = 0; $i < 13; $i++) {
-        $soma +=$cnpj[$i] *$j;
-        $j = ($j == 2) ? 9 :$j - 1;
-    }
-    $resto =$soma % 11;
-    return $cnpj[13] == ($resto < 2 ? 0 : 11 -$resto);
-}
-
-// Função para verificar se o CNPJ existe na base da Receita Federal
-function cnpjExisteNaReceita($cnpj) {
-    $cnpj = preg_replace('/[^0-9]/', '',$cnpj);
-    $url = "https://brasilapi.com.br/api/cnpj/v1/" . $cnpj;
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    return ($httpCode === 200);
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $host = "localhost";
     $user = "root";
     $pass = "";
     $dbname = "devin";
 
-    $conn = new mysqli($host,$user, $pass,$dbname);
+    $conn = new mysqli($host, $user, $pass, $dbname);
 
     if ($conn->connect_error) {
         die("Falha de conexão com o banco de dados.");
     }
 
-    if ($_POST['senha'] !==$_POST['confirme_senha']) {
+    if ($_POST['senha'] !== $_POST['confirme_senha']) {
         echo "<script>
             document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>As senhas não coincidem!</div>\";
         </script>";
         exit();
     }
 
-    $cnpj = preg_replace('/[^0-9]/', '',$_POST['cnpj'] ?? '');
-
-    if (!validarCNPJ($cnpj)) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>CNPJ inválido! Verifique os dígitos inseridos.</div>\";
-        </script>";
-        exit();
-    }
-
-    if (!cnpjExisteNaReceita($cnpj)) {
-        echo "<script>
-            document.getElementById('status-alert-container').innerHTML = \"<div class='php-toast error-toast'>CNPJ não encontrado na base de dados da Receita Federal!</div>\";
-        </script>";
-        exit();
-    }
-
     $nome = trim($_POST['nome']);
-    $cep = preg_replace('/[^0-9]/', '',$_POST['cep']);
-    $telefone = preg_replace('/[^0-9]/', '',$_POST['telefone']);
+    $cnpj = preg_replace('/[^0-9]/', '', $_POST['cnpj']);
+    $cep = preg_replace('/[^0-9]/', '', $_POST['cep']);
+    $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone']);
     $email = trim($_POST['email']);
     $senha_hash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
 
@@ -211,11 +230,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Erro no SQL: " . $conn->error);
     }
 
-    $stmt->bind_param("ssisss", $nome,$cnpj, $cep,$email, $senha_hash,$telefone);
+    $stmt->bind_param("ssisss", $nome, $cnpj, $cep, $email, $senha_hash, $telefone);
 
-    if ($stmt->execute()) {$auth = AuthController::login($email,$_POST['senha']);
+    if ($stmt->execute()) {
+        $auth = AuthController::login($email, $_POST['senha']);
         AuthController::establishSession($auth);
-        header('Location: ' . AuthController::redirectByUserType($auth['usuario']['tipo']));
+        header('Location: ' . AuthController::redirectByUserType('empresa'));
         exit;
     } else {
         echo "<script>
@@ -223,6 +243,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </script>";
     }
 
-    $stmt->close();$conn->close();
+    $stmt->close();
+    $conn->close();
 }
 ?>
+
