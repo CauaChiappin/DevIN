@@ -20,7 +20,9 @@
                 <span class="icon">✉</span>
                 <input type="email" id="email" name="email" placeholder="Informe seu email..." required>
             </div>
+            
             <button type="submit" class="btn-enviar">Enviar</button>
+            <a href="login.php" class="link-cancelar">Cancelar</a>
         </form>
     </div>
 
