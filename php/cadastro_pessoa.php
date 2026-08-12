@@ -3,215 +3,223 @@
 ob_start();
 
 require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/config/database.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+$erro = '';
 
-// =====================================================
-// VALIDAR CPF
-// =====================================================
-
-function validarCPF($cpf)
-{
-    $cpf = preg_replace('/[^0-9]/', '', $cpf);
-
-    // CPF precisa ter 11 dígitos
-    if (
-        strlen($cpf) != 11 ||
-        preg_match('/^(\d)\1{10}$/', $cpf)
-    ) {
-        return false;
-    }
-
-    // Validação dos dois dígitos verificadores
-    for ($t = 9; $t < 11; $t++) {
-
-        for ($d = 0, $c = 0; $c < $t; $c++) {
-            $d += $cpf[$c] * (($t + 1) - $c);
-        }
-
-        $d = ((10 * $d) % 11) % 10;
-
-        if ($cpf[$c] != $d) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-
-// =====================================================
-// PROCESSAMENTO DO CADASTRO
-// =====================================================
+/*
+|--------------------------------------------------------------------------
+| PROCESSAMENTO DO CADASTRO
+|--------------------------------------------------------------------------
+*/
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome     = trim($_POST['nome'] ?? '');
-    $cpf      = trim($_POST['cpf'] ?? '');
-    $cep      = trim($_POST['cep'] ?? '');
-    $email    = trim($_POST['email'] ?? '');
-    $senha    = $_POST['senha'] ?? '';
-    $telefone = trim($_POST['telefone'] ?? '');
 
-    try {
+    $nome =
+        trim($_POST['nome'] ?? '');
 
-        // ---------------------------------------------
-        // RECEBER DADOS DO FORMULÁRIO
-        // ---------------------------------------------
+    $email =
+        trim($_POST['email'] ?? '');
 
-        $nome = trim($_POST['nome'] ?? '');
-
-        $email = trim($_POST['email'] ?? '');
-
-        $cpf = preg_replace(
+    $cpf =
+        preg_replace(
             '/[^0-9]/',
             '',
             $_POST['cpf'] ?? ''
         );
 
-        $telefone = preg_replace(
+    $telefone =
+        preg_replace(
             '/[^0-9]/',
             '',
             $_POST['telefone'] ?? ''
         );
 
-        $cep = preg_replace(
+    $cep =
+        preg_replace(
             '/[^0-9]/',
             '',
             $_POST['cep'] ?? ''
         );
 
-        $senha = $_POST['senha'] ?? '';
+    $senha =
+        $_POST['senha'] ?? '';
 
-        $confirmeSenha = $_POST['confirme_senha'] ?? '';
+    $confirmeSenha =
+        $_POST['confirme_senha'] ?? '';
 
+    try {
 
-        // ---------------------------------------------
-        // VALIDAR CAMPOS
-        // ---------------------------------------------
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDAÇÕES
+        |--------------------------------------------------------------------------
+        */
 
         if ($nome === '') {
-            throw new Exception('Informe seu nome.');
+
+            throw new Exception(
+                'Informe seu nome.'
+            );
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception('Informe um e-mail válido.');
+        if (
+            !filter_var(
+                $email,
+                FILTER_VALIDATE_EMAIL
+            )
+        ) {
+
+            throw new Exception(
+                'Informe um e-mail válido.'
+            );
         }
 
-        if (!validarCPF($cpf)) {
-            throw new Exception('O CPF informado é inválido.');
+        if (
+            strlen($cpf) !== 11
+        ) {
+
+            throw new Exception(
+                'Informe um CPF válido.'
+            );
         }
 
-        if ($telefone === '') {
-            throw new Exception('Informe seu telefone.');
+        if (
+            strlen($telefone) < 10
+        ) {
+
+            throw new Exception(
+                'Informe um telefone válido.'
+            );
         }
 
-        if ($cep === '') {
-            throw new Exception('Informe seu CEP.');
+        if (
+            strlen($cep) !== 8
+        ) {
+
+            throw new Exception(
+                'Informe um CEP válido.'
+            );
         }
 
         if ($senha === '') {
-            throw new Exception('Informe uma senha.');
+
+            throw new Exception(
+                'Informe uma senha.'
+            );
         }
 
         if ($senha !== $confirmeSenha) {
-            throw new Exception('As senhas não coincidem.');
+
+            throw new Exception(
+                'As senhas não coincidem.'
+            );
         }
 
-
-        // ---------------------------------------------
-        // VALIDAR SENHA
-        // ---------------------------------------------
+        /*
+        |--------------------------------------------------------------------------
+        | SENHA
+        |--------------------------------------------------------------------------
+        */
 
         if (strlen($senha) < 8) {
+
             throw new Exception(
                 'A senha deve ter no mínimo 8 caracteres.'
             );
         }
 
-        if (!preg_match('/[A-Z]/', $senha)) {
+        if (!preg_match(
+            '/[A-Z]/',
+            $senha
+        )) {
+
             throw new Exception(
                 'A senha deve possuir pelo menos uma letra maiúscula.'
             );
         }
 
-        if (!preg_match('/[^a-zA-Z0-9]/', $senha)) {
+        if (!preg_match(
+            '/[^a-zA-Z0-9]/',
+            $senha
+        )) {
+
             throw new Exception(
                 'A senha deve possuir pelo menos um caractere especial.'
             );
         }
 
-
-        // ---------------------------------------------
-        // CONEXÃO COM O BANCO
-        // ---------------------------------------------
-
-        $conn = getDatabaseConnection();
-
-
-        // ---------------------------------------------
-        // CONFIGURAR ERROS DO MYSQL
-        // ---------------------------------------------
+        /*
+        |--------------------------------------------------------------------------
+        | BANCO
+        |--------------------------------------------------------------------------
+        */
 
         mysqli_report(
             MYSQLI_REPORT_ERROR |
             MYSQLI_REPORT_STRICT
         );
 
-
-        // ---------------------------------------------
-        // CRIPTOGRAFAR SENHA
-        // ---------------------------------------------
-
-        $senhaHash = password_hash(
-            $senha,
-            PASSWORD_DEFAULT
-        );
-
-
-        // ---------------------------------------------
-        // INSERIR PESSOA
-        // ---------------------------------------------
-
-        $sql = "
-            INSERT INTO pessoa
-            (
-                nome,
-                email,
-                cpf,
-                telefone,
-                cep,
-                senha_hash,
-                created_at,
-                lembrete_enviado
-            )
-            VALUES
-            (
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                NOW(),
-                0
-            )
-        ";
-
-
-        $stmt = $conn->prepare($sql);
-
+        $conn =
+            getDatabaseConnection();
 
         /*
-         * TODOS os campos são tratados como string.
+        |--------------------------------------------------------------------------
+        | HASH
+        |--------------------------------------------------------------------------
+        */
+
+        $senhaHash =
+            password_hash(
+                $senha,
+                PASSWORD_DEFAULT
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | INSERT
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt =
+            $conn->prepare("
+                INSERT INTO pessoa
+                (
+                    nome,
+                    email,
+                    cpf,
+                    telefone,
+                    cep,
+                    senha_hash,
+                    created_at,
+                    lembrete_enviado
+                )
+                VALUES
+                (
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    NOW(),
+                    0
+                )
+            ");
+
+        /*
+         * Todos são strings.
          *
-         * Principalmente o CEP, porque ele pode começar
-         * com zero.
+         * Isso é especialmente importante
+         * para CPF e CEP.
          */
+
         $stmt->bind_param(
-            "ssssss",
+            'ssssss',
             $nome,
             $email,
             $cpf,
@@ -220,88 +228,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $senhaHash
         );
 
-
-        // Executa INSERT
         $stmt->execute();
 
-
-        // Guarda o ID criado
-        $idPessoa = $stmt->insert_id;
-
+        $idPessoa =
+            $stmt->insert_id;
 
         $stmt->close();
+
         $conn->close();
 
-
-        // =================================================
-        // LOGIN AUTOMÁTICO
-        // =================================================
-
         /*
-         * Agora que a pessoa foi criada, usamos o próprio
-         * AuthController para fazer o login.
-         */
+        |--------------------------------------------------------------------------
+        | LOGIN AUTOMÁTICO
+        |--------------------------------------------------------------------------
+        */
 
-        $auth = AuthController::login(
-            $email,
-            $senha
+        $auth =
+            AuthController::login(
+                $email,
+                $senha
+            );
+
+        AuthController::establishSession(
+            $auth
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | DADOS PARA O CURRÍCULO
+        |--------------------------------------------------------------------------
+        */
+
+        $_SESSION['id_pessoa'] =
+            $idPessoa;
+
+        $_SESSION['pessoa_nome'] =
+            $nome;
 
         /*
-         * Cria:
-         *
-         * $_SESSION['usuario_id']
-         * $_SESSION['usuario_nome']
-         * $_SESSION['usuario_email']
-         * $_SESSION['usuario_tipo']
-         * $_SESSION['jwt']
-         * $_SESSION['logado']
-         *
-         * e também o cookie JWT.
+         * Também salvamos nas chaves utilizadas
+         * pelo cadastrar_curriculo.php.
          */
-        AuthController::establishSession($auth);
 
+        $_SESSION['nome_pessoa'] =
+            $nome;
+
+        $_SESSION['email_pessoa'] =
+            $email;
 
         /*
-         * Guarda também o ID da pessoa para o cadastro
-         * do currículo.
-         */
-        $_SESSION['id_pessoa'] = $idPessoa;
-        $_SESSION['pessoa_nome'] = $nome;
+        |--------------------------------------------------------------------------
+        | REDIRECIONAMENTO
+        |--------------------------------------------------------------------------
+        */
 
+        header(
+            'Location: cadastrar_curriculo.php'
+        );
 
-        // ---------------------------------------------
-        // VAI DIRETO PARA O CURRÍCULO
-        // ---------------------------------------------
-
-        header('Location: cadastrar_curriculo.php');
         exit;
-
 
     } catch (mysqli_sql_exception $e) {
 
-        /*
-         * Código 1062 = chave duplicada.
-         *
-         * Normalmente significa CPF ou e-mail já cadastrado.
-         */
+        error_log(
+            'Erro MySQL cadastro pessoa: ' .
+            $e->getMessage()
+        );
 
         if ($e->getCode() === 1062) {
 
-            $erro = 'Este CPF ou e-mail já está cadastrado.';
+            $erro =
+                'Este CPF ou e-mail já está cadastrado.';
 
         } else {
 
             $erro =
-                'Erro ao salvar no banco de dados: ' .
-                $e->getMessage();
+                'Não foi possível realizar o cadastro.';
         }
-
 
     } catch (Throwable $e) {
 
-        $erro = $e->getMessage();
+        $erro =
+            $e->getMessage();
     }
 }
 
@@ -319,7 +327,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>DevIN | Criar Conta Pessoal</title>
+    <title>
+        DevIN | Criar Conta Pessoal
+    </title>
 
     <link
         rel="icon"
@@ -341,34 +351,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-<div class="container">
-    <h1>Criar Conta (Pessoa Física)</h1>
-
 
 <div class="main-container">
 
-
-    <!-- ========================================= -->
-    <!-- LADO ESQUERDO                            -->
-    <!-- ========================================= -->
-
     <section class="left-side">
-
-
-        <!-- LOGO -->
 
         <div class="brand-logo">
 
-            <a href="../php/index.php">
+            <a href="index.php">
                 Dev<span>IN</span>
             </a>
 
         </div>
-
-
-        <!-- ===================================== -->
-        <!-- ALTERNAR TIPO DE CADASTRO              -->
-        <!-- ===================================== -->
 
         <div class="toggle-container">
 
@@ -392,15 +386,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </div>
 
-
         <h1 class="page-title">
             Criar conta
         </h1>
-
-
-        <!-- ===================================== -->
-        <!-- MENSAGEM DE ERRO                      -->
-        <!-- ===================================== -->
 
         <?php if (!empty($erro)): ?>
 
@@ -412,19 +400,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     margin-bottom: 15px;
                 "
             >
+
                 <?= htmlspecialchars(
                     $erro,
                     ENT_QUOTES,
                     'UTF-8'
                 ) ?>
+
             </div>
 
         <?php endif; ?>
-
-
-        <!-- ===================================== -->
-        <!-- FORMULÁRIO                             -->
-        <!-- ===================================== -->
 
         <form
             action="cadastro_pessoa.php"
@@ -433,18 +418,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             id="formCadastro"
         >
 
-
             <div class="form-columns">
 
-
-                <!-- ================================= -->
-                <!-- PRIMEIRA COLUNA                    -->
-                <!-- ================================= -->
-
                 <div class="form-column">
-
-
-                    <!-- NOME -->
 
                     <div class="input-group">
 
@@ -465,9 +441,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         >
 
                     </div>
-
-
-                    <!-- CPF -->
 
                     <div class="input-group">
 
@@ -491,9 +464,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
-
-                    <!-- CEP -->
-
                     <div class="input-group">
 
                         <label for="cep">
@@ -516,15 +486,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
-
-                    <!-- CONFIRMAR SENHA -->
-
                     <div class="input-group password-wrapper">
 
                         <label for="confirme_senha">
                             Confirme a sua senha:*
                         </label>
-
 
                         <div class="input-icon-container">
 
@@ -535,7 +501,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 required
                             >
 
-
                             <img
                                 src="../img/olho_fechado.png"
                                 class="toggle-password-eye"
@@ -543,11 +508,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     'confirme_senha',
                                     this
                                 )"
-                                alt="Ocultar/Mostrar Senha"
+                                alt="Mostrar ou ocultar senha"
                             >
 
                         </div>
-
 
                         <span
                             id="error-match"
@@ -558,18 +522,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
-
                 </div>
 
-
-                <!-- ================================= -->
-                <!-- SEGUNDA COLUNA                    -->
-                <!-- ================================= -->
-
                 <div class="form-column">
-
-
-                    <!-- EMAIL -->
 
                     <div class="input-group">
 
@@ -590,9 +545,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         >
 
                     </div>
-
-
-                    <!-- TELEFONE -->
 
                     <div class="input-group">
 
@@ -615,15 +567,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
-
-                    <!-- SENHA -->
-
                     <div class="input-group password-wrapper">
 
                         <label for="senha">
                             Senha:*
                         </label>
-
 
                         <div class="input-icon-container">
 
@@ -634,7 +582,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 required
                             >
 
-
                             <img
                                 src="../img/olho_fechado.png"
                                 class="toggle-password-eye"
@@ -642,18 +589,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     'senha',
                                     this
                                 )"
-                                alt="Ocultar/Mostrar Senha"
+                                alt="Mostrar ou ocultar senha"
                             >
 
                         </div>
 
                     </div>
 
-
-                    <!-- REQUISITOS DA SENHA -->
-
                     <div class="password-requirements">
-
 
                         <div
                             class="requirement-item req-invalid"
@@ -668,7 +611,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         </div>
 
-
                         <div
                             class="requirement-item req-invalid"
                             id="req-upper"
@@ -682,7 +624,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         </div>
 
-
                         <div
                             class="requirement-item req-invalid"
                             id="req-special"
@@ -692,23 +633,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 ⚠️
                             </span>
 
-                            Pelo menos 1 caracter especial
+                            Pelo menos 1 caractere especial
                             (como ! @ # $)
 
                         </div>
 
-
                     </div>
-
 
                 </div>
 
             </div>
-
-
-            <!-- ===================================== -->
-            <!-- BOTÃO CADASTRAR                       -->
-            <!-- ===================================== -->
 
             <div class="form-footer-action">
 
@@ -718,7 +652,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 >
                     Cadastrar
                 </button>
-
 
                 <p class="login-redirect">
 
@@ -732,13 +665,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             </div>
 
-
         </form>
-
-
-        <!-- ===================================== -->
-        <!-- RODAPÉ                                -->
-        <!-- ===================================== -->
 
         <footer class="page-footer">
 
@@ -749,16 +676,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </footer>
 
-
     </section>
 
-
-    <!-- ========================================= -->
-    <!-- LADO DIREITO                             -->
-    <!-- ========================================= -->
-
     <section class="right-side">
-
 
         <a
             href="login.php"
@@ -766,7 +686,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         >
             Login
         </a>
-
 
         <div class="mascot-container">
 
@@ -778,18 +697,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </div>
 
-
     </section>
-
 
 </div>
 
-
 <div id="status-alert-container"></div>
-
 
 <script src="../js/cadastro.js"></script>
 
 </body>
-
 </html>
