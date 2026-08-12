@@ -1,0 +1,24 @@
+:root { --bg: #f8f7f2; --blue: #004a94; --text: #111111; --white: #ffffff; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', Arial, sans-serif; }
+a { text-decoration: none; }
+.cabecalho-site { width: min(80%, 1280px); height: 83px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+.marca { color: var(--text); font-size: 28px; font-weight: 700; }
+.marca span, footer span { color: var(--blue); }
+.voltar { min-height: 40px; display: inline-flex; align-items: center; padding: 0 18px; border: 2px solid var(--blue); border-radius: 11px; color: var(--blue); font-weight: 600; transition: .2s ease; }
+.voltar:hover { color: var(--white); background: var(--blue); transform: translateY(-1px); }
+.pagina-politica { width: min(900px, calc(100% - 40px)); margin: 48px auto 70px; }
+.hero-politica { padding: 46px 56px; border-radius: 30px; color: var(--white); background: linear-gradient(125deg, #003a76, #0755a7); box-shadow: 0 20px 45px rgba(0, 74, 148, .2); }
+.eyebrow { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .12em; opacity: .8; }
+h1 { margin: 0; font-size: clamp(32px, 5vw, 48px); line-height: 1.12; }
+.hero-politica > p:not(.eyebrow) { max-width: 650px; margin: 18px 0; font-size: 17px; }
+.hero-politica small { opacity: .8; }
+.conteudo-politica { margin-top: 28px; padding: 42px 56px; border-radius: 28px; background: var(--white); box-shadow: 0 16px 35px rgba(0, 0, 0, .08); }
+.conteudo-politica section + section { margin-top: 30px; }
+h2 { margin: 0 0 8px; color: var(--blue); font-size: 19px; }
+.conteudo-politica p { margin: 0; color: #4e5360; font-size: 14px; line-height: 1.8; }
+.aviso-lgpd { margin-top: 36px; padding: 20px 22px; border-left: 4px solid var(--blue); border-radius: 0 14px 14px 0; background: #edf5ff; }
+.aviso-lgpd strong { color: var(--blue); }
+.aviso-lgpd p { margin-top: 6px; }
+footer { padding: 24px; border-top: 1px solid #e3e1d9; color: #555; font-size: 13px; text-align: center; }
+@media (max-width: 600px) { .cabecalho-site { width: calc(100% - 32px); height: 72px; } .marca { font-size: 25px; } .voltar { min-height: 36px; padding: 0 13px; font-size: 13px; } .pagina-politica { width: min(100% - 28px, 900px); margin-top: 26px; } .hero-politica, .conteudo-politica { padding: 30px 24px; border-radius: 22px; } }

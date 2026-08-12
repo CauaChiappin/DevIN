@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
@@ -46,21 +46,64 @@ body {
     justify-content: center;
 }
 
-/* Logo DevIN */
+/* Cabeçalho compacto, seguindo a identidade visual da página inicial */
+.cadastro-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
 .brand-logo {
-    font-size: 2.2rem;
-    font-weight: 800;
+    font-size: 28px;
+    font-weight: 700;
     color: #000000;
-    letter-spacing: -1px;
-      text-decoration: none;
-       color: var(--blue)
+    letter-spacing: 0;
 }
 .brand-logo a { 
-    text-decoration: none
-    ; color: #000000;
+    text-decoration: none;
+    color: #000000;
  }
 
+.brand-logo { text-decoration: none; color: #000000; }
+
 .brand-logo span { color: #004aad; }
+
+.header-action {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border: 2px solid #004aad;
+    border-radius: 11px;
+    color: #004aad;
+    font-size: .95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.header-action:hover {
+    background: #004aad;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.header-action--outside {
+    position: absolute;
+    top: 40px;
+    right: 60px;
+    border-color: #ffffff;
+    background: #ffffff;
+    color: #004aad;
+    z-index: 2;
+}
+
+.header-action--outside:hover {
+    background: transparent;
+    color: #ffffff;
+}
 
 /* Alternador Pessoal / Empresa */
 .toggle-container {
@@ -234,24 +277,6 @@ body {
 .login-redirect a { color: #004aad; font-weight: 700; text-decoration: none; }
 .login-redirect a:hover { text-decoration: underline; }
 
-/* Botão de Login Superior Direito */
-.btn-top-login {
-    position: absolute;
-    top: 40px;
-    right: 60px;
-    text-decoration: none;
-    color: #004aad;
-    background-color: #ffffff;
-    padding: 8px 35px;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-}
-
-.btn-top-login:hover { transform: scale(1.03); }
-
 /* Espaço do Robô */
 .mascot-container {
     width: 90%; /* Aumentado um pouco para o robô ter mais presença */
@@ -302,6 +327,12 @@ body {
     .right-side { display: none; }
     .left-side { border-radius: 0; padding: 40px 25px; }
     .form-columns { flex-direction: column; gap: 18px; }
+    .header-action--outside { display: none; }
+}
+
+@media (max-width: 480px) {
+    .left-side { padding: 28px 20px; }
+    .brand-logo { font-size: 25px; }
 }
         /* Extensão de estilos para alinhar select e textarea ao design de pílula */
         .input-group select,
@@ -335,4 +366,3 @@ body {
             margin-bottom: 25px;
             text-align: center;
         }
-    

@@ -347,6 +347,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         rel="stylesheet"
         href="../css/cadastrostyle.css"
     >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 </head>
 
@@ -356,13 +359,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <section class="left-side">
 
-        <div class="brand-logo">
-
-            <a href="index.php">
-                Dev<span>IN</span>
-            </a>
-
-        </div>
+        <header class="cadastro-header">
+            <a class="brand-logo" href="index.php">Dev<span>IN</span></a>
+        </header>
 
         <div class="toggle-container">
 
@@ -679,13 +678,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </section>
 
     <section class="right-side">
-
-        <a
-            href="login.php"
-            class="btn-top-login"
-        >
-            Login
-        </a>
+        <a href="login.php" class="header-action header-action--outside">Login</a>
 
         <div class="mascot-container">
 
