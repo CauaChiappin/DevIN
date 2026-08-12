@@ -72,6 +72,8 @@ $vagasPessoa = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Dashboard Candidato</title>
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
 </head>
 
@@ -80,7 +82,6 @@ $vagasPessoa = [
         <aside class="sidebar">
             <div class="sidebar-topo">
                 <a class="brand" href="pessoa.php">
-                    <?= dashboardIcon('brand') ?>
                     <span class="brand-text">Dev<span>IN</span></span>
                 </a>
                 <button class="menu-toggle" type="button" aria-label="Abrir ou fechar menu" aria-expanded="true"

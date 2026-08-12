@@ -358,6 +358,8 @@ unset($candidato);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Dashboard Empresa</title>
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
 </head>
 <body>
@@ -366,7 +368,6 @@ unset($candidato);
         <aside class="sidebar">
             <div class="sidebar-topo">
                 <a class="brand" href="empresa.php">
-                    <?= dashboardIcon('brand') ?>
                     <span class="brand-text">Dev<span>IN</span></span>
                 </a>
                 <button class="menu-toggle" type="button" aria-label="Abrir ou fechar menu" aria-expanded="true" data-toggle-menu>
@@ -376,7 +377,7 @@ unset($candidato);
 
             <nav class="menu-principal" aria-label="Menu principal">
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="empresa.php?pagina=inicio"><?= dashboardIcon('home') ?><span class="menu-text">Inicio</span></a>
-                <a class="<?= ativo($pagina, 'candidatos') ?>" href="empresa.php?pagina=candidatos"><?= dashboardIcon('users') ?><span class="menu-text">Candidatos</span></a>
+                <a class="<?= ativo($pagina, 'candidatos') ?>" href="empresa.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Candidatos</span></a>
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="empresa.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nos</span></a>
             </nav>
 
@@ -531,8 +532,6 @@ unset($candidato);
                         </div>
                     </article>
                 <?php endforeach; ?>
-
-                <?php if (!$empresaPosts): ?><p class="empty-state">Voce ainda nao publicou nenhuma vaga.</p><?php endif; ?>
 
                 <?php foreach ($talentos as $talento): ?>
                     <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>">
