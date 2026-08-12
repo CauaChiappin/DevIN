@@ -609,7 +609,7 @@ $cIdiomas =
 
             <div class="form-footer-action">
 
-                <button
+             <button  href="/php/pessoa.php"
                     type="submit"
                     class="btn-submit"
                 >
@@ -668,4 +668,4 @@ $cIdiomas =
 </div>
 
 </body>
-</html>
+</html>     
