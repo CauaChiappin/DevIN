@@ -1,3 +1,12 @@
+<?php
+// recuperacao.php
+session_start();
+
+$mensagemSucesso = $_SESSION['sucesso_recuperacao'] ?? '';
+$mensagemErro    = $_SESSION['erro_recuperacao'] ?? '';
+
+unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao']);
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,24 +16,30 @@
     <link rel="stylesheet" href="../css/estilo.css">
 </head>
 <body>
+<div class="card">
+    <h1>Recuperação de Senha</h1>
+    <p class="subtitle">Digite seu e-mail cadastrado e enviaremos um link seguro para a redefinição.</p>
 
-    <div class="card">
-        <h2>Recuperação de senha</h2>
-        <div class="logo">Dev<span>IN</span></div>
-        
-        <form action="processar.php?acao=solicitar" method="POST">
-            <label for="email">Email:</label>
-            <div class="input-container">
-                <span class="icon">✉</span>
-                <input type="email" id="email" name="email" placeholder="Informe seu email..." required>
-            </div>
-            <button type="submit" class="btn-enviar">Enviar</button>
-        </form>
-    </div>
+    <?php if ($mensagemSucesso): ?>
+        <div class="alert-success"><?= htmlspecialchars($mensagemSucesso) ?></div>
+    <?php endif; ?>
 
-    <footer>
-        DevIN | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
-    </footer>
+    <?php if ($mensagemErro): ?>
+        <div class="alert-error"><?= htmlspecialchars($mensagemErro) ?></div>
+    <?php endif; ?>
 
+    <form action="processar.php" method="POST">
+        <input type="hidden" name="acao" value="solicitar_recuperacao">
+
+        <div class="form-group">
+            <label for="email">E-mail Cadastrado:</label>
+            <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Enviar Link de Recuperação</button>
+    </form>
+
+    <a href="login.php" class="back-link">← Voltar para o Login</a>
+</div>
 </body>
 </html>

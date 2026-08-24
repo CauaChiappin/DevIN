@@ -41,6 +41,12 @@ switch ($url) {
         require __DIR__ . '/../cadastro_empresa.php';
         break;
 
+    case '/politica-privacidade':
+    case '/politica_privacidade.html':
+    case '/politica_privacidade.php':
+        require __DIR__ . '/../politica_privacidade.php';
+        break;
+
     // Se o usuário digitar qualquer outra coisa, dá erro 404
     default:
         http_response_code(404);

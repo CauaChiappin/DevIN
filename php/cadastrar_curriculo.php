@@ -1,94 +1,647 @@
 <?php
-ob_start();
+
 session_start();
 
-// Barreira de autenticação
-if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    header('Location: login.php?erro=Faça login para continuar');
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/MailerHelper.php';
+
+/*
+|--------------------------------------------------------------------------
+| VERIFICA LOGIN
+|--------------------------------------------------------------------------
+*/
+
+if (
+    empty($_SESSION['id_pessoa']) &&
+    empty($_SESSION['usuario_id'])
+) {
+
+    header(
+        'Location: login.php'
+    );
+
     exit;
 }
 
-// Garante que apenas usuários do tipo 'pessoa' preencham
-if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] !== 'pessoa') {
-    header('Location: login.php');
-    exit;
-}
+/*
+|--------------------------------------------------------------------------
+| IDENTIFICA A PESSOA
+|--------------------------------------------------------------------------
+*/
 
+$idPessoa =
+    (int) (
+        $_SESSION['id_pessoa']
+        ?? $_SESSION['usuario_id']
+    );
+
+$nomePessoa =
+    $_SESSION['nome_pessoa']
+    ?? $_SESSION['usuario_nome']
+    ?? 'Candidato';
+
+$emailPessoa =
+    $_SESSION['email_pessoa']
+    ?? $_SESSION['usuario_email']
+    ?? '';
+
+/*
+|--------------------------------------------------------------------------
+| MENSAGENS
+|--------------------------------------------------------------------------
+*/
+
+$mensagemSucesso = '';
 $mensagemErro = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $dbname = "devin";
+/*
+|--------------------------------------------------------------------------
+| CONEXÃO
+|--------------------------------------------------------------------------
+*/
 
-    $conn = new mysqli($host, $user, $pass, $dbname);
+try {
 
-    if ($conn->connect_error) {
-        $mensagemErro = "Falha de conexão com o banco de dados: " . $conn->connect_error;
-    } else {
-        $idPessoa = $_SESSION['usuario_id'];
-        $nome_social = trim($_POST['nome_social'] ?? '');
-        $grau_escolaridade = trim($_POST['grau_de_escolaridade'] ?? '');
-        $cursos = trim($_POST['cursos'] ?? '');
-        $experiencia = trim($_POST['experiencia'] ?? '');
-        $idiomas = trim($_POST['idiomas'] ?? '');
+    $conn =
+        getDatabaseConnection();
 
-        // Prepara a gravação mantendo a integridade com a tabela 'curriculo' do seu MySQL
-        $sql = "INSERT INTO curriculo 
-                (id_pessoa, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+} catch (Throwable $e) {
 
-        $stmt = $conn->prepare($sql);
+    error_log(
+        'Erro de conexão: ' .
+        $e->getMessage()
+    );
 
-        if ($stmt) {
-            $stmt->bind_param("isssss", $idPessoa, $nome_social, $grau_escolaridade, $cursos, $experiencia, $idiomas);
+    $conn = null;
 
-            if ($stmt->execute()) {
-                header('Location: dashboard_pessoa.php');
-                exit;
-            } else {
-                $mensagemErro = "Erro ao salvar currículo: " . $stmt->error;
-            }
-            $stmt->close();
-        } else {
-            $mensagemErro = "Erro na query SQL: " . $conn->error;
+    $mensagemErro =
+        'Não foi possível conectar ao banco de dados.';
+}
+
+/*
+|--------------------------------------------------------------------------
+| SALVAR CURRÍCULO
+|--------------------------------------------------------------------------
+*/
+
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    $conn instanceof mysqli
+) {
+
+    $nomeSocial =
+        trim(
+            $_POST['nome_social'] ?? ''
+        );
+
+    $grauEscolaridade =
+        trim(
+            $_POST['grau_de_escolaridade'] ?? ''
+        );
+
+    $cursos =
+        trim(
+            $_POST['cursos'] ?? ''
+        );
+
+    $experiencia =
+        trim(
+            $_POST['experiencia'] ?? ''
+        );
+
+    $idiomas =
+        trim(
+            $_POST['idiomas'] ?? ''
+        );
+
+    try {
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDAÇÃO
+        |--------------------------------------------------------------------------
+        */
+
+        if ($nomeSocial === '') {
+            throw new InvalidArgumentException(
+                'Informe seu nome social.'
+            );
         }
 
-        $conn->close();
+        if ($grauEscolaridade === '') {
+            throw new InvalidArgumentException(
+                'Selecione seu grau de escolaridade.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VERIFICA SE JÁ EXISTE CURRÍCULO
+        |--------------------------------------------------------------------------
+        */
+
+        $stmtCheck =
+            $conn->prepare("
+                SELECT id_curriculo
+                FROM curriculo
+                WHERE id_pessoa = ?
+                LIMIT 1
+            ");
+
+        $stmtCheck->bind_param(
+            'i',
+            $idPessoa
+        );
+
+        $stmtCheck->execute();
+
+        $resCheck =
+            $stmtCheck->get_result();
+
+        $jaExiste =
+            $resCheck &&
+            $resCheck->num_rows > 0;
+
+        $stmtCheck->close();
+
+        /*
+        |--------------------------------------------------------------------------
+        | ATUALIZA OU INSERE
+        |--------------------------------------------------------------------------
+        */
+
+        if ($jaExiste) {
+
+            $stmt =
+                $conn->prepare("
+                    UPDATE curriculo
+                    SET
+                        nome_social = ?,
+                        grau_de_escolaridade = ?,
+                        cursos = ?,
+                        experiencia = ?,
+                        idiomas = ?
+                    WHERE id_pessoa = ?
+                ");
+
+            $stmt->bind_param(
+                'sssssi',
+                $nomeSocial,
+                $grauEscolaridade,
+                $cursos,
+                $experiencia,
+                $idiomas,
+                $idPessoa
+            );
+
+        } else {
+
+            $stmt =
+                $conn->prepare("
+                    INSERT INTO curriculo
+                    (
+                        id_pessoa,
+                        nome_social,
+                        grau_de_escolaridade,
+                        cursos,
+                        experiencia,
+                        idiomas
+                    )
+                    VALUES
+                    (?, ?, ?, ?, ?, ?)
+                ");
+
+            $stmt->bind_param(
+                'isssss',
+                $idPessoa,
+                $nomeSocial,
+                $grauEscolaridade,
+                $cursos,
+                $experiencia,
+                $idiomas
+            );
+        }
+
+        $executou =
+            $stmt->execute();
+
+        $stmt->close();
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESULTADO
+        |--------------------------------------------------------------------------
+        */
+
+        if ($executou) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | E-MAIL DO CANDIDATO
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                !empty($emailPessoa) &&
+                filter_var(
+                    $emailPessoa,
+                    FILTER_VALIDATE_EMAIL
+                )
+            ) {
+
+                MailerHelper::
+                    enviarConfirmacaoCadastroCurriculo(
+                        $emailPessoa,
+                        $nomePessoa
+                    );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | AVISA EMPRESAS
+            |--------------------------------------------------------------------------
+            */
+
+            MailerHelper::
+                notificarEmpresasNovoCandidato(
+                    $conn,
+                    $nomePessoa
+                );
+
+            $mensagemSucesso =
+                'Currículo salvo com sucesso!';
+
+        } else {
+
+            $mensagemErro =
+                'Erro ao salvar o currículo.';
+        }
+
+    } catch (Throwable $e) {
+
+        error_log(
+            'Erro ao salvar currículo: ' .
+            $e->getMessage()
+        );
+
+        $mensagemErro =
+            'Não foi possível salvar o currículo. Tente novamente.';
     }
 }
+
+/*
+|--------------------------------------------------------------------------
+| BUSCA CURRÍCULO
+|--------------------------------------------------------------------------
+*/
+
+$dadosCurriculo = [];
+
+if ($conn instanceof mysqli) {
+
+    try {
+
+        $stmtFetch =
+            $conn->prepare("
+                SELECT
+                    nome_social,
+                    grau_de_escolaridade,
+                    cursos,
+                    experiencia,
+                    idiomas
+                FROM curriculo
+                WHERE id_pessoa = ?
+                LIMIT 1
+            ");
+
+        $stmtFetch->bind_param(
+            'i',
+            $idPessoa
+        );
+
+        $stmtFetch->execute();
+
+        $dadosCurriculo =
+            $stmtFetch
+                ->get_result()
+                ->fetch_assoc()
+                ?? [];
+
+        $stmtFetch->close();
+
+        $conn->close();
+
+    } catch (Throwable $e) {
+
+        error_log(
+            'Erro ao buscar currículo: ' .
+            $e->getMessage()
+        );
+    }
+}
+
+$cNomeSocial =
+    $dadosCurriculo['nome_social']
+    ?? '';
+
+$cGrauEscolaridade =
+    $dadosCurriculo['grau_de_escolaridade']
+    ?? '';
+
+$cCursos =
+    $dadosCurriculo['cursos']
+    ?? '';
+
+$cExperiencia =
+    $dadosCurriculo['experiencia']
+    ?? '';
+
+$cIdiomas =
+    $dadosCurriculo['idiomas']
+    ?? '';
+
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevIN | Preencher Currículo</title>
-    <link rel="stylesheet" href="../css/curriculo.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        DevIN | Preencher Currículo
+    </title>
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="../img/favicon.svg"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="../img/favicon.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/curriculo.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/cadastrostyle.css"
+    >
+
 </head>
+
 <body>
 
-    <div class="curriculo-card">
+<div class="main-container">
 
-        <?php if (!empty($mensagemErro)): ?>
-            <div class="msg-erro-box">
-                <?php echo htmlspecialchars($mensagemErro, ENT_QUOTES, 'UTF-8'); ?>
+    <div class="left-side">
+
+        <div class="brand-logo">
+
+            <a href="index.php">
+                Dev<span>IN</span>
+            </a>
+
+        </div>
+
+        <?php if ($mensagemSucesso): ?>
+
+            <div class="php-toast success-toast">
+
+                <?= htmlspecialchars(
+                    $mensagemSucesso,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+
             </div>
+
         <?php endif; ?>
 
-        <form action="cadastrar_curriculo.php" method="POST">
-            
-            <div class="form-group">
-                <label for="nome_social">Nome social</label>
-                <input type="text" id="nome_social" name="nome_social">
+        <?php if ($mensagemErro): ?>
+
+            <div class="php-toast error-toast">
+
+                <?= htmlspecialchars(
+                    $mensagemErro,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+
             </div>
 
-            <div class="form-group">
-                <label for="objetivo_profissional">Objetivo Profissional<span class="asterisk">*</span></label>
-                <input type="text" id="objetivo_profissional" name="objetivo_profissional" required>
+        <?php endif; ?>
+
+        <form
+            method="POST"
+            action="cadastrar_curriculo.php"
+            class="register-form"
+        >
+
+            <h2 class="title-curriculo">
+                Preenchimento de Currículo
+            </h2>
+
+            <div class="form-columns">
+
+                <div class="form-column">
+
+                    <div class="input-group">
+
+                        <label for="nome_social">
+                            Nome Social / Como prefere ser chamado(a):
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nome_social"
+                            name="nome_social"
+                            placeholder="Ex: Alex Silva"
+                            value="<?= htmlspecialchars(
+                                $cNomeSocial,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="grau_de_escolaridade">
+                            Grau de Escolaridade:
+                        </label>
+
+                        <select
+                            id="grau_de_escolaridade"
+                            name="grau_de_escolaridade"
+                            required
+                        >
+
+                            <option value="">
+                                Selecione...
+                            </option>
+
+                            <option
+                                value="Ensino Médio Incompleto"
+                                <?= $cGrauEscolaridade === 'Ensino Médio Incompleto'
+                                    ? 'selected'
+                                    : '' ?>
+                            >
+                                Ensino Médio Incompleto
+                            </option>
+
+                            <option
+                                value="Ensino Médio Completo"
+                                <?= $cGrauEscolaridade === 'Ensino Médio Completo'
+                                    ? 'selected'
+                                    : '' ?>
+                            >
+                                Ensino Médio Completo
+                            </option>
+
+                            <option
+                                value="Ensino Superior Incompleto"
+                                <?= $cGrauEscolaridade === 'Ensino Superior Incompleto'
+                                    ? 'selected'
+                                    : '' ?>
+                            >
+                                Ensino Superior Incompleto
+                            </option>
+
+                            <option
+                                value="Ensino Superior Completo"
+                                <?= $cGrauEscolaridade === 'Ensino Superior Completo'
+                                    ? 'selected'
+                                    : '' ?>
+                            >
+                                Ensino Superior Completo
+                            </option>
+
+                            <option
+                                value="Pós-graduação / Especialização"
+                                <?= $cGrauEscolaridade === 'Pós-graduação / Especialização'
+                                    ? 'selected'
+                                    : '' ?>
+                            >
+                                Pós-graduação / Especialização
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="idiomas">
+                            Idiomas:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="idiomas"
+                            name="idiomas"
+                            placeholder="Ex: Português Nativo, Inglês Intermediário"
+                            value="<?= htmlspecialchars(
+                                $cIdiomas,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="form-column">
+
+                    <div class="input-group">
+
+                        <label for="cursos">
+                            Cursos e Certificações:
+                        </label>
+
+                        <textarea
+                            id="cursos"
+                            name="cursos"
+                            placeholder="Ex: Curso de PHP Avançado, HTML5/CSS3, MySQL"
+                        ><?= htmlspecialchars(
+                            $cCursos,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?></textarea>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="experiencia">
+                            Experiência Profissional:
+                        </label>
+
+                        <textarea
+                            id="experiencia"
+                            name="experiencia"
+                            placeholder="Ex: Desenvolvedor Web na Empresa X (2022 - Atual)"
+                        ><?= htmlspecialchars(
+                            $cExperiencia,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?></textarea>
+
+                    </div>
+
+                </div>
+
             </div>
+
+            <div class="form-footer-action">
+
+                <button
+                    type="submit"
+                    class="btn-submit"
+                >
+                    Finalizar e Salvar Currículo
+                </button>
+
+                <div class="login-redirect">
+
+                    Deseja sair do sistema?
+
+                    <a href="logout.php">
+                        Clique aqui
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+        <div class="page-footer">
+
+            © <?= date('Y') ?>
+
+            <span>
+                DevIN
+            </span>
+
+            . Todos os direitos reservados.
+
+        </div>
 
             <div class="form-group">
                 <label for="grau_de_escolaridade">Grau de Escolaridade<span class="asterisk">*</span></label>
@@ -117,9 +670,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </div>
 
-    <footer>
-        DevIN | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
-    </footer>
+    <div class="right-side">
+
+        <a
+            href="logout.php"
+            class="btn-top-login"
+        >
+            Sair
+        </a>
+
+        <div class="mascot-container">
+
+            <img
+                src="../img/robocadastro.webp"
+                alt="Mascote DevIN"
+                class="mascot-img"
+            >
+
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>

@@ -4,147 +4,362 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../auth/Jwt.php';
 
+
 class AuthController
 {
+
+    // =====================================================
+    // CRIAR SESSÃO
+    // =====================================================
+
     public static function establishSession(array $auth): void
     {
+
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
 
-        $_SESSION['usuario_id'] = $auth['usuario']['id'];
-        $_SESSION['usuario_nome'] = $auth['usuario']['nome'];
-        $_SESSION['usuario_email'] = $auth['usuario']['email'];
-        $_SESSION['usuario_tipo'] = $auth['usuario']['tipo'];
-        $_SESSION['jwt'] = $auth['token'];
+
+        $_SESSION['usuario_id'] =
+            $auth['usuario']['id'];
+
+        $_SESSION['usuario_nome'] =
+            $auth['usuario']['nome'];
+
+        $_SESSION['usuario_email'] =
+            $auth['usuario']['email'];
+
+        $_SESSION['usuario_tipo'] =
+            $auth['usuario']['tipo'];
+
+        $_SESSION['jwt'] =
+            $auth['token'];
+
         $_SESSION['logado'] = true;
 
-        setcookie(JWT_COOKIE_NAME, $auth['token'], [
-            'expires' => time() + JWT_EXPIRATION_SECONDS,
-            'path' => '/',
-            'httponly' => true,
-            'samesite' => 'Lax',
-        ]);
+
+        // Cookie JWT
+
+        setcookie(
+            JWT_COOKIE_NAME,
+            $auth['token'],
+            [
+                'expires' =>
+                    time() + JWT_EXPIRATION_SECONDS,
+
+                'path' => '/',
+
+                'httponly' => true,
+
+                'samesite' => 'Lax',
+            ]
+        );
     }
 
-    public static function login(string $email, string $senha): array // metodo que valida email e senha, busca usuario no banco de dados, gera token JWT e retorna um array com token e dados do usuario
-    {
-        $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    public static function login(
+        string $email,
+        string $senha
+    ): array {
+
+        $email = filter_var(
+            $email,
+            FILTER_VALIDATE_EMAIL
+        );
+
 
         if (!$email || trim($senha) === '') {
-            throw new InvalidArgumentException('Preencha email e senha.');
+
+            throw new InvalidArgumentException(
+                'Preencha email e senha.'
+            );
         }
+
 
         $conn = getDatabaseConnection();
-        $usuario = self::findUserByEmail($conn, $email); // busca usuario no banco de dados, se nao encontrar, retorna null
+
+
+        $usuario =
+            self::findUserByEmail(
+                $conn,
+                $email
+            );
+
+
         $conn->close();
 
+
         if (!$usuario) {
-            throw new RuntimeException('Usuario nao encontrado.');
+
+            throw new RuntimeException(
+                'Usuário não encontrado.'
+            );
         }
 
-        if (!password_verify($senha, $usuario['senha_hash'])) {
-            throw new RuntimeException('Senha incorreta.');
+
+        if (
+            !password_verify(
+                $senha,
+                $usuario['senha_hash']
+            )
+        ) {
+
+            throw new RuntimeException(
+                'Senha incorreta.'
+            );
         }
+
+
+        // =================================================
+        // JWT
+        // =================================================
 
         $now = time();
-        $payload = [ /*Carrega os dados a serem codificados, como está em colchetes ele é um json(serve para armazenar dados e transportar dados) */
-            'iss' => JWT_ISSUER, // Emissor do token
-            'iat' => $now, // Data de emissão do token
-            'exp' => $now + JWT_EXPIRATION_SECONDS, // Data de expiração do token
-            'sub' => (string) $usuario['id'], // Identificador do usuário
-            'nome' => $usuario['nome'], // Nome do usuário ......
-            'email' => $usuario['email'],
-            'tipo' => $usuario['tipo'],
+
+
+        $payload = [
+
+            'iss' =>
+                JWT_ISSUER,
+
+            'iat' =>
+                $now,
+
+            'exp' =>
+                $now + JWT_EXPIRATION_SECONDS,
+
+            'sub' =>
+                (string) $usuario['id'],
+
+            'nome' =>
+                $usuario['nome'],
+
+            'email' =>
+                $usuario['email'],
+
+            'tipo' =>
+                $usuario['tipo'],
         ];
 
-        $token = Jwt::encode($payload, JWT_SECRET); // encode é o metodo que codifica o token, ele recebe o payload e a chave secreta para gerar o token
+
+        $token = Jwt::encode(
+            $payload,
+            JWT_SECRET
+        );
+
 
         return [
-            'token' => $token, // retorna o token JWT gerado
-            'usuario' => [ // retorna os dados do usuario
-                'id' => $usuario['id'],
-                'nome' => $usuario['nome'],
-                'email' => $usuario['email'],
-                'tipo' => $usuario['tipo'],
+
+            'token' =>
+                $token,
+
+            'usuario' => [
+
+                'id' =>
+                    $usuario['id'],
+
+                'nome' =>
+                    $usuario['nome'],
+
+                'email' =>
+                    $usuario['email'],
+
+                'tipo' =>
+                    $usuario['tipo'],
             ],
         ];
     }
 
-    private static function findUserByEmail(mysqli $conn, string $email): ?array // metodo que busca usuario no banco de dados pelo email, retorna um array com os dados do usuario ou null se nao encontrar
-    {
-        $sources = [ // array que contem as tabelas do banco de dados e o tipo de usuario correspondente
-            ['table' => 'administrador', 'type' => 'adm'],
-            ['table' => 'Empresa', 'type' => 'empresa'],
-            ['table' => 'empresa', 'type' => 'empresa'],
-            ['table' => 'Pessoa', 'type' => 'pessoa'],
-            ['table' => 'pessoa_fisica', 'type' => 'pessoa'],
+
+    // =====================================================
+    // PROCURAR USUÁRIO PELO EMAIL
+    // =====================================================
+
+    private static function findUserByEmail(
+        mysqli $conn,
+        string $email
+    ): ?array {
+
+        /*
+         * IMPORTANTE:
+         *
+         * O cadastro salva na tabela "pessoa".
+         * Portanto procuramos exatamente "pessoa".
+         */
+
+        $sources = [
+
+            [
+                'table' => 'administrador',
+                'type' => 'adm'
+            ],
+
+            [
+                'table' => 'empresa',
+                'type' => 'empresa'
+            ],
+
+            [
+                'table' => 'pessoa',
+                'type' => 'pessoa'
+            ],
         ];
 
-        foreach ($sources as $source) { // percorre o array de tabelas e tipos de usuario, buscando o usuario pelo email em cada tabela
-            $sql = "SELECT * FROM {$source['table']} WHERE email = ? LIMIT 1"; // faz uma busca na tabela especificada pelo email, limitando a busca a 1 resultado
-            $stmt = $conn->prepare($sql); // prepara a query para ser executada, evitando SQL Injection
 
-            if (!$stmt) { // se a query nao puder ser preparada, continua para a proxima tabela
+        foreach ($sources as $source) {
+
+
+            $sql = "
+                SELECT *
+                FROM {$source['table']}
+                WHERE email = ?
+                LIMIT 1
+            ";
+
+
+            $stmt = $conn->prepare($sql);
+
+
+            if (!$stmt) {
                 continue;
             }
 
-            $stmt->bind_param("s", $email); // vincula o parametro email a query, evitando SQL Injection
-            $stmt->execute(); // executa a query no banco de dados
-            $result = $stmt->get_result(); // obtém o resultado da query executada, que é um objeto mysqli_result
 
-            if ($result && $result->num_rows === 1) {
-                $row = $result->fetch_assoc();
-                $stmt->close(); // fecha a query preparada, liberando recursos do banco de dados
+            $stmt->bind_param(
+                "s",
+                $email
+            );
 
-                $senhaHash = $row['senha_hash'] ?? $row['senha'] ?? null; // verifica se a coluna senha_hash ou senha existe no resultado da query, se não existir, continua para a próxima tabela
+
+            $stmt->execute();
+
+
+            $result =
+                $stmt->get_result();
+
+
+            if (
+                $result &&
+                $result->num_rows === 1
+            ) {
+
+                $row =
+                    $result->fetch_assoc();
+
+
+                $stmt->close();
+
+
+                /*
+                 * Procura a senha.
+                 */
+
+                $senhaHash =
+                    $row['senha_hash']
+                    ?? $row['senha']
+                    ?? null;
+
 
                 if (!$senhaHash) {
                     continue;
                 }
 
+
                 return [
-                    'id' => self::extractId($row), // extrai o id do usuario, verificando se existe a coluna id, id_administrador, id_empresa ou id_pessoa, caso nao exista, retorna 0
-                    'nome' => $row['nome'] ?? '',
-                    'email' => $row['email'] ?? $email,
-                    'senha_hash' => $senhaHash,
-                    'tipo' => $source['type'],
+
+                    'id' =>
+                        self::extractId($row),
+
+                    'nome' =>
+                        $row['nome'] ?? '',
+
+                    'email' =>
+                        $row['email'] ?? $email,
+
+                    'senha_hash' =>
+                        $senhaHash,
+
+                    'tipo' =>
+                        $source['type'],
                 ];
             }
+
 
             $stmt->close();
         }
 
+
         return null;
     }
 
-    private static function extractId(array $row): int
-    {
-        foreach (['id', 'id_administrador', 'id_empresa', 'id_pessoa'] as $key) { // percorre o array de chaves que podem conter o id do usuario, verificando se a chave existe no resultado da query, caso exista, retorna o valor da chave como inteiro
-            if (isset($row[$key])) { // verifica se a chave existe no resultado da query
+
+    // =====================================================
+    // PEGAR ID
+    // =====================================================
+
+    private static function extractId(
+        array $row
+    ): int {
+
+        foreach (
+            [
+                'id',
+                'id_administrador',
+                'id_empresa',
+                'id_pessoa'
+            ]
+            as $key
+        ) {
+
+            if (isset($row[$key])) {
+
                 return (int) $row[$key];
             }
         }
 
-        foreach ($row as $key => $value) { // percorre o array de resultados da query, verificando se a chave começa com "id_", caso comece, retorna o valor da chave como inteiro
-            if (strpos($key, 'id_') === 0) {
+
+        foreach ($row as $key => $value) {
+
+            if (
+                strpos($key, 'id_') === 0
+            ) {
+
                 return (int) $value;
             }
         }
 
+
         return 0;
     }
 
-    public static function redirectByUserType(string $tipo): string // metodo que redireciona o usuario para a pagina correspondente ao seu tipo, retorna a url da pagina
-    {
-        $routes = [ // array que contem as rotas correspondentes a cada tipo de usuario
-            'adm' => 'dashboard.php',
-            'empresa' => 'dashboard.php',
-            'pessoa' => 'dashboard.php',
+
+    // =====================================================
+    // REDIRECIONAMENTO
+    // =====================================================
+
+    public static function redirectByUserType(
+        string $tipo
+    ): string {
+
+        $routes = [
+
+            'adm' =>
+                'adm.php',
+
+            'empresa' =>
+                'empresa.php',
+
+            'pessoa' =>
+                'pessoa.php',
         ];
 
-        return $routes[$tipo] ?? 'index.php';
+
+        return $routes[$tipo]
+            ?? 'index.php';
     }
-    
-      
+
 }

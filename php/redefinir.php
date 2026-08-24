@@ -1,38 +1,275 @@
+<?php
+
+session_start();
+
+require_once __DIR__ . '/config/database.php';
+
+$token = trim(
+    $_GET['token'] ?? ''
+);
+
+$tokenValido = false;
+
+if ($token !== '') {
+
+    try {
+
+        $conn =
+            getDatabaseConnection();
+
+        /*
+        |--------------------------------------------------------------------------
+        | PROCURA TOKEN NA PESSOA
+        |--------------------------------------------------------------------------
+        */
+
+        $stmtPessoa =
+            $conn->prepare("
+                SELECT id_pessoa
+                FROM pessoa
+                WHERE
+                    token_recuperacao = ?
+                    AND token_expiracao > NOW()
+                LIMIT 1
+            ");
+
+        $stmtPessoa->bind_param(
+            's',
+            $token
+        );
+
+        $stmtPessoa->execute();
+
+        $resultadoPessoa =
+            $stmtPessoa->get_result();
+
+        if (
+            $resultadoPessoa &&
+            $resultadoPessoa->num_rows > 0
+        ) {
+            $tokenValido = true;
+        }
+
+        $stmtPessoa->close();
+
+        /*
+        |--------------------------------------------------------------------------
+        | SE NÃO ENCONTROU, PROCURA NA EMPRESA
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$tokenValido) {
+
+            $stmtEmpresa =
+                $conn->prepare("
+                    SELECT id_empresa
+                    FROM empresa
+                    WHERE
+                        token_recuperacao = ?
+                        AND token_expiracao > NOW()
+                    LIMIT 1
+                ");
+
+            $stmtEmpresa->bind_param(
+                's',
+                $token
+            );
+
+            $stmtEmpresa->execute();
+
+            $resultadoEmpresa =
+                $stmtEmpresa->get_result();
+
+            if (
+                $resultadoEmpresa &&
+                $resultadoEmpresa->num_rows > 0
+            ) {
+                $tokenValido = true;
+            }
+
+            $stmtEmpresa->close();
+        }
+
+        $conn->close();
+
+    } catch (Throwable $e) {
+
+        error_log(
+            'Erro ao validar token: ' .
+            $e->getMessage()
+        );
+
+        $tokenValido = false;
+    }
+}
+
+$mensagemErro =
+    $_SESSION['erro_redefinir'] ?? '';
+
+unset(
+    $_SESSION['erro_redefinir']
+);
+
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Nova Senha - DevIN</title>
-    <link rel="stylesheet" href="../css/estilo.css">
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="../img/favicon.svg"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="../img/favicon.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/recuperacao.css"
+    >
+
 </head>
+
 <body>
 
-    <div class="card">
-        <h2>Criar Nova Senha</h2>
-        <div class="logo">Dev<span>IN</span></div>
-        
-        <form action="processar.php?acao=salvar" method="POST">
-            <input type="hidden" id="token" name="token">
+<div class="card">
 
-            <label for="senha">Nova Senha:</label>
-            <div class="input-container">
-                <input type="password" id="senha" name="senha" placeholder="Digite a nova senha..." required>
+    <h1>
+        Criar Nova Senha
+    </h1>
+
+    <?php if (!$tokenValido): ?>
+
+        <div class="alert-error">
+
+            Este link de redefinição é inválido
+            ou já expirou.
+
+        </div>
+
+        <a
+            href="recuperacao.php"
+            class="btn-submit"
+            style="
+                display: block;
+                text-align: center;
+                text-decoration: none;
+            "
+        >
+            Solicitar Novo Link
+        </a>
+
+    <?php else: ?>
+
+        <p class="subtitle">
+
+            Digite sua nova senha abaixo
+            para atualizar sua conta.
+
+        </p>
+
+        <?php if ($mensagemErro): ?>
+
+            <div class="alert-error">
+
+                <?= htmlspecialchars(
+                    $mensagemErro,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+
             </div>
 
-            <button type="submit" class="btn-enviar">Salvar Nova Senha</button>
-        </form>
-    </div>
+        <?php endif; ?>
 
-    <script>
-        // JS para pegar o token da URL (?token=xyz) e colocar no formulário
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        if (token) {
-            document.getElementById('token').value = token;
-        } else {
-            alert('Token inválido ou ausente!');
-        }
-    </script>
+        <form
+            action="processar.php"
+            method="POST"
+        >
+
+            <input
+                type="hidden"
+                name="acao"
+                value="redefinir_senha"
+            >
+
+            <input
+                type="hidden"
+                name="token"
+                value="<?= htmlspecialchars(
+                    $token,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>"
+            >
+
+            <div class="form-group">
+
+                <label for="nova_senha">
+                    Nova Senha:
+                </label>
+
+                <input
+                    type="password"
+                    id="nova_senha"
+                    name="nova_senha"
+                    placeholder="••••••••"
+                    required
+                    minlength="8"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="confirmar_senha">
+                    Confirme a Nova Senha:
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmar_senha"
+                    name="confirmar_senha"
+                    placeholder="••••••••"
+                    required
+                    minlength="8"
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn-submit"
+            >
+                Atualizar Senha
+            </button>
+
+        </form>
+
+    <?php endif; ?>
+
+    <a
+        href="login.php"
+        class="back-link"
+    >
+        ← Voltar para o Login
+    </a>
+
+</div>
+
 </body>
 </html>

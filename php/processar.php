@@ -1,173 +1,526 @@
 <?php
-// processar.php
 
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "devin";
+session_start();
 
-$conn = new mysqli($host, $user, $pass, $dbname);
-if ($conn->connect_error) {
-    die("Falha de conexão com o banco de dados.");
-}
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/MailerHelper.php';
 
-$acao = isset($_GET['acao']) ? $_GET['acao'] : '';
+$acao = $_POST['acao'] ?? '';
 
-// ==========================================
-// AÇÃO 1: SOLICITAR RECUPERAÇÃO DE SENHA
-// ==========================================
-if ($acao === 'solicitar' && $_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $conn->real_escape_string($_POST['email']);
-    
-    $tabela_usuario = "";
-    $nome_usuario = "";
-    $campo_id_tabela = ""; // Guardará se o ID é id_pessoa ou id_empresa
+/*
+|--------------------------------------------------------------------------
+| SOLICITAR RECUPERAÇÃO DE SENHA
+|--------------------------------------------------------------------------
+*/
 
-    // 1. Procura primeiro na tabela Pessoa
-    // IMPORTANTE: Ajuste 'id_pessoa' e 'nome' para os nomes reais das colunas na sua tabela Pessoa
-    $sql_pessoa = "SELECT id_pessoa, nome FROM Pessoa WHERE email = ?";
-    $stmt = $conn->prepare($sql_pessoa);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $res_pessoa = $stmt->get_result();
+if ($acao === 'solicitar_recuperacao') {
 
-    if ($res_pessoa->num_rows > 0) {
-        $usuario = $res_pessoa->fetch_assoc();
-        $tabela_usuario = "Pessoa";
-        $nome_usuario = $usuario['nome'];
-        $campo_id_tabela = "id_pessoa"; // Nome da coluna de ID na tabela Pessoa
-    } else {
-        // 2. Se não achar em Pessoa, procura na tabela Empresa
-        // IMPORTANTE: Ajuste 'id_empresa' e 'nome' para os nomes reais das colunas na sua tabela Empresa
-        $sql_empresa = "SELECT id_empresa, nome FROM Empresa WHERE email = ?"; 
-        $stmt_emp = $conn->prepare($sql_empresa);
-        $stmt_emp->bind_param("s", $email);
-        $stmt_emp->execute();
-        $res_empresa = $stmt_emp->get_result();
+    $email = trim(
+        $_POST['email'] ?? ''
+    );
 
-        if ($res_empresa->num_rows > 0) {
-            $usuario = $res_empresa->fetch_assoc();
-            $tabela_usuario = "Empresa";
-            $nome_usuario = $usuario['nome'];
-            $campo_id_tabela = "id_empresa"; // Nome da coluna de ID na tabela Empresa
+    if (
+        empty($email) ||
+        !filter_var(
+            $email,
+            FILTER_VALIDATE_EMAIL
+        )
+    ) {
+
+        $_SESSION['erro_recuperacao'] =
+            'Por favor, informe um e-mail válido.';
+
+        header(
+            'Location: recuperacao.php'
+        );
+
+        exit;
+    }
+
+    try {
+
+        $conn = getDatabaseConnection();
+
+        /*
+        |--------------------------------------------------------------------------
+        | PROCURA NA TABELA PESSOA
+        |--------------------------------------------------------------------------
+        */
+
+        $stmtPessoa = $conn->prepare("
+            SELECT
+                id_pessoa AS id,
+                nome,
+                email,
+                'pessoa' AS tipo
+            FROM pessoa
+            WHERE email = ?
+            LIMIT 1
+        ");
+
+        $stmtPessoa->bind_param(
+            's',
+            $email
+        );
+
+        $stmtPessoa->execute();
+
+        $usuario =
+            $stmtPessoa
+                ->get_result()
+                ->fetch_assoc();
+
+        $stmtPessoa->close();
+
+        /*
+        |--------------------------------------------------------------------------
+        | SE NÃO ENCONTROU, PROCURA NA EMPRESA
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$usuario) {
+
+            $stmtEmpresa = $conn->prepare("
+                SELECT
+                    id_empresa AS id,
+                    nome,
+                    email,
+                    'empresa' AS tipo
+                FROM empresa
+                WHERE email = ?
+                LIMIT 1
+            ");
+
+            $stmtEmpresa->bind_param(
+                's',
+                $email
+            );
+
+            $stmtEmpresa->execute();
+
+            $usuario =
+                $stmtEmpresa
+                    ->get_result()
+                    ->fetch_assoc();
+
+            $stmtEmpresa->close();
         }
-    }
 
-    // Se não achou o e-mail em NENHUMA das tabelas
-    if (empty($tabela_usuario)) {
-        echo "<script>
-            alert('O e-mail pode estar incorreto ou o usuário/empresa não possui cadastro.');
-            window.history.back();
-        </script>";
-        exit();
-    }
-    
-    // Gera um token único e define uma expiração de 30 minutos
-    $token = bin2hex(random_bytes(32));
-    $expiracao = date("Y-m-d H:i:s", strtotime("+30 minutes"));
+        /*
+        |--------------------------------------------------------------------------
+        | USUÁRIO ENCONTRADO
+        |--------------------------------------------------------------------------
+        */
 
-    // Salva o token na tabela correspondente (Pessoa ou Empresa)
-    $sql_update = "UPDATE $tabela_usuario SET token_recuperacao = ?, token_expiracao = ? WHERE email = ?";
-    $stmt_update = $conn->prepare($sql_update);
-    $stmt_update->bind_param("sss", $token, $expiracao, $email);
-    $stmt_update->execute();
+        if ($usuario) {
 
-    // Link que o usuário vai clicar
-    $link_redefinicao = "http://localhost/DevIN/php/redefinir.html?token=" . $token;
+            $token = bin2hex(
+                random_bytes(32)
+            );
 
-    // --- ENVIO DO EMAIL ---
-    $para = $email;
-    $assunto = "Recuperacao de Senha - DevIN";
-    $mensagem = "Olá, " . $nome_usuario . ".\n\nClique no link abaixo para criar uma nova senha para sua conta:\n" . $link_redefinicao;
-    $headers = "From: no-reply@devin.com";
+            $tabela =
+                $usuario['tipo'] === 'pessoa'
+                    ? 'pessoa'
+                    : 'empresa';
 
-    @mail($para, $assunto, $mensagem, $headers);
+            $colunaId =
+                $usuario['tipo'] === 'pessoa'
+                    ? 'id_pessoa'
+                    : 'id_empresa';
 
-    // Fallback visual para testes no XAMPP local
-    echo "<div style='font-family:sans-serif; text-align:center; margin-top:50px;'>
-            <h3>Solicitação de ($tabela_usuario) processada com sucesso!</h3>
-            <p>Se você estiver em ambiente real, um e-mail foi enviado para <b>$email</b>.</p>
-            <div style='background:#f4f4f4; padding:15px; display:inline-block; border-radius:8px; border:1px solid #ccc;'>
-                <strong>Link de recuperação gerado para testes locais:</strong><br><br>
-                <a href='$link_redefinicao'>$link_redefinicao</a>
-            </div>
-          </div>";
-    exit();
-}
+            $sql = "
+                UPDATE {$tabela}
+                SET
+                    token_recuperacao = ?,
+                    token_expiracao =
+                        DATE_ADD(NOW(), INTERVAL 1 HOUR)
+                WHERE {$colunaId} = ?
+            ";
 
-// ==========================================
-// AÇÃO 2: SALVAR A NOVA SENHA
-// ==========================================
-if ($acao === 'salvar' && $_SERVER["REQUEST_METHOD"] == "POST") {
-    $token = $conn->real_escape_string($_POST['token']);
-    $nova_senha = $_POST['senha'];
+            $stmtToken =
+                $conn->prepare($sql);
 
-    if (empty($token)) {
-        die("Token ausente ou inválido.");
-    }
+            $stmtToken->bind_param(
+                'si',
+                $token,
+                $usuario['id']
+            );
 
-    $agora = date("Y-m-d H:i:s");
-    $tabela_alvo = "";
-    $campo_id_alvo = "";
-    $id_usuario = 0;
+            $stmtToken->execute();
+            $stmtToken->close();
 
-    // 1. Procura o token na tabela Pessoa
-    $sql_p = "SELECT id_pessoa FROM Pessoa WHERE token_recuperacao = ? AND token_expiracao > ?";
-    $stmt_p = $conn->prepare($sql_p);
-    $stmt_p->bind_param("ss", $token, $agora);
-    $stmt_p->execute();
-    $res_p = $stmt_p->get_result();
+            /*
+            |--------------------------------------------------------------------------
+            | LINK DE RECUPERAÇÃO
+            |--------------------------------------------------------------------------
+            |
+            | Se o projeto estiver em:
+            | http://localhost/DevIN/
+            |
+            | este endereço funciona no XAMPP.
+            |
+            */
 
-    if ($res_p->num_rows > 0) {
-        $user_p = $res_p->fetch_assoc();
-        $tabela_alvo = "Pessoa";
-        $campo_id_alvo = "id_pessoa";
-        $id_usuario = $user_p['id_pessoa'];
-    } else {
-        // 2. Se não achar na Pessoa, procura na Empresa
-        $sql_e = "SELECT id_empresa FROM Empresa WHERE token_recuperacao = ? AND token_expiracao > ?";
-        $stmt_e = $conn->prepare($sql_e);
-        $stmt_e->bind_param("ss", $token, $agora);
-        $stmt_e->execute();
-        $res_e = $stmt_e->get_result();
+            $linkRedefinicao =
+                'http://localhost/DevIN/php/redefinir.php?token=' .
+                urlencode($token);
 
-        if ($res_e->num_rows > 0) {
-            $user_e = $res_e->fetch_assoc();
-            $tabela_alvo = "Empresa";
-            $campo_id_alvo = "id_empresa";
-            $id_usuario = $user_e['id_empresa'];
+            $nomeSeguro =
+                htmlspecialchars(
+                    $usuario['nome'],
+                    ENT_QUOTES,
+                    'UTF-8'
+                );
+
+            $assunto =
+                'Redefinição de Senha - DevIN';
+
+            $corpoHtml = "
+                <div style='
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                    background-color: #f4f6f9;
+                '>
+
+                    <div style='
+                        max-width: 500px;
+                        margin: 0 auto;
+                        background: #ffffff;
+                        padding: 25px;
+                        border-radius: 8px;
+                    '>
+
+                        <h2 style='color: #2b56f5;'>
+                            Olá, {$nomeSeguro}!
+                        </h2>
+
+                        <p>
+                            Recebemos uma solicitação para
+                            redefinir a senha da sua conta
+                            no <strong>DevIN</strong>.
+                        </p>
+
+                        <p>
+                            Clique no botão abaixo para criar
+                            uma nova senha.
+                        </p>
+
+                        <p>
+                            Este link ficará disponível
+                            por <strong>1 hora</strong>.
+                        </p>
+
+                        <div style='
+                            text-align: center;
+                            margin: 25px 0;
+                        '>
+
+                            <a
+                                href='{$linkRedefinicao}'
+                                style='
+                                    background-color: #2b56f5;
+                                    color: #ffffff;
+                                    padding: 12px 24px;
+                                    text-decoration: none;
+                                    border-radius: 5px;
+                                    font-weight: bold;
+                                    display: inline-block;
+                                '
+                            >
+                                Redefinir Minha Senha
+                            </a>
+
+                        </div>
+
+                        <p style='
+                            color: #777;
+                            font-size: 12px;
+                        '>
+                            Se você não solicitou esta alteração,
+                            desconsidere este e-mail.
+                        </p>
+
+                    </div>
+
+                </div>
+            ";
+
+            MailerHelper::enviar(
+                $email,
+                $usuario['nome'],
+                $assunto,
+                $corpoHtml
+            );
         }
+
+        $conn->close();
+
+        /*
+        |--------------------------------------------------------------------------
+        | MENSAGEM GENÉRICA
+        |--------------------------------------------------------------------------
+        |
+        | Não informamos se o e-mail existe ou não.
+        | Isso evita exposição de contas cadastradas.
+        |
+        */
+
+        $_SESSION['sucesso_recuperacao'] =
+            'Se o e-mail informado estiver cadastrado, você receberá o link de redefinição em instantes.';
+
+        header(
+            'Location: recuperacao.php'
+        );
+
+        exit;
+
+    } catch (Throwable $e) {
+
+        error_log(
+            'Erro na recuperação de senha: ' .
+            $e->getMessage()
+        );
+
+        $_SESSION['erro_recuperacao'] =
+            'Não foi possível processar a solicitação. Tente novamente.';
+
+        header(
+            'Location: recuperacao.php'
+        );
+
+        exit;
     }
-
-    // Se o token não for achado ou já tiver expirado nas duas tabelas
-    if (empty($tabela_alvo)) {
-        echo "<script>
-            alert('Este link de recuperação é inválido ou já expirou!');
-            window.location.href = 'recuperacao.php';
-        </script>";
-        exit();
-    }
-
-    // Gera o Hash seguro da nova senha
-    $nova_senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
-
-    // Atualiza a senha na tabela correta e limpa os tokens de segurança
-    $sql_final = "UPDATE $tabela_alvo SET senha = ?, token_recuperacao = NULL, token_expiracao = NULL WHERE $campo_id_alvo = ?";
-    $stmt_final = $conn->prepare($sql_final);
-    $stmt_final->bind_param("si", $nova_senha_hash, $id_usuario);
-
-    if ($stmt_final->execute()) {
-        echo "<script>
-            alert('Senha de " . ($tabela_alvo == "Pessoa" ? "Usuário" : "Empresa") . " atualizada com sucesso! A senha antiga foi invalidada.');
-            window.location.href = 'login.html'; 
-        </script>";
-    } else {
-        echo "<script>
-            alert('Erro ao atualizar a senha no banco de dados.');
-            window.history.back();
-        </script>";
-    }
-
-    $conn->close();
 }
-?>
+
+
+/*
+|--------------------------------------------------------------------------
+| REDEFINIR SENHA
+|--------------------------------------------------------------------------
+*/
+
+if ($acao === 'redefinir_senha') {
+
+    $token =
+        trim($_POST['token'] ?? '');
+
+    $novaSenha =
+        $_POST['nova_senha'] ?? '';
+
+    $confSenha =
+        $_POST['confirmar_senha'] ?? '';
+
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDAÇÕES
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        empty($token) ||
+        empty($novaSenha) ||
+        empty($confSenha)
+    ) {
+
+        $_SESSION['erro_redefinir'] =
+            'Preencha todos os campos.';
+
+        header(
+            'Location: redefinir.php?token=' .
+            urlencode($token)
+        );
+
+        exit;
+    }
+
+    if ($novaSenha !== $confSenha) {
+
+        $_SESSION['erro_redefinir'] =
+            'As senhas não coincidem.';
+
+        header(
+            'Location: redefinir.php?token=' .
+            urlencode($token)
+        );
+
+        exit;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MESMAS REGRAS DO CADASTRO
+    |--------------------------------------------------------------------------
+    */
+
+    if (strlen($novaSenha) < 8) {
+
+        $_SESSION['erro_redefinir'] =
+            'A senha deve ter no mínimo 8 caracteres.';
+
+        header(
+            'Location: redefinir.php?token=' .
+            urlencode($token)
+        );
+
+        exit;
+    }
+
+    if (!preg_match('/[A-Z]/', $novaSenha)) {
+
+        $_SESSION['erro_redefinir'] =
+            'A senha deve possuir pelo menos uma letra maiúscula.';
+
+        header(
+            'Location: redefinir.php?token=' .
+            urlencode($token)
+        );
+
+        exit;
+    }
+
+    if (!preg_match('/[^a-zA-Z0-9]/', $novaSenha)) {
+
+        $_SESSION['erro_redefinir'] =
+            'A senha deve possuir pelo menos um caractere especial.';
+
+        header(
+            'Location: redefinir.php?token=' .
+            urlencode($token)
+        );
+
+        exit;
+    }
+
+    try {
+
+        $conn =
+            getDatabaseConnection();
+
+        $senhaHash =
+            password_hash(
+                $novaSenha,
+                PASSWORD_DEFAULT
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | TENTA ALTERAR NA PESSOA
+        |--------------------------------------------------------------------------
+        */
+
+        $stmtPessoa =
+            $conn->prepare("
+                UPDATE pessoa
+                SET
+                    senha_hash = ?,
+                    token_recuperacao = NULL,
+                    token_expiracao = NULL
+                WHERE
+                    token_recuperacao = ?
+                    AND token_expiracao > NOW()
+            ");
+
+        $stmtPessoa->bind_param(
+            'ss',
+            $senhaHash,
+            $token
+        );
+
+        $stmtPessoa->execute();
+
+        $afetados =
+            $stmtPessoa->affected_rows;
+
+        $stmtPessoa->close();
+
+        /*
+        |--------------------------------------------------------------------------
+        | SE NÃO ALTEROU PESSOA, TENTA EMPRESA
+        |--------------------------------------------------------------------------
+        */
+
+        if ($afetados === 0) {
+
+            $stmtEmpresa =
+                $conn->prepare("
+                    UPDATE empresa
+                    SET
+                        senha_hash = ?,
+                        token_recuperacao = NULL,
+                        token_expiracao = NULL
+                    WHERE
+                        token_recuperacao = ?
+                        AND token_expiracao > NOW()
+                ");
+
+            $stmtEmpresa->bind_param(
+                'ss',
+                $senhaHash,
+                $token
+            );
+
+            $stmtEmpresa->execute();
+
+            $afetados =
+                $stmtEmpresa->affected_rows;
+
+            $stmtEmpresa->close();
+        }
+
+        $conn->close();
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESULTADO
+        |--------------------------------------------------------------------------
+        */
+
+        if ($afetados > 0) {
+
+            $_SESSION['sucesso_login'] =
+                'Senha redefinida com sucesso! Faça seu login.';
+
+            header(
+                'Location: login.php'
+            );
+
+            exit;
+        }
+
+        $_SESSION['erro_redefinir'] =
+            'O link de redefinição é inválido ou já expirou. Solicite um novo.';
+
+        header(
+            'Location: recuperacao.php'
+        );
+
+        exit;
+
+    } catch (Throwable $e) {
+
+        error_log(
+            'Erro ao redefinir senha: ' .
+            $e->getMessage()
+        );
+
+        $_SESSION['erro_redefinir'] =
+            'Não foi possível redefinir a senha. Tente novamente.';
+
+        header(
+            'Location: redefinir.php?token=' .
+            urlencode($token)
+        );
+
+        exit;
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| AÇÃO DESCONHECIDA
+|--------------------------------------------------------------------------
+*/
+
+header('Location: index.php');
+exit;
