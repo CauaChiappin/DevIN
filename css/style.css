@@ -781,6 +781,9 @@ summary:focus-visible {
 
 .imagem-suporte {
     width: 300px;
+    border-radius: 23px;
+    object-fit: cover;
+    box-shadow: 0 14px 28px rgba(0, 74, 148, .1);
 }
 
 .perguntas {
