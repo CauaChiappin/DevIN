@@ -87,7 +87,7 @@ body {
     display: flex;
     justify-content: center; 
     align-items: center;     
-    gap: 550px; 
+    gap: clamp(40px, 8vw, 140px);
     flex: 1;                 
     padding: 40px 50px;
 }
@@ -225,4 +225,21 @@ body {
     width: 24px;
     height: 24px;
     display: block;
+}
+
+@media (max-width: 900px) {
+    .cabecalho-site { padding: 18px 24px; }
+    .navegacao { display: none; }
+    .conteudo-login { gap: 32px; padding: 30px 24px; }
+    .gif-robo { width: min(320px, 42vw); }
+}
+
+@media (max-width: 620px) {
+    .cabecalho-site { padding: 16px 20px; }
+    .logo a { font-size: 27px; }
+    .botao-azul { padding: 8px 14px; font-size: 14px; }
+    .conteudo-login { flex-direction: column; justify-content: flex-start; padding: 28px 20px 36px; }
+    .gif-robo { width: min(230px, 70vw); }
+    .area-login { padding: 32px 24px; border-radius: 22px; }
+    .area-login h1 { font-size: 28px; }
 }

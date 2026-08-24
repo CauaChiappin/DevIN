@@ -173,9 +173,16 @@ input::placeholder {
 }
 
 footer {
-    position: absolute;
-    bottom: 20px;
+    margin-top: 20px;
     font-size: 11px;
     color: #333;
     text-align: center;
+}
+
+@media (max-width: 480px) {
+    body { padding: 20px 14px; }
+    .card { padding: 28px 20px; border-radius: 18px; }
+    h2 { font-size: 21px; }
+    .botoes-grupo { flex-direction: column; }
+    .btn-voltar { width: 100%; }
 }
