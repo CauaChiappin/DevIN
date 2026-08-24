@@ -195,11 +195,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     telefone,
                     cep,
                     senha_hash,
+                    foto,
                     created_at,
                     lembrete_enviado
                 )
                 VALUES
                 (
+                    ?,
                     ?,
                     ?,
                     ?,
@@ -218,14 +220,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          * para CPF e CEP.
          */
 
+        // A coluna foto aceita o perfil sem imagem, mas não aceita NULL.
+        $foto = '';
+
         $stmt->bind_param(
-            'ssssss',
+            'sssssss',
             $nome,
             $email,
             $cpf,
             $telefone,
             $cep,
-            $senhaHash
+            $senhaHash,
+            $foto
         );
 
         $stmt->execute();

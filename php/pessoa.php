@@ -127,6 +127,13 @@ $vagasPessoa = [
                     </div>
                 </header>
 
+                <?php if (!empty($_SESSION['curriculo_success'])): ?>
+                    <p class="dashboard-flash form-success">
+                        <?= h($_SESSION['curriculo_success']) ?>
+                    </p>
+                    <?php unset($_SESSION['curriculo_success']); ?>
+                <?php endif; ?>
+
                 <form class="busca" action="" method="get">
                     <input type="hidden" name="pagina" value="<?= h($pagina) ?>">
                     <label>

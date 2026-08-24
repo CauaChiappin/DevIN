@@ -117,6 +117,13 @@
 
 .profile-save:hover { filter: brightness(.93); }
 .form-success { margin: 0; color: #187343; font-size: 13px; font-weight: 600; }
+.dashboard-flash {
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    border: 1px solid #b9e3c8;
+    border-radius: 10px;
+    background: #edf9f1;
+}
 
 .ui-icon {
     width: 22px;

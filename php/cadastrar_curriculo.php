@@ -268,8 +268,14 @@ if (
                     $nomePessoa
                 );
 
-            $mensagemSucesso =
+            $_SESSION['curriculo_success'] =
                 'Currículo salvo com sucesso!';
+
+            header(
+                'Location: pessoa.php?pagina=inicio'
+            );
+
+            exit;
 
         } else {
 
@@ -391,17 +397,17 @@ $cIdiomas =
 
     <link
         rel="stylesheet"
-        href="../css/curriculo.css"
+        href="../css/cadastrostyle.css"
     >
 
     <link
         rel="stylesheet"
-        href="../css/cadastrostyle.css"
+        href="../css/curriculo.css"
     >
 
 </head>
 
-<body>
+<body class="curriculo-page">
 
 <div class="main-container">
 
