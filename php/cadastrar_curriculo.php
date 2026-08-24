@@ -367,6 +367,7 @@ $cIdiomas =
     ?? '';
 
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -648,6 +649,31 @@ $cIdiomas =
 
         </div>
 
+            <div class="form-group">
+                <label for="grau_de_escolaridade">Grau de Escolaridade<span class="asterisk">*</span></label>
+                <input type="text" id="grau_de_escolaridade" name="grau_de_escolaridade" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cursos">Cursos</label>
+                <input type="text" id="cursos" name="cursos">
+            </div>
+
+            <div class="form-group">
+                <label for="experiencia">Experiência<span class="asterisk">*</span></label>
+                <input type="text" id="experiencia" name="experiencia" required>
+            </div>
+
+            <div class="form-group">
+                <label for="idiomas">Idiomas</label>
+                <input type="text" id="idiomas" name="idiomas">
+            </div>
+
+            <div class="button-container">
+                <button type="submit" class="btn-enviar">Enviar</button>
+            </div>
+
+        </form>
     </div>
 
     <div class="right-side">
