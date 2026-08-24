@@ -185,7 +185,7 @@ $vagasPessoa = [
                                 <li>
                                     <div class="team-avatar"></div>
                                     <div class="team-info">
-                                        <strong>João Vitor da Silva e Sousa</strong>
+                                        <strong><a href="https://ept.scseduca.com.br/">João Vitor da Silva e Sousa</a></strong>
                                         <span>Cofundador • joao.sousa2@scseduca.com.br</span>
                                     </div>
                                 </li>
