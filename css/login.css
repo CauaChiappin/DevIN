@@ -13,7 +13,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
 }
 
 body {
@@ -27,57 +27,84 @@ body {
    2. CABEÇALHO (HEADER)
    ========================================================================== */
 .cabecalho-site {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;            
-    padding: 20px 50px;             
-    background-color: var(--bg); 
+    width: 80%;
+    min-height: 83px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 170px 1fr 180px;
+    align-items: center;
+    gap: 24px;
+    background-color: var(--bg);
 }
 
-.logo a {
-    font-size: 32px;
-    font-weight: bold;
-    color: var(--black); 
+.marca {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--black);
     text-decoration: none;
 }
 
-.logo span {
-    color: var(--blue); 
+.marca span {
+    color: var(--blue);
 }
 
-.navegacao ul {
+.navegacao {
     display: flex;
-    list-style: none; 
-    gap: 30px;        
+    justify-content: center;
+    gap: clamp(22px, 4vw, 65px);
 }
 
 .navegacao a {
+    position: relative;
+    padding: 6px 0;
     text-decoration: none;
-    color: var(--black); 
-    font-size: 18px;
+    color: var(--black);
+    font-size: 16px;
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: color .2s ease;
+}
+
+.navegacao a::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--blue);
+    transform: scaleX(0);
+    transition: transform .2s ease;
 }
 
 .navegacao a:hover {
-    color: var(--blue); 
+    color: var(--blue);
 }
 
-.botao-azul {
-    display: inline-block;
+.navegacao a:hover::after { transform: scaleX(1); }
+
+.acoes { display: flex; justify-content: flex-end; }
+
+.botao {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-decoration: none;
-    color: var(--blue); 
-    border: 2px solid var(--blue); 
-    padding: 10px 25px;
-    border-radius: 12px; 
-    font-size: 18px;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    border: 2px solid var(--blue);
+    border-radius: 11px;
+    padding: 0 20px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: color .2s ease, background-color .2s ease, transform .2s ease;
 }
 
-.botao-azul:hover {
+.botao-branco { color: var(--blue); }
+
+.botao-branco:hover {
     background-color: var(--blue); 
     color: var(--white); 
+    transform: translateY(-1px);
 }
 
 /* ==========================================================================
@@ -92,9 +119,33 @@ body {
     padding: 40px 50px;
 }
 
+.robo-area {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 450px;
+    max-width: 90%;
+    padding-bottom: 18px;
+}
+
+.robo-area::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    width: 58%;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0, 42, 84, .28) 0%, rgba(0, 74, 148, .12) 48%, transparent 74%);
+    filter: blur(7px);
+    transform: scaleX(1.12);
+}
+
 .gif-robo {
+    position: relative;
+    z-index: 1;
     width: 450px;          
-    max-width: 90%;        
+    max-width: 100%;
     height: auto;          
 }
 
@@ -109,7 +160,9 @@ body {
 
 .area-login h1 {
     text-align: center;
-    font-size: 32px;
+    font-size: 30px;
+    font-weight: 500;
+    letter-spacing: -.02em;
     color: var(--black);
     margin-bottom: 30px; 
 }
@@ -210,8 +263,7 @@ body {
     position: absolute;
     right: 15px;
     top: 50%;
-    /* O calc puxa o olho para baixo compensando a altura do label 'Senha:' */
-    transform: translateY(calc(-50% + 12px)); 
+    transform: translateY(calc(-50% + 15px));
     background: none;
     border: none;
     cursor: pointer; 
