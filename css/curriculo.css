@@ -1,121 +1,174 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+/* Ajustes exclusivos da tela de preenchimento de currículo. */
+.curriculo-page {
+    background: #004aad;
+    overflow-x: hidden;
 }
 
-body {
-    background-color: #f7f6f2; /* Cor do fundo levemente bege/cinza claro conforme modelo */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.curriculo-page .main-container {
+    width: 100%;
     min-height: 100vh;
-    padding: 40px 20px;
+    height: auto;
+    overflow-x: hidden;
 }
 
-/* Card centralizado */
-.curriculo-card {
+.curriculo-page .left-side {
+    min-height: 100vh;
+    min-width: 0;
+    padding: 36px clamp(32px, 4vw, 64px) 28px;
+    justify-content: space-between;
+}
+
+.curriculo-page .brand-logo {
+    flex: 0 0 auto;
+}
+
+.curriculo-page .register-form {
+    flex: 1 0 auto;
+    width: min(100%, 900px);
+    margin: 0 auto;
+}
+
+.curriculo-page .title-curriculo {
+    margin-bottom: 30px;
+    color: #003f93;
+    font-size: clamp(1.45rem, 2.4vw, 2rem);
+    line-height: 1.2;
+}
+
+.curriculo-page .form-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 28px;
+    align-items: start;
+    padding: 28px;
+    border: 1px solid #d9e3f0;
+    border-radius: 20px;
+    background: #f8fbff;
+    box-shadow: 0 12px 30px rgba(15, 63, 128, 0.08);
+}
+
+.curriculo-page .form-column {
+    gap: 20px;
+}
+
+.curriculo-page .input-group {
+    gap: 8px;
+}
+
+.curriculo-page .input-group label {
+    line-height: 1.35;
+}
+
+.curriculo-page .input-group input,
+.curriculo-page .input-group select,
+.curriculo-page .input-group textarea {
+    border-color: #b6c6da;
+    border-radius: 12px;
+    color: #172033;
     background-color: #ffffff;
-    border: 1px solid #7ca2cc; /* Borda fina azulada conforme layout */
-    border-radius: 18px;
-    width: 100%;
-    max-width: 650px;
-    padding: 40px 50px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
-/* Grupos de campos */
-.form-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    font-size: 0.95rem;
-    color: #1a1a1a;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-/* Asterisco vermelho para campos obrigatórios */
-.form-group label .asterisk {
-    color: #e53935;
-    margin-left: 2px;
-}
-
-/* Estilo unificado para inputs, selects e textareas */
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 12px 18px;
-    font-size: 0.95rem;
-    border: 1px solid #7ca2cc; /* Borda azul suave do protótipo */
-    border-radius: 14px; /* Cantos arredondados */
-    outline: none;
-    background-color: #ffffff;
-    color: #333;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #004ba8;
-    box-shadow: 0 0 0 3px rgba(0, 75, 168, 0.15);
-}
-
-.form-group textarea {
-    resize: vertical;
+.curriculo-page .input-group input,
+.curriculo-page .input-group select {
     min-height: 48px;
 }
 
-/* Container do botão de envio */
-.button-container {
-    display: flex;
-    justify-content: center;
+.curriculo-page .input-group textarea {
+    min-height: 137px;
+    line-height: 1.45;
+    padding-top: 13px;
+}
+
+.curriculo-page .input-group input::placeholder,
+.curriculo-page .input-group textarea::placeholder {
+    color: #718096;
+    opacity: 1;
+}
+
+.curriculo-page .form-footer-action {
     margin-top: 30px;
 }
 
-/* Botão Enviar estilizado */
-.btn-enviar {
-    background-color: #004bb4;
-    color: #ffffff;
-    border: none;
-    border-radius: 18px;
-    padding: 12px 65px;
-    font-size: 1.05rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.btn-enviar:hover {
-    background-color: #003785;
-}
-
-.btn-enviar:active {
-    transform: scale(0.98);
-}
-
-/* Caixas de mensagens de erro */
-.msg-erro-box {
-    background-color: #fce8e6;
-    color: #d93025;
-    padding: 12px 16px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #f5c6cb;
-    font-size: 0.9rem;
+.curriculo-page .btn-submit {
+    min-height: 48px;
+    padding: 12px clamp(28px, 4vw, 60px);
     text-align: center;
 }
 
-footer {
-    margin-top: 25px;
-    color: #777;
-    font-size: 0.85rem;
-    text-align: center;
+.curriculo-page .page-footer {
+    flex: 0 0 auto;
+    margin-top: 28px;
+}
+
+.curriculo-page .right-side {
+    min-width: 0;
+    min-height: 100vh;
+}
+
+.curriculo-page .mascot-container {
+    width: 100%;
+    height: auto;
+    max-height: 76vh;
+    margin-left: 0;
+    justify-content: center;
+}
+
+.curriculo-page .mascot-img {
+    max-width: 82%;
+    max-height: 76vh;
+}
+
+@media (max-width: 1150px) {
+    .curriculo-page .left-side {
+        padding-inline: 36px;
+    }
+
+    .curriculo-page .form-columns {
+        gap: 22px;
+    }
+}
+
+@media (max-width: 950px) {
+    .curriculo-page .main-container,
+    .curriculo-page .left-side {
+        min-height: 100vh;
+    }
+
+    .curriculo-page .left-side {
+        padding: 32px 24px 24px;
+    }
+
+    .curriculo-page .register-form {
+        flex: 0 0 auto;
+        margin: 32px auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .curriculo-page .form-columns {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 22px;
+    }
+
+    .curriculo-page .form-column {
+        gap: 20px;
+    }
+
+    .curriculo-page .title-curriculo {
+        margin-bottom: 24px;
+        text-align: left;
+    }
+
+    .curriculo-page .form-footer-action {
+        align-items: stretch;
+    }
+
+    .curriculo-page .btn-submit {
+        width: 100%;
+    }
+
+    .curriculo-page .page-footer {
+        line-height: 1.5;
+    }
 }

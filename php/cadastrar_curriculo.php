@@ -276,6 +276,12 @@ if (
             header('Location: pessoa.php');
             exit;
 
+            header(
+                'Location: pessoa.php?pagina=inicio'
+            );
+
+            exit;
+
         } else {
 
             $mensagemErro =
@@ -396,17 +402,17 @@ $cIdiomas =
 
     <link
         rel="stylesheet"
-        href="../css/curriculo.css"
+        href="../css/cadastrostyle.css"
     >
 
     <link
         rel="stylesheet"
-        href="../css/cadastrostyle.css"
+        href="../css/curriculo.css"
     >
 
 </head>
 
-<body>
+<body class="curriculo-page">
 
 <div class="main-container">
 
