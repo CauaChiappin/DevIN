@@ -346,3 +346,26 @@ body {
             text-align: center;
         }
     
+
+/* Easter egg: ponto secreto para o jogo Doom. Mantem exatamente o mesmo
+   aspecto em todos os estados do link, sem azul, sublinhado ou hover. */
+.secret-doom,
+.secret-doom:link,
+.secret-doom:visited,
+.secret-doom:hover,
+.secret-doom:active,
+.secret-doom:focus,
+.secret-doom:focus-visible {
+    color: #000000 !important;
+    text-decoration: none !important;
+    text-decoration-line: none !important;
+    text-decoration-color: transparent !important;
+    background: transparent !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+    cursor: default !important;
+}
