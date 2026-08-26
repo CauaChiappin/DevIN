@@ -1,6 +1,6 @@
 <?php
 // Inicia ou recupera a sessão do usuário (a "memória" que mantém o usuário logado)
-require_once __DIR__ . '/middlewares/auth.php';
+session_start();
 
 // Carrega o controlador de perfil (regras de atualização, busca de dados, etc.)
 require_once __DIR__ . '/controllers/ProfileController.php';
@@ -44,7 +44,7 @@ if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_byt
 // --- LÓGICA DE ENVIO DE FORMULÁRIOS (QUANDO É UM POST) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Valida se o código de segurança do formulário bate com o código da sessão (evita envios maliciosos)
-    requireValidCsrf();
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) exit('Solicitação inválida.');
     
     $action = $_POST['action'] ?? '';
 
@@ -263,19 +263,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: login.php'); exit;
         }
     } catch (Throwable $exception) {
-        error_log('Erro no dashboard empresa: ' . $exception->getMessage());
-        // Mostra apenas mensagens seguras ao usuário; detalhes técnicos ficam no log.
+        // Se acontecer qualquer erro durante os processos acima, guarda a mensagem de erro
         if (in_array($action, ['update_application_status', 'create_test_candidates'], true)) {
-            $_SESSION['candidate_error'] = 'Não foi possível atualizar a candidatura. Tente novamente.';
+            $_SESSION['candidate_error'] = $exception->getMessage();
             header('Location: empresa.php?pagina=candidatos'); exit;
         }
 
         if (in_array($action, ['create_job', 'update_job', 'delete_job'], true)) {
-            $_SESSION['job_error'] = 'Não foi possível concluir a operação da vaga. Tente novamente.';
+            $_SESSION['job_error'] = $exception->getMessage();
             header('Location: empresa.php?pagina=inicio'); exit;
         }
 
-        $_SESSION['profile_error'] = 'Não foi possível atualizar o perfil. Tente novamente.';
+        $_SESSION['profile_error'] = $exception->getMessage();
         header('Location: empresa.php?perfil=meu'); exit;
     }
 }
