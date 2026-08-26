@@ -1,47 +1,10 @@
 <?php
 session_start();
+require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
+require_once __DIR__ . '/helpers.php';
 
-function ativo(string $paginaAtual, string $pagina): string
-{
-    return $paginaAtual === $pagina ? 'ativo' : '';
-}
-
-function h(string $valor): string
-{
-    return htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
-}
-
-function profileAvatar(array $perfil, string $classes): string
-{
-    $foto = $perfil['foto'] ?? '';
-    $imagem = is_string($foto) && str_starts_with($foto, 'uploads/')
-        ? '<img src="' . h($foto) . '" alt="Foto de perfil">'
-        : '';
-
-    return '<span class="' . h($classes) . ' current-user-avatar">' . $imagem . '</span>';
-}
-
-function dashboardIcon(string $name): string
-{
-    $paths = match ($name) {
-        'home' => '<path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-6h6v6"/>',
-        'user' => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
-        'briefcase' => '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>',
-        'info' => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
-        'settings' => '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-3v-.08A1.7 1.7 0 0 0 10.68 18.36a1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7.02 14.7 1.7 1.7 0 0 0 5.46 13.7H5v-3h.08a1.7 1.7 0 0 0 1.56-1.03A1.7 1.7 0 0 0 6.3 7.8l-.06-.06 2.12-2.12.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 11.3 4.46V4h3v.08a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.12 2.12-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03H20v3h-.08a1.7 1.7 0 0 0-1.56 1.36z"/>',
-        'logout' => '<path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6"/>',
-        default => '',
-    };
-
-    return '<svg class="ui-icon ui-icon-' . h($name) . '" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $paths . '</svg>';
-}
-
-// Proteção da página
-if (empty($_SESSION['logado']) || ($_SESSION['usuario_tipo'] ?? '') !== 'pessoa') {
-    header('Location: login.php');
-    exit;
-}
+$usuarioAtual = requirePessoaComCurriculo();
 
 $tipo = 'pessoa';
 $nome = $_SESSION['usuario_nome'] ?? 'Usuario';
@@ -147,7 +110,7 @@ $vagasPessoa = [
                                 class="menu-text">Configuracoes</span></button>
                     </div>
                 </details>
-                <a class="sair" href="logout.php"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da
+                <a class="sair" href="logout.php" data-confirm-logout="Tem certeza que deseja sair da sua conta?"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da
                         Conta</span></a>
             </div>
         </aside>
@@ -160,13 +123,6 @@ $vagasPessoa = [
                         <h1>Dashboard Candidato</h1>
                     </div>
                 </header>
-
-                <?php if (!empty($_SESSION['curriculo_success'])): ?>
-                    <p class="dashboard-flash form-success">
-                        <?= h($_SESSION['curriculo_success']) ?>
-                    </p>
-                    <?php unset($_SESSION['curriculo_success']); ?>
-                <?php endif; ?>
 
                 <form class="busca" action="" method="get">
                     <input type="hidden" name="pagina" value="<?= h($pagina) ?>">

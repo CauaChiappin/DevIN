@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
@@ -46,64 +46,21 @@ body {
     justify-content: center;
 }
 
-/* Cabeçalho compacto, seguindo a identidade visual da página inicial */
-.cadastro-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-}
-
+/* Logo DevIN */
 .brand-logo {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 2.2rem;
+    font-weight: 800;
     color: #000000;
-    letter-spacing: 0;
+    letter-spacing: -1px;
+        text-decoration: none;
+        color: #000000;
 }
 .brand-logo a { 
-    text-decoration: none;
-    color: #000000;
+        text-decoration: none;
+        color: #000000;
  }
 
-.brand-logo { text-decoration: none; color: #000000; }
-
 .brand-logo span { color: #004aad; }
-
-.header-action {
-    min-height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 20px;
-    border: 2px solid #004aad;
-    border-radius: 11px;
-    color: #004aad;
-    font-size: .95rem;
-    font-weight: 700;
-    text-decoration: none;
-    transition: background-color .2s ease, color .2s ease, transform .2s ease;
-}
-
-.header-action:hover {
-    background: #004aad;
-    color: #ffffff;
-    transform: translateY(-1px);
-}
-
-.header-action--outside {
-    position: absolute;
-    top: 40px;
-    right: 60px;
-    border-color: #ffffff;
-    background: #ffffff;
-    color: #004aad;
-    z-index: 2;
-}
-
-.header-action--outside:hover {
-    background: transparent;
-    color: #ffffff;
-}
 
 /* Alternador Pessoal / Empresa */
 .toggle-container {
@@ -277,6 +234,24 @@ body {
 .login-redirect a { color: #004aad; font-weight: 700; text-decoration: none; }
 .login-redirect a:hover { text-decoration: underline; }
 
+/* Botão de Login Superior Direito */
+.btn-top-login {
+    position: absolute;
+    top: 40px;
+    right: 60px;
+    text-decoration: none;
+    color: #004aad;
+    background-color: #ffffff;
+    padding: 8px 35px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.btn-top-login:hover { transform: scale(1.03); }
+
 /* Espaço do Robô */
 .mascot-container {
     width: 90%; /* Aumentado um pouco para o robô ter mais presença */
@@ -325,14 +300,18 @@ body {
 @media (max-width: 950px) {
     .main-container { flex-direction: column; height: auto; overflow: visible; }
     .right-side { display: none; }
-    .left-side { border-radius: 0; padding: 40px 25px; }
+    .left-side { border-radius: 0; padding: 32px 20px; min-height: 100vh; }
     .form-columns { flex-direction: column; gap: 18px; }
-    .header-action--outside { display: none; }
+    .toggle-container { gap: 8px; }
+    .toggle-btn { padding: 10px 18px; }
+    .btn-submit { width: 100%; padding-inline: 20px; }
 }
 
 @media (max-width: 480px) {
-    .left-side { padding: 28px 20px; }
-    .brand-logo { font-size: 25px; }
+    .brand-logo { font-size: 1.9rem; }
+    .toggle-btn { font-size: 0.9rem; padding-inline: 12px; }
+    .toggle-divider { letter-spacing: 0; }
+    .php-toast { left: 20px; right: 20px; bottom: 20px; text-align: center; }
 }
         /* Extensão de estilos para alinhar select e textarea ao design de pílula */
         .input-group select,
@@ -366,3 +345,27 @@ body {
             margin-bottom: 25px;
             text-align: center;
         }
+    
+
+/* Easter egg: ponto secreto para o jogo Doom. Mantem exatamente o mesmo
+   aspecto em todos os estados do link, sem azul, sublinhado ou hover. */
+.secret-doom,
+.secret-doom:link,
+.secret-doom:visited,
+.secret-doom:hover,
+.secret-doom:active,
+.secret-doom:focus,
+.secret-doom:focus-visible {
+    color: #000000 !important;
+    text-decoration: none !important;
+    text-decoration-line: none !important;
+    text-decoration-color: transparent !important;
+    background: transparent !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+    cursor: default !important;
+}

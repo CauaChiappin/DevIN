@@ -9,6 +9,9 @@ require_once __DIR__ . '/PHPMailer/src/SMTP.php';
 
 class MailerHelper
 {
+    private const CURRICULO_URL = 'http://localhost/DevIN/php/cadastrar_curriculo.php';
+    private const DASHBOARD_PESSOA_URL = 'http://localhost/DevIN/php/pessoa.php';
+
     /**
      * Cria e configura a conexão SMTP do PHPMailer.
      */
@@ -163,6 +166,12 @@ class MailerHelper
                         Boa sorte na sua busca por oportunidades!
                     </p>
 
+                    <p style='text-align:center; margin-top:24px;'>
+                        <a href='" . self::DASHBOARD_PESSOA_URL . "' style='background:#00549f;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;'>
+                            Acessar meu perfil
+                        </a>
+                    </p>
+
                 </div>
 
             </div>
@@ -230,6 +239,12 @@ class MailerHelper
                         Complete suas informações e aumente
                         suas chances de encontrar uma oportunidade
                         no <strong>DevIN</strong>.
+                    </p>
+
+                    <p style='text-align:center; margin-top:24px;'>
+                        <a href='" . self::CURRICULO_URL . "' style='background:#00549f;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;'>
+                            Finalizar currículo
+                        </a>
                     </p>
 
                 </div>

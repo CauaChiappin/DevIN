@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/middlewares/auth.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -18,12 +19,32 @@ if (
     !empty($_SESSION['logado'])
 ) {
 
-    header(
-        'Location: ' .
-        AuthController::redirectByUserType(
-            $_SESSION['usuario_tipo'] ?? ''
-        )
-    );
+    $tipoSessao = $_SESSION['usuario_tipo'] ?? '';
+
+    if ($tipoSessao === 'pessoa') {
+        try {
+            $conn = getDatabaseConnection();
+            $idPessoaSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+            $stmt = $conn->prepare(
+                'SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1'
+            );
+            $stmt->bind_param('i', $idPessoaSessao);
+            $stmt->execute();
+            $possuiCurriculoSessao = $stmt->get_result()->num_rows > 0;
+            $stmt->close();
+            $conn->close();
+        } catch (Throwable $exception) {
+            error_log('Erro ao verificar curriculo no login: ' . $exception->getMessage());
+            $possuiCurriculoSessao = false;
+        }
+
+        header('Location: ' . ($possuiCurriculoSessao ? 'pessoa.php' : 'cadastrar_curriculo.php'));
+    } else {
+        header(
+            'Location: ' .
+            AuthController::redirectByUserType($tipoSessao)
+        );
+    }
 
     exit;
 }
@@ -208,24 +229,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <link
         rel="stylesheet"
-        href="../css/login.css?v=20260812-2"
+        href="../css/login.css"
     >
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <title>DevIN | Login</title>
 
     <link
         rel="icon"
         type="image/svg+xml"
-        href="/DevIN/img/favicon.svg"
+        href="../img/favicon.svg"
     >
 
     <link
         rel="icon"
         type="image/png"
-        href="/DevIN/img/favicon.png"
+        href="../img/favicon.png"
     >
 
 </head>
@@ -234,18 +252,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <header class="cabecalho-site">
 
-    <a class="marca" href="index.php">Dev<span>IN</span></a>
+    <div class="logo">
 
-    <nav class="navegacao" aria-label="Navegação principal">
-        <a href="index.php#conheca">Conheça o DevIN</a>
-        <a href="index.php#etapas">Etapas</a>
-        <a href="index.php#contato">Contato</a>
+        <a href="index.php">
+            Dev<span>IN</span>
+        </a>
+
+    </div>
+
+    <nav class="navegacao">
+
+        <ul>
+
+            <li>
+                <a href="index.php">
+                    Conheça o DevIN
+                </a>
+            </li>
+
+            <li>
+                <a href="index.php#etapas">
+                    Etapas
+                </a>
+            </li>
+
+            <li>
+                <a href="index.php#contatos">
+                    Contato
+                </a>
+            </li>
+
+        </ul>
+
     </nav>
 
     <div class="acoes">
 
         <a
-            class="botao botao-branco"
+            class="botao-azul"
             href="cadastro_pessoa.php"
         >
             Cadastrar-se
@@ -257,13 +301,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <main class="conteudo-login">
 
-    <div class="robo-area">
-        <img
-            class="gif-robo"
-            src="/DevIN/img/robologin.gif"
-            alt="Robô DevIN"
-        >
-    </div>
+    <img
+        class="gif-robo"
+        src="../img/robologin.gif"
+        alt="Robô DevIN"
+    >
 
     <div class="area-login">
 
@@ -389,7 +431,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             Ao continuar, você reconhece a
 
-            <a href="politica_privacidade.php">
+            <a href="#">
                 Política de Privacidade
             </a>
 

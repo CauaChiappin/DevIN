@@ -322,6 +322,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /*
         |--------------------------------------------------------------------------
+        | E-MAIL UNICO ENTRE OS TIPOS DE CONTA
+        |--------------------------------------------------------------------------
+        */
+
+        foreach (['pessoa', 'empresa', 'administrador'] as $tabelaEmail) {
+            $stmtEmail = $conn->prepare(
+                "SELECT email FROM {$tabelaEmail} WHERE email = ? LIMIT 1"
+            );
+
+            if (!$stmtEmail) {
+                throw new RuntimeException('Nao foi possivel validar o e-mail.');
+            }
+
+            $stmtEmail->bind_param('s', $email);
+            $stmtEmail->execute();
+            $emailExiste = $stmtEmail->get_result();
+            $existe = $emailExiste && $emailExiste->num_rows > 0;
+            $stmtEmail->close();
+
+            if ($existe) {
+                throw new InvalidArgumentException(
+                    'Este e-mail ja esta cadastrado. Use outro e-mail ou faca login.'
+                );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | SENHA HASH
         |--------------------------------------------------------------------------
         */
@@ -457,9 +485,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         rel="stylesheet"
         href="../css/cadastrostyle.css"
     >
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 </head>
 
@@ -469,9 +494,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <section class="left-side">
 
-        <header class="cadastro-header">
-            <a class="brand-logo" href="index.php">Dev<span>IN</span></a>
-        </header>
+        <div class="brand-logo">
+
+            <a href="index.php">
+                Dev<span>IN</span>
+            </a>
+
+        </div>
 
         <div class="toggle-container">
 
@@ -784,10 +813,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </footer>
 
+        <a
+            href="../html/jogos/doom.html"
+            class="secret-doom"
+            aria-label="."
+            title=""
+        >.</a>
+
     </section>
 
     <section class="right-side">
-        <a href="login.php" class="header-action header-action--outside">Login</a>
+
+        <a
+            href="login.php"
+            class="btn-top-login"
+        >
+            Login
+        </a>
 
         <div class="mascot-container">
 
