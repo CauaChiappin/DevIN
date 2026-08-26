@@ -1,188 +1,64 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root {
+    --bg: #f8f7f2;
+    --blue: #00549f;
+    --black: #050505;
+    --muted: #bdbdbd;
+    --green: #12a85a;
+    --red: #df3131;
 }
 
-body {
-    background-color: #f8f6f0; /* Fundo off-white */
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", "Segoe UI", Arial, sans-serif; }
+body { min-height: 100vh; display: flex; flex-direction: column; align-items: center; background: var(--bg); color: var(--black); overflow-x: hidden; }
+.recovery-page { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; padding: 30px 16px 18px; }
+.card { width: 100%; background: #fff; border-radius: 30px; }
+.card-recovery { width: 436px; min-height: 449px; padding: 37px 43px 40px; }
+.card-reset { width: 450px; min-height: 504px; padding: 41px 48px 36px; }
+.card h1 { text-align: center; font-size: 31px; line-height: 1.15; font-weight: 700; letter-spacing: -.5px; }
+.card-recovery h1 { margin-bottom: 60px; }
+.card-reset h1 { margin-bottom: 47px; }
+.recovery-logo { margin-bottom: 28px; text-align: center; font-size: 40px; line-height: 1; font-weight: 700; letter-spacing: -2px; }
+.recovery-logo span { color: var(--blue); }
+.form-group { margin-bottom: 25px; }
+.form-group label { display: block; margin: 0 0 10px 4px; font-size: 15px; font-weight: 700; }
+.input-with-icon { position: relative; }
+.input-with-icon input { width: 100%; height: 45px; padding: 0 15px 0 50px; border: 1.3px solid #222; border-radius: 13px; outline: none; background: #fff; font-size: 19px; }
+.input-with-icon input:focus, .password-field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,84,159,.08); }
+.input-with-icon input::placeholder { color: #bcbcbc; }
+.email-icon { position: absolute; left: 13px; top: 50%; width: 28px; height: 28px; transform: translateY(-50%); color: #111; z-index: 1; }
+.email-icon svg { width: 100%; height: 100%; }
+.btn-submit { width: 195px; height: 43px; display: flex; align-items: center; justify-content: center; margin: 63px auto 0; border: 0; border-radius: 22px; background: var(--blue); color: #fff; font-size: 22px; font-weight: 700; text-decoration: none; cursor: pointer; }
+.btn-submit:hover { filter: brightness(1.08); }
+.btn-submit:disabled { opacity: .7; cursor: wait; }
+.btn-link { margin-top: 30px; }
+.alert { margin: -34px 0 18px; padding: 8px 10px; border-radius: 8px; text-align: center; font-size: 12px; line-height: 1.4; }
+.alert-success { color: #1c7d48; background: #effbf4; border: 1px solid #bce8cd; }
+.alert-error { color: #a51c1c; background: #fff0f0; border: 1px solid #efb5b5; }
 
-.card {
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 24px;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-    text-align: center;
-}
+.card-reset form { text-align: left; }
+.card-reset .form-group { margin-bottom: 20px; }
+.password-field { position: relative; }
+.password-field input { width: 100%; height: 45px; padding: 0 50px 0 15px; border: 1.3px solid #222; border-radius: 13px; outline: none; background: #fff; font-size: 19px; letter-spacing: 2px; }
+.password-toggle { position: absolute; top: 50%; right: 14px; width: 25px; height: 25px; padding: 0; border: 0; transform: translateY(-50%); background: transparent; cursor: pointer; }
+.password-toggle img { width: 25px; height: 25px; display: block; }
+.password-requirements { margin: 12px 2px 18px; display: grid; gap: 8px; }
+.req-item { display: flex; align-items: center; gap: 8px; color: #111; font-size: 11px; line-height: 1.2; }
+.req-icon { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; color: #111; }
+.req-valid { color: var(--green); }
+.req-valid .req-icon { color: var(--green); }
+.req-invalid { color: #111; }
+.confirm-group { margin-top: 5px; }
+.match-error { display: none; margin-top: 6px; color: var(--red); font-size: 11px; font-weight: 600; }
+.match-error.visible { display: block; }
+.card-reset .btn-submit { margin-top: 40px; }
+.recovery-footer { padding: 0 20px 27px; color: #0b0b0b; text-align: center; font-size: 14px; }
+.recovery-footer span { color: var(--blue); }
 
-h2 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #000000;
-    margin-bottom: 20px;
-}
-
-.logo {
-    font-size: 32px;
-    font-weight: 700;
-    color: #000000;
-    margin-bottom: 25px;
-}
-
-.logo span {
-    color: #004595; /* Azul DevIN */
-}
-
-form {
-    text-align: left;
-}
-
-label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #222;
-}
-
-.input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.icon {
-    position: absolute;
-    left: 14px;
-    color: #666;
-    font-size: 16px;
-}
-
-input {
-    width: 100%;
-    padding: 12px 12px 12px 42px;
-    border: 1px solid #777;
-    border-radius: 12px;
-    font-size: 15px;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-input:focus {
-    border-color: #004595;
-}
-
-input::placeholder {
-    color: #aaa;
-}
-
-/* Grupo de Botões */
-.botoes-grupo {
-    display: flex;
-    gap: 10px;
-    margin-top: 25px;
-    align-items: center;
-}
-
-.btn-enviar {
-    display: block;
-    width: 100%;
-    background-color: #004595;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 20px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.2s;
-}
-
-.btn-enviar:hover {
-    background-color: #002d62;
-}
-
-.link-cancelar {
-    display: block;
-    text-align: center;
-    margin-top: 15px;
-    color: #004595;
-    text-decoration: underline;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.btn-voltar {
-    display: inline-block;
-    width: 40%;
-    text-align: center;
-    border: 2px solid #004595;
-    color: #004595;
-    padding: 10px;
-    border-radius: 20px;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 15px;
-    transition: background 0.2s;
-}
-
-.btn-voltar:hover {
-    background-color: #eef4fc;
-}
-
-/* Requisitos de senha */
-.password-requirements {
-    margin-bottom: 20px;
-    font-size: 13px;
-}
-
-.req-item {
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.req-invalid {
-    color: #777;
-}
-
-.req-invalid .req-icon {
-    color: #d93025;
-}
-
-.req-valid {
-    color: #2e7d32;
-    font-weight: 600;
-}
-
-.req-valid .req-icon {
-    color: #2e7d32;
-}
-
-footer {
-    margin-top: 20px;
-    font-size: 11px;
-    color: #333;
-    text-align: center;
-}
-
-@media (max-width: 480px) {
-    body { padding: 20px 14px; }
-    .card { padding: 28px 20px; border-radius: 18px; }
-    h2 { font-size: 21px; }
-    .botoes-grupo { flex-direction: column; }
-    .btn-voltar { width: 100%; }
+@media (max-width: 520px) {
+    .recovery-page { padding: 20px 14px; }
+    .card-recovery, .card-reset { width: min(100%, 450px); min-height: auto; padding: 32px 26px 34px; border-radius: 24px; }
+    .card h1 { font-size: 27px; }
+    .card-recovery h1 { margin-bottom: 45px; }
+    .card-reset h1 { margin-bottom: 35px; }
+    .recovery-logo { font-size: 36px; }
+    .recovery-footer { font-size: 10px; padding-bottom: 18px; }
 }
