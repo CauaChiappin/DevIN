@@ -41,7 +41,11 @@ body {
     font-size: 28px;
     font-weight: 700;
     color: var(--black);
+}
+
+.marca a {
     text-decoration: none;
+    color: inherit;
 }
 
 .marca span {
@@ -51,6 +55,11 @@ body {
 .navegacao {
     display: flex;
     justify-content: center;
+}
+
+.navegacao ul {
+    display: flex;
+    list-style: none;
     gap: clamp(22px, 4vw, 65px);
 }
 
@@ -81,9 +90,14 @@ body {
     color: var(--blue);
 }
 
-.navegacao a:hover::after { transform: scaleX(1); }
+.navegacao a:hover::after { 
+    transform: scaleX(1); 
+}
 
-.acoes { display: flex; justify-content: flex-end; }
+.acoes { 
+    display: flex; 
+    justify-content: flex-end; 
+}
 
 .botao {
     height: 40px;
@@ -99,7 +113,9 @@ body {
     transition: color .2s ease, background-color .2s ease, transform .2s ease;
 }
 
-.botao-branco { color: var(--blue); }
+.botao-branco { 
+    color: var(--blue); 
+}
 
 .botao-branco:hover {
     background-color: var(--blue); 
@@ -153,7 +169,7 @@ body {
     background-color: var(--white);
     padding: 45px 40px;
     border-radius: 32px; 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra suavizada para um visual mais limpo */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 450px;    
 }
@@ -251,10 +267,9 @@ body {
    5. POSICIONAMENTO DO BOTÃO MOSTRAR SENHA (OLHO)
    ========================================================================== */
 .input-container {
-    position: relative; /* Define que os filhos absolutos se alinham por aqui */
+    position: relative;
 }
 
-/* Dá um espaço no final do texto do input para não ficar embaixo do olho */
 .input-container input {
     padding-right: 50px; 
 }
@@ -279,4 +294,22 @@ body {
     display: block;
 }
 
+/* ==========================================================================
+   6. RESPONSIVIDADE
+   ========================================================================== */
+@media (max-width: 900px) {
+    .cabecalho-site { padding: 18px 24px; }
+    .navegacao { display: none; }
+    .conteudo-login { gap: 32px; padding: 30px 24px; }
+    .gif-robo { width: min(320px, 42vw); }
+}
 
+@media (max-width: 620px) {
+    .cabecalho-site { padding: 16px 20px; }
+    .marca a { font-size: 27px; }
+    .botao-branco { padding: 8px 14px; font-size: 14px; }
+    .conteudo-login { flex-direction: column; justify-content: flex-start; padding: 28px 20px 36px; }
+    .gif-robo { width: min(230px, 70vw); }
+    .area-login { padding: 32px 24px; border-radius: 22px; }
+    .area-login h1 { font-size: 28px; }
+}
