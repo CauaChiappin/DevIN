@@ -15,7 +15,7 @@ unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao']);
     <title>Recuperação de Senha - DevIN</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="icon" type="image/png" href="../img/favicon.png">
-    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="../css/recuperacao.css">
 </head>
 <body>
 <div class="card">

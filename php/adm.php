@@ -1,13 +1,10 @@
 <?php
 session_start();
+require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/helpers.php';
 
-// Proteção da página
-if (empty($_SESSION['logado']) || ($_SESSION['usuario_tipo'] ?? '') !== 'adm') {
-    header('Location: login.php');
-    exit;
-}
+$usuarioAtual = requireWebAuth('adm');
 
 $tipo = 'adm';
 $nome = $_SESSION['usuario_nome'] ?? 'Usuario';

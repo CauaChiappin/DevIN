@@ -52,12 +52,12 @@ body {
     font-weight: 800;
     color: #000000;
     letter-spacing: -1px;
-      text-decoration: none;
-       color: var(--blue)
+        text-decoration: none;
+        color: #000000;
 }
 .brand-logo a { 
-    text-decoration: none
-    ; color: #000000;
+        text-decoration: none;
+        color: #000000;
  }
 
 .brand-logo span { color: #004aad; }
@@ -300,8 +300,18 @@ body {
 @media (max-width: 950px) {
     .main-container { flex-direction: column; height: auto; overflow: visible; }
     .right-side { display: none; }
-    .left-side { border-radius: 0; padding: 40px 25px; }
+    .left-side { border-radius: 0; padding: 32px 20px; min-height: 100vh; }
     .form-columns { flex-direction: column; gap: 18px; }
+    .toggle-container { gap: 8px; }
+    .toggle-btn { padding: 10px 18px; }
+    .btn-submit { width: 100%; padding-inline: 20px; }
+}
+
+@media (max-width: 480px) {
+    .brand-logo { font-size: 1.9rem; }
+    .toggle-btn { font-size: 0.9rem; padding-inline: 12px; }
+    .toggle-divider { letter-spacing: 0; }
+    .php-toast { left: 20px; right: 20px; bottom: 20px; text-align: center; }
 }
         /* Extensão de estilos para alinhar select e textarea ao design de pílula */
         .input-group select,
@@ -336,3 +346,26 @@ body {
             text-align: center;
         }
     
+
+/* Easter egg: ponto secreto para o jogo Doom. Mantem exatamente o mesmo
+   aspecto em todos os estados do link, sem azul, sublinhado ou hover. */
+.secret-doom,
+.secret-doom:link,
+.secret-doom:visited,
+.secret-doom:hover,
+.secret-doom:active,
+.secret-doom:focus,
+.secret-doom:focus-visible {
+    color: #000000 !important;
+    text-decoration: none !important;
+    text-decoration-line: none !important;
+    text-decoration-color: transparent !important;
+    background: transparent !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+    cursor: default !important;
+}

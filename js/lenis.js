@@ -32,7 +32,7 @@ gsap.ticker.add((time) => { // Adiciona uma função ao ticker do GSAP para atua
 gsap.ticker.lagSmoothing(0); // Desativa a suavização de lag do ticker do GSAP para evitar atrasos na animação
 atualizarHeader(window.scrollY); // Atualiza o cabeçalho com base na posição inicial do scroll ao carregar a página
 
-gsap.fromTo('.texto-principal', // Animação de entrada do texto principal
+gsap.fromTo('.titulo-principal', // Animação de entrada do título principal
   {
     x: -90, // Começa 90px à esquerda
     opacity: 0
@@ -185,20 +185,4 @@ revelarGrupo('.perguntas', {
 }, {
   y: -35,
   opacity: 0
-});
-
-// Faz o Lenis assumir o controle dos links do menu (âncoras)
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault(); // Impede o "teletransporte" nativo do navegador
-        
-        const destino = this.getAttribute('href');
-        
-        // Manda o Lenis deslizar até a seção com um offset para o header não cobrir o título
-        lenis.scrollTo(destino, {
-            offset: -80, // Ajuste esse valor com base na altura do seu cabeçalho
-            duration: 1.2, // Tempo em segundos para a rolagem (pode ajustar para ficar mais rápido ou lento)
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) // Curva de aceleração elegante
-        });
-    });
 });

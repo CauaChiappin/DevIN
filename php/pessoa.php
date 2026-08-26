@@ -1,13 +1,10 @@
 <?php
 session_start();
+require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/helpers.php';
 
-// Proteção da página
-if (empty($_SESSION['logado']) || ($_SESSION['usuario_tipo'] ?? '') !== 'pessoa') {
-    header('Location: login.php');
-    exit;
-}
+$usuarioAtual = requirePessoaComCurriculo();
 
 $tipo = 'pessoa';
 $nome = $_SESSION['usuario_nome'] ?? 'Usuario';
@@ -113,7 +110,7 @@ $vagasPessoa = [
                                 class="menu-text">Configuracoes</span></button>
                     </div>
                 </details>
-                <a class="sair" href="logout.php"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da
+                <a class="sair" href="logout.php" data-confirm-logout="Tem certeza que deseja sair da sua conta?"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da
                         Conta</span></a>
             </div>
         </aside>

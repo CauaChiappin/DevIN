@@ -129,6 +129,17 @@ document.querySelectorAll("[data-close-modal]").forEach((button) => {
     button.addEventListener("click", () => button.closest("dialog")?.close());
 });
 
+
+
+document.querySelectorAll('[data-confirm-logout]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+        const message = link.dataset.confirmLogout || 'Tem certeza que deseja sair?';
+        if (!window.confirm(message)) {
+            event.preventDefault();
+        }
+    });
+});
+
 document.querySelector("[data-delete-account]")?.addEventListener("click", (event) => {
     if (!confirm("Tem certeza? Esta ação exclui sua conta permanentemente.")) event.preventDefault();
 });
