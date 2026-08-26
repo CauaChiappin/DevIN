@@ -637,5 +637,24 @@ unset($candidato);
     </dialog>
 
     <script src="../js/dashboard.js"></script>
+    <script>
+        document.querySelector('input[name="foto"]')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.querySelector('.profile-photo-preview img') || document.querySelector('.profile-photo-preview');
+                    if (preview) {
+                        if (preview.tagName === 'IMG') {
+                            preview.src = event.target.result;
+                        } else {
+                            preview.style.backgroundImage = `url(${event.target.result})`;
+                        }
+                    }
+                };z
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </body>
 </html>
