@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/security.php';
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../auth/Jwt.php';
 
@@ -15,10 +16,8 @@ class AuthController
     public static function establishSession(array $auth): void
     {
 
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-
+        startSecureSession();
+        secureSessionRegenerate();
 
         $_SESSION['usuario_id'] =
             $auth['usuario']['id'];
@@ -31,9 +30,6 @@ class AuthController
 
         $_SESSION['usuario_tipo'] =
             $auth['usuario']['tipo'];
-
-        $_SESSION['jwt'] =
-            $auth['token'];
 
         $_SESSION['logado'] = true;
 
@@ -49,8 +45,8 @@ class AuthController
 
                 'path' => '/',
 
+                'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
                 'httponly' => true,
-
                 'samesite' => 'Lax',
             ]
         );
@@ -96,7 +92,7 @@ class AuthController
         if (!$usuario) {
 
             throw new RuntimeException(
-                'Usuário não encontrado.'
+                'E-mail ou senha inválidos.'
             );
         }
 
@@ -109,7 +105,7 @@ class AuthController
         ) {
 
             throw new RuntimeException(
-                'Senha incorreta.'
+                'E-mail ou senha inválidos.'
             );
         }
 

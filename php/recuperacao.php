@@ -1,6 +1,7 @@
 <?php
 // recuperacao.php
-session_start();
+require_once __DIR__ . '/config/security.php';
+startSecureSession();
 
 $mensagemSucesso = $_SESSION['sucesso_recuperacao'] ?? '';
 $mensagemErro    = $_SESSION['erro_recuperacao'] ?? '';
@@ -32,6 +33,7 @@ unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao']);
 
     <form action="processar.php" method="POST">
         <input type="hidden" name="acao" value="solicitar_recuperacao">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
         <div class="form-group">
             <label for="email">E-mail Cadastrado:</label>

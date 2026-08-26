@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/helpers.php';
@@ -20,10 +19,52 @@ if (empty($_SESSION['csrf_token']))
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? ''))
-        exit('Solicitação inválida.');
+    requireValidCsrf();
     try {
         $action = $_POST['action'] ?? '';
+        if ($action === 'apply_job') {
+            $vagaId = (int) ($_POST['id_vaga'] ?? 0);
+            if ($vagaId <= 0) {
+                throw new InvalidArgumentException('Vaga inválida.');
+            }
+
+            $conn = getDatabaseConnection();
+            try {
+                $check = $conn->prepare('SELECT id_vaga FROM vagas WHERE id_vaga = ? LIMIT 1');
+                $check->bind_param('i', $vagaId);
+                $check->execute();
+                $exists = $check->get_result()->num_rows === 1;
+                $check->close();
+
+                if (!$exists) {
+                    throw new InvalidArgumentException('A vaga não está mais disponível.');
+                }
+
+                $duplicate = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_pessoa = ? AND id_vaga = ? LIMIT 1');
+                $idPessoa = (int) $_SESSION['usuario_id'];
+                $duplicate->bind_param('ii', $idPessoa, $vagaId);
+                $duplicate->execute();
+                $alreadyApplied = $duplicate->get_result()->num_rows > 0;
+                $duplicate->close();
+
+                if ($alreadyApplied) {
+                    throw new InvalidArgumentException('Você já se candidatou a esta vaga.');
+                }
+
+                $stmt = $conn->prepare('INSERT INTO candidatura (data_candidatura, status, id_pessoa, id_vaga) VALUES (CURDATE(), ?, ?, ?)');
+                $status = 'pendente';
+                $stmt->bind_param('sii', $status, $idPessoa, $vagaId);
+                $stmt->execute();
+                $stmt->close();
+            } finally {
+                $conn->close();
+            }
+
+            $_SESSION['job_success'] = 'Candidatura enviada com sucesso.';
+            header('Location: pessoa.php?pagina=vagas');
+            exit;
+        }
+
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_nome'] = trim($_POST['nome']);
@@ -44,8 +85,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     } catch (Throwable $exception) {
-        $_SESSION['profile_error'] = $exception->getMessage();
-        header('Location: pessoa.php?perfil=meu');
+        error_log('Erro no dashboard pessoa: ' . $exception->getMessage());
+        if ($action === 'apply_job') {
+            $_SESSION['job_error'] = $exception instanceof InvalidArgumentException
+                ? $exception->getMessage()
+                : 'Não foi possível enviar a candidatura. Tente novamente.';
+            header('Location: pessoa.php?pagina=inicio');
+        } else {
+            $_SESSION['profile_error'] = 'Não foi possível concluir a operação. Tente novamente.';
+            header('Location: pessoa.php?perfil=meu');
+        }
         exit;
     }
 }
@@ -56,11 +105,34 @@ if (!$perfilAtual) {
     exit;
 }
 
-// Dados simulados da Pessoa
-$vagasPessoa = [
-    ['empresa' => 'Empresa X', 'titulo' => 'Estagio em Desenvolvimento', 'resumo' => 'Logica, HTML, CSS e vontade de aprender.', 'detalhe' => 'A vaga oferece mentoria, atividades de interface e apoio em projetos internos.', 'status' => 'Em analise'],
-    ['empresa' => 'Empresa Y', 'titulo' => 'Assistente de TI', 'resumo' => 'Suporte, organizacao e comunicacao.', 'detalhe' => 'Atuacao com chamados, inventario de equipamentos e apoio aos colaboradores.', 'status' => 'Reprovado'],
-];
+// Dados reais da plataforma: vagas abertas e candidaturas da pessoa logada.
+$vagasDisponiveis = [];
+$minhasCandidaturas = [];
+
+try {
+    $conn = getDatabaseConnection();
+    $stmt = $conn->prepare("SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga, e.nome AS empresa FROM vagas v INNER JOIN empresa e ON e.id_empresa = v.id_empresa ORDER BY v.id_vaga DESC");
+    $stmt->execute();
+    $vagasDisponiveis = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    $idPessoaAtual = (int) $_SESSION['usuario_id'];
+    $stmt = $conn->prepare("SELECT c.id_candidatura, c.status, c.data_candidatura, v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa FROM candidatura c INNER JOIN vagas v ON v.id_vaga = c.id_vaga INNER JOIN empresa e ON e.id_empresa = v.id_empresa WHERE c.id_pessoa = ? ORDER BY c.id_candidatura DESC");
+    $stmt->bind_param('i', $idPessoaAtual);
+    $stmt->execute();
+    $minhasCandidaturas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    $conn->close();
+} catch (Throwable $exception) {
+    error_log('Erro ao carregar vagas da pessoa: ' . $exception->getMessage());
+    $_SESSION['job_error'] = 'Não foi possível carregar as vagas agora.';
+}
+
+foreach ($vagasDisponiveis as &$vaga) {
+    $vaga['detalhe'] = $vaga['descricao'] !== '' ? $vaga['descricao'] : 'Esta vaga ainda não possui uma descrição detalhada.';
+}
+unset($vaga);
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -203,26 +275,48 @@ $vagasPessoa = [
                     <button class="btn primary" type="button" data-open-profile>Editar perfil</button>
                 </section>
             <?php elseif ($pagina === 'vagas'): ?>
-                <?php foreach ($vagasPessoa as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>">
-                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
+                <?php if (!empty($_SESSION['job_error'])): ?>
+                    <p class="form-error"><?= h($_SESSION['job_error']); unset($_SESSION['job_error']); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($_SESSION['job_success'])): ?>
+                    <p class="form-success"><?= h($_SESSION['job_success']); unset($_SESSION['job_success']); ?></p>
+                <?php endif; ?>
+                <?php if (!$minhasCandidaturas): ?>
+                    <p class="empty-state">Você ainda não se candidatou a nenhuma vaga.</p>
+                <?php endif; ?>
+                <?php foreach ($minhasCandidaturas as $vaga): ?>
+                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>">
+                        <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
-                            <h2><?= h($vaga['empresa']) ?></h2>
-                            <p><?= h($vaga['resumo']) ?></p>
+                            <h2><?= h($vaga['empresa']) ?> · <?= h($vaga['titulo']) ?></h2>
+                            <p><?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
                         </div>
-                        <span
-                            class="status <?= $vaga['status'] === 'Reprovado' ? 'reprovado' : 'analise' ?>"><?= h($vaga['status']) ?></span>
+                        <span class="status <?= $vaga['status'] === 'aprovado' ? 'aprovado' : ($vaga['status'] === 'recusado' ? 'reprovado' : 'analise') ?>"><?= h(ucfirst($vaga['status'])) ?></span>
                     </article>
                 <?php endforeach; ?>
             <?php else: ?>
-                <?php foreach ($vagasPessoa as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>">
-                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
+                <?php if (!empty($_SESSION['job_error'])): ?>
+                    <p class="form-error"><?= h($_SESSION['job_error']); unset($_SESSION['job_error']); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($_SESSION['job_success'])): ?>
+                    <p class="form-success"><?= h($_SESSION['job_success']); unset($_SESSION['job_success']); ?></p>
+                <?php endif; ?>
+                <?php if (!$vagasDisponiveis): ?>
+                    <p class="empty-state">Ainda não há vagas publicadas.</p>
+                <?php endif; ?>
+                <?php foreach ($vagasDisponiveis as $vaga): ?>
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>">
+                        <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
-                            <p><?= h($vaga['resumo']) ?></p>
+                            <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
                         </div>
-                        <button class="btn primary" type="button">Candidatar-se</button>
+                        <form method="post">
+                            <input type="hidden" name="action" value="apply_job">
+                            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                            <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
+                            <button class="btn primary" type="submit">Candidatar-se</button>
+                        </form>
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -233,7 +327,7 @@ $vagasPessoa = [
                 <h2>Contato</h2>
                 <p>Fale com a equipe DevIN para conhecer melhor o projeto.</p>
             <?php elseif ($pagina === 'perfil'): ?>
-                <h2>Explicando tudo sobre a vaga selecionada</h2>
+                <h2 id="detailTitle">Detalhes da vaga</h2>
                 <p>Use este espaco para visualizar detalhes da vaga.</p>
                 <button class="btn primary fixed-action" type="button">Candidatar-se</button>
             <?php else: ?>

@@ -60,3 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
 });
+
+document.querySelector('form[action="login.php"]')?.addEventListener('submit', () => {
+    const button = document.querySelector('.botao-entrar');
+    if (!button || button.disabled) return;
+    button.disabled = true;
+    button.textContent = 'Entrando...';
+});

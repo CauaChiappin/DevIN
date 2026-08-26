@@ -3,14 +3,16 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+require_once __DIR__ . '/config/auth.php';
+
 require_once __DIR__ . '/PHPMailer/src/Exception.php';
 require_once __DIR__ . '/PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/PHPMailer/src/SMTP.php';
 
 class MailerHelper
 {
-    private const CURRICULO_URL = 'http://localhost/DevIN/php/cadastrar_curriculo.php';
-    private const DASHBOARD_PESSOA_URL = 'http://localhost/DevIN/php/pessoa.php';
+    private const CURRICULO_URL = APP_BASE_URL . '/php/cadastrar_curriculo.php';
+    private const DASHBOARD_PESSOA_URL = APP_BASE_URL . '/php/pessoa.php';
 
     /**
      * Cria e configura a conexão SMTP do PHPMailer.

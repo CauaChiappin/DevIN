@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../config/auth.php';
+
 class Jwt
 {
     public static function encode(array $payload, string $secret): string
@@ -101,10 +103,20 @@ class Jwt
             throw new RuntimeException('Tipo do token inválido.');
         }
 
-        if (
-            isset($payload['exp']) &&
-            time() >= (int) $payload['exp']
-        ) {
+        if (!isset($payload['iss']) || !hash_equals(JWT_ISSUER, (string) $payload['iss'])) {
+            throw new RuntimeException('Emissor do token inválido.');
+        }
+
+        if (!isset($payload['iat'], $payload['exp'], $payload['sub'])) {
+            throw new RuntimeException('Claims obrigatórias ausentes no token.');
+        }
+
+        $now = time();
+        if ((int) $payload['iat'] > $now + 30) {
+            throw new RuntimeException('Token com data inválida.');
+        }
+
+        if ($now >= (int) $payload['exp']) {
             throw new RuntimeException('Token expirado.');
         }
 

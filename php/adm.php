@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/helpers.php';
@@ -19,9 +18,40 @@ if (!in_array($pagina, $paginasPermitidas, true)) {
 if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) exit('Solicitação inválida.');
+    requireValidCsrf();
     try {
         $action = $_POST['action'] ?? '';
+        if (in_array($action, ['admin_delete_pessoa', 'admin_delete_empresa', 'admin_delete_vaga'], true)) {
+            $id = (int) ($_POST['id'] ?? 0);
+            if ($id <= 0) {
+                throw new InvalidArgumentException('Registro inválido.');
+            }
+
+            $targets = [
+                'admin_delete_pessoa' => ['pessoa', 'id_pessoa'],
+                'admin_delete_empresa' => ['empresa', 'id_empresa'],
+                'admin_delete_vaga' => ['vagas', 'id_vaga'],
+            ];
+
+            [$table, $column] = $targets[$action];
+            $conn = getDatabaseConnection();
+            try {
+                $stmt = $conn->prepare("DELETE FROM {$table} WHERE {$column} = ?");
+                $stmt->bind_param('i', $id);
+                $stmt->execute();
+                if ($stmt->affected_rows !== 1) {
+                    throw new RuntimeException('Registro não encontrado.');
+                }
+                $stmt->close();
+            } finally {
+                $conn->close();
+            }
+
+            $_SESSION['admin_success'] = 'Registro excluído com sucesso.';
+            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'inicio' : 'candidatos'));
+            exit;
+        }
+
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_nome'] = trim($_POST['nome']);
@@ -39,23 +69,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: login.php'); exit;
         }
     } catch (Throwable $exception) {
-        $_SESSION['profile_error'] = $exception->getMessage();
-        header('Location: adm.php?perfil=meu'); exit;
+        error_log('Erro no dashboard ADM: ' . $exception->getMessage());
+        if (str_starts_with($action, 'admin_delete_')) {
+            $_SESSION['admin_error'] = 'Não foi possível excluir o registro. Ele pode possuir dados relacionados.';
+            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'inicio' : 'candidatos'));
+        } else {
+            $_SESSION['profile_error'] = 'Não foi possível concluir a operação. Tente novamente.';
+            header('Location: adm.php?perfil=meu');
+        }
+        exit;
     }
 }
 
 $perfilAtual = findProfile($tipo, (int) $_SESSION['usuario_id']);
 if (!$perfilAtual) { header('Location: logout.php'); exit; }
 
-// Dados simulados do Admin
-$postsAdmin = [
-    ['empresa' => 'Empresa Alfa', 'titulo' => 'Post da vaga', 'detalhe' => 'Revise a descricao da vaga, requisitos, salario informado e aderencia as diretrizes do site.'],
-    ['empresa' => 'Empresa Beta', 'titulo' => 'Post da vaga', 'detalhe' => 'Este post foi sinalizado para avaliacao do administrador antes de continuar visivel.'],
-];
-$usuariosAdmin = [
-    ['nome' => 'Carlos Souza', 'resumo' => 'Perfil de candidato em verificacao.', 'detalhe' => 'Verifique foto, e-mail, dados basicos e comportamento do perfil antes de remover a conta.'],
-    ['nome' => 'Bianca Rocha', 'resumo' => 'Conta com dados incompletos.', 'detalhe' => 'A conta precisa ser avaliada por suspeita de informacoes falsas.'],
-];
+// Dados reais para moderação.
+$empresasAdmin = [];
+$usuariosAdmin = [];
+$vagasAdmin = [];
+
+try {
+    $conn = getDatabaseConnection();
+
+    $result = $conn->query('SELECT id_empresa AS id, nome, email, cnpj FROM empresa ORDER BY nome');
+    $empresasAdmin = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+    $result = $conn->query('SELECT id_pessoa AS id, nome, email, cpf FROM pessoa ORDER BY nome');
+    $usuariosAdmin = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+    $result = $conn->query("SELECT v.id_vaga AS id, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa FROM vagas v INNER JOIN empresa e ON e.id_empresa = v.id_empresa ORDER BY v.id_vaga DESC");
+    $vagasAdmin = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+    $conn->close();
+} catch (Throwable $exception) {
+    error_log('Erro ao carregar moderação ADM: ' . $exception->getMessage());
+    $_SESSION['admin_error'] = 'Não foi possível carregar os registros agora.';
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -93,11 +144,13 @@ $usuariosAdmin = [
                         <button type="button" data-open-settings><?= dashboardIcon('settings') ?><span class="menu-text">Configuracoes</span></button>
                     </div>
                 </details>
-                <a class="sair" href="logout.php"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>
+                <a class="sair" href="logout.php" data-confirm-logout="Tem certeza que deseja sair da sua conta?"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>
             </div>
         </aside>
 
         <section class="lista-area">
+            <?php if (!empty($_SESSION['admin_error'])): ?><p class="form-error"><?= h($_SESSION['admin_error']); unset($_SESSION['admin_error']); ?></p><?php endif; ?>
+            <?php if (!empty($_SESSION['admin_success'])): ?><p class="form-success"><?= h($_SESSION['admin_success']); unset($_SESSION['admin_success']); ?></p><?php endif; ?>
             <?php if ($pagina !== 'sobre'): ?>
             <header class="dashboard-header">
                 <div>
@@ -129,26 +182,52 @@ $usuariosAdmin = [
                     <button class="btn primary" type="button" data-open-profile>Editar perfil</button>
                 </section>
             <?php elseif ($pagina === 'candidatos'): ?>
+                <?php if (!$usuariosAdmin): ?><p class="empty-state">Nenhum candidato cadastrado.</p><?php endif; ?>
                 <?php foreach ($usuariosAdmin as $usuario): ?>
-                    <article class="item-card" data-detail="<?= h($usuario['detalhe']) ?>">
+                    <article class="item-card" data-detail="<?= h('E-mail: ' . $usuario['email'] . ' | CPF: ' . $usuario['cpf']) ?>">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($usuario['nome']) ?></h2>
-                            <p><?= h($usuario['resumo']) ?></p>
+                            <p><?= h($usuario['email']) ?></p>
                         </div>
-                        <button class="btn danger" type="button">Excluir perfil</button>
+                        <form method="post" onsubmit="return confirm('Excluir este candidato permanentemente?');">
+                            <input type="hidden" name="action" value="admin_delete_pessoa">
+                            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                            <input type="hidden" name="id" value="<?= (int) $usuario['id'] ?>">
+                            <button class="btn danger" type="submit">Excluir perfil</button>
+                        </form>
                     </article>
                 <?php endforeach; ?>
             <?php else: ?>
-                <?php foreach ($postsAdmin as $post): ?>
-                    <article class="item-card" data-detail="<?= h($post['detalhe']) ?>">
-                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
+                <?php if (!$empresasAdmin && !$vagasAdmin): ?><p class="empty-state">Nenhum registro disponível.</p><?php endif; ?>
+                <?php foreach ($empresasAdmin as $empresa): ?>
+                    <article class="item-card" data-detail="<?= h('E-mail: ' . $empresa['email'] . ' | CNPJ: ' . $empresa['cnpj']) ?>">
+                        <span class="card-avatar"><?= dashboardIcon('building') ?></span>
                         <div>
-                            <h2><?= h($post['empresa']) ?></h2>
-                            <p><?= h($post['titulo']) ?></p>
-                            <a href="#">Saiba Mais...</a>
+                            <h2><?= h($empresa['nome']) ?></h2>
+                            <p><?= h($empresa['email']) ?></p>
                         </div>
-                        <button class="btn danger" type="button">Excluir Post</button>
+                        <form method="post" onsubmit="return confirm('Excluir esta empresa permanentemente?');">
+                            <input type="hidden" name="action" value="admin_delete_empresa">
+                            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                            <input type="hidden" name="id" value="<?= (int) $empresa['id'] ?>">
+                            <button class="btn danger" type="submit">Excluir empresa</button>
+                        </form>
+                    </article>
+                <?php endforeach; ?>
+                <?php foreach ($vagasAdmin as $vaga): ?>
+                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>">
+                        <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
+                        <div>
+                            <h2><?= h($vaga['empresa']) ?></h2>
+                            <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
+                        </div>
+                        <form method="post" onsubmit="return confirm('Excluir esta vaga?');">
+                            <input type="hidden" name="action" value="admin_delete_vaga">
+                            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                            <input type="hidden" name="id" value="<?= (int) $vaga['id'] ?>">
+                            <button class="btn danger" type="submit">Excluir vaga</button>
+                        </form>
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>

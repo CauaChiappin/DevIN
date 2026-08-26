@@ -1,10 +1,9 @@
 <?php
 
-session_start();
-
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/MailerHelper.php';
+require_once __DIR__ . '/config/security.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +74,8 @@ if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
     $conn instanceof mysqli
 ) {
+
+    requireValidCsrf();
 
     $nomeSocial =
         trim(
@@ -459,6 +460,7 @@ $cIdiomas =
             action="cadastrar_curriculo.php"
             class="register-form"
         >
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
             <h2 class="title-curriculo">
                 Preenchimento de Currículo
@@ -620,7 +622,7 @@ $cIdiomas =
 
             <div class="form-footer-action">
 
-             <button  href="/php/pessoa.php"
+             <button
                     type="submit"
                     class="btn-submit"
                 >

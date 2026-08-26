@@ -1,19 +1,23 @@
 <?php
 
-function getDatabaseConnection(): mysqli // define uma função que retorna tipo mysqli, que é a classe do PHP para trabalhar com banco de dados MySQL.
+declare(strict_types=1);
+
+function getDatabaseConnection(): mysqli
 {
-    $host = "localhost";  // talvez devemos mudar as variaveis de ambiente para variaveis de ambiente, para nao deixar exposto no codigo fonte (ex: $_ENV['DB_HOST']), mas por enquanto vamos deixar assim.
-    $user = "root";
-    $pass = "";
-    $dbname = "devin";
+    $host = getenv('DEVIN_DB_HOST') ?: 'localhost';
+    $user = getenv('DEVIN_DB_USER') ?: 'root';
+    $pass = getenv('DEVIN_DB_PASS') ?: '';
+    $dbname = getenv('DEVIN_DB_NAME') ?: 'devin';
+    $port = (int) (getenv('DEVIN_DB_PORT') ?: 3306);
 
-    $conn = new mysqli($host, $user, $pass, $dbname);
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    if ($conn->connect_error) {
-        throw new RuntimeException("Falha na conexao com o banco de dados.");
+    try {
+        $conn = new mysqli($host, $user, $pass, $dbname, $port);
+        $conn->set_charset('utf8mb4');
+        return $conn;
+    } catch (mysqli_sql_exception $e) {
+        error_log('Falha de conexão com o banco DevIN: ' . $e->getMessage());
+        throw new RuntimeException('Falha na conexão com o banco de dados.');
     }
-
-    $conn->set_charset("utf8mb4");
-
-    return $conn;
 }
