@@ -322,6 +322,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /*
         |--------------------------------------------------------------------------
+        | E-MAIL UNICO ENTRE OS TIPOS DE CONTA
+        |--------------------------------------------------------------------------
+        */
+
+        foreach (['pessoa', 'empresa', 'administrador'] as $tabelaEmail) {
+            $stmtEmail = $conn->prepare(
+                "SELECT email FROM {$tabelaEmail} WHERE email = ? LIMIT 1"
+            );
+
+            if (!$stmtEmail) {
+                throw new RuntimeException('Nao foi possivel validar o e-mail.');
+            }
+
+            $stmtEmail->bind_param('s', $email);
+            $stmtEmail->execute();
+            $emailExiste = $stmtEmail->get_result();
+            $existe = $emailExiste && $emailExiste->num_rows > 0;
+            $stmtEmail->close();
+
+            if ($existe) {
+                throw new InvalidArgumentException(
+                    'Este e-mail ja esta cadastrado. Use outro e-mail ou faca login.'
+                );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | SENHA HASH
         |--------------------------------------------------------------------------
         */
@@ -784,6 +812,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Todos os direitos reservados.
 
         </footer>
+
+        <a
+            href="../html/jogos/doom.html"
+            class="secret-doom"
+            aria-label="."
+            title=""
+        >.</a>
 
     </section>
 

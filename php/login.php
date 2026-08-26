@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/middlewares/auth.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -18,12 +19,32 @@ if (
     !empty($_SESSION['logado'])
 ) {
 
-    header(
-        'Location: ' .
-        AuthController::redirectByUserType(
-            $_SESSION['usuario_tipo'] ?? ''
-        )
-    );
+    $tipoSessao = $_SESSION['usuario_tipo'] ?? '';
+
+    if ($tipoSessao === 'pessoa') {
+        try {
+            $conn = getDatabaseConnection();
+            $idPessoaSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+            $stmt = $conn->prepare(
+                'SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1'
+            );
+            $stmt->bind_param('i', $idPessoaSessao);
+            $stmt->execute();
+            $possuiCurriculoSessao = $stmt->get_result()->num_rows > 0;
+            $stmt->close();
+            $conn->close();
+        } catch (Throwable $exception) {
+            error_log('Erro ao verificar curriculo no login: ' . $exception->getMessage());
+            $possuiCurriculoSessao = false;
+        }
+
+        header('Location: ' . ($possuiCurriculoSessao ? 'pessoa.php' : 'cadastrar_curriculo.php'));
+    } else {
+        header(
+            'Location: ' .
+            AuthController::redirectByUserType($tipoSessao)
+        );
+    }
 
     exit;
 }

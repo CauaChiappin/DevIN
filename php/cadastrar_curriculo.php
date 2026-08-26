@@ -2,26 +2,17 @@
 
 session_start();
 
+require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/MailerHelper.php';
 
 /*
 |--------------------------------------------------------------------------
-| VERIFICA LOGIN
+| VERIFICA LOGIN E TIPO DE CONTA
 |--------------------------------------------------------------------------
 */
 
-if (
-    empty($_SESSION['id_pessoa']) &&
-    empty($_SESSION['usuario_id'])
-) {
-
-    header(
-        'Location: login.php'
-    );
-
-    exit;
-}
+$usuario = requireWebAuth('pessoa');
 
 /*
 |--------------------------------------------------------------------------
@@ -29,20 +20,16 @@ if (
 |--------------------------------------------------------------------------
 */
 
-$idPessoa =
-    (int) (
-        $_SESSION['id_pessoa']
-        ?? $_SESSION['usuario_id']
-    );
+$idPessoa = (int) $usuario['id'];
 
 $nomePessoa =
     $_SESSION['nome_pessoa']
-    ?? $_SESSION['usuario_nome']
+    ?? $usuario['nome']
     ?? 'Candidato';
 
 $emailPessoa =
     $_SESSION['email_pessoa']
-    ?? $_SESSION['usuario_email']
+    ?? $usuario['email']
     ?? '';
 
 /*
@@ -237,39 +224,57 @@ if (
 
             /*
             |--------------------------------------------------------------------------
-            | E-MAIL DO CANDIDATO
+            | CONCLUSAO DO CADASTRO
             |--------------------------------------------------------------------------
+            | O e-mail e a notificacao para empresas acontecem somente
+            | na primeira criacao do curriculo. Edicoes posteriores nao
+            | disparam novamente os avisos.
             */
 
-            if (
-                !empty($emailPessoa) &&
-                filter_var(
-                    $emailPessoa,
-                    FILTER_VALIDATE_EMAIL
-                )
-            ) {
-
-                MailerHelper::
-                    enviarConfirmacaoCadastroCurriculo(
+            if (!$jaExiste) {
+                if (
+                    !empty($emailPessoa) &&
+                    filter_var(
+                        $emailPessoa,
+                        FILTER_VALIDATE_EMAIL
+                    )
+                ) {
+                    MailerHelper::enviarConfirmacaoCadastroCurriculo(
                         $emailPessoa,
                         $nomePessoa
                     );
+                }
+
+                MailerHelper::notificarEmpresasNovoCandidato(
+                    $conn,
+                    $nomePessoa
+                );
             }
 
             /*
             |--------------------------------------------------------------------------
-            | AVISA EMPRESAS
+            | LIMPA O ESTADO DE LEMBRETE
             |--------------------------------------------------------------------------
             */
 
-            MailerHelper::
-                notificarEmpresasNovoCandidato(
-                    $conn,
-                    $nomePessoa
-                );
+            $stmtLembrete = $conn->prepare(
+                'UPDATE pessoa SET lembrete_enviado = 0 WHERE id_pessoa = ?'
+            );
 
-            $mensagemSucesso =
-                'Currículo salvo com sucesso!';
+            if ($stmtLembrete) {
+                $stmtLembrete->bind_param('i', $idPessoa);
+                $stmtLembrete->execute();
+                $stmtLembrete->close();
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | REDIRECIONA PARA O DASHBOARD
+            |--------------------------------------------------------------------------
+            */
+
+            header('Location: pessoa.php');
+            exit;
 
         } else {
 
