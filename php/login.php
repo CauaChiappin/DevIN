@@ -1,222 +1,119 @@
 <?php
 
-require_once __DIR__ . '/controllers/AuthController.php';
-require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/security.php';
-
 startSecureSession();
 
-/*
-|--------------------------------------------------------------------------
-| SE JÁ ESTÁ LOGADO
-|--------------------------------------------------------------------------
-*/
+require_once __DIR__ . '/config/database.php';
 
-if (
-    $_SERVER['REQUEST_METHOD'] !== 'POST' &&
-    !empty($_SESSION['logado'])
-) {
-
-    $tipoSessao = $_SESSION['usuario_tipo'] ?? '';
-
-    if ($tipoSessao === 'pessoa') {
-        try {
-            $conn = getDatabaseConnection();
-            $idPessoaSessao = (int) ($_SESSION['usuario_id'] ?? 0);
-            $stmt = $conn->prepare(
-                'SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1'
-            );
-            $stmt->bind_param('i', $idPessoaSessao);
-            $stmt->execute();
-            $possuiCurriculoSessao = $stmt->get_result()->num_rows > 0;
-            $stmt->close();
-            $conn->close();
-        } catch (Throwable $exception) {
-            error_log('Erro ao verificar curriculo no login: ' . $exception->getMessage());
-            $possuiCurriculoSessao = false;
-        }
-
-        header('Location: ' . ($possuiCurriculoSessao ? 'pessoa.php' : 'cadastrar_curriculo.php'));
-    } else {
-        header(
-            'Location: ' .
-            AuthController::redirectByUserType($tipoSessao)
-        );
-    }
-
-    exit;
-}
-
-$erro = '';
-
-/*
-|--------------------------------------------------------------------------
-| MENSAGEM DE SUCESSO
-|--------------------------------------------------------------------------
-*/
-
-$sucesso =
-    $_SESSION['sucesso_login'] ?? '';
-
-unset(
-    $_SESSION['sucesso_login']
+$token = trim(
+    $_GET['token'] ?? ''
 );
 
-/*
-|--------------------------------------------------------------------------
-| LOGIN
-|--------------------------------------------------------------------------
-*/
+$tokenValido = false;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    requireValidCsrf();
+if ($token !== '') {
 
     try {
 
-        $email =
-            trim($_POST['email'] ?? '');
-
-        $senha =
-            $_POST['senha'] ?? '';
+        $conn =
+            getDatabaseConnection();
 
         /*
         |--------------------------------------------------------------------------
-        | AUTENTICA APENAS UMA VEZ
+        | PROCURA TOKEN NA PESSOA
         |--------------------------------------------------------------------------
         */
 
-        $auth =
-            AuthController::login(
-                $email,
-                $senha
-            );
+        $stmtPessoa =
+            $conn->prepare("
+                SELECT id_pessoa
+                FROM pessoa
+                WHERE
+                    token_recuperacao = ?
+                    AND token_expiracao > NOW()
+                LIMIT 1
+            ");
 
-        /*
-        |--------------------------------------------------------------------------
-        | CRIA SESSÃO
-        |--------------------------------------------------------------------------
-        */
-
-        AuthController::establishSession(
-            $auth
+        $stmtPessoa->bind_param(
+            's',
+            $token
         );
 
+        $stmtPessoa->execute();
+
+        $resultadoPessoa =
+            $stmtPessoa->get_result();
+
+        if (
+            $resultadoPessoa &&
+            $resultadoPessoa->num_rows > 0
+        ) {
+            $tokenValido = true;
+        }
+
+        $stmtPessoa->close();
+
         /*
         |--------------------------------------------------------------------------
-        | SE FOR PESSOA
+        | SE NÃO ENCONTROU, PROCURA NA EMPRESA
         |--------------------------------------------------------------------------
         */
 
-        if (
-            $auth['usuario']['tipo'] === 'pessoa'
-        ) {
+        if (!$tokenValido) {
 
-            $conn =
-                getDatabaseConnection();
-
-            $idPessoa =
-                (int) $auth['usuario']['id'];
-
-            /*
-            |--------------------------------------------------------------------------
-            | VERIFICA CURRÍCULO
-            |--------------------------------------------------------------------------
-            */
-
-            $stmt =
+            $stmtEmpresa =
                 $conn->prepare("
-                    SELECT id_curriculo
-                    FROM curriculo
-                    WHERE id_pessoa = ?
+                    SELECT id_empresa
+                    FROM empresa
+                    WHERE
+                        token_recuperacao = ?
+                        AND token_expiracao > NOW()
                     LIMIT 1
                 ");
 
-            $stmt->bind_param(
-                'i',
-                $idPessoa
+            $stmtEmpresa->bind_param(
+                's',
+                $token
             );
 
-            $stmt->execute();
+            $stmtEmpresa->execute();
 
-            $resultado =
-                $stmt->get_result();
+            $resultadoEmpresa =
+                $stmtEmpresa->get_result();
 
-            $possuiCurriculo =
-                $resultado &&
-                $resultado->num_rows > 0;
-
-            $stmt->close();
-
-            $conn->close();
-
-            /*
-            |--------------------------------------------------------------------------
-            | SALVA DADOS PARA O CURRÍCULO
-            |--------------------------------------------------------------------------
-            */
-
-            $_SESSION['id_pessoa'] =
-                $idPessoa;
-
-            $_SESSION['nome_pessoa'] =
-                $auth['usuario']['nome'];
-
-            $_SESSION['email_pessoa'] =
-                $auth['usuario']['email'];
-
-            /*
-            |--------------------------------------------------------------------------
-            | REDIRECIONAMENTO
-            |--------------------------------------------------------------------------
-            */
-
-            if ($possuiCurriculo) {
-
-                header(
-                    'Location: pessoa.php'
-                );
-
-            } else {
-
-                header(
-                    'Location: cadastrar_curriculo.php'
-                );
+            if (
+                $resultadoEmpresa &&
+                $resultadoEmpresa->num_rows > 0
+            ) {
+                $tokenValido = true;
             }
 
-            exit;
+            $stmtEmpresa->close();
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | EMPRESA OU ADMINISTRADOR
-        |--------------------------------------------------------------------------
-        */
+        $conn->close();
 
-        header(
-            'Location: ' .
-            AuthController::redirectByUserType(
-                $auth['usuario']['tipo']
-            )
-        );
-
-        exit;
-
-    } catch (Throwable $exception) {
+    } catch (Throwable $e) {
 
         error_log(
-            'Erro no login: ' .
-            $exception->getMessage()
+            'Erro ao validar token: ' .
+            $e->getMessage()
         );
 
-        $erro = 'E-mail ou senha inválidos. Verifique os dados e tente novamente.';
+        $tokenValido = false;
     }
 }
 
+$mensagemErro =
+    $_SESSION['erro_redefinir'] ?? '';
+
+unset(
+    $_SESSION['erro_redefinir']
+);
+
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
 
@@ -227,12 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         content="width=device-width, initial-scale=1.0"
     >
 
-    <link
-        rel="stylesheet"
-        href="../css/login.css"
-    >
-
-    <title>DevIN | Login</title>
+    <title>Nova Senha - DevIN</title>
 
     <link
         rel="icon"
@@ -246,205 +138,145 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         href="../img/favicon.png"
     >
 
+    <link
+        rel="stylesheet"
+        href="../css/recuperacao.css"
+    >
+
 </head>
 
 <body>
 
-<header class="cabecalho-site">
+<div class="card">
 
-    <div class="logo">
+    <h1>
+        Criar Nova Senha
+    </h1>
 
-        <a href="index.php">
-            Dev<span>IN</span>
-        </a>
+    <?php if (!$tokenValido): ?>
 
-    </div>
+        <div class="alert-error">
 
-    <nav class="navegacao">
+            Este link de redefinição é inválido
+            ou já expirou.
 
-        <ul>
-
-            <li>
-                <a href="index.php">
-                    Conheça o DevIN
-                </a>
-            </li>
-
-            <li>
-                <a href="index.php#etapas">
-                    Etapas
-                </a>
-            </li>
-
-            <li>
-                <a href="index.php#contatos">
-                    Contato
-                </a>
-            </li>
-
-        </ul>
-
-    </nav>
-
-    <div class="acoes">
+        </div>
 
         <a
-            class="botao-azul"
-            href="cadastro_pessoa.php"
+            href="recuperacao.php"
+            class="btn-submit"
+            style="
+                display: block;
+                text-align: center;
+                text-decoration: none;
+            "
         >
-            Cadastrar-se
+            Solicitar Novo Link
         </a>
 
-    </div>
+    <?php else: ?>
 
-</header>
+        <p class="subtitle">
 
-<main class="conteudo-login">
+            Digite sua nova senha abaixo
+            para atualizar sua conta.
 
-    <img
-        class="gif-robo"
-        src="../img/robologin.gif"
-        alt="Robô DevIN"
-    >
+        </p>
 
-    <div class="area-login">
+        <?php if ($mensagemErro): ?>
 
-        <h1>
-            Login
-        </h1>
-
-        <?php if (!empty($sucesso)): ?>
-
-            <p
-                class="mensagem-sucesso"
-                style="
-                    color: green;
-                    font-weight: bold;
-                    margin-bottom: 10px;
-                "
-            >
-                <?= htmlspecialchars(
-                    $sucesso,
-                    ENT_QUOTES,
-                    'UTF-8'
-                ) ?>
-            </p>
-
-        <?php endif; ?>
-
-        <?php if (!empty($erro)): ?>
-
-            <p
-                class="mensagem-erro"
-                style="
-                    color: red;
-                    font-weight: bold;
-                    margin-bottom: 10px;
-                "
-            >
+            <div class="alert-error">
 
                 <?= htmlspecialchars(
-                    $erro,
+                    $mensagemErro,
                     ENT_QUOTES,
                     'UTF-8'
                 ) ?>
 
-            </p>
+            </div>
 
         <?php endif; ?>
 
         <form
-            action="login.php"
+            action="processar.php"
             method="POST"
         >
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
-            <div class="grupo-campo">
-
-                <label for="email">
-                    Email:
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Seu email..."
-                    value="<?= htmlspecialchars(
-                        $_POST['email'] ?? '',
-                        ENT_QUOTES,
-                        'UTF-8'
-                    ) ?>"
-                    required
-                >
-
-            </div>
-
-            <div
-                class="grupo-campo campo-senha input-container"
+            <input
+                type="hidden"
+                name="acao"
+                value="redefinir_senha"
             >
 
-                <label for="senha">
-                    Senha:
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>"
+            >
+
+            <input
+                type="hidden"
+                name="token"
+                value="<?= htmlspecialchars(
+                    $token,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>"
+            >
+
+            <div class="form-group">
+
+                <label for="nova_senha">
+                    Nova Senha:
                 </label>
 
                 <input
                     type="password"
-                    id="senha"
-                    name="senha"
-                    placeholder="Sua senha..."
+                    id="nova_senha"
+                    name="nova_senha"
+                    placeholder="••••••••"
                     required
+                    minlength="8"
                 >
-
-                <button
-                    type="button"
-                    id="btn-mostrar"
-                    aria-label="Mostrar ou ocultar senha"
-                >
-
-                    <img
-                        id="img-olho"
-                        src="../img/olho_fechado.png"
-                        alt="Mostrar senha"
-                    >
-
-                </button>
 
             </div>
 
-            <a
-                href="recuperacao.php"
-                class="link-esqueceu"
-            >
-                Esqueceu a Senha?
-            </a>
+            <div class="form-group">
+
+                <label for="confirmar_senha">
+                    Confirme a Nova Senha:
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmar_senha"
+                    name="confirmar_senha"
+                    placeholder="••••••••"
+                    required
+                    minlength="8"
+                >
+
+            </div>
 
             <button
                 type="submit"
-                class="botao-entrar"
+                class="btn-submit"
             >
-                Entrar
+                Atualizar Senha
             </button>
 
         </form>
 
-        <p class="texto-politica">
+    <?php endif; ?>
 
-            Ao continuar, você reconhece a
+    <a
+        href="login.php"
+        class="back-link"
+    >
+        ← Voltar para o Login
+    </a>
 
-            <a href="#">
-                Política de Privacidade
-            </a>
-
-            do DevIN.
-
-        </p>
-
-    </div>
-
-</main>
-
-<script src="../js/login.js"></script>
+</div>
 
 </body>
 </html>
