@@ -1,7 +1,6 @@
 <?php
 // Inicia ou recupera a sessão do usuário (a "memória" que mantém o usuário logado)
 session_start();
-require_once __DIR__ . '/middlewares/auth.php';
 
 // Carrega o controlador de perfil (regras de atualização, busca de dados, etc.)
 require_once __DIR__ . '/controllers/ProfileController.php';
@@ -9,7 +8,13 @@ require_once __DIR__ . '/controllers/ProfileController.php';
 // Carrega o arquivo de funções auxiliares (como ícones, formatação de textos e fotos)
 require_once __DIR__ . '/helpers.php';
 
-$usuarioAtual = requireWebAuth('empresa');
+// --- PROTEÇÃO DA PÁGINA ---
+// Verifica se o usuário NÃO está logado OU se o tipo de usuário NÃO é 'empresa'.
+// Se alguma dessas condições for verdadeira, manda o usuário direto para a tela de login.
+if (empty($_SESSION['logado']) || ($_SESSION['usuario_tipo'] ?? '') !== 'empresa') {
+    header('Location: login.php'); // Redireciona para o login
+    exit; // Encerra o script para não carregar mais nada por segurança
+}
 
 // Define o tipo de perfil atual como 'empresa'
 $tipo = 'empresa';
@@ -384,7 +389,7 @@ unset($candidato);
                         <button type="button" data-open-settings><?= dashboardIcon('settings') ?><span class="menu-text">Configuracoes</span></button>
                     </div>
                 </details>
-                <a class="sair" href="logout.php" data-confirm-logout="Tem certeza que deseja sair da sua conta?"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>
+                <a class="sair" href="logout.php"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>
             </div>
         </aside>
 
@@ -632,24 +637,5 @@ unset($candidato);
     </dialog>
 
     <script src="../js/dashboard.js"></script>
-    <script>
-        document.querySelector('input[name="foto"]')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const preview = document.querySelector('.profile-photo-preview img') || document.querySelector('.profile-photo-preview');
-                    if (preview) {
-                        if (preview.tagName === 'IMG') {
-                            preview.src = event.target.result;
-                        } else {
-                            preview.style.backgroundImage = `url(${event.target.result})`;
-                        }
-                    }
-                };z
-                reader.readAsDataURL(file);
-            }
-        });
-    </script>
 </body>
 </html>
