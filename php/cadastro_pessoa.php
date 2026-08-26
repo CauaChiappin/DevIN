@@ -4,10 +4,9 @@ ob_start();
 
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/security.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+startSecureSession();
 
 $erro = '';
 
@@ -18,6 +17,8 @@ $erro = '';
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    requireValidCsrf();
 
     $nome =
         trim($_POST['nome'] ?? '');
@@ -223,11 +224,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     telefone,
                     cep,
                     senha_hash,
+                    foto,
                     created_at,
                     lembrete_enviado
                 )
                 VALUES
                 (
+                    ?,
                     ?,
                     ?,
                     ?,
@@ -246,14 +249,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          * para CPF e CEP.
          */
 
+        // A coluna foto aceita o perfil sem imagem, mas não aceita NULL.
+        $foto = '';
+
         $stmt->bind_param(
-            'ssssss',
+            'sssssss',
             $nome,
             $email,
             $cpf,
             $telefone,
             $cep,
-            $senhaHash
+            $senhaHash,
+            $foto
         );
 
         $stmt->execute();
@@ -445,6 +452,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             class="register-form"
             id="formCadastro"
         >
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
             <div class="form-columns">
 

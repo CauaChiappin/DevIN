@@ -781,9 +781,9 @@ summary:focus-visible {
 
 .imagem-suporte {
     width: 300px;
-    border-radius: 23px;
-    object-fit: cover;
-    box-shadow: 0 14px 28px rgba(0, 74, 148, .1);
+    border-radius: 23px; /* Mesmo arredondamento da caixa de SAC */
+    object-fit: cover; /* Garante que a imagem não distorça */
+    box-shadow: 0 14px 28px rgba(0, 74, 148, .1); /* Sombra super leve para destacar (opcional) */
 }
 
 .perguntas {

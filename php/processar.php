@@ -1,11 +1,19 @@
 <?php
 
-session_start();
+startSecureSession();
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/MailerHelper.php';
+require_once __DIR__ . '/config/security.php';
 
 $acao = $_POST['acao'] ?? '';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: login.php');
+    exit;
+}
+
+requireValidCsrf();
 
 /*
 |--------------------------------------------------------------------------

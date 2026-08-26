@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../auth/Jwt.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/security.php';
 
 function getBearerToken(): ?string
 {
@@ -48,9 +49,7 @@ function requireAuth(): array
  */
 function requireWebAuth(?string $tipoEsperado = null): array
 {
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
-    }
+    startSecureSession();
 
     if (empty($_SESSION['logado']) || empty($_SESSION['usuario_id'])) {
         header('Location: login.php');

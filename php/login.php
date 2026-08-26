@@ -1,8 +1,9 @@
 <?php
 
-require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/config/security.php';
+startSecureSession();
+
 require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/middlewares/auth.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -43,11 +44,7 @@ $erro = '';
 $sucesso = $_SESSION['sucesso_login'] ?? '';
 unset($_SESSION['sucesso_login']);
 
-/*
-|--------------------------------------------------------------------------
-| LOGIN
-|--------------------------------------------------------------------------
-*/
+$tokenValido = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -87,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -163,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="senha" 
                     placeholder="Sua senha..." 
                     required
+                    minlength="8"
                 >
                 <button type="button" id="btn-mostrar" aria-label="Mostrar ou ocultar senha">
                     <img id="img-olho" src="../img/olho_fechado.png" alt="Mostrar senha">

@@ -4,10 +4,9 @@ ob_start();
 
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/security.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+startSecureSession();
 
 $erro = '';
 
@@ -18,6 +17,8 @@ $erro = '';
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    requireValidCsrf();
 
     $nome =
         trim($_POST['nome'] ?? '');
@@ -385,6 +386,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             class="register-form"
             id="formCadastro"
         >
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
             <div class="form-columns">
 
@@ -639,16 +641,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Dev<span>IN</span> |
             Escola Profª Alcina Dantas Feijão |
             © DevIN 2026.
-            Todos os direitos reservados.
-
-        </footer>
-
-        <a
+            Todos os direitos reservados<a
             href="../html/jogos/doom.html"
             class="secret-doom"
             aria-label="."
             title=""
         >.</a>
+
+        </footer>
+
+       
 
     </section>
 

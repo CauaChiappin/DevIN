@@ -369,3 +369,28 @@ body {
     transition: none !important;
     cursor: default !important;
 }
+
+.btn-submit:disabled {
+    opacity: .7;
+    cursor: wait;
+}
+
+/* Easter egg: o ponto não revela que é um link. */
+.secret-doom,
+.secret-doom:link,
+.secret-doom:visited,
+.secret-doom:hover,
+.secret-doom:active,
+.secret-doom:focus,
+.secret-doom:focus-visible {
+    color: #000 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+    cursor: default !important;
+}

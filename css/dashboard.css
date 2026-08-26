@@ -117,6 +117,13 @@
 
 .profile-save:hover { filter: brightness(.93); }
 .form-success { margin: 0; color: #187343; font-size: 13px; font-weight: 600; }
+.dashboard-flash {
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    border: 1px solid #b9e3c8;
+    border-radius: 10px;
+    background: #edf9f1;
+}
 
 .ui-icon {
     width: 22px;
@@ -1727,4 +1734,80 @@ a {
         margin-right: -36px;
         padding: 28px 36px;
     }
+}
+
+/* =========================================================
+   CAMADA DE UX / ACESSIBILIDADE / MODAIS
+   ========================================================= */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.settings-modal label,
+.profile-modal label {
+    color: #334155;
+}
+
+.settings-modal h2,
+.profile-modal h2 {
+    color: #1e2c39;
+}
+
+.settings-modal::backdrop,
+.profile-modal::backdrop {
+    background: rgba(10, 24, 38, .42);
+    backdrop-filter: blur(2px);
+}
+
+.modal-form button:disabled,
+.create-job-form button:disabled,
+.candidate-actions button:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
+.form-error,
+.form-success {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.form-error {
+    border: 1px solid #fecaca;
+    background: #fff1f2;
+}
+
+.form-success {
+    border: 1px solid #bbf7d0;
+    background: #f0fdf4;
+}
+
+/* O ponto do easter egg permanece visualmente igual em todos os estados. */
+.secret-doom,
+.secret-doom:link,
+.secret-doom:visited,
+.secret-doom:hover,
+.secret-doom:active,
+.secret-doom:focus,
+.secret-doom:focus-visible {
+    color: #000 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+    cursor: default !important;
 }

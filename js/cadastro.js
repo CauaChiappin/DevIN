@@ -92,3 +92,14 @@ aplicarMascara('telefone', 11, (valor) => {
 });
 
 aplicarMascara('cep', 8, (valor) => valor.replace(/(\d{5})(\d)/, '$1-$2'));
+
+// Evita duplo envio e dá feedback visual durante o processamento do cadastro.
+document.querySelectorAll('form').forEach((form) => {
+    form.addEventListener('submit', () => {
+        const button = form.querySelector('button[type="submit"]');
+        if (!button || button.disabled) return;
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = 'Processando...';
+    });
+});
