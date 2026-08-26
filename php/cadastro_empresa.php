@@ -11,7 +11,151 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 $erro = '';
 
+/*
+|--------------------------------------------------------------------------
+| VALIDA CNPJ
+|--------------------------------------------------------------------------
+*/
 
+function validarCNPJ(string $cnpj): bool
+{
+    $cnpj = preg_replace(
+        '/[^0-9]/',
+        '',
+        $cnpj
+    );
+
+    if (
+        strlen($cnpj) !== 14 ||
+        preg_match(
+            '/^(\d)\1{13}$/',
+            $cnpj
+        )
+    ) {
+        return false;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRIMEIRO DÍGITO
+    |--------------------------------------------------------------------------
+    */
+
+    $soma = 0;
+    $peso = 5;
+
+    for ($i = 0; $i < 12; $i++) {
+
+        $soma +=
+            ((int) $cnpj[$i]) * $peso;
+
+        $peso--;
+
+        if ($peso === 1) {
+            $peso = 9;
+        }
+    }
+
+    $resto =
+        $soma % 11;
+
+    $digito =
+        $resto < 2
+            ? 0
+            : 11 - $resto;
+
+    if (
+        (int) $cnpj[12] !== $digito
+    ) {
+        return false;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEGUNDO DÍGITO
+    |--------------------------------------------------------------------------
+    */
+
+    $soma = 0;
+    $peso = 6;
+
+    for ($i = 0; $i < 13; $i++) {
+
+        $soma +=
+            ((int) $cnpj[$i]) * $peso;
+
+        $peso--;
+
+        if ($peso === 1) {
+            $peso = 9;
+        }
+    }
+
+    $resto =
+        $soma % 11;
+
+    $digito =
+        $resto < 2
+            ? 0
+            : 11 - $resto;
+
+    return (
+        (int) $cnpj[13] === $digito
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| CONSULTA CNPJ NA BRASIL API
+|--------------------------------------------------------------------------
+*/
+
+function cnpjExisteNaReceita(string $cnpj): bool
+{
+    $cnpj =
+        preg_replace(
+            '/[^0-9]/',
+            '',
+            $cnpj
+        );
+
+    $url =
+        'https://brasilapi.com.br/api/cnpj/v1/' .
+        $cnpj;
+
+    $ch =
+        curl_init();
+
+    curl_setopt_array(
+        $ch,
+        [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 5,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTPHEADER => [
+                'Accept: application/json'
+            ]
+        ]
+    );
+
+    $response =
+        curl_exec($ch);
+
+    $httpCode =
+        curl_getinfo(
+            $ch,
+            CURLINFO_HTTP_CODE
+        );
+
+    curl_close($ch);
+
+    return (
+        $response !== false &&
+        $httpCode === 200
+    );
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -137,7 +281,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
         }
 
-        
+        /*
+        |--------------------------------------------------------------------------
+        | CNPJ
+        |--------------------------------------------------------------------------
+        */
+
+        if (!validarCNPJ($cnpj)) {
+            throw new Exception(
+                'CNPJ inválido! Verifique os dígitos inseridos.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONSULTA BRASIL API
+        |--------------------------------------------------------------------------
+        */
+
+        if (!cnpjExisteNaReceita($cnpj)) {
+
+            throw new Exception(
+                'CNPJ não encontrado na base de dados consultada.'
+            );
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -318,9 +485,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         rel="stylesheet"
         href="../css/cadastrostyle.css"
     >
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 </head>
 
@@ -330,9 +494,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <section class="left-side">
 
-        <header class="cadastro-header">
-            <a class="brand-logo" href="index.php">Dev<span>IN</span></a>
-        </header>
+        <div class="brand-logo">
+
+            <a href="index.php">
+                Dev<span>IN</span>
+            </a>
+
+        </div>
 
         <div class="toggle-container">
 
@@ -641,21 +809,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Dev<span>IN</span> |
             Escola Profª Alcina Dantas Feijão |
             © DevIN 2026.
-            Todos os direitos reservados<a
+            Todos os direitos reservados.
+
+        </footer>
+
+        <a
             href="../html/jogos/doom.html"
             class="secret-doom"
             aria-label="."
             title=""
         >.</a>
 
-        </footer>
-
-       
-
     </section>
 
     <section class="right-side">
-        <a href="login.php" class="header-action header-action--outside">Login</a>
+
+        <a
+            href="login.php"
+            class="btn-top-login"
+        >
+            Login
+        </a>
 
         <div class="mascot-container">
 
