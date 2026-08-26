@@ -13,7 +13,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
 }
 
 body {
@@ -27,100 +27,57 @@ body {
    2. CABEÇALHO (HEADER)
    ========================================================================== */
 .cabecalho-site {
-    width: 80%;
-    min-height: 83px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 170px 1fr 180px;
-    align-items: center;
-    gap: 24px;
-    background-color: var(--bg);
-}
-
-.marca {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--black);
-}
-
-.marca a {
-    text-decoration: none;
-    color: inherit;
-}
-
-.marca span {
-    color: var(--blue);
-}
-
-.navegacao {
     display: flex;
-    justify-content: center;
+    justify-content: space-between; 
+    align-items: center;            
+    padding: 20px 50px;             
+    background-color: var(--bg); 
+}
+
+.logo a {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--black); 
+    text-decoration: none;
+}
+
+.logo span {
+    color: var(--blue); 
 }
 
 .navegacao ul {
     display: flex;
-    list-style: none;
-    gap: clamp(22px, 4vw, 65px);
+    list-style: none; 
+    gap: 30px;        
 }
 
 .navegacao a {
-    position: relative;
-    padding: 6px 0;
     text-decoration: none;
-    color: var(--black);
-    font-size: 16px;
+    color: var(--black); 
+    font-size: 18px;
     font-weight: 500;
-    transition: color .2s ease;
-}
-
-.navegacao a::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 2px;
-    border-radius: 999px;
-    background: var(--blue);
-    transform: scaleX(0);
-    transition: transform .2s ease;
+    transition: color 0.3s ease;
 }
 
 .navegacao a:hover {
-    color: var(--blue);
-}
-
-.navegacao a:hover::after { 
-    transform: scaleX(1); 
-}
-
-.acoes { 
-    display: flex; 
-    justify-content: flex-end; 
-}
-
-.botao {
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    border: 2px solid var(--blue);
-    border-radius: 11px;
-    padding: 0 20px;
-    font-size: 16px;
-    font-weight: 600;
-    transition: color .2s ease, background-color .2s ease, transform .2s ease;
-}
-
-.botao-branco { 
     color: var(--blue); 
 }
 
-.botao-branco:hover {
+.botao-azul {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--blue); 
+    border: 2px solid var(--blue); 
+    padding: 10px 25px;
+    border-radius: 12px; 
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.botao-azul:hover {
     background-color: var(--blue); 
     color: var(--white); 
-    transform: translateY(-1px);
 }
 
 /* ==========================================================================
@@ -130,38 +87,14 @@ body {
     display: flex;
     justify-content: center; 
     align-items: center;     
-    gap: clamp(40px, 8vw, 140px);
+    gap: 550px; 
     flex: 1;                 
     padding: 40px 50px;
 }
 
-.robo-area {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    width: 450px;
-    max-width: 90%;
-    padding-bottom: 18px;
-}
-
-.robo-area::after {
-    content: '';
-    position: absolute;
-    bottom: 8px;
-    width: 58%;
-    height: 28px;
-    border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(0, 42, 84, .28) 0%, rgba(0, 74, 148, .12) 48%, transparent 74%);
-    filter: blur(7px);
-    transform: scaleX(1.12);
-}
-
 .gif-robo {
-    position: relative;
-    z-index: 1;
     width: 450px;          
-    max-width: 100%;
+    max-width: 90%;        
     height: auto;          
 }
 
@@ -169,16 +102,14 @@ body {
     background-color: var(--white);
     padding: 45px 40px;
     border-radius: 32px; 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra suavizada para um visual mais limpo */
     width: 100%;
     max-width: 450px;    
 }
 
 .area-login h1 {
     text-align: center;
-    font-size: 30px;
-    font-weight: 500;
-    letter-spacing: -.02em;
+    font-size: 32px;
     color: var(--black);
     margin-bottom: 30px; 
 }
@@ -267,9 +198,10 @@ body {
    5. POSICIONAMENTO DO BOTÃO MOSTRAR SENHA (OLHO)
    ========================================================================== */
 .input-container {
-    position: relative;
+    position: relative; /* Define que os filhos absolutos se alinham por aqui */
 }
 
+/* Dá um espaço no final do texto do input para não ficar embaixo do olho */
 .input-container input {
     padding-right: 50px; 
 }
@@ -278,7 +210,8 @@ body {
     position: absolute;
     right: 15px;
     top: 50%;
-    transform: translateY(calc(-50% + 15px));
+    /* O calc puxa o olho para baixo compensando a altura do label 'Senha:' */
+    transform: translateY(calc(-50% + 12px)); 
     background: none;
     border: none;
     cursor: pointer; 
@@ -292,24 +225,4 @@ body {
     width: 24px;
     height: 24px;
     display: block;
-}
-
-/* ==========================================================================
-   6. RESPONSIVIDADE
-   ========================================================================== */
-@media (max-width: 900px) {
-    .cabecalho-site { padding: 18px 24px; }
-    .navegacao { display: none; }
-    .conteudo-login { gap: 32px; padding: 30px 24px; }
-    .gif-robo { width: min(320px, 42vw); }
-}
-
-@media (max-width: 620px) {
-    .cabecalho-site { padding: 16px 20px; }
-    .marca a { font-size: 27px; }
-    .botao-branco { padding: 8px 14px; font-size: 14px; }
-    .conteudo-login { flex-direction: column; justify-content: flex-start; padding: 28px 20px 36px; }
-    .gif-robo { width: min(230px, 70vw); }
-    .area-login { padding: 32px 24px; border-radius: 22px; }
-    .area-login h1 { font-size: 28px; }
 }
