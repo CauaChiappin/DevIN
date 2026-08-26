@@ -639,16 +639,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Dev<span>IN</span> |
             Escola Profª Alcina Dantas Feijão |
             © DevIN 2026.
-            Todos os direitos reservados.
-
-        </footer>
-
-        <a
+            Todos os direitos reservados<a
             href="../html/jogos/doom.html"
             class="secret-doom"
             aria-label="."
             title=""
         >.</a>
+
+        </footer>
+
+       
 
     </section>
 
