@@ -351,12 +351,351 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mascot-container">
             <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
         </div>
+
+        <div class="toggle-container">
+
+            <a
+                href="cadastro_pessoa.php"
+                class="toggle-btn pessoal"
+            >
+                Pessoal
+            </a>
+
+            <span class="toggle-divider">
+                OU
+            </span>
+
+            <a
+                href="cadastro_empresa.php"
+                class="toggle-btn empresa active"
+            >
+                Empresa
+            </a>
+
+        </div>
+
+        <h1 class="page-title">
+            Criar conta
+        </h1>
+
+        <?php if (!empty($erro)): ?>
+
+            <div
+                class="php-toast error-toast"
+                style="
+                    color: red;
+                    font-weight: bold;
+                    margin-bottom: 15px;
+                "
+            >
+
+                <?= htmlspecialchars(
+                    $erro,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+
+            </div>
+
+        <?php endif; ?>
+
+        <form
+            action="cadastro_empresa.php"
+            method="POST"
+            class="register-form"
+            id="formCadastro"
+        >
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
+
+            <div class="form-columns">
+
+                <div class="form-column">
+
+                    <div class="input-group">
+
+                        <label for="nome">
+                            Nome:*
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nome"
+                            name="nome"
+                            required
+                            value="<?= htmlspecialchars(
+                                $_POST['nome'] ?? '',
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="cnpj">
+                            CNPJ:*
+                        </label>
+
+                        <input
+                            type="text"
+                            id="cnpj"
+                            name="cnpj"
+                            placeholder="00.000.000/0000-00"
+                            required
+                            value="<?= htmlspecialchars(
+                                $_POST['cnpj'] ?? '',
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="cep">
+                            CEP:*
+                        </label>
+
+                        <input
+                            type="text"
+                            id="cep"
+                            name="cep"
+                            placeholder="00000-000"
+                            maxlength="9"
+                            required
+                            value="<?= htmlspecialchars(
+                                $_POST['cep'] ?? '',
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                        >
+
+                    </div>
+
+                    <div class="input-group password-wrapper">
+
+                        <label for="confirme_senha">
+                            Confirme a sua senha:*
+                        </label>
+
+                        <div class="input-icon-container">
+
+                            <input
+                                type="password"
+                                id="confirme_senha"
+                                name="confirme_senha"
+                                required
+                            >
+
+                            <img
+                                src="../img/olho_fechado.png"
+                                class="toggle-password-eye"
+                                onclick="togglePasswordVisibility(
+                                    'confirme_senha',
+                                    this
+                                )"
+                                alt="Mostrar ou ocultar senha"
+                            >
+
+                        </div>
+
+                        <span
+                            id="error-match"
+                            class="error-message-text"
+                        >
+                            Senhas não coincidem
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="form-column">
+
+                    <div class="input-group">
+
+                        <label for="email">
+                            E-mail:*
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            value="<?= htmlspecialchars(
+                                $_POST['email'] ?? '',
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="telefone">
+                            Telefone:*
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="telefone"
+                            name="telefone"
+                            placeholder="(00) 00000-0000"
+                            required
+                            value="<?= htmlspecialchars(
+                                $_POST['telefone'] ?? '',
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                        >
+
+                    </div>
+
+                    <div class="input-group password-wrapper">
+
+                        <label for="senha">
+                            Senha:*
+                        </label>
+
+                        <div class="input-icon-container">
+
+                            <input
+                                type="password"
+                                id="senha"
+                                name="senha"
+                                required
+                            >
+
+                            <img
+                                src="../img/olho_fechado.png"
+                                class="toggle-password-eye"
+                                onclick="togglePasswordVisibility(
+                                    'senha',
+                                    this
+                                )"
+                                alt="Mostrar ou ocultar senha"
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="password-requirements">
+
+                        <div
+                            class="requirement-item req-invalid"
+                            id="req-length"
+                        >
+
+                            <span class="req-icon">
+                                ⚠️
+                            </span>
+
+                            No mínimo 8 caracteres
+
+                        </div>
+
+                        <div
+                            class="requirement-item req-invalid"
+                            id="req-upper"
+                        >
+
+                            <span class="req-icon">
+                                ⚠️
+                            </span>
+
+                            Pelo menos 1 letra maiúscula (A-Z)
+
+                        </div>
+
+                        <div
+                            class="requirement-item req-invalid"
+                            id="req-special"
+                        >
+
+                            <span class="req-icon">
+                                ⚠️
+                            </span>
+
+                            Pelo menos 1 caractere especial
+                            (como ! @ # $)
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="form-footer-action">
+
+                <button
+                    type="submit"
+                    class="btn-submit"
+                >
+                    Cadastrar
+                </button>
+
+                <p class="login-redirect">
+
+                    Já tem conta?
+
+                    <a href="login.php">
+                        Faça login
+                    </a>
+
+                </p>
+
+            </div>
+
+        </form>
+
+        <footer class="page-footer">
+
+            Dev<span>IN</span> |
+            Escola Profª Alcina Dantas Feijão |
+            © DevIN 2026.
+            Todos os direitos reservados<a
+            href="../html/jogos/doom.html"
+            class="secret-doom"
+            aria-label="."
+            title=""
+        >.</a>
+
+        </footer>
+
+       
+
+    </section>
+
+    <section class="right-side">
+
+        <a
+            href="login.php"
+            class="btn-top-login"
+        >
+            Login
+        </a>
+
+        <div class="mascot-container">
+
+            <img
+                src="../img/robocadastro.webp"
+                alt="Robô DevIN"
+                class="mascot-img"
+            >
+
+        </div>
+
     </section>
 
 </div>
 
-<!-- Arquivo JavaScript com máscaras de digitação e validações em tempo real -->
 <script src="../js/cadastro.js"></script>
 
 </body>
-</html>
