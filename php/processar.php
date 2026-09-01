@@ -1,10 +1,10 @@
 <?php
 
-startSecureSession();
-
-require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/MailerHelper.php';
 require_once __DIR__ . '/config/security.php';
+startSecureSession();
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/auth.php';
+require_once __DIR__ . '/MailerHelper.php';
 
 $acao = $_POST['acao'] ?? '';
 
@@ -169,9 +169,7 @@ if ($acao === 'solicitar_recuperacao') {
             |
             */
 
-            $linkRedefinicao =
-                'http://localhost/DevIN/php/redefinir.php?token=' .
-                urlencode($token);
+            $linkRedefinicao = rtrim(APP_BASE_URL, '/') . '/php/redefinir.php?token=' . urlencode($token);
 
             $nomeSeguro =
                 htmlspecialchars(
@@ -253,12 +251,14 @@ if ($acao === 'solicitar_recuperacao') {
                 </div>
             ";
 
-            MailerHelper::enviar(
+            if (!MailerHelper::enviar(
                 $email,
                 $usuario['nome'],
                 $assunto,
                 $corpoHtml
-            );
+            )) {
+                error_log('Falha ao enviar e-mail de recuperação para ' . $email);
+            }
         }
 
         $conn->close();

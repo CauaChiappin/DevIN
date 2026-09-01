@@ -1,12 +1,9 @@
-/* ==========================================================================
-   1. VARIÁVEIS DE CORES E RESET
-   ========================================================================== */
 :root {
     --bg: #f8f7f2;
-    --black: #000000;
-    --blue: #004a94;
-    --gray: #7a7a7a;
-    --white: #ffffff;
+    --black: #050505;
+    --blue: #00549f;
+    --gray: #b7b7b7;
+    --white: #fff;
 }
 
 * {
@@ -16,12 +13,7 @@
     font-family: 'Arial', sans-serif;
 }
 
-body {
-    background-color: var(--bg);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; 
-}
+body { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--black); overflow-x: hidden; }
 
 /* ==========================================================================
    2. CABEÇALHO (HEADER)
