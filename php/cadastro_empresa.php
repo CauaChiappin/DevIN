@@ -1347,19 +1347,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script src="../js/cadastro.js"></script>
 
 </body>
-</html>
-                src="../img/robocadastro.webp"
-                alt="Robô DevIN"
-                class="mascot-img"
-            >
-
-        </div>
-
-    </section>
-
-</div>
-
-<script src="../js/cadastro.js"></script>
-
-</body>
-</html>
