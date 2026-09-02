@@ -3,7 +3,7 @@ require_once __DIR__ . '/config/security.php';
 startSecureSession();
 require_once __DIR__ . '/config/database.php';
 
-$token = trim($_GET['token'] ?? '');
+$token = trim(requestString($_GET, 'token'));
 $tokenValido = false;
 
 if ($token !== '') {
@@ -43,7 +43,6 @@ unset($_SESSION['erro_redefinir']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperação de senha | DevIN</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../css/recuperacao.css">
 </head>
 <body>

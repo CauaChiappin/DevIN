@@ -22,13 +22,16 @@ switch ($url) {
 
     // Rota da Página de Login
     case '/login':
+        case '/lo':
+            case '/log':
     case '/login.html':
     case '/login.php':
         require __DIR__ . '/../login.php';
         break;
 
     // Rota de Cadastro de Pessoa Física
-    case '/cadastro-pessoa':
+     case '/cadastro':
+         case '/cadastro-pessoa':
     case '/cadastro_pessoa.html':
     case '/cadastro_pessoa.php':
         require __DIR__ . '/../cadastro_pessoa.php';

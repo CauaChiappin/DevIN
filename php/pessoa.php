@@ -21,9 +21,9 @@ if (empty($_SESSION['csrf_token']))
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireValidCsrf();
     try {
-        $action = $_POST['action'] ?? '';
+        $action = requestString($_POST, 'action');
         if ($action === 'apply_job') {
-            $vagaId = (int) ($_POST['id_vaga'] ?? 0);
+            $vagaId = (int) requestString($_POST, 'id_vaga');
             if ($vagaId <= 0) {
                 throw new InvalidArgumentException('Vaga inválida.');
             }
@@ -67,21 +67,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
-            $_SESSION['usuario_nome'] = trim($_POST['nome']);
-            $_SESSION['usuario_email'] = trim($_POST['email']);
+            $_SESSION['usuario_nome'] = trim(requestString($_POST, 'nome'));
+            $_SESSION['usuario_email'] = trim(requestString($_POST, 'email'));
             $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.';
             header('Location: pessoa.php?perfil=meu');
             exit;
         }
         if ($action === 'update_settings') {
-            updateLanguage($tipo, (int) $_SESSION['usuario_id'], $_POST['idioma'] ?? 'pt-BR');
+            updateLanguage($tipo, (int) $_SESSION['usuario_id'], requestString($_POST, 'idioma') ?: 'pt-BR');
             header('Location: pessoa.php?configuracoes=1');
             exit;
         }
         if ($action === 'delete_account') {
             deleteProfile($tipo, (int) $_SESSION['usuario_id']);
-            session_destroy();
-            header('Location: login.php');
+            header('Location: logout.php');
             exit;
         }
     } catch (Throwable $exception) {
@@ -104,6 +103,7 @@ if (!$perfilAtual) {
     header('Location: logout.php');
     exit;
 }
+$idiomaAtual = $_SESSION['idioma'] ?? 'pt-BR';
 
 // Dados reais da plataforma: vagas abertas e candidaturas da pessoa logada.
 $vagasDisponiveis = [];
@@ -142,7 +142,6 @@ unset($vaga);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Dashboard Candidato</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
 </head>
 
@@ -383,10 +382,10 @@ unset($vaga);
             <h2>Configuracoes</h2>
             <label>Idioma
                 <select name="idioma">
-                    <option value="pt-BR" <?= ($perfilAtual['idioma'] ?? 'pt-BR') === 'pt-BR' ? 'selected' : '' ?>>
+                    <option value="pt-BR" <?= $idiomaAtual === 'pt-BR' ? 'selected' : '' ?>>
                         Português</option>
-                    <option value="en" <?= ($perfilAtual['idioma'] ?? '') === 'en' ? 'selected' : '' ?>>Inglês</option>
-                    <option value="es" <?= ($perfilAtual['idioma'] ?? '') === 'es' ? 'selected' : '' ?>>Espanhol</option>
+                    <option value="en" <?= $idiomaAtual === 'en' ? 'selected' : '' ?>>Inglês</option>
+                    <option value="es" <?= $idiomaAtual === 'es' ? 'selected' : '' ?>>Espanhol</option>
                 </select>
             </label>
             <input type="hidden" name="action" value="update_settings"><input type="hidden" name="csrf_token"

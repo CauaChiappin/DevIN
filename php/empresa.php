@@ -1,12 +1,15 @@
 <?php
 // Inicia ou recupera a sessão do usuário (a "memória" que mantém o usuário logado)
-session_start();
+require_once __DIR__ . '/middlewares/auth.php';
+require_once __DIR__ . '/config/security.php';
+startSecureSession();
 
 // Carrega o controlador de perfil (regras de atualização, busca de dados, etc.)
 require_once __DIR__ . '/controllers/ProfileController.php';
 
 // Carrega o arquivo de funções auxiliares (como ícones, formatação de textos e fotos)
 require_once __DIR__ . '/helpers.php';
+$usuarioAtual = requireWebAuth('empresa');
 
 // --- PROTEÇÃO DA PÁGINA ---
 // Verifica se o usuário NÃO está logado OU se o tipo de usuário NÃO é 'empresa'.
@@ -43,18 +46,18 @@ if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_byt
 
 // --- LÓGICA DE ENVIO DE FORMULÁRIOS (QUANDO É UM POST) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireValidCsrf();
     // Valida se o código de segurança do formulário bate com o código da sessão (evita envios maliciosos)
-    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) exit('Solicitação inválida.');
     
-    $action = $_POST['action'] ?? '';
+    $action = requestString($_POST, 'action');
 
     try {
         // Descobre qual ação o formulário pediu para executar
-        $action = $_POST['action'] ?? '';
+        $action = requestString($_POST, 'action');
 
         if ($action === 'update_application_status') {
-            $idCandidatura = (int) ($_POST['id_candidatura'] ?? 0);
-            $status = $_POST['status'] ?? '';
+            $idCandidatura = (int) requestString($_POST, 'id_candidatura');
+            $status = requestString($_POST, 'status');
 
             if ($idCandidatura <= 0 || !in_array($status, ['aprovado', 'recusado'], true)) {
                 throw new InvalidArgumentException('Dados da candidatura invalidos.');
@@ -90,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Cria uma vaga real para a empresa atualmente logada.
         if ($action === 'create_job') {
-            $titulo = trim($_POST['titulo'] ?? '');
-            $descricao = trim($_POST['descricao'] ?? '');
+            $titulo = trim(requestString($_POST, 'titulo'));
+            $descricao = trim(requestString($_POST, 'descricao'));
 
             if ($titulo === '' || $descricao === '' || strlen($titulo) > 25 || strlen($descricao) > 255) {
                 throw new InvalidArgumentException('Informe titulo (ate 25 caracteres) e descricao (ate 255 caracteres).');
@@ -116,9 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Atualiza uma vaga, mas somente se ela pertencer a empresa logada.
         if ($action === 'update_job') {
-            $vagaId = (int) ($_POST['id_vaga'] ?? 0);
-            $titulo = trim($_POST['titulo'] ?? '');
-            $descricao = trim($_POST['descricao'] ?? '');
+            $vagaId = (int) requestString($_POST, 'id_vaga');
+            $titulo = trim(requestString($_POST, 'titulo'));
+            $descricao = trim(requestString($_POST, 'descricao'));
 
             if ($vagaId <= 0 || $titulo === '' || $descricao === '' || strlen($titulo) > 25 || strlen($descricao) > 255) {
                 throw new InvalidArgumentException('Dados da vaga invalidos.');
@@ -143,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Exclui uma vaga da empresa. As candidaturas relacionadas sao apagadas pelo banco.
         if ($action === 'delete_job') {
-            $vagaId = (int) ($_POST['id_vaga'] ?? 0);
+            $vagaId = (int) requestString($_POST, 'id_vaga');
             if ($vagaId <= 0) {
                 throw new InvalidArgumentException('Vaga invalida.');
             }
@@ -245,14 +248,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             // O nome da empresa e fixo; por isso a sessao tambem nao recebe nome vindo do formulario.
-            $_SESSION['usuario_email'] = trim($_POST['email']);
+            $_SESSION['usuario_email'] = trim(requestString($_POST, 'email'));
             $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.';
             header('Location: empresa.php?perfil=meu'); exit;
         }
 
         // Ação 2: Atualizar as configurações de idioma
         if ($action === 'update_settings') {
-            updateLanguage($tipo, (int) $_SESSION['usuario_id'], $_POST['idioma'] ?? 'pt-BR');
+            updateLanguage($tipo, (int) $_SESSION['usuario_id'], requestString($_POST, 'idioma') ?: 'pt-BR');
             header('Location: empresa.php?configuracoes=1'); exit;
         }
 
@@ -260,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'delete_account') {
             deleteProfile($tipo, (int) $_SESSION['usuario_id']);
             session_destroy(); // Destrói todas as informações guardadas na sessão
-            header('Location: login.php'); exit;
+            header('Location: logout.php'); exit;
         }
     } catch (Throwable $exception) {
         // Se acontecer qualquer erro durante os processos acima, guarda a mensagem de erro
@@ -284,12 +287,15 @@ $perfilAtual = findProfile($tipo, (int) $_SESSION['usuario_id']);
 
 // Se por algum motivo o perfil não existir mais no banco, encerra a sessão
 if (!$perfilAtual) { header('Location: logout.php'); exit; }
+$idiomaAtual = $_SESSION['idioma'] ?? 'pt-BR';
 
 // --- DADOS SIMULADOS (Para exibição na tela) ---
 // Lista de vagas criadas pela empresa
 $conn = getDatabaseConnection();
-$hasDescricao = (bool) $conn->query("SHOW COLUMNS FROM vagas LIKE 'descricao'")->num_rows;
-$descricaoSql = $hasDescricao ? 'COALESCE(descricao, "")' : '""';
+$descricaoColumns = $conn->query("SHOW COLUMNS FROM vagas LIKE 'descricao'");
+$hasDescricao = $descricaoColumns instanceof mysqli_result && $descricaoColumns->num_rows > 0;
+$descricaoColumns?->free();
+$descricaoSql = $hasDescricao ? "COALESCE(descricao, '')" : "''";
 $stmtVagas = $conn->prepare("SELECT id_vaga, titulo, $descricaoSql AS descricao, tempo_vaga FROM vagas WHERE id_empresa = ? ORDER BY id_vaga DESC");
 $empresaId = (int) $_SESSION['usuario_id'];
 $stmtVagas->bind_param('i', $empresaId);
@@ -359,7 +365,6 @@ unset($candidato);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Dashboard Empresa</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
 </head>
 <body>
@@ -591,7 +596,7 @@ unset($candidato);
 
             <div class="profile-fields">
                 <!-- Nome exibido apenas para consulta; ele nao e enviado nem pode ser editado. -->
-                <label>Nome da empresa<input type="text" value="<?= h($perfilAtual['nome']) ?>" readonly aria-readonly="true"></label>
+                <label>Nome da empresa<input name="nome" type="text" value="<?= h($perfilAtual['nome']) ?>" readonly aria-readonly="true"></label>
                 <label>E-mail account<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" required></label>
                 <label>Celular<input name="telefone" type="tel" value="<?= h($perfilAtual['telefone'] ?? '') ?>" required></label>
                 <label>CEP<input name="cep" type="text" value="<?= h($perfilAtual['cep'] ?? '') ?>" required></label>
@@ -608,7 +613,7 @@ unset($candidato);
             <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
             <input type="hidden" name="id_vaga" value="" data-job-id>
             <label>Titulo da vaga<input name="titulo" type="text" maxlength="120" required data-job-title-input></label>
-            <label>Descricao<textarea name="descricao" rows="6" maxlength="2000" data-job-description-input></textarea></label>
+                    <label>Descricao<textarea name="descricao" rows="6" maxlength="255" data-job-description-input></textarea></label>
             <button class="btn primary" type="submit" data-job-submit>Publicar vaga</button>
         </form>
     </dialog>
@@ -619,9 +624,9 @@ unset($candidato);
             <h2>Configuracoes</h2>
             <label>Idioma
                 <select name="idioma">
-                    <option value="pt-BR" <?= ($perfilAtual['idioma'] ?? 'pt-BR') === 'pt-BR' ? 'selected' : '' ?>>Português</option>
-                    <option value="en" <?= ($perfilAtual['idioma'] ?? '') === 'en' ? 'selected' : '' ?>>Inglês</option>
-                    <option value="es" <?= ($perfilAtual['idioma'] ?? '') === 'es' ? 'selected' : '' ?>>Espanhol</option>
+                    <option value="pt-BR" <?= $idiomaAtual === 'pt-BR' ? 'selected' : '' ?>>Português</option>
+                    <option value="en" <?= $idiomaAtual === 'en' ? 'selected' : '' ?>>Inglês</option>
+                    <option value="es" <?= $idiomaAtual === 'es' ? 'selected' : '' ?>>Espanhol</option>
                 </select>
             </label>
             <input type="hidden" name="action" value="update_settings">

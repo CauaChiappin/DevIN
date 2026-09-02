@@ -1,4 +1,15 @@
-gsap.registerPlugin(ScrollTrigger);
+(() => {
+  const fallbackHeader = document.querySelector('.cabecalho-site');
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined' || typeof Lenis === 'undefined') {
+    const atualizarHeaderFallback = () => {
+      if (fallbackHeader) fallbackHeader.classList.toggle('rolado', window.scrollY > 40);
+    };
+    atualizarHeaderFallback();
+    window.addEventListener('scroll', atualizarHeaderFallback, { passive: true });
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
 
 const header = document.querySelector('.cabecalho-site');
 const lenis = new Lenis({
@@ -186,3 +197,5 @@ revelarGrupo('.perguntas', {
   y: -35,
   opacity: 0
 });
+
+})();

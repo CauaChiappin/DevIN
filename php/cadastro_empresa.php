@@ -77,6 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../css/cadastrostyle.css">
 </head>
 <body>
+    <div class="main-container">
+        <section class="left-side">
+            <header class="cadastro-header">
+                <a class="brand-logo" href="index.php">Dev<span>IN</span></a>
+            </header>
 
 <div class="main-container">
     <section class="left-side">
