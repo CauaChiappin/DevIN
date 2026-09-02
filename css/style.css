@@ -852,83 +852,110 @@ summary:focus-visible {
 }
 
 .rodape {
-    height: 342px;
     background: var(--blue);
     color: var(--white);
+    padding: 56px 0 0;
 }
 
 .conteudo-rodape {
     width: 1194px;
-    max-width: 100%;
-    height: 342px;
+    max-width: calc(100% - 64px);
     margin: 0 auto;
-    position: relative;
-    padding: 34px 37px 0;
-}
-
-.rodape h2 {
-    margin: 0;
-    font-size: 30px;
-    line-height: 1;
-}
-
-.navegacao-rodape {
-    width: 603px;
-    margin: 49px auto 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 80px;
-    text-align: center;
-    font-size: 16px;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+}
+
+.marca-rodape h3 {
+    margin: 0 0 12px;
+    color: var(--white);
+    font-size: 20px;
     font-weight: 700;
 }
 
-.navegacao-rodape p,
-.link-rodape-contato {
-    margin: 15px 0 0;
-    color: rgba(255, 255, 255, .7);
-    font-weight: 400;
+.marca-rodape p {
+    max-width: 260px;
+    margin: 0;
+    color: rgba(255, 255, 255, .72);
+    font-size: 14px;
+    line-height: 1.6;
 }
 
-.link-rodape-contato {
-    width: max-content;
-    max-width: 100%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
-    transition: color .28s ease, transform .28s ease;
+.coluna-rodape h3 {
+    margin: 0 0 16px;
+    font-size: 15px;
+    font-weight: 600;
 }
 
-.link-rodape-contato:hover {
+.coluna-rodape a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, .72);
+    font-size: 14px;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.coluna-rodape a:hover {
     color: var(--white);
-    transform: translateY(-1px);
+    transform: translateX(2px);
 }
 
 .icones-rodape {
-    position: absolute;
-    left: 42px;
-    bottom: 64px;
     display: flex;
-    gap: 30px;
-    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
 }
 
-.icones-rodape img {
-    width: 64px;
-    height: 64px;
+.icone-social {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .1);
+    transition: background .2s ease, transform .2s ease;
+}
+
+.icone-social:hover {
+    background: rgba(255, 255, 255, .2);
+    transform: translateY(-2px);
+}
+
+.icone-social img {
+    width: 20px;
+    height: 20px;
     object-fit: contain;
+    border-radius: 4px;
+}
+
+.icone-contato {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    flex-shrink: 0;
+    opacity: .65;
+}
+
+.icone-mail { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 5h20v14H2z" fill="none" stroke="white" stroke-width="2"/><path d="M2 5l10 8 10-8" fill="none" stroke="white" stroke-width="2"/></svg>') no-repeat center / contain; background: white; }
+.icone-fone { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 2c1 4 2 6 4 8s4 3 8 4l2-3c2 1 4 2 4 4v3c0 2-2 3-4 3C10 21 3 14 3 4c0-2 1-4 3-4h3l2 4-2 2z" fill="none" stroke="white" stroke-width="1.5"/></svg>') no-repeat center / contain; background: white; }
+.icone-ajuda { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="white" stroke-width="2"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4" fill="none" stroke="white" stroke-width="2"/><circle cx="12" cy="17" r="1" fill="white"/></svg>') no-repeat center / contain; background: white; }
+
+.linha-rodape {
+    grid-column: 1 / -1;
+    margin: 16px 0 10px;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, .18);
 }
 
 .direitos {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 18px;
-    margin: 0;
+    grid-column: 1 / -1;
+    margin: 0 0 22px;
     text-align: center;
+    color: rgba(255, 255, 255, .72);
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 @media (max-width: 900px) {
@@ -1040,13 +1067,6 @@ summary:focus-visible {
         justify-self: center;
     }
 
-    .empresas-destaque,
-    .navegacao-rodape {
-        grid-template-columns: repeat(2, 1fr);
-        width: 100%;
-        gap: 24px;
-    }
-
     .texto-empresas {
         max-width: 620px;
         margin: 24px auto 0;
@@ -1075,12 +1095,21 @@ summary:focus-visible {
     }
 
     .conteudo-rodape {
-        padding-bottom: 120px;
+        grid-template-columns: 1fr 1fr;
+        text-align: left;
+    }
+
+    .marca-rodape {
+        grid-column: 1 / -1;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    .marca-rodape p {
+        margin: 0 auto;
     }
 
     .icones-rodape {
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 50px;
+        justify-content: center;
     }
 }

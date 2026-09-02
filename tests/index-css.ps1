@@ -14,6 +14,18 @@ foreach ($selector in '.cabecalho-site', '.principal h1', '.rodape') {
     }
 }
 
+foreach ($fragment in 'class="marca-rodape"', 'class="coluna-rodape"', 'class="linha-rodape"') {
+    if ($html -notmatch [regex]::Escape($fragment)) {
+        throw "O footer da home nÃ£o contÃ©m a estrutura esperada: $fragment"
+    }
+}
+
+foreach ($selector in '.marca-rodape h3', '.coluna-rodape a', '.icone-social', '.linha-rodape') {
+    if ($css -notmatch [regex]::Escape($selector)) {
+        throw "O stylesheet da home nÃ£o contÃ©m o estilo do footer: $selector"
+    }
+}
+
 if ($css -match [regex]::Escape('.recovery-page')) {
     throw 'O stylesheet da home contém estilos da página de recuperação.'
 }
