@@ -79,27 +79,27 @@ if (
 
     $nomeSocial =
         trim(
-            $_POST['nome_social'] ?? ''
+            requestString($_POST, 'nome_social')
         );
 
     $grauEscolaridade =
         trim(
-            $_POST['grau_de_escolaridade'] ?? ''
+            requestString($_POST, 'grau_de_escolaridade')
         );
 
     $cursos =
         trim(
-            $_POST['cursos'] ?? ''
+            requestString($_POST, 'cursos')
         );
 
     $experiencia =
         trim(
-            $_POST['experiencia'] ?? ''
+            requestString($_POST, 'experiencia')
         );
 
     $idiomas =
         trim(
-            $_POST['idiomas'] ?? ''
+            requestString($_POST, 'idiomas')
         );
 
     try {
@@ -277,11 +277,6 @@ if (
             header('Location: pessoa.php');
             exit;
 
-            header(
-                'Location: pessoa.php?pagina=inicio'
-            );
-
-            exit;
 
         } else {
 
@@ -393,12 +388,6 @@ $cIdiomas =
         rel="icon"
         type="image/svg+xml"
         href="../img/favicon.svg"
-    >
-
-    <link
-        rel="icon"
-        type="image/png"
-        href="../img/favicon.png"
     >
 
     <link

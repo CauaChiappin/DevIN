@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/security.php';
 
 function profileTable(string $tipo): array
 {
@@ -61,32 +62,13 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
         throw new InvalidArgumentException('Envie uma imagem JPG, PNG ou WEBP válida.');
     }
 
-    $directory = __DIR__ . '/../uploads';
-    if (!is_dir($directory) && !mkdir($directory, 0755, true)) {
-        throw new RuntimeException('Não foi possível preparar o armazenamento da foto.');
+    $contents = file_get_contents($upload['tmp_name']);
+    if ($contents === false) {
+        throw new RuntimeException('Não foi possível ler a foto enviada.');
     }
 
-    $filename = sprintf(
-        '%s-%d-%s.%s',
-        $tipo,
-        $id,
-        bin2hex(random_bytes(8)),
-        $extensions[$mime]
-    );
-
-    $destination = $directory . '/' . $filename;
-    if (!move_uploaded_file($upload['tmp_name'], $destination)) {
-        throw new RuntimeException('Não foi possível salvar a foto.');
-    }
-
-    if (is_string($currentPhoto) && str_starts_with($currentPhoto, 'uploads/')) {
-        $oldPath = __DIR__ . '/../' . $currentPhoto;
-        if (is_file($oldPath)) {
-            @unlink($oldPath);
-        }
-    }
-
-    return 'uploads/' . $filename;
+    // As colunas foto de pessoa e empresa são MEDIUMBLOB no banco.
+    return $contents;
 }
 
 function ensureUniqueEmail(string $tipo, int $id, string $email): void
@@ -137,14 +119,16 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     }
 
     ensureUniqueEmail($tipo, $id, $email);
-    $foto = saveProfilePhoto($tipo, $id, $upload, $currentProfile['foto'] ?? null);
+    $foto = $tipo === 'adm'
+        ? null
+        : saveProfilePhoto($tipo, $id, $upload, $currentProfile['foto'] ?? null);
 
     $conn = getDatabaseConnection();
 
     try {
         if ($tipo === 'adm') {
-            $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, foto = ? WHERE {$idColumn} = ?");
-            $stmt->bind_param('sssi', $nome, $email, $foto, $id);
+            $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ? WHERE {$idColumn} = ?");
+            $stmt->bind_param('ssi', $nome, $email, $id);
         } else {
             $cep = preg_replace('/\D/', '', $data['cep'] ?? '');
             $telefone = preg_replace('/\D/', '', $data['telefone'] ?? '');
@@ -176,17 +160,8 @@ function updateLanguage(string $tipo, int $id, string $idioma): void
         throw new InvalidArgumentException('Idioma inválido.');
     }
 
-    [$table, $idColumn] = profileTable($tipo);
-    $conn = getDatabaseConnection();
-
-    try {
-        $stmt = $conn->prepare("UPDATE {$table} SET idioma = ? WHERE {$idColumn} = ?");
-        $stmt->bind_param('si', $idioma, $id);
-        $stmt->execute();
-        $stmt->close();
-    } finally {
-        $conn->close();
-    }
+    startSecureSession();
+    $_SESSION['idioma'] = $idioma;
 }
 
 function deleteProfile(string $tipo, int $id): void

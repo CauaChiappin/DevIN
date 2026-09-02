@@ -228,6 +228,10 @@ body {
     cursor: pointer;
     transition: background-color 0.2s;
 }
+.secreto {
+    text-decoration: none;
+    cursor: default;
+}
 
 .btn-submit:hover { background-color: #00357a; }
 .login-redirect { font-size: 0.9rem; color: #000000; }

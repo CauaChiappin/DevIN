@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/config/security.php';
 startSecureSession();
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/auth.php';
 require_once __DIR__ . '/MailerHelper.php';
 
-$acao = $_POST['acao'] ?? '';
+$acao = requestString($_POST, 'acao');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: login.php');
@@ -23,9 +25,7 @@ requireValidCsrf();
 
 if ($acao === 'solicitar_recuperacao') {
 
-    $email = trim(
-        $_POST['email'] ?? ''
-    );
+    $email = trim(requestString($_POST, 'email'));
 
     if (
         empty($email) ||
@@ -309,14 +309,11 @@ if ($acao === 'solicitar_recuperacao') {
 
 if ($acao === 'redefinir_senha') {
 
-    $token =
-        trim($_POST['token'] ?? '');
+    $token = trim(requestString($_POST, 'token'));
 
-    $novaSenha =
-        $_POST['nova_senha'] ?? '';
+    $novaSenha = requestString($_POST, 'nova_senha');
 
-    $confSenha =
-        $_POST['confirmar_senha'] ?? '';
+    $confSenha = requestString($_POST, 'confirmar_senha');
 
     /*
     |--------------------------------------------------------------------------

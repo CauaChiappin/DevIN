@@ -4,6 +4,27 @@ const reqLength = document.getElementById('req-length');
 const reqUpper = document.getElementById('req-upper');
 const reqSpecial = document.getElementById('req-special');
 const errorMatch = document.getElementById('error-match');
+const cadastroForm = document.getElementById('formCadastro');
+let csrfInput = cadastroForm?.querySelector('input[name="csrf_token"]');
+
+let csrfRequest = null;
+if (cadastroForm && !csrfInput) {
+    csrfRequest = fetch('../php/csrf.php', { credentials: 'same-origin' })
+        .then((response) => {
+            if (!response.ok) throw new Error('Falha ao iniciar a sessao.');
+            return response.json();
+        })
+        .then((data) => {
+            if (!data.token) throw new Error('Token CSRF ausente.');
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'csrf_token';
+            input.value = data.token;
+            cadastroForm.appendChild(input);
+            csrfInput = input;
+            return input;
+        });
+}
 
 function togglePasswordVisibility(inputId, imgElement) {
     const input = document.getElementById(inputId);
@@ -44,7 +65,7 @@ if (senhaInput && confirmeSenhaInput) {
 
     confirmeSenhaInput.addEventListener('input', checkPasswordMatch);
 
-    document.getElementById('formCadastro').addEventListener('submit', (event) => {
+    cadastroForm.addEventListener('submit', (event) => {
         const senha = senhaInput.value;
         const senhaValida = senha.length >= 8
             && /[A-Z]/.test(senha)
@@ -56,6 +77,18 @@ if (senhaInput && confirmeSenhaInput) {
         }
     });
 }
+
+cadastroForm?.addEventListener('submit', async (event) => {
+    if (csrfInput || !csrfRequest) return;
+
+    event.preventDefault();
+    try {
+        await csrfRequest;
+        cadastroForm.requestSubmit(event.submitter);
+    } catch (error) {
+        window.alert('Nao foi possivel preparar o formulario. Atualize a pagina e tente novamente.');
+    }
+});
 
 function aplicarMascara(id, limite, formatar) {
     const campo = document.getElementById(id);
@@ -95,7 +128,8 @@ aplicarMascara('cep', 8, (valor) => valor.replace(/(\d{5})(\d)/, '$1-$2'));
 
 // Evita duplo envio e dá feedback visual durante o processamento do cadastro.
 document.querySelectorAll('form').forEach((form) => {
-    form.addEventListener('submit', () => {
+    form.addEventListener('submit', (event) => {
+        if (event.defaultPrevented) return;
         const button = form.querySelector('button[type="submit"]');
         if (!button || button.disabled) return;
         button.disabled = true;

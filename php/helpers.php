@@ -9,23 +9,23 @@ function h(?string $valor): string
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-/** Conteúdo institucional compartilhado pelos três dashboards. */
+/** ConteÃºdo institucional compartilhado pelos trÃªs dashboards. */
 function aboutPage(): string
 {
     return <<<'HTML'
 <div class="sobre-container">
     <div class="sobre-top-section">
-        <span class="badge-historia">Nossa história</span>
+        <span class="badge-historia">Nossa histÃ³ria</span>
         <h1 class="sobre-title">Conectando talentos ao <span class="text-blue palavra-rotativa" data-rotating-word aria-live="polite">futuro</span><br>da tecnologia</h1>
-        <p class="sobre-subtitle">A DevIN nasceu para transformar a forma como desenvolvedores<br>encontram oportunidades — simples, rápido e eficiente.</p>
+        <p class="sobre-subtitle">A DevIN nasceu para transformar a forma como desenvolvedores<br>encontram oportunidades â€” simples, rÃ¡pido e eficiente.</p>
         <div class="sobre-cards">
-            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">⌁</span><h3>Visão</h3><p>Ser referência na conexão entre talentos de tecnologia e empresas, promovendo crescimento profissional e inovação no mercado digital.</p></article>
-            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">◎</span><h3>Missão</h3><p>Conectar desenvolvedores de todos os níveis a oportunidades de trabalho, tornando o processo de recrutamento mais simples e eficiente.</p></article>
+            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">âŒ</span><h3>VisÃ£o</h3><p>Ser referÃªncia na conexÃ£o entre talentos de tecnologia e empresas, promovendo crescimento profissional e inovaÃ§Ã£o no mercado digital.</p></article>
+            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">â—Ž</span><h3>MissÃ£o</h3><p>Conectar desenvolvedores de todos os nÃ­veis a oportunidades de trabalho, tornando o processo de recrutamento mais simples e eficiente.</p></article>
         </div>
     </div>
     <div class="sobre-bottom-section">
-        <div class="sobre-about-text"><h2>Quem somos <span class="text-blue">nós?</span></h2><p>A DevIN nasceu com o propósito de transformar a forma como profissionais de tecnologia encontram oportunidades. Desenvolvida no ambiente educacional da Escola Profª Alcina Dantas Feijão.</p><p>Hoje, a DevIN oferece um ambiente moderno onde empresas podem divulgar vagas e gerenciar candidatos, enquanto usuários criam perfis, buscam empregos, estágios e programas de aprendizagem.</p></div>
-        <section class="sobre-team-card"><h2 class="team-header">Time fundador</h2><ul class="team-list"><li><img class="team-avatar" src="../img/julio.jpg" alt="Foto temporária de Cauã Chiappin de Lima"><div class="team-info"><strong>Cauã Chiappin de Lima</strong><a href="mailto:caua.lima@scseduca.com.br">Cofundador · caua.lima@scseduca.com.br</a></div></li><li><img class="team-avatar" src="../img/enzo.jpeg" alt="Foto temporária de Enzo Vasconcelos de Camargo"><div class="team-info"><strong>Enzo Vasconcelos de Camargo</strong><a href="mailto:enzo.camargo@scseduca.com.br">Cofundador · enzo.camargo@scseduca.com.br</a></div></li><li><img class="team-avatar" src="../img/julio.jpg" alt="Foto temporária de João Vitor da Silva e Sousa"><div class="team-info"><strong>João Vitor da Silva e Sousa</strong><a href="mailto:joao.sousa2@scseduca.com.br">Cofundador · joao.sousa2@scseduca.com.br</a></div></li></ul></section>
+        <div class="sobre-about-text"><h2>Quem somos <span class="text-blue">nÃ³s?</span></h2><p>A DevIN nasceu com o propÃ³sito de transformar a forma como profissionais de tecnologia encontram oportunidades. Desenvolvida no ambiente educacional da Escola ProfÂª Alcina Dantas FeijÃ£o.</p><p>Hoje, a DevIN oferece um ambiente moderno onde empresas podem divulgar vagas e gerenciar candidatos, enquanto usuÃ¡rios criam perfis, buscam empregos, estÃ¡gios e programas de aprendizagem.</p></div>
+        <section class="sobre-team-card"><h2 class="team-header">Time fundador</h2><ul class="team-list"><li><img class="team-avatar" src="../img/julio.jpeg" alt="Foto temporÃ¡ria de CauÃ£ Chiappin de Lima"><div class="team-info"><strong>CauÃ£ Chiappin de Lima</strong><a href="mailto:caua.lima@scseduca.com.br">Cofundador Â· caua.lima@scseduca.com.br</a></div></li><li><img class="team-avatar" src="../img/enzo.jpeg" alt="Foto temporÃ¡ria de Enzo Vasconcelos de Camargo"><div class="team-info"><strong>Enzo Vasconcelos de Camargo</strong><a href="mailto:enzo.camargo@scseduca.com.br">Cofundador Â· enzo.camargo@scseduca.com.br</a></div></li><li><img class="team-avatar" src="../img/julio.jpeg" alt="Foto temporÃ¡ria de JoÃ£o Vitor da Silva e Sousa"><div class="team-info"><strong>JoÃ£o Vitor da Silva e Sousa</strong><a href="mailto:joao.sousa2@scseduca.com.br">Cofundador Â· joao.sousa2@scseduca.com.br</a></div></li></ul></section>
     </div>
 </div>
 HTML;
@@ -33,11 +33,11 @@ HTML;
 
 /*
  * Monta o avatar reutilizado no menu, no modal e no perfil.
- * Se não houver foto válida, retorna somente o span com o fundo padrão do CSS.
+ * Se nÃ£o houver foto vÃ¡lida, retorna somente o span com o fundo padrÃ£o do CSS.
  */
 function profileAvatar(array $perfil, string $classes): string
 {
-    // Pega o caminho salvo no banco; string vazia é usada quando não existe foto.
+    // Pega o caminho salvo no banco; string vazia Ã© usada quando nÃ£o existe foto.
     $foto = $perfil['foto'] ?? '';
 
     // A foto da empresa agora fica no MEDIUMBLOB; transforma os bytes em uma imagem visivel no navegador.
@@ -48,13 +48,13 @@ function profileAvatar(array $perfil, string $classes): string
             return '<span class="' . h($classes) . ' current-user-avatar has-photo">' . $imagem . '</span>';
         }
     }
-    // Só renderiza a tag img para caminhos de upload existentes; caso contrário, mantém o avatar padrão.
+    // SÃ³ renderiza a tag img para caminhos de upload existentes; caso contrÃ¡rio, mantÃ©m o avatar padrÃ£o.
     $imagem = is_string($foto) && str_starts_with($foto, 'uploads/') && is_file(__DIR__ . '/' . $foto)
-        // h() escapa o caminho antes de colocá-lo no HTML, evitando injeção de código.
+        // h() escapa o caminho antes de colocÃ¡-lo no HTML, evitando injeÃ§Ã£o de cÃ³digo.
         ? '<img src="' . h($foto) . '" alt="Foto de perfil">'
         : '';
 
-    // Junta as classes visuais e a imagem (quando válida) dentro de um único avatar.
+    // Junta as classes visuais e a imagem (quando vÃ¡lida) dentro de um Ãºnico avatar.
     return '<span class="' . h($classes) . ' current-user-avatar' . ($imagem !== '' ? ' has-photo' : '') . '">' . $imagem . '</span>';
 }
 
@@ -78,3 +78,4 @@ function dashboardIcon(string $name): string
     return '<svg class="ui-icon ui-icon-' . h($name) . '" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $paths . '</svg>';
 }
 ?>
+

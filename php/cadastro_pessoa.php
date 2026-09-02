@@ -21,37 +21,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireValidCsrf();
 
     $nome =
-        trim($_POST['nome'] ?? '');
+        trim(requestString($_POST, 'nome'));
 
     $email =
-        trim($_POST['email'] ?? '');
+        trim(requestString($_POST, 'email'));
 
     $cpf =
         preg_replace(
             '/[^0-9]/',
             '',
-            $_POST['cpf'] ?? ''
+            requestString($_POST, 'cpf')
         );
 
     $telefone =
         preg_replace(
             '/[^0-9]/',
             '',
-            $_POST['telefone'] ?? ''
+            requestString($_POST, 'telefone')
         );
 
     $cep =
         preg_replace(
             '/[^0-9]/',
             '',
-            $_POST['cep'] ?? ''
+            requestString($_POST, 'cep')
         );
 
     $senha =
-        $_POST['senha'] ?? '';
+        requestString($_POST, 'senha');
 
     $confirmeSenha =
-        $_POST['confirme_senha'] ?? '';
+        requestString($_POST, 'confirme_senha');
 
     try {
 
@@ -207,6 +207,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $senha,
                 PASSWORD_DEFAULT
             );
+
+        if ($senhaHash === false) {
+            throw new RuntimeException('Não foi possível proteger a senha.');
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -373,12 +377,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     >
 
     <link
-        rel="icon"
-        type="image/png"
-        href="../img/favicon.png"
-    >
-
-    <link
         rel="stylesheet"
         href="../css/cadastrostyle.css"
     >
@@ -429,11 +427,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div
                 class="php-toast error-toast"
-                style="
-                    color: red;
-                    font-weight: bold;
-                    margin-bottom: 15px;
-                "
             >
 
                 <?= htmlspecialchars(
@@ -470,7 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             name="nome"
                             required
                             value="<?= htmlspecialchars(
-                                $_POST['nome'] ?? '',
+                                requestString($_POST, 'nome'),
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?>"
@@ -492,7 +485,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             maxlength="14"
                             required
                             value="<?= htmlspecialchars(
-                                $_POST['cpf'] ?? '',
+                                requestString($_POST, 'cpf'),
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?>"
@@ -514,7 +507,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             maxlength="9"
                             required
                             value="<?= htmlspecialchars(
-                                $_POST['cep'] ?? '',
+                                requestString($_POST, 'cep'),
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?>"
@@ -574,7 +567,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             name="email"
                             required
                             value="<?= htmlspecialchars(
-                                $_POST['email'] ?? '',
+                                requestString($_POST, 'email'),
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?>"
@@ -595,7 +588,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             placeholder="(00) 00000-0000"
                             required
                             value="<?= htmlspecialchars(
-                                $_POST['telefone'] ?? '',
+                                requestString($_POST, 'telefone'),
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?>"
