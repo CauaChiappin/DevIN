@@ -26,11 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Chama a função login() que vai à base de dados verificar se os dados estão corretos.
         $auth = AuthController::login($_POST['email'] ?? '', $_POST['senha'] ?? '');
 
-        // Guarda os dados do utilizador na memória do servidor (Sessão).
-        $auth = AuthController::login(
-            $_POST['email'] ?? '',
-            $_POST['senha'] ?? ''
-        );
 
         AuthController::establishSession($auth);
         // Cria um cookie no navegador do utilizador com o Token JWT.

@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN Arcade - Doom</title>
-    
-    <link href="https://v8.js-dos.com/latest/js-dos.css" rel="stylesheet">
-    <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
 
     <style>
         * {
@@ -17,7 +14,7 @@
         }
 
         body {
-            background-color: #0b0b0b; /* Fundo escuro estilo fliperama */
+            background-color: #0b0b0b;
             color: #fff;
             display: flex;
             flex-direction: column;
@@ -54,14 +51,21 @@
             font-size: 20px;
         }
 
-        /* Container ajustado para o emulador nativo */
         .game-container {
             width: 100%;
-            height: 450px;
+            height: 480px;
             background: #000;
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid #333;
+            position: relative;
+        }
+
+        /* Iframe ajustado para carregar a porta web nativa */
+        .game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .btn-voltar {
@@ -94,24 +98,21 @@
         <div class="logo">Dev<span>IN</span> Arcade</div>
         <h2>DOOM (1993) - Shareware</h2>
         
-        <div id="dosbox" class="game-container"></div>
+        <div class="game-container">
+            <iframe 
+                class="game-frame"
+                src="https://silveiraneto.net/files/jsdoom/" 
+                allow="autoplay; keyboard; focus-without-user-activation"
+                scrolling="no">
+            </iframe>
+        </div>
 
-            <a href="../../php/recuperacao.php" class="btn-voltar">← Voltar para o Site</a>
+        <a href="../../php/recuperacao.php" class="btn-voltar">← Voltar para o Site</a>
     </div>
 
     <footer>
         DevIN | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
     </footer>
-
-    <script>
-        // Configura o motor do DOSBox usando a CDN estável deles
-        Dos.configure({
-            wdosboxUrl: "https://v8.js-dos.com/latest/wdosbox.js"
-        });
-
-        // Carrega o pacote oficial de demonstração do DOOM diretamente da CDN do JS-DOS
-        Dos(document.getElementById("dosbox")).run("https://v8.js-dos.com/latest/pkgs/doom.zip");
-    </script>
 
 </body>
 </html>
