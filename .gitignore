@@ -22,6 +22,8 @@ logs/
 tmp/
 temp/
 cache/
+storage/sessions/*
+!storage/sessions/.gitkeep
 
 # Build and coverage output
 dist/
