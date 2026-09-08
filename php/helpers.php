@@ -19,8 +19,8 @@ function aboutPage(): string
         <h1 class="sobre-title">Conectando talentos ao <span class="text-blue palavra-rotativa" data-rotating-word aria-live="polite">futuro</span><br>da tecnologia</h1>
         <p class="sobre-subtitle">A DevIN nasceu para transformar a forma como desenvolvedores<br>encontram oportunidades - "simples, rapido e eficiente".</p>
         <div class="sobre-cards">
-            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">âŒ</span><h3>Visão</h3><p>Ser referência na conexão entre talentos de tecnologia e empresas, promovendo crescimento profissional e inovação no mercado digital.</p></article>
-            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">â—Ž</span><h3>Missão</h3><p>Conectar desenvolvedores de todos os níveis a oportunidades de trabalho, tornando o processo de recrutamento mais simples e eficiente.</p></article>
+            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">⌁</span><h3>Visão</h3><p>Ser referência na conexão entre talentos de tecnologia e empresas, promovendo crescimento profissional e inovação no mercado digital.</p></article>
+            <article class="sobre-card"><span class="icon-placeholder" aria-hidden="true">◎</span><h3>Missão</h3><p>Conectar desenvolvedores de todos os níveis a oportunidades de trabalho, tornando o processo de recrutamento mais simples e eficiente.</p></article>
         </div>
     </div>
     <div class="sobre-bottom-section">
