@@ -1109,7 +1109,55 @@ summary:focus-visible {
         margin: 0 auto;
     }
 
+    .principal,
+    .linha-sobre {
+        min-width: 0;
+    }
+
     .icones-rodape {
         justify-content: center;
     }
+}
+
+    @media (max-width: 720px) {
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body { padding-top: 72px; }
+    .cabecalho-site { height: 72px; }
+    .navegacao {
+        width: 100%;
+        height: 72px;
+        grid-template-columns: 1fr auto;
+        padding: 0 16px;
+    }
+    .navegacao .site-menu-toggle { grid-column: 2; grid-row: 1; }
+    .navegacao [data-site-menu] {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+        padding: 14px 16px 18px;
+        border: 1px solid rgba(0, 74, 148, .12);
+        border-radius: 0 0 20px 20px;
+        background: var(--bg);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, .08);
+    }
+    .navegacao [data-site-menu].is-open { display: grid; gap: 18px; }
+    .navegacao .menu,
+    .navegacao .acoes { align-items: stretch; flex-direction: column; gap: 10px; }
+    .navegacao .menu a,
+    .navegacao .acoes .botao { min-height: 44px; justify-content: center; width: 100%; }
+    .principal,
+    .sobre,
+    .bloco-etapas,
+    .empresas,
+    .contato { padding: 38px 16px; }
+    .texto-principal h1 { font-size: clamp(38px, 11vw, 62px); }
+    .lista-etapas { transform: none; }
+    .conteudo-rodape { grid-template-columns: 1fr; gap: 24px; padding: 34px 22px; }
+    .coluna-rodape,
+    .marca-rodape { text-align: center; }
 }

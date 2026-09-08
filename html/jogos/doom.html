@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN Arcade - Doom</title>
     <link rel="stylesheet" href="../../css/jogos.css">
+    <link rel="stylesheet" href="../../css/site-navigation.css">
     <link rel="icon" type="image/svg+xml" href="../../img/favicon.svg">
 </head>
 <body class="game-page">
     <div class="arcade-shell">
         <header class="arcade-header">
             <a class="arcade-logo" href="../index.html">Dev<span>IN</span> Arcade</a>
-            <nav class="arcade-nav" aria-label="Jogos">
-                <a class="arcade-button" href="../index.html">Voltar ao site</a>
-                <a class="arcade-button" href="pacman.html">Pac-Man</a>
-            </nav>
+            <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+            </button>
+            <div class="site-menu" id="site-menu" data-site-menu>
+                <nav class="arcade-nav" aria-label="Jogos">
+                    <a class="arcade-button" href="../index.html">Voltar ao site</a>
+                    <a class="arcade-button" href="pacman.html">Pac-Man</a>
+                </nav>
+            </div>
         </header>
 
         <main class="emulator-stage">
@@ -37,5 +43,6 @@
             <span>DevIN | Escola Profa. Alcina Dantas Feijao | 2026</span>
         </footer>
     </div>
+<script src="../../js/site-navigation.js"></script>
 </body>
 </html>

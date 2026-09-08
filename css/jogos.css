@@ -134,3 +134,43 @@ body.game-page {
     .pacman, .ghost { height: 15px; width: 15px; }
     .score-panel { grid-template-columns: 1fr; }
 }
+
+html,
+body.game-page {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+@media (max-width: 720px) {
+    .arcade-shell { width: min(100% - 20px, 1180px); padding-top: 14px; }
+
+    .arcade-header {
+        align-items: center;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+    }
+
+    .arcade-header .site-menu-toggle { display: inline-flex; justify-self: end; }
+    .arcade-logo { min-width: 0; font-size: clamp(21px, 7vw, 30px); }
+
+    .arcade-header .site-menu {
+        background: var(--arcade-panel);
+        border: 1px solid rgba(148, 163, 184, .28);
+        border-radius: 0 0 12px 12px;
+        display: none;
+        grid-column: 1 / -1;
+        padding: 12px;
+    }
+
+    .arcade-header .site-menu.is-open { display: grid; }
+    .arcade-nav { flex-direction: column; }
+    .arcade-button { min-height: 44px; text-align: center; }
+    .score-row span { font-size: clamp(17px, 5vw, 24px); text-align: right; }
+    .emulator-stage { padding: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .marquee-trilho,
+    .power::after { animation: none; }
+}

@@ -381,6 +381,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         href="../css/cadastrostyle.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="../css/site-navigation.css"
+    >
+
 </head>
 
 <body>
@@ -389,6 +394,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <section class="left-side">
 
+        <header class="cadastro-header">
         <div class="brand-logo">
 
             <a href="index.php">
@@ -396,6 +402,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </a>
 
         </div>
+
+        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+        <div class="site-menu" id="site-menu" data-site-menu>
+            <a href="login.php" class="header-action">Login</a>
+        </div>
+        </header>
 
         <div class="toggle-container">
 
@@ -709,13 +723,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <section class="right-side">
 
-        <a
-            href="login.php"
-            class="btn-top-login"
-        >
-            Login
-        </a>
-
         <div class="mascot-container">
 
             <img
@@ -733,6 +740,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div id="status-alert-container"></div>
 
 <script src="../js/cadastro.js"></script>
+<script src="../js/site-navigation.js"></script>
 
 </body>
 </html>

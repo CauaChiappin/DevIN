@@ -6,6 +6,7 @@
     <title>DevIN | Política de Privacidade</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/politica-privacidade.css">
+    <link rel="stylesheet" href="../css/site-navigation.css">
     <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +15,12 @@
 <body>
     <header class="cabecalho-site">
         <a class="marca" href="../php/index.php">Dev<span>IN</span></a>
+        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+        <div class="site-menu" id="site-menu" data-site-menu>
+            <a class="voltar" href="../php/login.php">Voltar ao login</a>
+        </div>
         <a class="voltar" href="../php/login.php">← Voltar ao login</a>
     </header>
 
@@ -61,5 +68,6 @@
     <footer>Dev<span>IN</span> · Escola Profª Alcina Dantas Feijão · © 2026</footer>
     <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
     <script src="../js/lenis-smooth.js"></script>
+    <script src="../js/site-navigation.js"></script>
 </body>
 </html>

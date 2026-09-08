@@ -399,6 +399,7 @@ unset($vaga);
         </form>
     </dialog>
 
+    <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
 

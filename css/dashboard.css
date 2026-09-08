@@ -1736,6 +1736,67 @@ a {
     }
 }
 
+@media (max-width: 720px) {
+    body { overflow-x: hidden; overflow-y: auto; }
+
+    .dashboard-shell {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 100vh;
+        height: auto;
+        overflow: visible;
+    }
+
+    .sidebar {
+        display: block;
+        height: auto;
+        min-width: 0;
+        padding: 12px 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        overflow: visible;
+    }
+
+    .sidebar-topo {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        min-height: 52px;
+    }
+
+    .menu-principal,
+    .sidebar .conta { display: none; }
+    .dashboard-shell.mobile-menu-open .menu-principal,
+    .dashboard-shell.mobile-menu-open .sidebar .conta {
+        display: grid;
+    }
+
+    .menu-principal {
+        gap: 6px;
+        padding: 12px 0 0;
+    }
+
+    .menu-principal a,
+    .perfil-link,
+    .perfil-menu button,
+    .sair { min-height: 44px; }
+
+    .dashboard-shell.mobile-menu-open .conta {
+        margin-top: 8px;
+        padding-top: 8px;
+    }
+
+    .lista-area,
+    .detalhe-area {
+        grid-column: 1;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .lista-area { min-height: auto; padding: 22px 16px 30px; }
+    .detalhe-area { min-height: 240px; padding: 24px 16px; }
+    .item-card, .post-card, .sobre-cards, .fundadores { min-width: 0; }
+}
+
 /* =========================================================
    CAMADA DE UX / ACESSIBILIDADE / MODAIS
    ========================================================= */

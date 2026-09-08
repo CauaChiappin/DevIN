@@ -12,10 +12,33 @@
     // Sidebar: preferência fica salva somente no navegador deste usuário.
     if (dashboardShell && menuToggle) {
         const fechado = localStorage.getItem('devin-menu-fechado') === 'true';
-        dashboardShell.classList.toggle('menu-fechado', fechado);
-        menuToggle.setAttribute('aria-expanded', String(!fechado));
+        const mobileMenu = window.DevINDashboardMenu?.init({
+            shell: dashboardShell,
+            toggle: menuToggle,
+            windowRef: window,
+        });
+        const isMobile = () => mobileMenu?.isMobile?.() === true;
+        const syncLayout = () => {
+            if (isMobile()) {
+                dashboardShell.classList.remove('menu-fechado');
+                menuToggle.setAttribute('aria-expanded', String(dashboardShell.classList.contains('mobile-menu-open')));
+                return;
+            }
+
+            dashboardShell.classList.remove('mobile-menu-open');
+            dashboardShell.classList.toggle('menu-fechado', fechado);
+            menuToggle.setAttribute('aria-expanded', String(!fechado));
+        };
+
+        syncLayout();
+        window.addEventListener('resize', syncLayout);
 
         menuToggle.addEventListener('click', () => {
+            if (isMobile()) {
+                document.querySelector('.perfil-dropdown')?.removeAttribute('open');
+                return;
+            }
+
             const novoEstado = dashboardShell.classList.toggle('menu-fechado');
             menuToggle.setAttribute('aria-expanded', String(!novoEstado));
             localStorage.setItem('devin-menu-fechado', String(novoEstado));

@@ -9,20 +9,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/site-navigation.css">
     <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
 </head>
 <body>
     <header class="cabecalho-site">
         <nav class="navegacao">
             <a class="marca" href="#inicio">Dev<span>IN</span></a>
-            <div class="menu">
-                <a href="#conheca">Conhe&ccedil;a o DevIN</a>
-                <a href="#etapas">Etapas</a>
-                <a href="#contato">Contato</a>
-            </div>
-            <div class="acoes">
-                <a class="botao botao-azul" href="../php/login.php">Entrar</a>
-                <a class="botao botao-branco" href="../php/cadastro_pessoa.php">Cadastrar-se</a>
+            <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+            </button>
+            <div class="site-menu" id="site-menu" data-site-menu>
+                <div class="menu">
+                    <a href="#conheca">Conhe&ccedil;a o DevIN</a>
+                    <a href="#etapas">Etapas</a>
+                    <a href="#contato">Contato</a>
+                </div>
+                <div class="acoes">
+                    <a class="botao botao-azul" href="../php/login.php">Entrar</a>
+                    <a class="botao botao-branco" href="../php/cadastro_pessoa.php">Cadastrar-se</a>
+                </div>
             </div>
         </nav>
     </header>
@@ -198,6 +204,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
     <script src="../js/lenis.js"></script>
     <script src="../js/texto-rotativo-index.js"></script>
+    <script src="../js/site-navigation.js"></script>
 
 </body>
 </html>
