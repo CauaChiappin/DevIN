@@ -157,7 +157,7 @@ try {
             <header class="dashboard-header">
                 <div>
                     <span>Painel DevIN</span>
-                    <h1>ModeraÃ§Ã£o ADM</h1>
+                    <h1>Moderação ADM</h1>
                 </div>
             </header>
 
