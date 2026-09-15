@@ -39,7 +39,7 @@ if ($acao === 'solicitar_recuperacao') {
             'Por favor, informe um e-mail válido.';
 
         header(
-            'Location: recuperacao.php'
+            'Location: ' . APP_BASE_URL . '/php/recuperacao.php'
         );
 
         exit;
@@ -251,13 +251,25 @@ if ($acao === 'solicitar_recuperacao') {
                 </div>
             ";
 
-            if (!MailerHelper::enviar(
+            $emailEnviado = MailerHelper::enviar(
                 $email,
                 $usuario['nome'],
                 $assunto,
                 $corpoHtml
-            )) {
+            );
+
+            if (!$emailEnviado) {
                 error_log('Falha ao enviar e-mail de recuperação para ' . $email);
+
+                $conn->close();
+
+                $_SESSION['erro_recuperacao'] =
+                    'Não foi possível enviar o e-mail de recuperação. Tente novamente.';
+
+                header(
+                    'Location: ' . APP_BASE_URL . '/php/recuperacao.php'
+                );
+                exit;
             }
         }
 
@@ -277,7 +289,7 @@ if ($acao === 'solicitar_recuperacao') {
             'Se o e-mail informado estiver cadastrado, você receberá o link de redefinição em instantes.';
 
         header(
-            'Location: recuperacao.php'
+            'Location: ' . APP_BASE_URL . '/php/recuperacao.php'
         );
 
         exit;
@@ -293,7 +305,7 @@ if ($acao === 'solicitar_recuperacao') {
             'Não foi possível processar a solicitação. Tente novamente.';
 
         header(
-            'Location: recuperacao.php'
+            'Location: ' . APP_BASE_URL . '/php/recuperacao.php'
         );
 
         exit;

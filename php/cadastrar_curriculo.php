@@ -37,8 +37,9 @@ $emailPessoa =
 |--------------------------------------------------------------------------
 */
 
-$mensagemSucesso = '';
-$mensagemErro = '';
+$mensagemSucesso = $_SESSION['sucesso_curriculo'] ?? '';
+$mensagemErro = $_SESSION['erro_curriculo'] ?? '';
+unset($_SESSION['sucesso_curriculo'], $_SESSION['erro_curriculo']);
 
 /*
 |--------------------------------------------------------------------------
@@ -223,6 +224,8 @@ if (
 
         if ($executou) {
 
+            $emailEnviado = true;
+
             /*
             |--------------------------------------------------------------------------
             | CONCLUSAO DO CADASTRO
@@ -233,6 +236,9 @@ if (
             */
 
             if (!$jaExiste) {
+
+                $emailEnviado = false;
+
                 if (
                     !empty($emailPessoa) &&
                     filter_var(
@@ -240,16 +246,27 @@ if (
                         FILTER_VALIDATE_EMAIL
                     )
                 ) {
-                    MailerHelper::enviarConfirmacaoCadastroCurriculo(
+                    $emailEnviado = MailerHelper::enviarConfirmacaoCadastroCurriculo(
                         $emailPessoa,
                         $nomePessoa
                     );
+                } else {
+                    error_log(
+                        'Não foi possível enviar a confirmação do currículo: e-mail ausente ou inválido.'
+                    );
                 }
 
-                MailerHelper::notificarEmpresasNovoCandidato(
-                    $conn,
-                    $nomePessoa
-                );
+                try {
+                    MailerHelper::notificarEmpresasNovoCandidato(
+                        $conn,
+                        $nomePessoa
+                    );
+                } catch (Throwable $e) {
+                    error_log(
+                        'Erro ao notificar empresas sobre novo candidato: ' .
+                        $e->getMessage()
+                    );
+                }
             }
 
             /*
@@ -268,13 +285,23 @@ if (
                 $stmtLembrete->close();
             }
 
+            if (!$emailEnviado) {
+                $_SESSION['erro_curriculo'] =
+                    'Seu currículo foi salvo, mas não foi possível enviar a confirmação por e-mail. Tente novamente.';
+
+                header(
+                    'Location: ' . APP_BASE_URL . '/php/cadastrar_curriculo.php'
+                );
+                exit;
+            }
+
             /*
             |--------------------------------------------------------------------------
             | REDIRECIONA PARA O DASHBOARD
             |--------------------------------------------------------------------------
             */
 
-            header('Location: pessoa.php');
+            header('Location: ' . APP_BASE_URL . '/php/pessoa.php');
             exit;
 
 
@@ -620,7 +647,7 @@ $cIdiomas =
 
                 <div class="login-redirect">
 
-                    Deseja sair do sistema?
+                    Deseja Voltar?
 
                     <a href="logout.php">
                         Clique aqui
