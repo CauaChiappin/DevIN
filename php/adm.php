@@ -10,7 +10,7 @@ $nome = $_SESSION['usuario_nome'] ?? 'Usuário';
 $email = $_SESSION['usuario_email'] ?? 'email@devin.com';
 $pagina = $_GET['pagina'] ?? 'inicio';
 
-$paginasPermitidas = ['inicio', 'candidatos', 'sobre', 'perfil'];
+$paginasPermitidas = ['inicio', 'candidatos', 'posts', 'sobre', 'perfil'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
     $pagina = 'inicio';
 }
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $_SESSION['admin_success'] = 'Registro excluído com sucesso.';
-            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'inicio' : 'candidatos'));
+            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : 'candidatos'));
             exit;
         }
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log('Erro no dashboard ADM: ' . $exception->getMessage());
         if (str_starts_with($action, 'admin_delete_')) {
             $_SESSION['admin_error'] = 'Não foi possível excluir o registro. Ele pode possuir dados relacionados.';
-            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'inicio' : 'candidatos'));
+            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : 'candidatos'));
         } else {
             $_SESSION['profile_error'] = 'Não foi possível concluir a operação. Tente novamente.';
             header('Location: adm.php?perfil=meu');
@@ -130,6 +130,7 @@ try {
 
             <nav class="menu-principal" aria-label="Menu principal">
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a>
+                <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Posts das empresas</span></a>
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Candidatos</span></a>
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="adm.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span></a>
             </nav>
@@ -157,7 +158,7 @@ try {
             <header class="dashboard-header">
                 <div>
                     <span>Painel DevIN</span>
-                    <h1>Moderação ADM</h1>
+                    <h1><?= $pagina === 'posts' ? 'Posts das empresas' : 'Moderação ADM' ?></h1>
                 </div>
             </header>
 
@@ -186,7 +187,7 @@ try {
             <?php elseif ($pagina === 'candidatos'): ?>
                 <?php if (!$usuariosAdmin): ?><p class="empty-state">Nenhum candidato cadastrado.</p><?php endif; ?>
                 <?php foreach ($usuariosAdmin as $usuario): ?>
-                    <article class="item-card" data-detail="<?= h('E-mail: ' . $usuario['email'] . ' | CPF: ' . $usuario['cpf']) ?>">
+                    <article class="item-card" data-detail="<?= h('E-mail: ' . $usuario['email'] . ' | CPF: ' . $usuario['cpf']) ?>" data-detail-role="Candidato DevIN" data-detail-tags="Candidato|Perfil ativo" data-detail-experience="<?= h('Cadastro na plataforma::CPF ' . $usuario['cpf']) ?>" data-detail-action-label="Excluir registro">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($usuario['nome']) ?></h2>
@@ -196,14 +197,31 @@ try {
                             <input type="hidden" name="action" value="admin_delete_pessoa">
                             <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                             <input type="hidden" name="id" value="<?= (int) $usuario['id'] ?>">
-                            <button class="btn danger" type="submit">Excluir perfil</button>
+                            <button class="btn danger" type="submit" data-detail-action-target>Excluir perfil</button>
+                        </form>
+                    </article>
+                <?php endforeach; ?>
+            <?php elseif ($pagina === 'posts'): ?>
+                <?php if (!$vagasAdmin): ?><p class="empty-state">Nenhuma vaga publicada.</p><?php endif; ?>
+                <?php foreach ($vagasAdmin as $vaga): ?>
+                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h('Vaga publicada por ' . $vaga['empresa']) ?>" data-detail-tags="Vaga|<?= h($vaga['empresa']) ?>" data-detail-experience="Publicacao::Registro da vaga na plataforma" data-detail-action-label="Excluir vaga">
+                        <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
+                        <div>
+                            <h2><?= h($vaga['titulo']) ?></h2>
+                            <p><?= h($vaga['empresa']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
+                        </div>
+                        <form method="post" onsubmit="return confirm('Excluir esta vaga?');">
+                            <input type="hidden" name="action" value="admin_delete_vaga">
+                            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                            <input type="hidden" name="id" value="<?= (int) $vaga['id'] ?>">
+                            <button class="btn danger" type="submit" data-detail-action-target>Excluir vaga</button>
                         </form>
                     </article>
                 <?php endforeach; ?>
             <?php else: ?>
                 <?php if (!$empresasAdmin && !$vagasAdmin): ?><p class="empty-state">Nenhum registro disponível.</p><?php endif; ?>
                 <?php foreach ($empresasAdmin as $empresa): ?>
-                    <article class="item-card" data-detail="<?= h('E-mail: ' . $empresa['email'] . ' | CNPJ: ' . $empresa['cnpj']) ?>">
+                    <article class="item-card" data-detail="<?= h('E-mail: ' . $empresa['email'] . ' | CNPJ: ' . $empresa['cnpj']) ?>" data-detail-role="Empresa cadastrada" data-detail-tags="Empresa|Perfil ativo" data-detail-experience="<?= h('Cadastro na plataforma::CNPJ ' . $empresa['cnpj']) ?>" data-detail-action-label="Excluir registro">
                         <span class="card-avatar"><?= dashboardIcon('building') ?></span>
                         <div>
                             <h2><?= h($empresa['nome']) ?></h2>
@@ -213,12 +231,12 @@ try {
                             <input type="hidden" name="action" value="admin_delete_empresa">
                             <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                             <input type="hidden" name="id" value="<?= (int) $empresa['id'] ?>">
-                            <button class="btn danger" type="submit">Excluir empresa</button>
+                            <button class="btn danger" type="submit" data-detail-action-target>Excluir empresa</button>
                         </form>
                     </article>
                 <?php endforeach; ?>
                 <?php foreach ($vagasAdmin as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>">
+                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h('Vaga publicada por ' . $vaga['empresa']) ?>" data-detail-tags="Vaga|<?= h($vaga['empresa']) ?>" data-detail-experience="Publicacao::Registro da vaga na plataforma" data-detail-action-label="Excluir vaga">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
@@ -228,13 +246,16 @@ try {
                             <input type="hidden" name="action" value="admin_delete_vaga">
                             <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                             <input type="hidden" name="id" value="<?= (int) $vaga['id'] ?>">
-                            <button class="btn danger" type="submit">Excluir vaga</button>
+                            <button class="btn danger" type="submit" data-detail-action-target>Excluir vaga</button>
                         </form>
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>
         </section>
 
+        <?php if ($pagina !== 'sobre' && $pagina !== 'perfil'): ?>
+            <?= dashboardDetailPanel() ?>
+        <?php else: ?>
         <aside class="detalhe-area">
             <?php if ($pagina === 'sobre'): ?>
                 <h2>Contato</h2>
@@ -248,6 +269,7 @@ try {
                 <button class="btn danger fixed-action" type="button">Excluir Registro</button>
             <?php endif; ?>
         </aside>
+        <?php endif; ?>
     </main>
 
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">

@@ -46,6 +46,79 @@
     }
 
     // Cards: impede que botões/formulários internos sejam tratados como seleção do card.
+    const detailPanel = document.querySelector('.profile-detail-panel');
+    const detailCards = [...document.querySelectorAll('.item-card[data-detail]')];
+    let selectedActionTarget = null;
+
+    const splitItems = (value, fallback) => {
+        const items = String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
+        return items.length ? items : fallback;
+    };
+
+    const getInitials = (value) => value.split(/\s+/).filter(Boolean).slice(0, 2)
+        .map((word) => word[0]).join('').toUpperCase() || 'DI';
+
+    const renderList = (element, items, timeline = false) => {
+        if (!element) return;
+        element.replaceChildren();
+        items.forEach((item) => {
+            const row = document.createElement('li');
+            if (timeline) {
+                const [title, description] = item.split('::').map((part) => part.trim());
+                const heading = document.createElement('strong');
+                heading.textContent = title || 'DevIN';
+                row.appendChild(heading);
+                if (description) row.append(document.createTextNode(description));
+            } else {
+                row.textContent = item;
+            }
+            element.appendChild(row);
+        });
+    };
+
+    const renderDetail = (card) => {
+        const content = detailPanel?.querySelector('[data-detail-content]');
+        if (!detailPanel || !content) return;
+
+        const title = card.querySelector('h2')?.textContent?.trim() || 'Detalhes do registro';
+        const subtitle = card.querySelector('p')?.textContent?.trim() || 'Informacoes da plataforma';
+        const name = card.dataset.detailName || card.dataset.jobTitle || title;
+        const role = card.dataset.detailRole || subtitle;
+        const summary = card.dataset.detailSummary || card.dataset.detail || subtitle;
+        const tags = splitItems(card.dataset.detailTags, ['DevIN', 'Informacao disponivel']);
+        const experience = splitItems(card.dataset.detailExperience, [`Registro selecionado::${role}`]);
+
+        detailPanel.querySelector('[data-detail-placeholder]')?.setAttribute('hidden', '');
+        content.hidden = false;
+        const avatar = detailPanel.querySelector('[data-detail-avatar]');
+        const nameElement = detailPanel.querySelector('[data-detail-name]');
+        const roleElement = detailPanel.querySelector('[data-detail-role]');
+        const metaElement = detailPanel.querySelector('[data-detail-meta]');
+        const summaryElement = detailPanel.querySelector('[data-detail-summary]');
+
+        if (avatar) avatar.textContent = getInitials(name);
+        if (nameElement) nameElement.textContent = name;
+        if (roleElement) roleElement.textContent = role;
+        if (metaElement) metaElement.textContent = card.dataset.detailMeta || 'Disponivel na plataforma';
+        if (summaryElement) summaryElement.textContent = summary;
+        renderList(detailPanel.querySelector('[data-detail-tags]'), tags);
+        renderList(detailPanel.querySelector('[data-detail-experience]'), experience, true);
+
+        selectedActionTarget = card.querySelector('[data-detail-action-target]');
+        const action = detailPanel.querySelector('[data-detail-action]');
+        if (action) {
+            action.hidden = !selectedActionTarget;
+            if (selectedActionTarget) action.textContent = card.dataset.detailActionLabel || selectedActionTarget.textContent.trim();
+        }
+    };
+
+    detailPanel?.querySelector('[data-detail-action]')?.addEventListener('click', () => selectedActionTarget?.click());
+
+    if (detailCards[0]) {
+        detailCards[0].classList.add('selecionado');
+        renderDetail(detailCards[0]);
+    }
+
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {
         card.addEventListener('click', (event) => {
             if (event.target.closest('button, a, form, summary, input, textarea, select')) return;
@@ -55,6 +128,7 @@
             });
 
             card.classList.add('selecionado');
+            renderDetail(card);
 
             if (detailText) detailText.textContent = card.dataset.detail || 'Sem detalhes disponíveis.';
             if (detailTitle && card.dataset.jobTitle) detailTitle.textContent = card.dataset.jobTitle;
