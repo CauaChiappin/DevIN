@@ -6,16 +6,22 @@
     <base href="../../">
     <title>DevIN Arcade - Pac-Man</title>
     <link rel="stylesheet" href="css/jogos.css">
+    <link rel="stylesheet" href="css/site-navigation.css">
     <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 </head>
 <body class="game-page">
     <div class="arcade-shell">
         <header class="arcade-header">
             <a class="arcade-logo" href="html/index.html">Dev<span>IN</span> Arcade</a>
-            <nav class="arcade-nav" aria-label="Jogos">
-                <a class="arcade-button" href="html/index.html">Voltar ao site</a>
-                <a class="arcade-button" href="html/jogos/doom.html">Doom</a>
-            </nav>
+            <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+            </button>
+            <div class="site-menu" id="site-menu" data-site-menu>
+                <nav class="arcade-nav" aria-label="Jogos">
+                    <a class="arcade-button" href="html/index.html">Voltar ao site</a>
+                    <a class="arcade-button" href="html/jogos/doom.html">Doom</a>
+                </nav>
+            </div>
         </header>
 
         <main class="emulator-stage">
@@ -39,5 +45,6 @@
         </footer>
     </div>
 
+<script src="js/site-navigation.js"></script>
 </body>
 </html>

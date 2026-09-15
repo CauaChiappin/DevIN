@@ -14,8 +14,18 @@ unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao']);
     <title>Recuperação de senha | DevIN</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/recuperacao.css">
+    <link rel="stylesheet" href="../css/site-navigation.css">
 </head>
 <body>
+    <header class="recovery-header">
+        <a class="recovery-brand" href="../html/index.html">Dev<span>IN</span></a>
+        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+        <div class="site-menu" id="site-menu" data-site-menu>
+            <a href="login.php">Voltar ao login</a>
+        </div>
+    </header>
     <main class="recovery-page">
         <section class="card card-recovery" aria-labelledby="recovery-title">
             <h1 id="recovery-title">Recuperação de senha</h1>
@@ -57,5 +67,6 @@ unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao']);
     </footer>
 
     <script src="../js/recuperacao.js"></script>
+    <script src="../js/site-navigation.js"></script>
 </body>
 </html>

@@ -74,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/site-navigation.css">
     <title>Devin | Login</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 </head>
@@ -84,6 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="logo">
             <a href="../html/index.html">Dev<span>IN</span></a>
         </div>
+        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
 
         <nav class="navegacao">
             <ul>
@@ -137,6 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </p>
         </div>
         <script src="../js/login.js"></script>
+        <script src="../js/site-navigation.js"></script>
     </main>
 
 </body>
