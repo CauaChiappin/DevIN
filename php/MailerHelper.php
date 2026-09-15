@@ -25,13 +25,6 @@ class MailerHelper
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
 
-        $smtpUsername = trim((string) (getenv('DEVIN_SMTP_USERNAME') ?: ''));
-        $smtpPassword = (string) (getenv('DEVIN_SMTP_PASSWORD') ?: '');
-
-        if ($smtpUsername === '' || $smtpPassword === '') {
-            throw new RuntimeException('Configure DEVIN_SMTP_USERNAME e DEVIN_SMTP_PASSWORD para habilitar e-mails.');
-        }
-
         /*
          * IMPORTANTE:
          *
@@ -41,8 +34,8 @@ class MailerHelper
          * A senha deve ser uma SENHA DE APP do Google,
          * e não a senha normal da conta.
          */
-        $mail->Username = $smtpUsername;
-        $mail->Password = $smtpPassword;
+        $mail->Username = 'devin.alcinabot@gmail.com';
+        $mail->Password = 'fxrp qgxe izqo rncx';
 
         /*
          * Configuração de segurança do Gmail.
@@ -60,7 +53,7 @@ class MailerHelper
          * Remetente padrão dos e-mails.
          */
         $mail->setFrom(
-            (string) (getenv('DEVIN_SMTP_FROM_EMAIL') ?: $smtpUsername),
+            'devin.alcinabot@gmail.com',
             'Plataforma DevIN'
         );
 
