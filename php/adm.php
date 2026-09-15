@@ -6,7 +6,7 @@ require_once __DIR__ . '/helpers.php';
 $usuarioAtual = requireWebAuth('adm');
 
 $tipo = 'adm';
-$nome = $_SESSION['usuario_nome'] ?? 'Usuario';
+$nome = $_SESSION['usuario_nome'] ?? 'Usuário';
 $email = $_SESSION['usuario_email'] ?? 'email@devin.com';
 $pagina = $_GET['pagina'] ?? 'inicio';
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array($action, ['admin_delete_pessoa', 'admin_delete_empresa', 'admin_delete_vaga'], true)) {
             $id = (int) requestString($_POST, 'id');
             if ($id <= 0) {
-                throw new InvalidArgumentException('Registro invÃ¡lido.');
+                throw new InvalidArgumentException('Registro inválido.');
             }
 
             $targets = [
@@ -40,14 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param('i', $id);
                 $stmt->execute();
                 if ($stmt->affected_rows !== 1) {
-                    throw new RuntimeException('Registro nÃ£o encontrado.');
+                    throw new RuntimeException('Registro não encontrado.');
                 }
                 $stmt->close();
             } finally {
                 $conn->close();
             }
 
-            $_SESSION['admin_success'] = 'Registro excluÃ­do com sucesso.';
+            $_SESSION['admin_success'] = 'Registro excluído com sucesso.';
             header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'inicio' : 'candidatos'));
             exit;
         }
@@ -70,10 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Throwable $exception) {
         error_log('Erro no dashboard ADM: ' . $exception->getMessage());
         if (str_starts_with($action, 'admin_delete_')) {
-            $_SESSION['admin_error'] = 'NÃ£o foi possÃ­vel excluir o registro. Ele pode possuir dados relacionados.';
+            $_SESSION['admin_error'] = 'Não foi possível excluir o registro. Ele pode possuir dados relacionados.';
             header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'inicio' : 'candidatos'));
         } else {
-            $_SESSION['profile_error'] = 'NÃ£o foi possÃ­vel concluir a operaÃ§Ã£o. Tente novamente.';
+            $_SESSION['profile_error'] = 'Não foi possível concluir a operação. Tente novamente.';
             header('Location: adm.php?perfil=meu');
         }
         exit;
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $perfilAtual = findProfile($tipo, (int) $_SESSION['usuario_id']);
 if (!$perfilAtual) { header('Location: logout.php'); exit; }
 
-// Dados reais para moderaÃ§Ã£o.
+// Dados reais para moderação.
 $empresasAdmin = [];
 $usuariosAdmin = [];
 $vagasAdmin = [];
@@ -102,8 +102,8 @@ try {
 
     $conn->close();
 } catch (Throwable $exception) {
-    error_log('Erro ao carregar moderaÃ§Ã£o ADM: ' . $exception->getMessage());
-    $_SESSION['admin_error'] = 'NÃ£o foi possÃ­vel carregar os registros agora.';
+    error_log('Erro ao carregar moderação ADM: ' . $exception->getMessage());
+    $_SESSION['admin_error'] = 'Não foi possível carregar os registros agora.';
 }
 
 ?>
@@ -131,7 +131,7 @@ try {
             <nav class="menu-principal" aria-label="Menu principal">
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a>
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Candidatos</span></a>
-                <a class="<?= ativo($pagina, 'sobre') ?>" href="adm.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nos</span></a>
+                <a class="<?= ativo($pagina, 'sobre') ?>" href="adm.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span></a>
             </nav>
 
             <div class="conta">
@@ -157,7 +157,7 @@ try {
             <header class="dashboard-header">
                 <div>
                     <span>Painel DevIN</span>
-                    <h1>ModeraÃ§Ã£o ADM</h1>
+                    <h1>Moderação ADM</h1>
                 </div>
             </header>
 
@@ -201,7 +201,7 @@ try {
                     </article>
                 <?php endforeach; ?>
             <?php else: ?>
-                <?php if (!$empresasAdmin && !$vagasAdmin): ?><p class="empty-state">Nenhum registro disponÃ­vel.</p><?php endif; ?>
+                <?php if (!$empresasAdmin && !$vagasAdmin): ?><p class="empty-state">Nenhum registro disponível.</p><?php endif; ?>
                 <?php foreach ($empresasAdmin as $empresa): ?>
                     <article class="item-card" data-detail="<?= h('E-mail: ' . $empresa['email'] . ' | CNPJ: ' . $empresa['cnpj']) ?>">
                         <span class="card-avatar"><?= dashboardIcon('building') ?></span>
@@ -218,11 +218,11 @@ try {
                     </article>
                 <?php endforeach; ?>
                 <?php foreach ($vagasAdmin as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descriÃ§Ã£o informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>">
+                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
-                            <p><?= h($vaga['titulo']) ?> Â· <?= h($vaga['descricao'] ?: 'Sem descriÃ§Ã£o informada.') ?></p>
+                            <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
                         </div>
                         <form method="post" onsubmit="return confirm('Excluir esta vaga?');">
                             <input type="hidden" name="action" value="admin_delete_vaga">
@@ -241,10 +241,10 @@ try {
                 <p>Equipe DevIN - Acesso Restrito ADM.</p>
             <?php elseif ($pagina === 'perfil'): ?>
                 <h2>Seu Perfil</h2>
-                <p>Controles de seguranÃ§a da conta.</p>
+                <p>Controles de segurança da conta.</p>
             <?php else: ?>
                 <h2>Explicando tudo sobre o post selecionado</h2>
-                <p id="detailText">Selecione um post ou candidato para analisar as informacoes.</p>
+                <p id="detailText">Selecione um post ou candidato para analisar as informações.</p>
                 <button class="btn danger fixed-action" type="button">Excluir Registro</button>
             <?php endif; ?>
         </aside>
@@ -252,7 +252,7 @@ try {
 
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">
         <form method="post" class="modal-form profile-form" enctype="multipart/form-data">
-            <button class="modal-close" type="button" data-close-modal aria-label="Fechar">Ã—</button>
+            <button class="modal-close" type="button" data-close-modal aria-label="Fechar">&times;</button>
             <h2 class="sr-only" id="profileModalTitle">Meu perfil</h2>
             <?php if (!empty($_SESSION['profile_error'])): ?><p class="form-error"><?= h($_SESSION['profile_error']); unset($_SESSION['profile_error']); ?></p><?php endif; ?>
             <?php if (!empty($_SESSION['profile_success'])): ?><p class="form-success"><?= h($_SESSION['profile_success']); unset($_SESSION['profile_success']); ?></p><?php endif; ?>
@@ -268,15 +268,12 @@ try {
             </div>
             <div class="profile-fields">
                 <label>Nome<input name="nome" type="text" value="<?= h($perfilAtual['nome']) ?>" required></label>
-                <label>E-mail account<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" required></label>
-                </div>
-            <button class="profile-save" type="submit">Save</button>
+                <label>E-mail<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" required></label>
+            </div>
+            <button class="profile-save" type="submit">Salvar</button>
         </form>
     </dialog>
 
-
-
-    <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
 </html>
