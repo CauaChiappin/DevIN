@@ -1525,6 +1525,194 @@ a {
 .dashboard-shell .detalhe-area::before { content: "DETALHES"; display: block; margin-bottom: 14px; color: #7f8c99; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
 .empresa-dashboard .detalhe-area::before { content: "VAGA SELECIONADA"; }
 
+/* Painel de perfil detalhado: estrutura visual comum ao ADM, pessoa e empresa. */
+.dashboard-shell .profile-detail-panel {
+    padding: 22px 24px 32px;
+    overflow-y: auto;
+    background: #fdfcf9;
+    border-left: 1px solid #dce4eb;
+}
+
+.dashboard-shell .profile-detail-panel::before { content: none; }
+.profile-detail-panel [hidden] { display: none !important; }
+
+.detail-placeholder {
+    min-height: calc(100vh - 80px);
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    padding: 24px;
+    color: #738091;
+    text-align: center;
+}
+
+.detail-placeholder-icon,
+.detail-avatar {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border: 2px solid #c8ddf4;
+    border-radius: 50%;
+    background: #edf5ff;
+    color: #075ca8;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.detail-placeholder-icon {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 12px;
+}
+
+.detail-placeholder h2 {
+    margin: 0 0 6px !important;
+    color: #19324a !important;
+    font-family: Georgia, serif;
+    font-size: 22px !important;
+}
+
+.detail-placeholder p { margin: 0; max-width: 270px; }
+.detail-profile { width: min(100%, 650px); }
+
+.detail-profile-header {
+    display: grid;
+    grid-template-columns: 54px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: start;
+    padding: 0 0 20px;
+    border-bottom: 1px solid #d9e3eb;
+}
+
+.detail-avatar { width: 50px; height: 50px; font-size: 16px; }
+.detail-identity { min-width: 0; }
+
+.dashboard-shell .detail-identity h2 {
+    margin: 1px 0 4px;
+    color: #182d40;
+    font-family: Georgia, serif;
+    font-size: 21px;
+    line-height: 1.1;
+}
+
+.dashboard-shell .detail-identity p { margin: 0; }
+.dashboard-shell .detail-identity [data-detail-role] { color: #617184; font-size: 12px; }
+
+.dashboard-shell .detail-meta {
+    display: flex;
+    align-items: center;
+    margin-top: 7px !important;
+    color: #667589;
+    font-size: 11px !important;
+}
+
+.detail-meta::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #4ab876;
+}
+
+.detail-action {
+    min-width: 92px;
+    min-height: 32px;
+    padding: 7px 13px;
+    border: 0;
+    border-radius: 8px;
+    background: #075ba8;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.detail-action:hover { background: #004a8e; }
+.detail-section { padding-top: 18px; }
+
+.detail-section h3 {
+    margin: 0 0 9px;
+    color: #788697;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+}
+
+.dashboard-shell .detail-section > p {
+    max-width: none;
+    margin: 0;
+    color: #5c6b7a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.detail-tags,
+.detail-timeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.detail-tags li {
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #eaf3ff;
+    color: #1263a6;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.detail-tags li:nth-child(3n + 2) { background: #e8f7f2; color: #16735e; }
+.detail-tags li:nth-child(3n) { background: #f3f0e9; color: #816a45; }
+
+.detail-timeline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 9px;
+}
+
+.detail-timeline li {
+    position: relative;
+    min-height: 53px;
+    padding: 11px 13px 11px 46px;
+    border: 1px solid #dbe6ef;
+    border-radius: 10px;
+    background: #fff;
+    color: #647386;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.detail-timeline li::before {
+    content: "DI";
+    position: absolute;
+    top: 11px;
+    left: 12px;
+    display: grid;
+    width: 25px;
+    height: 25px;
+    place-items: center;
+    border-radius: 7px;
+    background: #eaf3ff;
+    color: #1263a6;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.detail-timeline strong { display: block; margin-bottom: 2px; color: #27445c; font-size: 12px; }
+
+@media (max-width: 720px) {
+    .dashboard-shell .profile-detail-panel { padding: 24px 16px 30px; }
+    .detail-profile-header { grid-template-columns: 50px minmax(0, 1fr); }
+    .detail-action { grid-column: 2; justify-self: start; }
+    .detail-placeholder { min-height: 220px; }
+}
+
 /* Sobre nós: usa a mesma base clara das telas de vagas e candidatos. */
 .dashboard-shell.page-sobre .lista-area {
     height: 100vh;
