@@ -41,6 +41,15 @@ expect(
     'A aba posts não pode listar perfis de empresas ou candidatos.'
 );
 
+expect(
+    str_contains($page, 'class="detalhe-area profile-detail-panel"'),
+    'A aba posts precisa renderizar o painel direito no formato de perfil detalhado.'
+);
+expect(
+    str_contains($page, 'data-detail-content'),
+    'O painel direito precisa ter uma area de detalhes preenchida ao selecionar um card.'
+);
+
 session_destroy();
 
 echo "PASS: aba Posts das empresas renderizada para o ADM.\n";

@@ -450,7 +450,7 @@ unset($candidato);
                     <small>Cria ou reinicia dois candidatos pendentes na primeira vaga da empresa.</small>
                 </form>
                 <?php foreach ($candidatos as $candidato): ?>
-                    <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>">
+                    <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-detail-action-label="Aprovar candidato">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($candidato['nome']) ?></h2>
@@ -463,7 +463,7 @@ unset($candidato);
                                     <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                                     <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
                                     <button class="btn danger" name="status" value="recusado" type="submit">Nao se encaixa</button>
-                                    <button class="btn success" name="status" value="aprovado" type="submit">Aprovar</button>
+                                    <button class="btn success" name="status" value="aprovado" type="submit" data-detail-action-target>Aprovar</button>
                                 </form>
                             <?php else: ?>
                                 <span class="status <?= $candidato['status'] === 'aprovado' ? 'aprovado' : 'reprovado' ?>">
@@ -502,7 +502,7 @@ unset($candidato);
                 <?php endif; ?>
 
                 <?php foreach ($empresaPosts as $post): ?>
-                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descricao informada.') ?>" data-job-title="<?= h($post['titulo']) ?>">
+                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descricao informada.') ?>" data-job-title="<?= h($post['titulo']) ?>" data-detail-role="Vaga publicada" data-detail-tags="Vaga|Publicada" data-detail-experience="<?= h('Publicacao::' . date('d/m/Y', strtotime($post['tempo_vaga']))) ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($post['titulo']) ?></h2>
@@ -539,7 +539,7 @@ unset($candidato);
                 <?php endforeach; ?>
 
                 <?php foreach ($talentos as $talento): ?>
-                    <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>">
+                    <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>" data-detail-role="Talento disponivel" data-detail-tags="Talento|Disponivel" data-detail-experience="Perfil DevIN::Disponivel para novas oportunidades">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($talento['nome']) ?></h2>
@@ -551,6 +551,9 @@ unset($candidato);
             <?php endif; ?>
         </section>
 
+        <?php if ($pagina !== 'sobre' && $pagina !== 'perfil'): ?>
+            <?= dashboardDetailPanel() ?>
+        <?php else: ?>
         <aside class="detalhe-area">
             <?php if ($pagina === 'sobre'): ?>
                 <h2>Contato</h2>
@@ -564,6 +567,7 @@ unset($candidato);
                 <p id="detailText">Selecione uma vaga para ver sua descricao completa aqui.</p>
             <?php endif; ?>
         </aside>
+        <?php endif; ?>
     </main>
 
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">

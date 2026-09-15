@@ -58,6 +58,43 @@ function profileAvatar(array $perfil, string $classes): string
     return '<span class="' . h($classes) . ' current-user-avatar' . ($imagem !== '' ? ' has-photo' : '') . '">' . $imagem . '</span>';
 }
 
+/** Painel de detalhes compartilhado pelas areas de listagem dos dashboards. */
+function dashboardDetailPanel(): string
+{
+    return <<<'HTML'
+<aside class="detalhe-area profile-detail-panel" aria-label="Detalhes do item selecionado">
+    <div class="detail-placeholder" data-detail-placeholder>
+        <span class="detail-placeholder-icon" aria-hidden="true">DI</span>
+        <h2>Selecione um card</h2>
+        <p>As informacoes do perfil, vaga ou candidatura aparecerao aqui.</p>
+    </div>
+    <article class="detail-profile" data-detail-content hidden>
+        <header class="detail-profile-header">
+            <span class="detail-avatar" data-detail-avatar aria-hidden="true">DI</span>
+            <div class="detail-identity">
+                <h2 data-detail-name>Detalhes</h2>
+                <p data-detail-role></p>
+                <p class="detail-meta" data-detail-meta>DevIN</p>
+            </div>
+            <button class="detail-action" type="button" data-detail-action hidden></button>
+        </header>
+        <section class="detail-section">
+            <h3>Sobre</h3>
+            <p data-detail-summary></p>
+        </section>
+        <section class="detail-section">
+            <h3>Habilidades</h3>
+            <ul class="detail-tags" data-detail-tags></ul>
+        </section>
+        <section class="detail-section">
+            <h3>Experiencia</h3>
+            <ul class="detail-timeline" data-detail-experience></ul>
+        </section>
+    </article>
+</aside>
+HTML;
+}
+
 function dashboardIcon(string $name): string
 {
     $paths = match ($name) {

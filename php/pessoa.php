@@ -284,7 +284,7 @@ unset($vaga);
                     <p class="empty-state">Você ainda não se candidatou a nenhuma vaga.</p>
                 <?php endif; ?>
                 <?php foreach ($minhasCandidaturas as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>">
+                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h('Candidatura para ' . $vaga['empresa']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($vaga['status'])) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h('Candidatura::Status ' . ucfirst($vaga['status'])) ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?> · <?= h($vaga['titulo']) ?></h2>
@@ -304,7 +304,7 @@ unset($vaga);
                     <p class="empty-state">Ainda não há vagas publicadas.</p>
                 <?php endif; ?>
                 <?php foreach ($vagasDisponiveis as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>">
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="Vaga disponivel|<?= h($vaga['empresa']) ?>" data-detail-experience="Vaga publicada::Confira os requisitos e envie sua candidatura" data-detail-action-label="Candidatar-se">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
@@ -314,13 +314,16 @@ unset($vaga);
                             <input type="hidden" name="action" value="apply_job">
                             <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                             <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
-                            <button class="btn primary" type="submit">Candidatar-se</button>
+                            <button class="btn primary" type="submit" data-detail-action-target>Candidatar-se</button>
                         </form>
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>
         </section>
 
+        <?php if ($pagina !== 'sobre' && $pagina !== 'perfil'): ?>
+            <?= dashboardDetailPanel() ?>
+        <?php else: ?>
         <aside class="detalhe-area">
             <?php if ($pagina === 'sobre'): ?>
                 <h2>Contato</h2>
@@ -337,6 +340,7 @@ unset($vaga);
                 <?php endif; ?>
             <?php endif; ?>
         </aside>
+        <?php endif; ?>
     </main>
 
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">
