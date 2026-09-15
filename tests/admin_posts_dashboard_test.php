@@ -49,6 +49,10 @@ expect(
     str_contains($page, 'data-detail-content'),
     'O painel direito precisa ter uma area de detalhes preenchida ao selecionar um card.'
 );
+expect(
+    str_contains($page, 'class="dashboard-header compact-list-header"'),
+    'A lista administrativa precisa renderizar o cabecalho compacto do novo layout.'
+);
 
 session_destroy();
 
