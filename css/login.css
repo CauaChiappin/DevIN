@@ -218,3 +218,58 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
     height: 24px;
     display: block;
 }
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img { max-width: 100%; }
+.cabecalho-site .site-menu-toggle { color: var(--black); }
+
+@media (max-width: 1050px) {
+    .conteudo-login { gap: clamp(40px, 12vw, 180px); }
+    .gif-robo { width: min(360px, 38vw); }
+}
+
+@media (max-width: 720px) {
+    .cabecalho-site {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+    .cabecalho-site .site-menu-toggle { display: inline-flex; justify-self: end; }
+    .cabecalho-site .navegacao {
+        display: none;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        flex-direction: column;
+        gap: 4px;
+        padding: 14px 0;
+    }
+    .cabecalho-site .navegacao.is-open { display: flex; }
+    .cabecalho-site .navegacao a {
+        align-items: center;
+        display: flex;
+        min-height: 44px;
+        padding: 8px 12px;
+    }
+    .cabecalho-site .acoes {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        justify-content: stretch;
+    }
+    .cabecalho-site .acoes .botao { justify-content: center; min-height: 44px; width: 100%; }
+    .conteudo-login {
+        flex-direction: column;
+        gap: 22px;
+        justify-content: flex-start;
+        padding: 28px 16px 42px;
+    }
+    .robo-area { order: 1; }
+    .area-login { order: 2; max-width: 100%; padding: 32px 22px; }
+    .gif-robo { width: min(270px, 78vw); }
+    .botao-entrar { width: 100%; }
+}

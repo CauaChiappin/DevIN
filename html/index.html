@@ -9,20 +9,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/site-navigation.css">
     <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
 </head>
 <body>
     <header class="cabecalho-site">
         <nav class="navegacao">
             <a class="marca" href="#inicio">Dev<span>IN</span></a>
-            <div class="menu">
-                <a href="#conheca">Conhe&ccedil;a o DevIN</a>
-                <a href="#etapas">Etapas</a>
-                <a href="#contato">Contato</a>
-            </div>
-            <div class="acoes">
-                <a class="botao botao-azul" href="../php/login.php">Entrar</a>
-                <a class="botao botao-branco" href="../php/cadastro_pessoa.php">Cadastrar-se</a>
+            <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+            </button>
+            <div class="site-menu" id="site-menu" data-site-menu>
+                <div class="menu">
+                    <a href="#conheca">Conhe&ccedil;a o DevIN</a>
+                    <a href="#etapas">Etapas</a>
+                    <a href="#contato">Contato</a>
+                </div>
+                <div class="acoes">
+                    <a class="botao botao-azul" href="../php/login.php">Entrar</a>
+                    <a class="botao botao-branco" href="../php/cadastro_pessoa.php">Cadastrar-se</a>
+                </div>
             </div>
         </nav>
     </header>
@@ -136,17 +142,21 @@
 
             <div class="perguntas">
                 <h2>D&uacute;vidas mais frequentes</h2>
-                <details>
-                    <summary>D&uacute;vida 1</summary>
-                    <p>Resposta da d&uacute;vida.</p>
+                <details name="duvidas-frequentes">
+                    <summary>Como crio minha conta e meu curr&iacute;culo?</summary>
+                    <p>Selecione &ldquo;Cadastrar-se&rdquo;, informe seus dados e, ap&oacute;s entrar, complete seu curr&iacute;culo para se candidatar &agrave;s oportunidades.</p>
                 </details>
-                <details>
-                    <summary>D&uacute;vida 2</summary>
-                    <p>Resposta da d&uacute;vida.</p>
+                <details name="duvidas-frequentes">
+                    <summary>Como me candidato a uma vaga?</summary>
+                    <p>Depois de fazer login e concluir seu curr&iacute;culo, acesse o feed de vagas e escolha a oportunidade que combina com voc&ecirc;.</p>
                 </details>
-                <details>
-                    <summary>D&uacute;vida 3</summary>
-                    <p>Resposta da d&uacute;vida.</p>
+                <details name="duvidas-frequentes">
+                    <summary>Como cadastro minha empresa?</summary>
+                    <p>Na tela de cadastro, selecione a op&ccedil;&atilde;o &ldquo;Empresa&rdquo;, preencha os dados solicitados e finalize o registro.</p>
+                </details>
+                <details name="duvidas-frequentes">
+                    <summary>Como publico uma vaga e acompanho as candidaturas?</summary>
+                    <p>Ap&oacute;s fazer login na &aacute;rea da empresa, crie a vaga e acompanhe os perfis dos candidatos na &aacute;rea de candidatos.</p>
                 </details>
             </div>
         </section>
@@ -198,6 +208,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
     <script src="../js/lenis.js"></script>
     <script src="../js/texto-rotativo-index.js"></script>
+    <script src="../js/site-navigation.js"></script>
 
 </body>
 </html>

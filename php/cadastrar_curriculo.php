@@ -397,6 +397,11 @@ $cIdiomas =
 
     <link
         rel="stylesheet"
+        href="../css/site-navigation.css"
+    >
+
+    <link
+        rel="stylesheet"
         href="../css/curriculo.css"
     >
 
@@ -408,6 +413,7 @@ $cIdiomas =
 
     <div class="left-side">
 
+        <header class="cadastro-header">
         <div class="brand-logo">
 
             <a href="index.php">
@@ -415,6 +421,14 @@ $cIdiomas =
             </a>
 
         </div>
+
+        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+        <div class="site-menu" id="site-menu" data-site-menu>
+            <a href="logout.php" class="header-action">Sair</a>
+        </div>
+        </header>
 
         <?php if ($mensagemSucesso): ?>
 
@@ -669,5 +683,6 @@ $cIdiomas =
 
 </div>
 
+<script src="../js/site-navigation.js"></script>
 </body>
 </html>     
