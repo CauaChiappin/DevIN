@@ -194,3 +194,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script src="../js/site-navigation.js"></script>
 </body>
 </html>
+<script src="../js/konami.js"></script>
