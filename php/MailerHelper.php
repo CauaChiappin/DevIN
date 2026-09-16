@@ -54,7 +54,7 @@ class MailerHelper
          */
         $mail->setFrom(
             'devin.alcinabot@gmail.com',
-            'Plataforma DevIN'
+            'suporte DevIN'
         );
 
         return $mail;

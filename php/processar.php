@@ -163,7 +163,7 @@ if ($acao === 'solicitar_recuperacao') {
             |--------------------------------------------------------------------------
             |
             | Se o projeto estiver em:
-            | http://localhost/DevIN/
+            | http://localhost:8080/DevIN/
             |
             | este endereço funciona no XAMPP.
             |

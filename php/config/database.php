@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 function getDatabaseConnection(): mysqli
 {
-    $host = getenv('DEVIN_DB_HOST') ?: 'localhost';
+    $host = getenv('DEVIN_DB_HOST') ?: 'localhost:8080';
     $user = getenv('DEVIN_DB_USER') ?: 'root';
     $pass = getenv('DEVIN_DB_PASS') ?: '';
     $dbname = getenv('DEVIN_DB_NAME') ?: 'devin';

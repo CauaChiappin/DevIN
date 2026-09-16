@@ -5,7 +5,7 @@
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // 2. CORREÇÃO DE PASTA (XAMPP / Wamp)
-// Se no seu navegador você acessa como "localhost/DevIN/...", tire as duas barras da linha abaixo:
+// Se no seu navegador você acessa como "localhost:8080/DevIN/...", tire as duas barras da linha abaixo:
 $url = str_replace('/DevIN', '', $url);
 
 
