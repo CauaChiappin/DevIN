@@ -400,20 +400,15 @@ unset($candidato);
 
         <section class="lista-area">
             <?php if ($pagina !== 'sobre'): ?>
-            <header class="dashboard-header">
-                <div>
-                    <span><?= $pagina === 'candidatos' ? 'GESTAO DE TALENTOS' : 'MINHAS VAGAS' ?></span>
-                    <h1><?= $pagina === 'candidatos' ? 'Candidatos' : 'Vagas publicadas' ?></h1>
-                </div>
-                <?php if ($pagina === 'inicio'): ?><span class="result-count"><?= count($empresaPosts) ?> vagas</span><?php endif; ?>
-            </header>
-
-            <form class="busca" action="" method="get">
-                <input type="hidden" name="pagina" value="<?= h($pagina) ?>">
-                <label>
-                    <input type="search" name="q" placeholder="Pesquise candidatos ou vagas">
-                </label>
-            </form>
+                <?= dashboardListHeader(
+                    $pagina,
+                    $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas publicadas'),
+                    'Pesquisar por nome ou habilidade...',
+                    $pagina === 'candidatos' ? count($candidatos) . ' candidatos' : ($pagina === 'inicio' ? count($empresaPosts) . ' vagas' : '')
+                ) ?>
+                <?php if (in_array($pagina, ['inicio', 'candidatos'], true)): ?>
+                    <p class="list-section-label">Disponíveis</p>
+                <?php endif; ?>
             <?php endif; ?>
 
             <?php if ($pagina === 'sobre'): ?>
@@ -455,6 +450,7 @@ unset($candidato);
                         <div>
                             <h2><?= h($candidato['nome']) ?></h2>
                             <p><?= h($candidato['resumo']) ?></p>
+                            <?= dashboardCardTags('Candidatura|' . ucfirst($candidato['status'])) ?>
                         </div>
                         <div class="acoes-card">
                             <?php if ($candidato['status'] === 'pendente'): ?>
@@ -507,6 +503,7 @@ unset($candidato);
                         <div>
                             <h2><?= h($post['titulo']) ?></h2>
                             <p><?= h($post['descricao'] ?: 'Sem descricao informada.') ?></p>
+                            <?= dashboardCardTags('Vaga|Publicada') ?>
                         </div>
                         <div class="post-tools">
                             <details class="job-editor">
@@ -544,6 +541,7 @@ unset($candidato);
                         <div>
                             <h2><?= h($talento['nome']) ?></h2>
                             <p><?= h($talento['resumo']) ?></p>
+                            <?= dashboardCardTags('Talento|Disponivel') ?>
                         </div>
                         <button class="btn primary" type="button">Conversar</button>
                     </article>
