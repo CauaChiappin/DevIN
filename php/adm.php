@@ -155,19 +155,15 @@ try {
             <?php if (!empty($_SESSION['admin_error'])): ?><p class="form-error"><?= h($_SESSION['admin_error']); unset($_SESSION['admin_error']); ?></p><?php endif; ?>
             <?php if (!empty($_SESSION['admin_success'])): ?><p class="form-success"><?= h($_SESSION['admin_success']); unset($_SESSION['admin_success']); ?></p><?php endif; ?>
             <?php if ($pagina !== 'sobre'): ?>
-            <header class="dashboard-header">
-                <div>
-                    <span>Painel DevIN</span>
-                    <h1><?= $pagina === 'posts' ? 'Posts das empresas' : 'Moderação ADM' ?></h1>
-                </div>
-            </header>
-
-            <form class="busca" action="" method="get">
-                <input type="hidden" name="pagina" value="<?= h($pagina) ?>">
-                <label>
-                    <input type="search" name="q" placeholder="Pesquisar registros">
-                </label>
-            </form>
+                <?= dashboardListHeader(
+                    $pagina,
+                    $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'posts' ? 'Posts das empresas' : ($pagina === 'perfil' ? 'Perfil' : 'Empresas')),
+                    'Pesquisar por nome ou habilidade...',
+                    $pagina === 'candidatos' ? count($usuariosAdmin) . ' candidatos' : ($pagina === 'posts' ? count($vagasAdmin) . ' posts' : ($pagina === 'inicio' ? (count($empresasAdmin) + count($vagasAdmin)) . ' registros' : ''))
+                ) ?>
+                <?php if (in_array($pagina, ['inicio', 'candidatos', 'posts'], true)): ?>
+                    <p class="list-section-label">Disponíveis</p>
+                <?php endif; ?>
             <?php endif; ?>
 
             <?php if ($pagina === 'sobre'): ?>
@@ -192,6 +188,7 @@ try {
                         <div>
                             <h2><?= h($usuario['nome']) ?></h2>
                             <p><?= h($usuario['email']) ?></p>
+                            <?= dashboardCardTags('Candidato|Perfil ativo') ?>
                         </div>
                         <form method="post" onsubmit="return confirm('Excluir este candidato permanentemente?');">
                             <input type="hidden" name="action" value="admin_delete_pessoa">
@@ -209,6 +206,7 @@ try {
                         <div>
                             <h2><?= h($vaga['titulo']) ?></h2>
                             <p><?= h($vaga['empresa']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
+                            <?= dashboardCardTags('Vaga|' . $vaga['empresa']) ?>
                         </div>
                         <form method="post" onsubmit="return confirm('Excluir esta vaga?');">
                             <input type="hidden" name="action" value="admin_delete_vaga">
@@ -226,6 +224,7 @@ try {
                         <div>
                             <h2><?= h($empresa['nome']) ?></h2>
                             <p><?= h($empresa['email']) ?></p>
+                            <?= dashboardCardTags('Empresa|Perfil ativo') ?>
                         </div>
                         <form method="post" onsubmit="return confirm('Excluir esta empresa permanentemente?');">
                             <input type="hidden" name="action" value="admin_delete_empresa">
@@ -241,6 +240,7 @@ try {
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
+                            <?= dashboardCardTags('Vaga|' . $vaga['empresa']) ?>
                         </div>
                         <form method="post" onsubmit="return confirm('Excluir esta vaga?');">
                             <input type="hidden" name="action" value="admin_delete_vaga">

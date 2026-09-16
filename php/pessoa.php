@@ -188,19 +188,15 @@ unset($vaga);
 
         <section class="lista-area">
             <?php if ($pagina !== 'sobre'): ?>
-                <header class="dashboard-header">
-                    <div>
-                        <span>Painel DevIN</span>
-                        <h1>Dashboard Candidato</h1>
-                    </div>
-                </header>
-
-                <form class="busca" action="" method="get">
-                    <input type="hidden" name="pagina" value="<?= h($pagina) ?>">
-                    <label>
-                        <input type="search" name="q" placeholder="Pesquise vagas">
-                    </label>
-                </form>
+                <?= dashboardListHeader(
+                    $pagina,
+                    $pagina === 'vagas' ? 'Minhas candidaturas' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas'),
+                    'Pesquisar por nome ou habilidade...',
+                    $pagina === 'vagas' ? count($minhasCandidaturas) . ' vagas' : ($pagina === 'inicio' ? count($vagasDisponiveis) . ' vagas' : '')
+                ) ?>
+                <?php if (in_array($pagina, ['inicio', 'vagas'], true)): ?>
+                    <p class="list-section-label">Disponíveis</p>
+                <?php endif; ?>
             <?php endif; ?>
 
             <?php if ($pagina === 'sobre'): ?><?= aboutPage() ?><?php elseif ($pagina === 'sobre'): ?>
@@ -289,6 +285,7 @@ unset($vaga);
                         <div>
                             <h2><?= h($vaga['empresa']) ?> · <?= h($vaga['titulo']) ?></h2>
                             <p><?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
+                            <?= dashboardCardTags('Candidatura|' . ucfirst($vaga['status']) . '|' . $vaga['empresa']) ?>
                         </div>
                         <span class="status <?= $vaga['status'] === 'aprovado' ? 'aprovado' : ($vaga['status'] === 'recusado' ? 'reprovado' : 'analise') ?>"><?= h(ucfirst($vaga['status'])) ?></span>
                     </article>
@@ -309,6 +306,7 @@ unset($vaga);
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
+                            <?= dashboardCardTags('Vaga disponível|' . $vaga['empresa']) ?>
                         </div>
                         <form method="post">
                             <input type="hidden" name="action" value="apply_job">

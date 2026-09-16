@@ -9,6 +9,37 @@ function h(?string $valor): string
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+/** Cabeçalho compacto compartilhado pelas listas dos dashboards. */
+function dashboardListHeader(string $pagina, string $titulo, string $placeholder, string $contador = ''): string
+{
+    $countMarkup = $contador === ''
+        ? ''
+        : '<span class="result-count">' . h($contador) . '</span>';
+
+    return '<header class="dashboard-header compact-list-header">'
+        . '<h1>' . h($titulo) . '</h1>'
+        . '<form class="busca" method="get">'
+        . '<input type="hidden" name="pagina" value="' . h($pagina) . '">'
+        . '<label class="compact-search-field"><span class="sr-only">Pesquisar</span>'
+        . '<input type="search" name="q" placeholder="' . h($placeholder) . '"></label>'
+        . '<span class="filter-button" aria-hidden="true">Filtros</span>'
+        . '</form>'
+        . $countMarkup
+        . '</header>';
+}
+
+/** Transforma os rótulos de um card em etiquetas compactas e seguras. */
+function dashboardCardTags(string $tags): string
+{
+    $items = array_values(array_filter(array_map('trim', explode('|', $tags))));
+    if ($items === []) {
+        return '';
+    }
+
+    $markup = array_map(static fn(string $item): string => '<li>' . h($item) . '</li>', $items);
+    return '<ul class="card-tags" aria-label="Detalhes do card">' . implode('', $markup) . '</ul>';
+}
+
 /** ConteÃºdo institucional compartilhado pelos trÃªs dashboards. */
 function aboutPage(): string
 {
