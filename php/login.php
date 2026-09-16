@@ -142,6 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <script src="../js/login.js"></script>
         <script src="../js/site-navigation.js"></script>
+        <script src="../js/konami.js"></script>
+
     </main>
 
 </body>
