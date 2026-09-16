@@ -106,11 +106,11 @@
 }
 
 .curriculo-page .mascot-container {
-    width: 100%;
+   width: 100%;
     height: auto;
     max-height: 76vh;
-    margin-left:-135px;
-    justify-content: center;
+    margin-left: 0.10%;
+
 }
 
 .curriculo-page .mascot-img {
