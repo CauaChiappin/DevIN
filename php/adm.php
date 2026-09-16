@@ -94,7 +94,17 @@ try {
     $result = $conn->query('SELECT id_empresa AS id, nome, email, cnpj FROM empresa ORDER BY nome');
     $empresasAdmin = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
-    $result = $conn->query('SELECT id_pessoa AS id, nome, email, cpf FROM pessoa ORDER BY nome');
+    $result = $conn->query(
+        'SELECT p.id_pessoa AS id, p.nome, p.email, p.cpf,
+            COALESCE(cu.nome_social, "") AS nome_social,
+            COALESCE(cu.grau_de_escolaridade, "") AS grau_de_escolaridade,
+            COALESCE(cu.cursos, "") AS cursos,
+            COALESCE(cu.experiencia, "") AS experiencia,
+            COALESCE(cu.idiomas, "") AS idiomas
+        FROM pessoa p
+        LEFT JOIN curriculo cu ON cu.id_pessoa = p.id_pessoa
+        ORDER BY p.nome'
+    );
     $usuariosAdmin = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
     $result = $conn->query("SELECT v.id_vaga AS id, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa FROM vagas v INNER JOIN empresa e ON e.id_empresa = v.id_empresa ORDER BY v.id_vaga DESC");
@@ -143,11 +153,6 @@ try {
                     </div>
                 </details>
                 <a class="sair" href="logout.php" data-confirm-logout="Tem certeza que deseja sair da sua conta?"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>
-                <form method="post" class="account-delete-form">
-                    <input type="hidden" name="action" value="delete_account">
-                    <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
-                    <button class="btn danger" type="submit" data-delete-account>Excluir conta</button>
-                </form>
             </div>
         </aside>
 
@@ -183,7 +188,8 @@ try {
             <?php elseif ($pagina === 'candidatos'): ?>
                 <?php if (!$usuariosAdmin): ?><p class="empty-state">Nenhum candidato cadastrado.</p><?php endif; ?>
                 <?php foreach ($usuariosAdmin as $usuario): ?>
-                    <article class="item-card" data-detail="<?= h('E-mail: ' . $usuario['email'] . ' | CPF: ' . $usuario['cpf']) ?>" data-detail-role="Candidato DevIN" data-detail-tags="Candidato|Perfil ativo" data-detail-experience="<?= h('Cadastro na plataforma::CPF ' . $usuario['cpf']) ?>" data-detail-action-label="Excluir registro">
+                    <?php $detalhesCandidato = dashboardCandidateDetails($usuario); ?>
+                    <article class="item-card" data-detail="<?= h($detalhesCandidato['summary']) ?>" data-detail-name="<?= h($detalhesCandidato['name']) ?>" data-detail-summary="<?= h($detalhesCandidato['summary']) ?>" data-detail-role="Candidato DevIN" data-detail-tags="<?= h($detalhesCandidato['tags']) ?>" data-detail-experience="<?= h($detalhesCandidato['experience']) ?>" data-detail-action-label="Excluir registro">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($usuario['nome']) ?></h2>
@@ -293,6 +299,11 @@ try {
                 <label>E-mail<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" required></label>
             </div>
             <button class="profile-save" type="submit">Salvar</button>
+        </form>
+        <form method="post" class="modal-form account-delete-form">
+            <input type="hidden" name="action" value="delete_account">
+            <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+            <button class="btn danger" type="submit" data-delete-account>Excluir conta</button>
         </form>
     </dialog>
 

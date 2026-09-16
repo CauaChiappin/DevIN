@@ -752,25 +752,6 @@ a {
     background: #e5ecf1;
 }
 
-.busca span {
-    width: 10px;
-    height: 10px;
-    border: 2px solid #7aa5c7;
-    border-radius: 50%;
-    position: relative;
-}
-
-.busca span::after {
-    content: "";
-    width: 6px;
-    height: 2px;
-    position: absolute;
-    right: -6px;
-    bottom: -4px;
-    background: #7aa5c7;
-    transform: rotate(45deg);
-}
-
 .busca input {
     width: 100%;
     border: 0;

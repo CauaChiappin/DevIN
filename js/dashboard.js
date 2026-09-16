@@ -114,10 +114,16 @@
 
     detailPanel?.querySelector('[data-detail-action]')?.addEventListener('click', () => selectedActionTarget?.click());
 
-    if (detailCards[0]) {
-        detailCards[0].classList.add('selecionado');
-        renderDetail(detailCards[0]);
-    }
+    const clearDetail = () => {
+        detailCards.forEach((card) => card.classList.remove('selecionado'));
+        selectedActionTarget = null;
+
+        if (!detailPanel) return;
+
+        detailPanel.querySelector('[data-detail-content]')?.setAttribute('hidden', '');
+        detailPanel.querySelector('[data-detail-placeholder]')?.removeAttribute('hidden');
+        detailPanel.querySelector('[data-detail-action]')?.setAttribute('hidden', '');
+    };
 
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {
         card.addEventListener('click', (event) => {
@@ -136,6 +142,11 @@
     });
 
     // Confirmação de saída para pessoa, empresa e administrador.
+    document.querySelector('.lista-area')?.addEventListener('click', (event) => {
+        if (event.target.closest('.item-card[data-detail], button, a, form, summary, input, textarea, select, label')) return;
+        clearDetail();
+    });
+
     document.querySelectorAll('[data-confirm-logout]').forEach((link) => {
         link.addEventListener('click', (event) => {
             const message = link.dataset.confirmLogout || 'Tem certeza que deseja sair da sua conta?';
