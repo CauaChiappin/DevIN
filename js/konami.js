@@ -9,9 +9,10 @@ const konamiCode = [
 let konamiIndex = 0;
 
 document.addEventListener('keydown', (event) => {
-  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+  const keyPressed = event.key.toLowerCase();
+  const targetKey = konamiCode[konamiIndex].toLowerCase();
   
-  if (key === konamiCode[konamiIndex].toLowerCase()) {
+  if (keyPressed === targetKey) {
     konamiIndex++;
     
     if (konamiIndex === konamiCode.length) {
