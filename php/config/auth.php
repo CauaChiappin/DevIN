@@ -14,7 +14,7 @@ if ($jwtSecret === '') {
 }
 
 $appBaseUrl = rtrim(
-    (string) (getenv('DEVIN_APP_BASE_URL') ?: 'http://localhost/DevIN'),
+    (string) (getenv('DEVIN_APP_BASE_URL') ?: 'http://localhost:8080/DevIN'),
     '/'
 );
 
