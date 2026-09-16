@@ -16,7 +16,7 @@ document.addEventListener('keydown', (event) => {
     konamiIndex++;
     
     if (konamiIndex === konamiCode.length) {
-      window.location.href = '../html/doom.html';
+      window.location.href = '../html/jogos/doom.html';
       konamiIndex = 0;
     }
   } else {
