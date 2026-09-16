@@ -220,12 +220,51 @@
 
     // Busca local sem enviar uma nova requisição a cada tecla.
     const searchInput = document.querySelector('.busca input[type="search"]');
-    searchInput?.addEventListener('input', () => {
-        const term = searchInput.value.trim().toLocaleLowerCase('pt-BR');
-        document.querySelectorAll('.lista-area .item-card').forEach((card) => {
-            card.hidden = term !== '' && !card.textContent.toLocaleLowerCase('pt-BR').includes(term);
+    const filterButton = document.querySelector('[data-toggle-filters]');
+    const filterMenu = document.querySelector('[data-filter-menu]');
+    const filterSelect = document.querySelector('[data-card-filter]');
+    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase('pt-BR');
+    const cardTags = (card) => String(card.dataset.detailTags || '')
+        .split('|').map((tag) => tag.trim()).filter(Boolean);
+    const updateCardVisibility = () => {
+        const term = normalizeSearch(searchInput?.value);
+        const activeFilter = filterSelect?.value || '';
+
+        detailCards.forEach((card) => {
+            const searchableContent = [
+                card.textContent,
+                card.dataset.detailName,
+                card.dataset.detailSummary,
+                card.dataset.detailRole,
+                card.dataset.detailTags,
+                card.dataset.detailExperience,
+            ].join(' ').toLocaleLowerCase('pt-BR');
+            const matchesSearch = term === '' || searchableContent.includes(term);
+            const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter);
+            card.hidden = !matchesSearch || !matchesFilter;
         });
+    };
+
+    if (filterSelect) {
+        const tags = [...new Set(detailCards.flatMap(cardTags))]
+            .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+        const options = ['', ...tags].map((tag) => {
+            const option = document.createElement('option');
+            option.value = tag;
+            option.textContent = tag || 'Todos';
+            return option;
+        });
+        filterSelect.replaceChildren(...options);
+        filterSelect.addEventListener('change', updateCardVisibility);
+    }
+
+    filterButton?.addEventListener('click', () => {
+        const isOpen = filterMenu?.hidden !== false;
+        if (filterMenu) filterMenu.hidden = !isOpen;
+        filterButton.setAttribute('aria-expanded', String(isOpen));
     });
+
+    searchInput?.addEventListener('input', updateCardVisibility);
 
     document.querySelector('.busca')?.addEventListener('submit', (event) => event.preventDefault());
 

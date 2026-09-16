@@ -1729,6 +1729,7 @@ a {
 
 .dashboard-shell .compact-list-header .busca {
     display: flex;
+    position: relative;
     flex: 1 1 auto;
     align-items: center;
     gap: 10px;
@@ -1793,8 +1794,36 @@ a {
     border: 1px solid #d9e1e8;
     background: #fafaf9;
     color: #708092;
-    cursor: default;
+    cursor: pointer;
     font-size: 12px;
+}
+
+.dashboard-shell .compact-list-header .filter-menu {
+    position: absolute;
+    z-index: 4;
+    top: 42px;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid #d9e1e8;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(24, 49, 73, .12);
+    color: #536476;
+    font-size: 12px;
+}
+
+.dashboard-shell .compact-list-header .filter-menu[hidden] { display: none; }
+.dashboard-shell .compact-list-header .filter-menu select {
+    min-height: 32px;
+    max-width: 190px;
+    border: 1px solid #d9e1e8;
+    border-radius: 6px;
+    background: #fafaf9;
+    color: #536476;
+    font: inherit;
 }
 
 .dashboard-shell .compact-list-header .result-count {
