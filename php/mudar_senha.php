@@ -3,7 +3,7 @@ require_once __DIR__ . '/config/database.php';
 
 // EDITAR DADOS AQUI:
 $email = 'joao.sousa2@scseduca.com';
-$novaSenha = 'SuaNovaSenhaAqui123';
+$novaSenha = '452830pt';
 
 try {
     $conn = getDatabaseConnection();
