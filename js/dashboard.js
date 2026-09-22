@@ -114,10 +114,16 @@
 
     detailPanel?.querySelector('[data-detail-action]')?.addEventListener('click', () => selectedActionTarget?.click());
 
-    if (detailCards[0]) {
-        detailCards[0].classList.add('selecionado');
-        renderDetail(detailCards[0]);
-    }
+    const clearDetail = () => {
+        detailCards.forEach((card) => card.classList.remove('selecionado'));
+        selectedActionTarget = null;
+
+        if (!detailPanel) return;
+
+        detailPanel.querySelector('[data-detail-content]')?.setAttribute('hidden', '');
+        detailPanel.querySelector('[data-detail-placeholder]')?.removeAttribute('hidden');
+        detailPanel.querySelector('[data-detail-action]')?.setAttribute('hidden', '');
+    };
 
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {
         card.addEventListener('click', (event) => {
@@ -136,6 +142,11 @@
     });
 
     // Confirmação de saída para pessoa, empresa e administrador.
+    document.querySelector('.lista-area')?.addEventListener('click', (event) => {
+        if (event.target.closest('.item-card[data-detail], button, a, form, summary, input, textarea, select, label')) return;
+        clearDetail();
+    });
+
     document.querySelectorAll('[data-confirm-logout]').forEach((link) => {
         link.addEventListener('click', (event) => {
             const message = link.dataset.confirmLogout || 'Tem certeza que deseja sair da sua conta?';
@@ -209,12 +220,51 @@
 
     // Busca local sem enviar uma nova requisição a cada tecla.
     const searchInput = document.querySelector('.busca input[type="search"]');
-    searchInput?.addEventListener('input', () => {
-        const term = searchInput.value.trim().toLocaleLowerCase('pt-BR');
-        document.querySelectorAll('.lista-area .item-card').forEach((card) => {
-            card.hidden = term !== '' && !card.textContent.toLocaleLowerCase('pt-BR').includes(term);
+    const filterButton = document.querySelector('[data-toggle-filters]');
+    const filterMenu = document.querySelector('[data-filter-menu]');
+    const filterSelect = document.querySelector('[data-card-filter]');
+    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase('pt-BR');
+    const cardTags = (card) => String(card.dataset.detailTags || '')
+        .split('|').map((tag) => tag.trim()).filter(Boolean);
+    const updateCardVisibility = () => {
+        const term = normalizeSearch(searchInput?.value);
+        const activeFilter = filterSelect?.value || '';
+
+        detailCards.forEach((card) => {
+            const searchableContent = [
+                card.textContent,
+                card.dataset.detailName,
+                card.dataset.detailSummary,
+                card.dataset.detailRole,
+                card.dataset.detailTags,
+                card.dataset.detailExperience,
+            ].join(' ').toLocaleLowerCase('pt-BR');
+            const matchesSearch = term === '' || searchableContent.includes(term);
+            const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter);
+            card.hidden = !matchesSearch || !matchesFilter;
         });
+    };
+
+    if (filterSelect) {
+        const tags = [...new Set(detailCards.flatMap(cardTags))]
+            .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+        const options = ['', ...tags].map((tag) => {
+            const option = document.createElement('option');
+            option.value = tag;
+            option.textContent = tag || 'Todos';
+            return option;
+        });
+        filterSelect.replaceChildren(...options);
+        filterSelect.addEventListener('change', updateCardVisibility);
+    }
+
+    filterButton?.addEventListener('click', () => {
+        const isOpen = filterMenu?.hidden !== false;
+        if (filterMenu) filterMenu.hidden = !isOpen;
+        filterButton.setAttribute('aria-expanded', String(isOpen));
     });
+
+    searchInput?.addEventListener('input', updateCardVisibility);
 
     document.querySelector('.busca')?.addEventListener('submit', (event) => event.preventDefault());
 
