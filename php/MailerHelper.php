@@ -15,47 +15,39 @@ class MailerHelper
     private const DASHBOARD_PESSOA_URL = APP_BASE_URL . '/php/pessoa.php';
 
     /**
-     * Cria e configura a conexão SMTP do PHPMailer.
+     * Cria e configura a conexão SMTP do PHPMailer utilizando o .env
      */
     private static function getMailer(): PHPMailer
     {
         $mail = new PHPMailer(true);
 
+        // Busca as configurações do arquivo .env com fallbacks de segurança
+        $host       = getenv('DEVIN_SMTP_HOST') ?: 'smtp.gmail.com';
+        $port       = (int)(getenv('DEVIN_SMTP_PORT') ?: 587);
+        $encryption = strtolower(getenv('DEVIN_SMTP_ENCRYPTION') ?: 'tls');
+        $username   = getenv('DEVIN_SMTP_USERNAME') ?: '';
+        $password   = getenv('DEVIN_SMTP_PASSWORD') ?: '';
+        $fromEmail  = getenv('DEVIN_SMTP_FROM_EMAIL') ?: $username;
+        $fromName   = getenv('DEVIN_SMTP_FROM_NAME') ?: 'Plataforma DevIN';
+
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
+        $mail->Host       = $host;
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $username;
+        $mail->Password   = $password;
 
-        /*
-         * IMPORTANTE:
-         *
-         * Substitua o e-mail abaixo pelo e-mail utilizado
-         * pelo sistema DevIN.
-         *
-         * A senha deve ser uma SENHA DE APP do Google,
-         * e não a senha normal da conta.
-         */
-        $mail->Username = 'devin.alcinabot@gmail.com';
-        $mail->Password = 'fxrp qgxe izqo rncx';
+        // Configuração dinâmica de criptografia (TLS/SSL)
+        if ($encryption === 'ssl') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        } else {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        }
 
-        /*
-         * Configuração de segurança do Gmail.
-         */
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-
-        /*
-         * Permite o envio de caracteres acentuados
-         * corretamente nos e-mails.
-         */
+        $mail->Port    = $port;
         $mail->CharSet = 'UTF-8';
 
-        /*
-         * Remetente padrão dos e-mails.
-         */
-        $mail->setFrom(
-            'devin.alcinabot@gmail.com',
-            'Plataforma DevIN'
-        );
+        // Remetente configurável via .env
+        $mail->setFrom($fromEmail, $fromName);
 
         return $mail;
     }
@@ -69,15 +61,8 @@ class MailerHelper
         string $assunto,
         string $corpoHtml
     ): bool {
-        /*
-         * Verifica se o endereço de e-mail é válido
-         * antes de tentar enviá-lo.
-         */
         if (!filter_var($destinatarioEmail, FILTER_VALIDATE_EMAIL)) {
-            error_log(
-                'E-mail inválido: ' . $destinatarioEmail
-            );
-
+            error_log('E-mail inválido: ' . $destinatarioEmail);
             return false;
         }
 
@@ -91,7 +76,7 @@ class MailerHelper
 
             $mail->isHTML(true);
             $mail->Subject = $assunto;
-            $mail->Body = $corpoHtml;
+            $mail->Body    = $corpoHtml;
 
             /*
              * Versão em texto simples para clientes
@@ -102,19 +87,10 @@ class MailerHelper
             return $mail->send();
 
         } catch (Exception $e) {
-            error_log(
-                'Erro do PHPMailer ao enviar e-mail: ' .
-                $e->getMessage()
-            );
-
+            error_log('Erro do PHPMailer ao enviar e-mail: ' . $e->getMessage());
             return false;
-
         } catch (\Throwable $e) {
-            error_log(
-                'Erro inesperado ao enviar e-mail: ' .
-                $e->getMessage()
-            );
-
+            error_log('Erro inesperado ao enviar e-mail: ' . $e->getMessage());
             return false;
         }
     }
@@ -126,167 +102,75 @@ class MailerHelper
         string $emailCandidato,
         string $nomeCandidato
     ): bool {
-        $nomeSeguro = htmlspecialchars(
-            $nomeCandidato,
-            ENT_QUOTES,
-            'UTF-8'
-        );
-
-        $assunto = 'Cadastro e Currículo Concluídos - DevIN';
+        $nomeSeguro = htmlspecialchars($nomeCandidato, ENT_QUOTES, 'UTF-8');
+        $assunto    = 'Cadastro e Currículo Concluídos - DevIN';
 
         $corpo = "
-            <div style='
-                font-family: Arial, sans-serif;
-                padding: 20px;
-                background-color: #f4f6f9;
-            '>
-
-                <div style='
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background: #ffffff;
-                    border-radius: 8px;
-                    padding: 30px;
-                '>
-
-                    <h2 style='color: #2b56f5;'>
-                        Olá, {$nomeSeguro}!
-                    </h2>
-
-                    <p>
-                        Parabéns! Seu cadastro e currículo
-                        foram concluídos com sucesso no
-                        <strong>DevIN</strong>.
-                    </p>
-
-                    <p>
-                        Seu perfil agora poderá ser encontrado
-                        por empresas cadastradas na plataforma.
-                    </p>
-
-                    <p>
-                        Boa sorte na sua busca por oportunidades!
-                    </p>
-
+            <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
+                <div style='max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px;'>
+                    <h2 style='color: #2b56f5;'>Olá, {$nomeSeguro}!</h2>
+                    <p>Parabéns! Seu cadastro e currículo foram concluídos com sucesso no <strong>DevIN</strong>.</p>
+                    <p>Seu perfil agora poderá ser encontrado por empresas cadastradas na plataforma.</p>
+                    <p>Boa sorte na sua busca por oportunidades!</p>
                     <p style='text-align:center; margin-top:24px;'>
                         <a href='" . self::DASHBOARD_PESSOA_URL . "' style='background:#00549f;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;'>
                             Acessar meu perfil
                         </a>
                     </p>
-
                 </div>
-
             </div>
         ";
 
-        return self::enviar(
-            $emailCandidato,
-            $nomeCandidato,
-            $assunto,
-            $corpo
-        );
+        return self::enviar($emailCandidato, $nomeCandidato, $assunto, $corpo);
     }
 
     /**
-     * Envia lembrete para pessoa que ainda não criou
-     * o currículo.
+     * Envia lembrete para pessoa que ainda não criou o currículo.
      */
     public static function enviarLembreteCurriculoPendente(
         string $emailCandidato,
         string $nomeCandidato
     ): bool {
-        $nomeSeguro = htmlspecialchars(
-            $nomeCandidato,
-            ENT_QUOTES,
-            'UTF-8'
-        );
-
-        $assunto = 'Falta pouco! Complete seu currículo no DevIN';
+        $nomeSeguro = htmlspecialchars($nomeCandidato, ENT_QUOTES, 'UTF-8');
+        $assunto    = 'Falta pouco! Complete seu currículo no DevIN';
 
         $corpo = "
-            <div style='
-                font-family: Arial, sans-serif;
-                padding: 20px;
-                background-color: #f4f6f9;
-            '>
-
-                <div style='
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background: #ffffff;
-                    border-radius: 8px;
-                    padding: 30px;
-                '>
-
-                    <h2 style='color: #e67e22;'>
-                        Olá, {$nomeSeguro}!
-                    </h2>
-
-                    <p>
-                        Você iniciou seu cadastro há mais de
-                        1 hora.
-                    </p>
-
-                    <p>
-                        Seu currículo ainda não foi cadastrado
-                        na plataforma.
-                    </p>
-
-                    <p>
-                        Finalize seu currículo para liberar
-                        seu perfil para as empresas.
-                    </p>
-
-                    <p>
-                        Complete suas informações e aumente
-                        suas chances de encontrar uma oportunidade
-                        no <strong>DevIN</strong>.
-                    </p>
-
+            <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
+                <div style='max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px;'>
+                    <h2 style='color: #e67e22;'>Olá, {$nomeSeguro}!</h2>
+                    <p>Você iniciou seu cadastro há mais de 1 hora.</p>
+                    <p>Seu currículo ainda não foi cadastrado na plataforma.</p>
+                    <p>Finalize seu currículo para liberar seu perfil para as empresas.</p>
+                    <p>Complete suas informações e aumente suas chances de encontrar uma oportunidade no <strong>DevIN</strong>.</p>
                     <p style='text-align:center; margin-top:24px;'>
                         <a href='" . self::CURRICULO_URL . "' style='background:#00549f;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;'>
                             Finalizar currículo
                         </a>
                     </p>
-
                 </div>
-
             </div>
         ";
 
-        return self::enviar(
-            $emailCandidato,
-            $nomeCandidato,
-            $assunto,
-            $corpo
-        );
+        return self::enviar($emailCandidato, $nomeCandidato, $assunto, $corpo);
     }
 
     /**
-     * Notifica as empresas sobre um novo candidato
-     * que concluiu o currículo.
+     * Notifica as empresas sobre um novo candidato que concluiu o currículo.
      */
     public static function notificarEmpresasNovoCandidato(
         mysqli $conn,
         string $nomeCandidato
     ): void {
         $query = "
-            SELECT
-                nome,
-                email
-            FROM empresa
-            WHERE email IS NOT NULL
-              AND email <> ''
+            SELECT nome, email 
+            FROM empresa 
+            WHERE email IS NOT NULL AND email <> ''
         ";
 
         $result = $conn->query($query);
 
         if ($result === false) {
-            error_log(
-                'Erro ao buscar empresas para notificação: ' .
-                $conn->error
-            );
-
+            error_log('Erro ao buscar empresas para notificação: ' . $conn->error);
             return;
         }
 
@@ -294,87 +178,31 @@ class MailerHelper
             return;
         }
 
-        $nomeSeguro = htmlspecialchars(
-            $nomeCandidato,
-            ENT_QUOTES,
-            'UTF-8'
-        );
+        $nomeSeguro = htmlspecialchars($nomeCandidato, ENT_QUOTES, 'UTF-8');
 
         while ($empresa = $result->fetch_assoc()) {
             $nomeEmpresaOriginal = $empresa['nome'] ?? 'Empresa';
+            $nomeEmpresa         = htmlspecialchars($nomeEmpresaOriginal, ENT_QUOTES, 'UTF-8');
+            $emailEmpresa        = trim($empresa['email'] ?? '');
 
-            $nomeEmpresa = htmlspecialchars(
-                $nomeEmpresaOriginal,
-                ENT_QUOTES,
-                'UTF-8'
-            );
-
-            $emailEmpresa = trim(
-                $empresa['email'] ?? ''
-            );
-
-            /*
-             * Ignora empresas sem e-mail válido.
-             */
-            if (
-                $emailEmpresa === '' ||
-                !filter_var(
-                    $emailEmpresa,
-                    FILTER_VALIDATE_EMAIL
-                )
-            ) {
+            if ($emailEmpresa === '' || !filter_var($emailEmpresa, FILTER_VALIDATE_EMAIL)) {
                 continue;
             }
 
             $assunto = 'Novo Candidato Disponível - DevIN';
 
             $corpo = "
-                <div style='
-                    font-family: Arial, sans-serif;
-                    padding: 20px;
-                    background-color: #f4f6f9;
-                '>
-
-                    <div style='
-                        max-width: 600px;
-                        margin: 0 auto;
-                        background: #ffffff;
-                        border-radius: 8px;
-                        padding: 30px;
-                    '>
-
-                        <h2 style='color: #2b56f5;'>
-                            Olá, {$nomeEmpresa}!
-                        </h2>
-
-                        <p>
-                            Um novo candidato está disponível
-                            na plataforma <strong>DevIN</strong>.
-                        </p>
-
-                        <p>
-                            O candidato
-                            <strong>{$nomeSeguro}</strong>
-                            acabou de concluir o currículo
-                            na plataforma.
-                        </p>
-
-                        <p>
-                            Acesse a plataforma para consultar
-                            os candidatos disponíveis.
-                        </p>
-
+                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
+                    <div style='max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px;'>
+                        <h2 style='color: #2b56f5;'>Olá, {$nomeEmpresa}!</h2>
+                        <p>Um novo candidato está disponível na plataforma <strong>DevIN</strong>.</p>
+                        <p>O candidato <strong>{$nomeSeguro}</strong> acabou de concluir o currículo na plataforma.</p>
+                        <p>Acesse a plataforma para consultar os candidatos disponíveis.</p>
                     </div>
-
                 </div>
             ";
 
-            self::enviar(
-                $emailEmpresa,
-                $nomeEmpresaOriginal,
-                $assunto,
-                $corpo
-            );
+            self::enviar($emailEmpresa, $nomeEmpresaOriginal, $assunto, $corpo);
         }
 
         $result->free();
