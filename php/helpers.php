@@ -22,7 +22,9 @@ function dashboardListHeader(string $pagina, string $titulo, string $placeholder
         . '<input type="hidden" name="pagina" value="' . h($pagina) . '">'
         . '<label class="compact-search-field"><span class="sr-only">Pesquisar</span>'
         . '<input type="search" name="q" placeholder="' . h($placeholder) . '"></label>'
-        . '<span class="filter-button" aria-hidden="true">Filtros</span>'
+        . '<button class="filter-button" type="button" data-toggle-filters aria-expanded="false">Filtros</button>'
+        . '<label class="filter-menu" data-filter-menu hidden><span>Filtrar por</span>'
+        . '<select data-card-filter aria-label="Filtrar cards"></select></label>'
         . '</form>'
         . $countMarkup
         . '</header>';
@@ -40,7 +42,34 @@ function dashboardCardTags(string $tags): string
     return '<ul class="card-tags" aria-label="Detalhes do card">' . implode('', $markup) . '</ul>';
 }
 
-/** ConteÃºdo institucional compartilhado pelos trÃªs dashboards. */
+/** Prepara os dados do currículo para o painel de detalhes do administrador. */
+function dashboardCandidateDetails(array $candidate): array
+{
+    $text = static fn(string $key): string => trim((string) ($candidate[$key] ?? ''));
+    $splitSkills = static function (string $value): array {
+        $items = preg_split('/[\r\n,;|]+/u', $value) ?: [];
+        $items = array_filter(array_map('trim', $items), static fn(string $item): bool => $item !== '');
+        return array_values(array_unique($items));
+    };
+
+    $accountName = $text('nome');
+    $socialName = $text('nome_social');
+    $education = $text('grau_de_escolaridade') ?: 'Não informada';
+    $skills = array_merge($splitSkills($text('cursos')), $splitSkills($text('idiomas')));
+    $skills = array_values(array_unique($skills));
+    $experience = $text('experiencia') ?: 'Nenhuma experiência informada.';
+
+    return [
+        'name' => $socialName ?: ($accountName ?: 'Candidato'),
+        'summary' => 'E-mail: ' . $text('email')
+            . ' | CPF: ' . $text('cpf')
+            . ' | Escolaridade: ' . $education,
+        'tags' => implode('|', $skills ?: ['Nenhuma habilidade informada']),
+        'experience' => 'Experiência profissional::' . str_replace(['|', '::'], '—', $experience),
+    ];
+}
+
+/** Conteúdo institucional compartilhado pelos três dashboards. */
 function aboutPage(): string
 {
     return <<<'HTML'
