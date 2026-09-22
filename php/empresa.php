@@ -258,14 +258,6 @@ foreach ($empresaPosts as &$post) {
 }
 unset($post);
 
-// Pessoas de exemplo mantidas no inicio para a empresa visualizar a tela como no layout original.
-$talentos = [
-    ['nome' => 'Marina Santos', 'resumo' => 'React, CSS e comunicacao clara.', 'detalhe' => 'Marina tem interesse em vagas de front-end junior e disponibilidade para conversar esta semana.'],
-    ['nome' => 'Lucas Pereira', 'resumo' => 'PHP, MySQL e logica de programacao.', 'detalhe' => 'Lucas procura primeira oportunidade em desenvolvimento web e ja criou projetos escolares com banco de dados.'],
-];
-
-// Lista de talentos/desenvolvedores disponíveis na plataforma
-
 // Lista de candidatos que se inscreveram nas vagas da empresa
 // Busca no banco somente quem se candidatou a vagas desta empresa.
 $conn = getDatabaseConnection();
@@ -487,17 +479,6 @@ unset($candidato);
                     </article>
                 <?php endforeach; ?>
 
-                <?php foreach ($talentos as $talento): ?>
-                    <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>" data-detail-role="Talento disponivel" data-detail-tags="Talento|Disponivel" data-detail-experience="Perfil DevIN::Disponivel para novas oportunidades">
-                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
-                        <div>
-                            <h2><?= h($talento['nome']) ?></h2>
-                            <p><?= h($talento['resumo']) ?></p>
-                            <?= dashboardCardTags('Talento|Disponivel') ?>
-                        </div>
-                        <button class="btn primary" type="button">Conversar</button>
-                    </article>
-                <?php endforeach; ?>
             <?php endif; ?>
         </section>
 
