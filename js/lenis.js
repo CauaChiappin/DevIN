@@ -19,6 +19,8 @@ const lenis = new Lenis({
 });
 
 let scrollAnterior = window.scrollY; // Armazena a posição de scroll anterior para determinar a direção do scroll
+let temporizadorParada;
+const atrasoParada = 200;
 
 function atualizarHeader(scroll, direcao = 0) {
   if (header) {
@@ -28,10 +30,16 @@ function atualizarHeader(scroll, direcao = 0) {
   }
 }
 
+function agendarHeaderParado(scroll) {
+  clearTimeout(temporizadorParada);
+  temporizadorParada = setTimeout(() => atualizarHeader(scroll, -1), atrasoParada);
+}
+
 lenis.on('scroll', ({ scroll }) => { // Evento de scroll do Lenis
   const direcao = scroll > scrollAnterior ? 1 : -1; // Determina a direção do scroll (1 para baixo, -1 para cima)
 
   atualizarHeader(scroll, direcao); // Atualiza o cabeçalho com base na posição e direção do scroll
+  agendarHeaderParado(scroll);
   scrollAnterior = scroll; // Atualiza a posição de scroll anterior para a próxima verificação
   ScrollTrigger.update();
 });
