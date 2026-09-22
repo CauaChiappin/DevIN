@@ -64,11 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $conn = getDatabaseConnection();
-            // Confirma pelo JOIN que esta candidatura pertence a uma vaga desta empresa.
+            // Confirma pelo JOIN que a candidatura pertence a uma vaga desta empresa.
+            // A atualizacao e feita em seguida apenas na tabela candidatura, evitando
+            // falhas de UPDATE com JOIN em configuracoes mais restritas do MySQL.
             $stmt = $conn->prepare(
-                'UPDATE candidatura c
+                'SELECT c.status
+                 FROM candidatura c
                  INNER JOIN vagas v ON v.id_vaga = c.id_vaga
-                 SET c.status = ?
                  WHERE c.id_candidatura = ? AND v.id_empresa = ?'
             );
 
@@ -77,13 +79,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $empresaId = (int) $_SESSION['usuario_id'];
-            $stmt->bind_param('sii', $status, $idCandidatura, $empresaId);
+            $stmt->bind_param('ii', $idCandidatura, $empresaId);
             $stmt->execute();
 
-            if ($stmt->affected_rows !== 1) {
+            $candidatura = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$candidatura) {
                 throw new RuntimeException('Candidatura nao encontrada ou sem permissao para altera-la.');
             }
 
+            if ($candidatura['status'] !== 'pendente') {
+                throw new RuntimeException('Esta candidatura ja foi avaliada.');
+            }
+
+            $stmt = $conn->prepare(
+                'UPDATE candidatura SET status = ? WHERE id_candidatura = ? AND status = "pendente"'
+            );
+            if (!$stmt) {
+                throw new RuntimeException('Nao foi possivel atualizar a candidatura: ' . $conn->error);
+            }
+
+            $stmt->bind_param('si', $status, $idCandidatura);
+            $stmt->execute();
+            if ($stmt->affected_rows !== 1) {
+                throw new RuntimeException('A candidatura foi alterada por outra sessao. Atualize a pagina e tente novamente.');
+            }
             $stmt->close();
             $conn->close();
             $_SESSION['candidate_success'] = 'Candidatura ' . ($status === 'aprovado' ? 'aprovada' : 'recusada') . ' com sucesso.';
@@ -171,79 +192,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Gera candidatos locais de teste para permitir testar aprovar e recusar.
-        if ($action === 'create_test_candidates') {
-            $empresaId = (int) $_SESSION['usuario_id'];
-            $conn = getDatabaseConnection();
-            $conn->begin_transaction();
-
-            $vagaStmt = $conn->prepare('SELECT id_vaga FROM vagas WHERE id_empresa = ? ORDER BY id_vaga ASC LIMIT 1');
-            $vagaStmt->bind_param('i', $empresaId);
-            $vagaStmt->execute();
-            $vaga = $vagaStmt->get_result()->fetch_assoc();
-            $vagaStmt->close();
-
-            if (!$vaga) {
-                throw new RuntimeException('Publique uma vaga antes de criar candidatos de teste.');
-            }
-
-            $buscarPessoa = $conn->prepare('SELECT id_pessoa FROM pessoa WHERE email = ? LIMIT 1');
-            $criarPessoa = $conn->prepare('INSERT INTO pessoa (nome, cpf, cep, email, senha_hash, telefone) VALUES (?, ?, ?, ?, ?, ?)');
-            $buscarCandidatura = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_pessoa = ? AND id_vaga = ? LIMIT 1');
-            $criarCandidatura = $conn->prepare('INSERT INTO candidatura (data_candidatura, status, id_pessoa, id_vaga) VALUES (CURDATE(), "pendente", ?, ?)');
-            $resetarCandidatura = $conn->prepare('UPDATE candidatura SET status = "pendente" WHERE id_candidatura = ?');
-
-            if (!$buscarPessoa || !$criarPessoa || !$buscarCandidatura || !$criarCandidatura || !$resetarCandidatura) {
-                throw new RuntimeException('Nao foi possivel preparar os dados de teste: ' . $conn->error);
-            }
-
-            foreach ([1 => 'Ana Teste', 2 => 'Bruno Teste'] as $indice => $nomeTeste) {
-                $emailTeste = 'candidato.teste.' . $empresaId . '.' . $indice . '@devin.local';
-                $cpfTeste = sprintf('%011d', 90000000000 + ($empresaId * 10) + $indice);
-                $cepTeste = '01001000';
-                $telefoneTeste = '1199999000' . $indice;
-                $senhaTeste = password_hash('teste123', PASSWORD_DEFAULT);
-
-                $buscarPessoa->bind_param('s', $emailTeste);
-                $buscarPessoa->execute();
-                $pessoa = $buscarPessoa->get_result()->fetch_assoc();
-
-                if ($pessoa) {
-                    $pessoaId = (int) $pessoa['id_pessoa'];
-                } else {
-                    $criarPessoa->bind_param('ssssss', $nomeTeste, $cpfTeste, $cepTeste, $emailTeste, $senhaTeste, $telefoneTeste);
-                    $criarPessoa->execute();
-                    $pessoaId = $conn->insert_id;
-                }
-
-                $vagaId = (int) $vaga['id_vaga'];
-                $buscarCandidatura->bind_param('ii', $pessoaId, $vagaId);
-                $buscarCandidatura->execute();
-                $candidatura = $buscarCandidatura->get_result()->fetch_assoc();
-
-                if ($candidatura) {
-                    $candidaturaId = (int) $candidatura['id_candidatura'];
-                    $resetarCandidatura->bind_param('i', $candidaturaId);
-                    $resetarCandidatura->execute();
-                } else {
-                    $criarCandidatura->bind_param('ii', $pessoaId, $vagaId);
-                    $criarCandidatura->execute();
-                }
-            }
-
-            $buscarPessoa->close();
-            $criarPessoa->close();
-            $buscarCandidatura->close();
-            $criarCandidatura->close();
-            $resetarCandidatura->close();
-            $conn->commit();
-            $conn->close();
-
-            $_SESSION['candidate_success'] = 'Dois candidatos de teste foram criados para a sua primeira vaga.';
-            header('Location: empresa.php?pagina=candidatos');
-            exit;
-        }
-
         // Ação 1: Atualizar o perfil da empresa (dados pessoais e foto)
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
@@ -267,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (Throwable $exception) {
         // Se acontecer qualquer erro durante os processos acima, guarda a mensagem de erro
-        if (in_array($action, ['update_application_status', 'create_test_candidates'], true)) {
+        if ($action === 'update_application_status') {
             $_SESSION['candidate_error'] = $exception->getMessage();
             header('Location: empresa.php?pagina=candidatos'); exit;
         }
@@ -310,14 +258,6 @@ foreach ($empresaPosts as &$post) {
 }
 unset($post);
 
-// Pessoas de exemplo mantidas no inicio para a empresa visualizar a tela como no layout original.
-$talentos = [
-    ['nome' => 'Marina Santos', 'resumo' => 'React, CSS e comunicacao clara.', 'detalhe' => 'Marina tem interesse em vagas de front-end junior e disponibilidade para conversar esta semana.'],
-    ['nome' => 'Lucas Pereira', 'resumo' => 'PHP, MySQL e logica de programacao.', 'detalhe' => 'Lucas procura primeira oportunidade em desenvolvimento web e ja criou projetos escolares com banco de dados.'],
-];
-
-// Lista de talentos/desenvolvedores disponíveis na plataforma
-
 // Lista de candidatos que se inscreveram nas vagas da empresa
 // Busca no banco somente quem se candidatou a vagas desta empresa.
 $conn = getDatabaseConnection();
@@ -335,6 +275,7 @@ INNER JOIN vagas v ON v.id_vaga = c.id_vaga
 INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
 LEFT JOIN curriculo cu ON cu.id_pessoa = p.id_pessoa
 WHERE v.id_empresa = ?
+  AND p.email NOT LIKE "candidato.teste.%@devin.local"
 ORDER BY c.data_candidatura DESC, c.id_candidatura DESC';
 $stmtCandidatos = $conn->prepare($sqlCandidatos);
 
@@ -438,12 +379,6 @@ unset($candidato);
                 <?php if (!$candidatos): ?>
                     <p class="empty-state">Ainda nao ha candidaturas para as suas vagas.</p>
                 <?php endif; ?>
-                <form method="post" class="test-candidates-form">
-                    <input type="hidden" name="action" value="create_test_candidates">
-                    <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
-                    <button class="btn primary" type="submit">Criar candidatos de teste</button>
-                    <small>Cria ou reinicia dois candidatos pendentes na primeira vaga da empresa.</small>
-                </form>
                 <?php foreach ($candidatos as $candidato): ?>
                     <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-detail-action-label="Aprovar candidato">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
@@ -454,13 +389,22 @@ unset($candidato);
                         </div>
                         <div class="acoes-card">
                             <?php if ($candidato['status'] === 'pendente'): ?>
-                                <form method="post" class="candidate-actions">
-                                    <input type="hidden" name="action" value="update_application_status">
-                                    <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
-                                    <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
-                                    <button class="btn danger" name="status" value="recusado" type="submit">Nao se encaixa</button>
-                                    <button class="btn success" name="status" value="aprovado" type="submit" data-detail-action-target>Aprovar</button>
-                                </form>
+                                <div class="candidate-actions">
+                                    <form method="post">
+                                        <input type="hidden" name="action" value="update_application_status">
+                                        <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                                        <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
+                                        <input type="hidden" name="status" value="recusado">
+                                        <button class="btn danger" type="submit">Nao se encaixa</button>
+                                    </form>
+                                    <form method="post">
+                                        <input type="hidden" name="action" value="update_application_status">
+                                        <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                                        <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
+                                        <input type="hidden" name="status" value="aprovado">
+                                        <button class="btn success" type="submit" data-detail-action-target>Aprovar</button>
+                                    </form>
+                                </div>
                             <?php else: ?>
                                 <span class="status <?= $candidato['status'] === 'aprovado' ? 'aprovado' : 'reprovado' ?>">
                                     <?= h(ucfirst($candidato['status'])) ?>
@@ -535,17 +479,6 @@ unset($candidato);
                     </article>
                 <?php endforeach; ?>
 
-                <?php foreach ($talentos as $talento): ?>
-                    <article class="item-card" data-detail="<?= h($talento['detalhe']) ?>" data-detail-role="Talento disponivel" data-detail-tags="Talento|Disponivel" data-detail-experience="Perfil DevIN::Disponivel para novas oportunidades">
-                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
-                        <div>
-                            <h2><?= h($talento['nome']) ?></h2>
-                            <p><?= h($talento['resumo']) ?></p>
-                            <?= dashboardCardTags('Talento|Disponivel') ?>
-                        </div>
-                        <button class="btn primary" type="button">Conversar</button>
-                    </article>
-                <?php endforeach; ?>
             <?php endif; ?>
         </section>
 

@@ -85,7 +85,7 @@ function aboutPage(): string
     </div>
     <div class="sobre-bottom-section">
         <div class="sobre-about-text"><h2>Quem somos <span class="text-blue">nós?</span></h2><p>A DevIN nasceu com o propósito de transformar a forma como profissionais de tecnologia encontram oportunidades. Desenvolvida no ambiente educacional da Escola Profª Alcina Dantas Feijão.</p><p>Hoje, a DevIN oferece um ambiente moderno onde empresas podem divulgar vagas e gerenciar candidatos, enquanto usuários criam perfis, buscam empregos, estágios e programas de aprendizagem.</p></div>
-        <section class="sobre-team-card"><h2 class="team-header">Time fundador</h2><ul class="team-list"><li><img class="team-avatar" src="../img/caua.jpg" alt="Foto temporária de Cauã Chiappin de Lima"><div class="team-info"><strong>Cauã Chiappin de Lima</strong><a href="mailto:caua.lima@scseduca.com.br">Cofundador · caua.lima@scseduca.com.br</a></div></li><li><img class="team-avatar" src="../img/enzo.jpg" alt="Foto temporária de Enzo Vasconcelos de Camargo"><div class="team-info"><strong>Enzo Vasconcelos de Camargo</strong><a href="mailto:enzo.camargo@scseduca.com.br">Cofundador · enzo.camargo@scseduca.com.br</a></div></li><li><img class="team-avatar" src="../img/joao.jpg" alt="Foto temporária de João Vitor da Silva e Sousa"><div class="team-info"><strong>João Vitor da Silva e Sousa</strong><a href="mailto:joao.sousa2@scseduca.com.br">Cofundador · joao.sousa2@scseduca.com.br</a></div></li></ul></section>
+        <section class="sobre-team-card"><h2 class="team-header">Time fundador</h2><ul class="team-list"><li><img class="team-avatar" src="../img/caua.jpg" alt="Foto temporária de Cauã Chiappin de Lima"><div class="team-info"><a href="https://www.instagram.com/knx_cl?stkn=czJ3YzI3cnowMXZo"><strong>Cauã Chiappin de Lima</strong></a><a href="mailto:caua.lima@scseduca.com.br">Cofundador · caua.lima@scseduca.com.br</a></div></li><li><img class="team-avatar" src="../img/enzo.jpg" alt="Foto temporária de Enzo Vasconcelos de Camargo"><div class="team-info"><a href="https://www.instagram.com/enzo.v._.c?stkn=djJ2MXNuem9zc2d4"><strong>Enzo Vasconcelos de Camargo</strong></a><a href="mailto:enzo.camargo@scseduca.com.br">Cofundador · enzo.camargo@scseduca.com.br</a></div></li><li><img class="team-avatar" src="../img/joao.jpg" alt="Foto temporária de João Vitor da Silva e Sousa"><div class="team-info"><a href="https://www.instagram.com/mjoaozxz?stkn=MWxhbG11c3QwdXg0aA%3D%3D"><strong>João Vitor da Silva e Sousa</strong></a><a href="mailto:joao.sousa2@scseduca.com.br">Cofundador · joao.sousa2@scseduca.com.br</a></div></li></ul></section>
     </div>
 </div>
 HTML;
@@ -93,28 +93,39 @@ HTML;
 
 /*
  * Monta o avatar reutilizado no menu, no modal e no perfil.
- * Se nÃ£o houver foto vÃ¡lida, retorna somente o span com o fundo padrÃ£o do CSS.
+ * Procura automaticamente uma imagem com o e-mail do usuário na pasta img/ (suporta .png, .jpg, .jpeg e .webp).
  */
 function profileAvatar(array $perfil, string $classes): string
 {
-    // Pega o caminho salvo no banco; string vazia Ã© usada quando nÃ£o existe foto.
-    $foto = $perfil['foto'] ?? '';
+    $email = trim($perfil['email'] ?? '');
+    $imagem = '';
 
-    // A foto da empresa agora fica no MEDIUMBLOB; transforma os bytes em uma imagem visivel no navegador.
-    if (is_string($foto) && $foto !== '' && !str_starts_with($foto, 'uploads/')) {
-        $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($foto);
-        if (in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
-            $imagem = '<img src="data:' . $mime . ';base64,' . base64_encode($foto) . '" alt="Foto de perfil">';
-            return '<span class="' . h($classes) . ' current-user-avatar has-photo">' . $imagem . '</span>';
+    // 1. Procura foto correspondente ao e-mail na pasta img/
+    if ($email !== '') {
+        $extensoes = ['png', 'jpg', 'jpeg', 'webp'];
+        foreach ($extensoes as $ext) {
+            $caminhoFisico = __DIR__ . '/../img/' . $email . '.' . $ext;
+            if (is_file($caminhoFisico)) {
+                $imagem = '<img src="../img/' . h($email) . '.' . $ext . '" alt="Foto de perfil">';
+                break;
+            }
         }
     }
-    // SÃ³ renderiza a tag img para caminhos de upload existentes; caso contrÃ¡rio, mantÃ©m o avatar padrÃ£o.
-    $imagem = is_string($foto) && str_starts_with($foto, 'uploads/') && is_file(__DIR__ . '/' . $foto)
-        // h() escapa o caminho antes de colocÃ¡-lo no HTML, evitando injeÃ§Ã£o de cÃ³digo.
-        ? '<img src="' . h($foto) . '" alt="Foto de perfil">'
-        : '';
 
-    // Junta as classes visuais e a imagem (quando vÃ¡lida) dentro de um Ãºnico avatar.
+    // 2. Se não encontrar imagem pelo e-mail, executa a verificação padrão
+    if ($imagem === '') {
+        $foto = $perfil['foto'] ?? '';
+
+        if (is_string($foto) && $foto !== '' && !str_starts_with($foto, 'uploads/')) {
+            $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($foto);
+            if (in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
+                $imagem = '<img src="data:' . $mime . ';base64,' . base64_encode($foto) . '" alt="Foto de perfil">';
+            }
+        } elseif (is_string($foto) && str_starts_with($foto, 'uploads/') && is_file(__DIR__ . '/' . $foto)) {
+            $imagem = '<img src="' . h($foto) . '" alt="Foto de perfil">';
+        }
+    }
+
     return '<span class="' . h($classes) . ' current-user-avatar' . ($imagem !== '' ? ' has-photo' : '') . '">' . $imagem . '</span>';
 }
 
@@ -160,7 +171,7 @@ function dashboardIcon(string $name): string
     $paths = match ($name) {
         'brand' => '<path d="M4 5.5h16v13H4z"/><path d="M12 5.5v13"/>',
         'home' => '<path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-6h6v6"/>',
-        'users' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+        'users' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 1 0 7.75"/>',
         'user' => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
         'building' => '<path d="M3 21h18M5 21V5h10v16M15 9h4v12M8 9h4M8 13h4M8 17h4"/>',
         'briefcase' => '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>',
@@ -174,5 +185,3 @@ function dashboardIcon(string $name): string
 
     return '<svg class="ui-icon ui-icon-' . h($name) . '" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $paths . '</svg>';
 }
-?>
-

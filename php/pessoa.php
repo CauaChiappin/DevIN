@@ -280,14 +280,23 @@ unset($vaga);
                     <p class="empty-state">Você ainda não se candidatou a nenhuma vaga.</p>
                 <?php endif; ?>
                 <?php foreach ($minhasCandidaturas as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h('Candidatura para ' . $vaga['empresa']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($vaga['status'])) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h('Candidatura::Status ' . ucfirst($vaga['status'])) ?>">
+                    <?php
+                    $statusCandidatura = $vaga['status'];
+                    $statusCandidaturaTexto = $statusCandidatura === 'recusado'
+                        ? 'Não se encaixa'
+                        : ucfirst($statusCandidatura);
+                    $statusCandidaturaClasse = $statusCandidatura === 'aprovado'
+                        ? 'aprovado'
+                        : ($statusCandidatura === 'recusado' ? 'reprovado' : 'analise');
+                    ?>
+                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h('Candidatura para ' . $vaga['empresa']) ?>" data-detail-tags="Candidatura|<?= h($statusCandidaturaTexto) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h('Candidatura::Status ' . $statusCandidaturaTexto) ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?> · <?= h($vaga['titulo']) ?></h2>
                             <p><?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
-                            <?= dashboardCardTags('Candidatura|' . ucfirst($vaga['status']) . '|' . $vaga['empresa']) ?>
+                            <?= dashboardCardTags('Candidatura|' . $statusCandidaturaTexto . '|' . $vaga['empresa']) ?>
                         </div>
-                        <span class="status <?= $vaga['status'] === 'aprovado' ? 'aprovado' : ($vaga['status'] === 'recusado' ? 'reprovado' : 'analise') ?>"><?= h(ucfirst($vaga['status'])) ?></span>
+                        <span class="status <?= $statusCandidaturaClasse ?>"><?= h($statusCandidaturaTexto) ?></span>
                     </article>
                 <?php endforeach; ?>
             <?php else: ?>
