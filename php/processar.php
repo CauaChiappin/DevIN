@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config/security.php';
 startSecureSession();
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/auth.php';
 require_once __DIR__ . '/MailerHelper.php';
-
-$acao = requestString($_POST, 'acao');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: login.php');
@@ -17,515 +16,240 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 requireValidCsrf();
 
+$acao = requestString($_POST, 'acao');
+
 /*
 |--------------------------------------------------------------------------
-| SOLICITAR RECUPERAÇÃO DE SENHA
+| SOLICITAR RECUPERAÇÃO DE SENHA (GERAR CÓDIGO DE 8 DÍGITOS)
 |--------------------------------------------------------------------------
 */
 
 if ($acao === 'solicitar_recuperacao') {
-
     $email = trim(requestString($_POST, 'email'));
 
-    if (
-        empty($email) ||
-        !filter_var(
-            $email,
-            FILTER_VALIDATE_EMAIL
-        )
-    ) {
-
-        $_SESSION['erro_recuperacao'] =
-            'Por favor, informe um e-mail válido.';
-
-        header(
-            'Location: recuperacao.php'
-        );
-
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['erro_recuperacao'] = 'Por favor, informe um e-mail válido.';
+        header('Location: recuperacao.php');
         exit;
     }
 
+    // Cooldown de 2 minutos entre solicitações
+    $agora = time();
+    $ultimoPedido = $_SESSION['ultimo_pedido_recuperacao'] ?? 0;
+    if (($agora - $ultimoPedido) < 120) {
+        $tempoRestante = 120 - ($agora - $ultimoPedido);
+        $_SESSION['erro_recuperacao'] = "Aguarde {$tempoRestante} segundos antes de solicitar um novo código.";
+        header('Location: recuperacao.php');
+        exit;
+    }
+    $_SESSION['ultimo_pedido_recuperacao'] = $agora;
+
+    $conn = getDatabaseConnection();
+
     try {
+        $usuario = null;
+        $tabelas = [
+            ['table' => 'pessoa',        'idCol' => 'id_pessoa',        'type' => 'pessoa'],
+            ['table' => 'empresa',       'idCol' => 'id_empresa',       'type' => 'empresa'],
+            ['table' => 'administrador', 'idCol' => 'id_administrador', 'type' => 'adm'],
+        ];
 
-        $conn = getDatabaseConnection();
-
-        /*
-        |--------------------------------------------------------------------------
-        | PROCURA NA TABELA PESSOA
-        |--------------------------------------------------------------------------
-        */
-
-        $stmtPessoa = $conn->prepare("
-            SELECT
-                id_pessoa AS id,
-                nome,
-                email,
-                'pessoa' AS tipo
-            FROM pessoa
-            WHERE email = ?
-            LIMIT 1
-        ");
-
-        $stmtPessoa->bind_param(
-            's',
-            $email
-        );
-
-        $stmtPessoa->execute();
-
-        $usuario =
-            $stmtPessoa
-                ->get_result()
-                ->fetch_assoc();
-
-        $stmtPessoa->close();
-
-        /*
-        |--------------------------------------------------------------------------
-        | SE NÃO ENCONTROU, PROCURA NA EMPRESA
-        |--------------------------------------------------------------------------
-        */
-
-        if (!$usuario) {
-
-            $stmtEmpresa = $conn->prepare("
-                SELECT
-                    id_empresa AS id,
-                    nome,
-                    email,
-                    'empresa' AS tipo
-                FROM empresa
+        foreach ($tabelas as $tab) {
+            $stmt = $conn->prepare("
+                SELECT {$tab['idCol']} AS id, nome, email, '{$tab['type']}' AS tipo
+                FROM {$tab['table']}
                 WHERE email = ?
                 LIMIT 1
             ");
 
-            $stmtEmpresa->bind_param(
-                's',
-                $email
-            );
+            if ($stmt) {
+                $stmt->bind_param('s', $email);
+                $stmt->execute();
+                $usuario = $stmt->get_result()->fetch_assoc();
+                $stmt->close();
 
-            $stmtEmpresa->execute();
-
-            $usuario =
-                $stmtEmpresa
-                    ->get_result()
-                    ->fetch_assoc();
-
-            $stmtEmpresa->close();
+                if ($usuario) {
+                    break;
+                }
+            }
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | USUÁRIO ENCONTRADO
-        |--------------------------------------------------------------------------
-        */
-
         if ($usuario) {
+            // Gera código numérico de 8 dígitos
+            $codigo = sprintf('%08d', random_int(0, 99999999));
+            $codigoHash = hash('sha256', $codigo);
 
-            $token = bin2hex(
-                random_bytes(32)
-            );
+            $mapaTabelas = [
+                'pessoa'  => ['tabela' => 'pessoa',        'idCol' => 'id_pessoa'],
+                'empresa' => ['tabela' => 'empresa',       'idCol' => 'id_empresa'],
+                'adm'     => ['tabela' => 'administrador', 'idCol' => 'id_administrador'],
+            ];
 
-            $tabela =
-                $usuario['tipo'] === 'pessoa'
-                    ? 'pessoa'
-                    : 'empresa';
+            $info = $mapaTabelas[$usuario['tipo']];
 
-            $colunaId =
-                $usuario['tipo'] === 'pessoa'
-                    ? 'id_pessoa'
-                    : 'id_empresa';
-
+            // Código válido por 15 minutos
             $sql = "
-                UPDATE {$tabela}
+                UPDATE {$info['tabela']}
                 SET
                     token_recuperacao = ?,
-                    token_expiracao =
-                        DATE_ADD(NOW(), INTERVAL 1 HOUR)
-                WHERE {$colunaId} = ?
+                    token_expiracao = DATE_ADD(NOW(), INTERVAL 15 MINUTE)
+                WHERE {$info['idCol']} = ?
             ";
 
-            $stmtToken =
-                $conn->prepare($sql);
+            $stmtToken = $conn->prepare($sql);
+            if ($stmtToken) {
+                $stmtToken->bind_param('si', $codigoHash, $usuario['id']);
+                $stmtToken->execute();
+                $stmtToken->close();
+            }
 
-            $stmtToken->bind_param(
-                'si',
-                $token,
-                $usuario['id']
-            );
-
-            $stmtToken->execute();
-            $stmtToken->close();
-
-            /*
-            |--------------------------------------------------------------------------
-            | LINK DE RECUPERAÇÃO
-            |--------------------------------------------------------------------------
-            |
-            | Se o projeto estiver em:
-            | http://localhost/DevIN/
-            |
-            | este endereço funciona no XAMPP.
-            |
-            */
-
-            $linkRedefinicao = rtrim(APP_BASE_URL, '/') . '/php/redefinir.php?token=' . urlencode($token);
-
-            $nomeSeguro =
-                htmlspecialchars(
-                    $usuario['nome'],
-                    ENT_QUOTES,
-                    'UTF-8'
-                );
-
-            $assunto =
-                'Redefinição de Senha - DevIN';
+            // Formatação legível do código (ex: 1234 5678)
+            $codigoFormatado = substr($codigo, 0, 4) . ' ' . substr($codigo, 4, 4);
+            $nomeSeguro = htmlspecialchars($usuario['nome'], ENT_QUOTES, 'UTF-8');
+            $assunto = 'Seu Código de Recuperação - DevIN';
 
             $corpoHtml = "
-                <div style='
-                    font-family: Arial, sans-serif;
-                    padding: 20px;
-                    background-color: #f4f6f9;
-                '>
-
-                    <div style='
-                        max-width: 500px;
-                        margin: 0 auto;
-                        background: #ffffff;
-                        padding: 25px;
-                        border-radius: 8px;
-                    '>
-
-                        <h2 style='color: #2b56f5;'>
-                            Olá, {$nomeSeguro}!
-                        </h2>
-
-                        <p>
-                            Recebemos uma solicitação para
-                            redefinir a senha da sua conta
-                            no <strong>DevIN</strong>.
-                        </p>
-
-                        <p>
-                            Clique no botão abaixo para criar
-                            uma nova senha.
-                        </p>
-
-                        <p>
-                            Este link ficará disponível
-                            por <strong>1 hora</strong>.
-                        </p>
-
-                        <div style='
-                            text-align: center;
-                            margin: 25px 0;
-                        '>
-
-                            <a
-                                href='{$linkRedefinicao}'
-                                style='
-                                    background-color: #2b56f5;
-                                    color: #ffffff;
-                                    padding: 12px 24px;
-                                    text-decoration: none;
-                                    border-radius: 5px;
-                                    font-weight: bold;
-                                    display: inline-block;
-                                '
-                            >
-                                Redefinir Minha Senha
-                            </a>
-
+                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
+                    <div style='max-width: 500px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 8px;'>
+                        <h2 style='color: #2b56f5;'>Olá, {$nomeSeguro}!</h2>
+                        <p>Recebemos uma solicitação para redefinir a senha da sua conta no <strong>DevIN</strong>.</p>
+                        <p>Utilize o código de verificação abaixo para criar uma nova senha:</p>
+                        <div style='text-align: center; margin: 25px 0;'>
+                            <span style='background-color: #2b56f5; color: #ffffff; padding: 14px 28px; border-radius: 6px; font-size: 28px; font-weight: bold; letter-spacing: 4px; display: inline-block;'>
+                                {$codigoFormatado}
+                            </span>
                         </div>
-
-                        <p style='
-                            color: #777;
-                            font-size: 12px;
-                        '>
-                            Se você não solicitou esta alteração,
-                            desconsidere este e-mail.
-                        </p>
-
+                        <p>Este código expira em <strong>15 minutos</strong>.</p>
+                        <p style='color: #777; font-size: 12px;'>Se você não solicitou esta alteração, desconsidere este e-mail.</p>
                     </div>
-
                 </div>
             ";
 
-            if (!MailerHelper::enviar(
-                $email,
-                $usuario['nome'],
-                $assunto,
-                $corpoHtml
-            )) {
+            if (!MailerHelper::enviar($email, $usuario['nome'], $assunto, $corpoHtml)) {
                 error_log('Falha ao enviar e-mail de recuperação para ' . $email);
             }
         }
 
-        $conn->close();
+        // Armazena e-mail na sessão para a página redefinir.php
+        $_SESSION['email_recuperacao'] = $email;
+        $_SESSION['sucesso_recuperacao'] = 'Se o e-mail estiver correto, enviamos um código de 8 dígitos.';
 
-        /*
-        |--------------------------------------------------------------------------
-        | MENSAGEM GENÉRICA
-        |--------------------------------------------------------------------------
-        |
-        | Não informamos se o e-mail existe ou não.
-        | Isso evita exposição de contas cadastradas.
-        |
-        */
-
-        $_SESSION['sucesso_recuperacao'] =
-            'Se o e-mail informado estiver cadastrado, você receberá o link de redefinição em instantes.';
-
-        header(
-            'Location: recuperacao.php'
-        );
-
+        header('Location: redefinir.php');
         exit;
 
     } catch (Throwable $e) {
-
-        error_log(
-            'Erro na recuperação de senha: ' .
-            $e->getMessage()
-        );
-
-        $_SESSION['erro_recuperacao'] =
-            'Não foi possível processar a solicitação. Tente novamente.';
-
-        header(
-            'Location: recuperacao.php'
-        );
-
+        error_log('Erro na recuperação de senha: ' . $e->getMessage());
+        $_SESSION['erro_recuperacao'] = 'Não foi possível processar a solicitação. Tente novamente.';
+        header('Location: recuperacao.php');
         exit;
+    } finally {
+        $conn->close();
     }
 }
 
-
 /*
 |--------------------------------------------------------------------------
-| REDEFINIR SENHA
+| REDEFINIR SENHA COM CÓDIGO DE 8 DÍGITOS
 |--------------------------------------------------------------------------
 */
 
 if ($acao === 'redefinir_senha') {
-
-    $token = trim(requestString($_POST, 'token'));
-
+    $email     = trim(requestString($_POST, 'email'));
+    $codigo    = preg_replace('/[^0-9]/', '', requestString($_POST, 'codigo'));
     $novaSenha = requestString($_POST, 'nova_senha');
-
     $confSenha = requestString($_POST, 'confirmar_senha');
 
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDAÇÕES
-    |--------------------------------------------------------------------------
-    */
+    if (empty($email) || empty($codigo) || empty($novaSenha) || empty($confSenha)) {
+        $_SESSION['erro_redefinir'] = 'Preencha todos os campos.';
+        header('Location: redefinir.php');
+        exit;
+    }
 
-    if (
-        empty($token) ||
-        empty($novaSenha) ||
-        empty($confSenha)
-    ) {
-
-        $_SESSION['erro_redefinir'] =
-            'Preencha todos os campos.';
-
-        header(
-            'Location: redefinir.php?token=' .
-            urlencode($token)
-        );
-
+    if (strlen($codigo) !== 8) {
+        $_SESSION['erro_redefinir'] = 'O código deve possuir exatamente 8 dígitos.';
+        header('Location: redefinir.php');
         exit;
     }
 
     if ($novaSenha !== $confSenha) {
-
-        $_SESSION['erro_redefinir'] =
-            'As senhas não coincidem.';
-
-        header(
-            'Location: redefinir.php?token=' .
-            urlencode($token)
-        );
-
+        $_SESSION['erro_redefinir'] = 'As senhas não coincidem.';
+        header('Location: redefinir.php');
         exit;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | MESMAS REGRAS DO CADASTRO
-    |--------------------------------------------------------------------------
-    */
-
     if (strlen($novaSenha) < 8) {
-
-        $_SESSION['erro_redefinir'] =
-            'A senha deve ter no mínimo 8 caracteres.';
-
-        header(
-            'Location: redefinir.php?token=' .
-            urlencode($token)
-        );
-
+        $_SESSION['erro_redefinir'] = 'A senha deve ter no mínimo 8 caracteres.';
+        header('Location: redefinir.php');
         exit;
     }
 
     if (!preg_match('/[A-Z]/', $novaSenha)) {
-
-        $_SESSION['erro_redefinir'] =
-            'A senha deve possuir pelo menos uma letra maiúscula.';
-
-        header(
-            'Location: redefinir.php?token=' .
-            urlencode($token)
-        );
-
+        $_SESSION['erro_redefinir'] = 'A senha deve possuir pelo menos uma letra maiúscula.';
+        header('Location: redefinir.php');
         exit;
     }
 
     if (!preg_match('/[^a-zA-Z0-9]/', $novaSenha)) {
-
-        $_SESSION['erro_redefinir'] =
-            'A senha deve possuir pelo menos um caractere especial.';
-
-        header(
-            'Location: redefinir.php?token=' .
-            urlencode($token)
-        );
-
+        $_SESSION['erro_redefinir'] = 'A senha deve possuir pelo menos um caractere especial.';
+        header('Location: redefinir.php');
         exit;
     }
 
+    $conn = getDatabaseConnection();
+
     try {
+        $senhaHash  = password_hash($novaSenha, PASSWORD_DEFAULT);
+        $codigoHash = hash('sha256', $codigo);
+        $afetados   = 0;
+        $tabelas    = ['pessoa', 'empresa', 'administrador'];
 
-        $conn =
-            getDatabaseConnection();
-
-        $senhaHash =
-            password_hash(
-                $novaSenha,
-                PASSWORD_DEFAULT
-            );
-
-        /*
-        |--------------------------------------------------------------------------
-        | TENTA ALTERAR NA PESSOA
-        |--------------------------------------------------------------------------
-        */
-
-        $stmtPessoa =
-            $conn->prepare("
-                UPDATE pessoa
+        foreach ($tabelas as $tabela) {
+            $stmt = $conn->prepare("
+                UPDATE {$tabela}
                 SET
                     senha_hash = ?,
                     token_recuperacao = NULL,
                     token_expiracao = NULL
                 WHERE
-                    token_recuperacao = ?
+                    email = ?
+                    AND token_recuperacao = ?
                     AND token_expiracao > NOW()
             ");
 
-        $stmtPessoa->bind_param(
-            'ss',
-            $senhaHash,
-            $token
-        );
+            if ($stmt) {
+                $stmt->bind_param('sss', $senhaHash, $email, $codigoHash);
+                $stmt->execute();
+                $afetados = $stmt->affected_rows;
+                $stmt->close();
 
-        $stmtPessoa->execute();
-
-        $afetados =
-            $stmtPessoa->affected_rows;
-
-        $stmtPessoa->close();
-
-        /*
-        |--------------------------------------------------------------------------
-        | SE NÃO ALTEROU PESSOA, TENTA EMPRESA
-        |--------------------------------------------------------------------------
-        */
-
-        if ($afetados === 0) {
-
-            $stmtEmpresa =
-                $conn->prepare("
-                    UPDATE empresa
-                    SET
-                        senha_hash = ?,
-                        token_recuperacao = NULL,
-                        token_expiracao = NULL
-                    WHERE
-                        token_recuperacao = ?
-                        AND token_expiracao > NOW()
-                ");
-
-            $stmtEmpresa->bind_param(
-                'ss',
-                $senhaHash,
-                $token
-            );
-
-            $stmtEmpresa->execute();
-
-            $afetados =
-                $stmtEmpresa->affected_rows;
-
-            $stmtEmpresa->close();
+                if ($afetados > 0) {
+                    break;
+                }
+            }
         }
 
-        $conn->close();
-
-        /*
-        |--------------------------------------------------------------------------
-        | RESULTADO
-        |--------------------------------------------------------------------------
-        */
-
         if ($afetados > 0) {
+            unset($_SESSION['email_recuperacao']);
+            session_regenerate_id(true);
 
-            $_SESSION['sucesso_login'] =
-                'Senha redefinida com sucesso! Faça seu login.';
-
-            header(
-                'Location: login.php'
-            );
-
+            $_SESSION['sucesso_login'] = 'Senha redefinida com sucesso! Faça seu login.';
+            header('Location: login.php');
             exit;
         }
 
-        $_SESSION['erro_redefinir'] =
-            'O link de redefinição é inválido ou já expirou. Solicite um novo.';
-
-        header(
-            'Location: recuperacao.php'
-        );
-
+        $_SESSION['erro_redefinir'] = 'Código de verificação incorreto ou expirado. Tente novamente.';
+        header('Location: redefinir.php');
         exit;
 
     } catch (Throwable $e) {
-
-        error_log(
-            'Erro ao redefinir senha: ' .
-            $e->getMessage()
-        );
-
-        $_SESSION['erro_redefinir'] =
-            'Não foi possível redefinir a senha. Tente novamente.';
-
-        header(
-            'Location: redefinir.php?token=' .
-            urlencode($token)
-        );
-
+        error_log('Erro ao redefinir senha: ' . $e->getMessage());
+        $_SESSION['erro_redefinir'] = 'Não foi possível redefinir a senha. Tente novamente.';
+        header('Location: redefinir.php');
         exit;
+    } finally {
+        $conn->close();
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| AÇÃO DESCONHECIDA
-|--------------------------------------------------------------------------
-*/
-
 header('Location: index.php');
-exit;
+exit;   

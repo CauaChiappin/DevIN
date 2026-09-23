@@ -1,31 +1,34 @@
 <?php
+
+declare(strict_types=1);
+
 // ============================================
-// DevIN - Dados e Configurações
+// DevIN - Dados e Configurações da Landing Page
 // ============================================
 
 $site = [
     'nome'     => 'DevIN',
-    'email'    => 'devin@gmail.com',
-    'telefone' => '11 xxxxx-xxxx',
-    'ano'      => date('Y'),
+    'email'    => 'contato@devin.com.br',
+    'telefone' => '(11) 99999-9999',
+    'ano'      => (int) date('Y'),
     'escola'   => 'Escola Profª Alcina Dantas Feijão',
 ];
 
 $nav_links = [
-    ['href' => '#sobre',    'label' => 'Conheça o DevIN'],
-    ['href' => '#etapas',   'label' => 'Etapas'],
-    ['href' => '#contato',  'label' => 'Contato'],
+    ['href' => '#sobre',   'label' => 'Conheça o DevIN'],
+    ['href' => '#etapas',  'label' => 'Etapas'],
+    ['href' => '#contato', 'label' => 'Contato'],
 ];
 
 $features = [
     [
         'titulo'    => 'Currículo',
-        'descricao' => 'Crie o seu currículo na DevIN e use para candidatar-se para vagas de empresas',
+        'descricao' => 'Crie o seu currículo na DevIN e use para candidatar-se às vagas das empresas parceiras.',
         'lado'      => 'direita',
     ],
     [
         'titulo'    => 'Feed de vagas',
-        'descricao' => 'Explore por um feed de vagas, com inúmeras oportunidades de trabalho, como jovem aprendiz, estágios e empregos.',
+        'descricao' => 'Explore um feed com inúmeras oportunidades de trabalho, como jovem aprendiz, estágios e empregos.',
         'lado'      => 'esquerda',
     ],
 ];
@@ -54,16 +57,16 @@ $logos_small = [
 
 $faqs = [
     [
-        'pergunta' => 'Dúvida 1',
-        'resposta' => 'Aqui vai a resposta detalhada para a dúvida 1. Nosso time está pronto para ajudar você a encontrar a melhor vaga.',
+        'pergunta' => 'Como faço para me candidatar a uma vaga?',
+        'resposta' => 'Crie sua conta de candidato, preencha o formulário com seus dados e currículo e acesse a aba de vagas para se candidatar às oportunidades disponíveis.',
     ],
     [
-        'pergunta' => 'Dúvida 2',
-        'resposta' => 'Aqui vai a resposta detalhada para a dúvida 2. O DevIN facilita todo o processo de candidatura.',
+        'pergunta' => 'O DevIN é gratuito para os candidatos?',
+        'resposta' => 'Sim! O cadastro na plataforma e a candidatura às vagas publicadas pelas empresas parceiras são 100% gratuitos.',
     ],
     [
-        'pergunta' => 'Dúvida 3',
-        'resposta' => 'Aqui vai a resposta detalhada para a dúvida 3. Entre em contato conosco caso precise de mais informações.',
+        'pergunta' => 'Como as empresas entram em contato comigo?',
+        'resposta' => 'As empresas analisam os perfis direto no painel e podem atualizar o status da sua candidatura ou entrar em contato através do e-mail e telefone cadastrados.',
     ],
 ];
 
@@ -72,4 +75,3 @@ $footer_links = [
     'Etapas'          => ['#conta', '#curriculo', '#candidatura'],
     'Contato'         => [$site['email'], $site['telefone']],
 ];
-?>

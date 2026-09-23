@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 require_once __DIR__ . '/config/security.php';
 startSecureSession();
 require_once __DIR__ . '/config/database.php';
@@ -7,29 +10,40 @@ $token = trim(requestString($_GET, 'token'));
 $tokenValido = false;
 
 if ($token !== '') {
+    $conn = getDatabaseConnection();
+
     try {
-        $conn = getDatabaseConnection();
+        // Hash do token recebido para bater com o que foi gravado no banco (SHA-256)
+        $tokenHash = hash('sha256', $token);
+        $tabelas = ['pessoa', 'empresa', 'administrador'];
 
-        $stmtPessoa = $conn->prepare('SELECT id_pessoa FROM pessoa WHERE token_recuperacao = ? AND token_expiracao > NOW() LIMIT 1');
-        $stmtPessoa->bind_param('s', $token);
-        $stmtPessoa->execute();
-        $resultadoPessoa = $stmtPessoa->get_result();
-        $tokenValido = $resultadoPessoa && $resultadoPessoa->num_rows > 0;
-        $stmtPessoa->close();
+        foreach ($tabelas as $tabela) {
+            $stmt = $conn->prepare("
+                SELECT 1
+                FROM {$tabela}
+                WHERE token_recuperacao = ?
+                  AND token_expiracao > NOW()
+                LIMIT 1
+            ");
 
-        if (!$tokenValido) {
-            $stmtEmpresa = $conn->prepare('SELECT id_empresa FROM empresa WHERE token_recuperacao = ? AND token_expiracao > NOW() LIMIT 1');
-            $stmtEmpresa->bind_param('s', $token);
-            $stmtEmpresa->execute();
-            $resultadoEmpresa = $stmtEmpresa->get_result();
-            $tokenValido = $resultadoEmpresa && $resultadoEmpresa->num_rows > 0;
-            $stmtEmpresa->close();
+            if ($stmt) {
+                $stmt->bind_param('s', $tokenHash);
+                $stmt->execute();
+                $resultado = $stmt->get_result();
+
+                if ($resultado && $resultado->num_rows > 0) {
+                    $tokenValido = true;
+                    $stmt->close();
+                    break;
+                }
+                $stmt->close();
+            }
         }
-
-        $conn->close();
     } catch (Throwable $e) {
         error_log('Erro ao validar token de recuperação: ' . $e->getMessage());
         $tokenValido = false;
+    } finally {
+        $conn->close();
     }
 }
 

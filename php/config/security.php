@@ -15,11 +15,13 @@ function startSecureSession(): void
     if (!is_dir($sessionPath)) {
         @mkdir($sessionPath, 0700, true);
     }
+
     if (is_dir($sessionPath) && is_writable($sessionPath)) {
         session_save_path($sessionPath);
     }
 
-    $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
 
     session_set_cookie_params([
         'lifetime' => 0,
@@ -35,7 +37,7 @@ function startSecureSession(): void
 function requestString(array $source, string $key): string
 {
     $value = $source[$key] ?? '';
-    return is_string($value) ? $value : '';
+    return is_string($value) ? trim($value) : '';
 }
 
 function csrfToken(): string
@@ -61,10 +63,20 @@ function verifyCsrfToken(?string $token): bool
 
 function requireValidCsrf(): void
 {
-    $token = $_POST['csrf_token'] ?? null;
+    // Tenta obter o token do POST ou dos cabeçalhos HTTP (para solicitações AJAX)
+    $token = $_POST['csrf_token'] 
+        ?? $_SERVER['HTTP_X_CSRF_TOKEN'] 
+        ?? $_SERVER['HTTP_X_XSRF_TOKEN'] 
+        ?? null;
+
     if (!is_string($token) || !verifyCsrfToken($token)) {
         http_response_code(403);
-        exit('Solicitação inválida. Atualize a página e tente novamente.');
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'sucesso' => false,
+            'mensagem' => 'Solicitação inválida ou token CSRF expirado. Atualize a página e tente novamente.'
+        ]);
+        exit;
     }
 }
 

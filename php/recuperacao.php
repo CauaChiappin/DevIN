@@ -1,10 +1,15 @@
 <?php
+
+declare(strict_types=1);
+
 require_once __DIR__ . '/config/security.php';
 startSecureSession();
 
 $mensagemSucesso = $_SESSION['sucesso_recuperacao'] ?? '';
-$mensagemErro = $_SESSION['erro_recuperacao'] ?? '';
-unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao']);
+$mensagemErro    = $_SESSION['erro_recuperacao'] ?? '';
+$oldEmail        = $_SESSION['old_email'] ?? '';
+
+unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao'], $_SESSION['old_email']);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -53,7 +58,7 @@ unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao']);
                                 <path d="m3 7 9 7 9-7"></path>
                             </svg>
                         </span>
-                        <input type="email" id="email" name="email" placeholder="Informe seu email..." autocomplete="email" required>
+                        <input type="email" id="email" name="email" value="<?= htmlspecialchars($oldEmail, ENT_QUOTES, 'UTF-8') ?>" placeholder="Informe seu email..." autocomplete="email" required autofocus>
                     </div>
                 </div>
 
