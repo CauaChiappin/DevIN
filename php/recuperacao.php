@@ -5,73 +5,49 @@ declare(strict_types=1);
 require_once __DIR__ . '/config/security.php';
 startSecureSession();
 
-$mensagemSucesso = $_SESSION['sucesso_recuperacao'] ?? '';
-$mensagemErro    = $_SESSION['erro_recuperacao'] ?? '';
-$oldEmail        = $_SESSION['old_email'] ?? '';
-
-unset($_SESSION['sucesso_recuperacao'], $_SESSION['erro_recuperacao'], $_SESSION['old_email']);
+$erro = $_SESSION['erro_recuperacao'] ?? '';
+unset($_SESSION['erro_recuperacao']);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperação de senha | DevIN</title>
+    <title>DevIN | Recuperação de Senha</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/recuperacao.css">
-    <link rel="stylesheet" href="../css/site-navigation.css">
 </head>
 <body>
-    <header class="recovery-header">
-        <a class="recovery-brand" href="../html/index.html">Dev<span>IN</span></a>
-        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
-            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-        </button>
-        <div class="site-menu" id="site-menu" data-site-menu>
-            <a href="login.php">Voltar ao login</a>
-        </div>
-    </header>
-    <main class="recovery-page">
-        <section class="card card-recovery" aria-labelledby="recovery-title">
-            <h1 id="recovery-title">Recuperação de senha</h1>
+    <main class="recovery-wrapper">
+        <section class="card-box" aria-labelledby="rec-title">
+            <a class="brand-link" href="../index.php">Dev<span>IN</span></a>
+            <h1 id="rec-title">Recuperação de senha</h1>
 
-            <div class="recovery-logo" aria-label="DevIN">Dev<span>IN</span></div>
-
-            <?php if ($mensagemSucesso): ?>
-                <div class="alert alert-success" role="status"><?= htmlspecialchars($mensagemSucesso, ENT_QUOTES, 'UTF-8') ?></div>
+            <?php if ($erro): ?>
+                <div class="alert alert-error"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></div>
             <?php endif; ?>
 
-            <?php if ($mensagemErro): ?>
-                <div class="alert alert-error" role="alert"><?= htmlspecialchars($mensagemErro, ENT_QUOTES, 'UTF-8') ?></div>
-            <?php endif; ?>
-
-            <form action="processar.php" method="POST" id="formRecuperacao">
+            <form action="processar.php" method="POST">
                 <input type="hidden" name="acao" value="solicitar_recuperacao">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
-                <div class="form-group">
+                <div class="input-block">
                     <label for="email">Email:</label>
-                    <div class="input-with-icon">
-                        <span class="email-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="5" width="18" height="14" rx="1.5"></rect>
-                                <path d="m3 7 9 7 9-7"></path>
-                            </svg>
-                        </span>
-                        <input type="email" id="email" name="email" value="<?= htmlspecialchars($oldEmail, ENT_QUOTES, 'UTF-8') ?>" placeholder="Informe seu email..." autocomplete="email" required autofocus>
+                    <div class="input-icon-field">
+                        <span class="icon-mail" aria-hidden="true">✉</span>
+                        <input type="email" id="email" name="email" required placeholder="Informe seu email..." autocomplete="email">
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">Enviar</button>
+                <div class="btn-group">
+                    <a href="login.php" class="btn btn-secondary">Voltar</a>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
             </form>
         </section>
     </main>
-
     <footer class="recovery-footer">
-        Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
+        Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | DevIN 2026. Todos os direitos reservados.
     </footer>
-
-    <script src="../js/recuperacao.js"></script>
-    <script src="../js/site-navigation.js"></script>
 </body>
 </html>

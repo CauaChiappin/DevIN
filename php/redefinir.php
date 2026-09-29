@@ -4,50 +4,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config/security.php';
 startSecureSession();
-require_once __DIR__ . '/config/database.php';
 
-$token = trim(requestString($_GET, 'token'));
-$tokenValido = false;
-
-if ($token !== '') {
-    $conn = getDatabaseConnection();
-
-    try {
-        // Hash do token recebido para bater com o que foi gravado no banco (SHA-256)
-        $tokenHash = hash('sha256', $token);
-        $tabelas = ['pessoa', 'empresa', 'administrador'];
-
-        foreach ($tabelas as $tabela) {
-            $stmt = $conn->prepare("
-                SELECT 1
-                FROM {$tabela}
-                WHERE token_recuperacao = ?
-                  AND token_expiracao > NOW()
-                LIMIT 1
-            ");
-
-            if ($stmt) {
-                $stmt->bind_param('s', $tokenHash);
-                $stmt->execute();
-                $resultado = $stmt->get_result();
-
-                if ($resultado && $resultado->num_rows > 0) {
-                    $tokenValido = true;
-                    $stmt->close();
-                    break;
-                }
-                $stmt->close();
-            }
-        }
-    } catch (Throwable $e) {
-        error_log('Erro ao validar token de recuperação: ' . $e->getMessage());
-        $tokenValido = false;
-    } finally {
-        $conn->close();
-    }
+if (empty($_SESSION['recuperacao_verificada'])) {
+    header('Location: recuperacao.php');
+    exit;
 }
 
-$mensagemErro = $_SESSION['erro_redefinir'] ?? '';
+$erro = $_SESSION['erro_redefinir'] ?? '';
 unset($_SESSION['erro_redefinir']);
 ?>
 <!DOCTYPE html>
@@ -55,76 +18,117 @@ unset($_SESSION['erro_redefinir']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperação de senha | DevIN</title>
+    <title>DevIN | Redefinir Senha</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/recuperacao.css">
-    <link rel="stylesheet" href="../css/site-navigation.css">
 </head>
 <body>
-    <header class="recovery-header">
-        <a class="recovery-brand" href="../html/index.html">Dev<span>IN</span></a>
-        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
-            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-        </button>
-        <div class="site-menu" id="site-menu" data-site-menu>
-            <a href="recuperacao.php">Nova recuperação</a>
-        </div>
-    </header>
-    <main class="recovery-page">
-        <section class="card card-reset" aria-labelledby="reset-title">
-            <h1 id="reset-title">Recuperação de senha</h1>
+    <main class="recovery-wrapper">
+        <section class="card-box" aria-labelledby="reset-title">
+            <a class="brand-link" href="../index.php">Dev<span>IN</span></a>
+            <h1 id="reset-title" class="sr-only">Recuperação de senha</h1>
 
-            <?php if (!$tokenValido): ?>
-                <div class="alert alert-error" role="alert">Este link de redefinição é inválido ou já expirou.</div>
-                <a href="recuperacao.php" class="btn-submit btn-link">Solicitar novo link</a>
-            <?php else: ?>
-                <?php if ($mensagemErro): ?>
-                    <div class="alert alert-error" role="alert"><?= htmlspecialchars($mensagemErro, ENT_QUOTES, 'UTF-8') ?></div>
-                <?php endif; ?>
-
-                <form action="processar.php" method="POST" id="formRedefinir">
-                    <input type="hidden" name="acao" value="redefinir_senha">
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
-                    <input type="hidden" name="token" value="<?= htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>">
-
-                    <div class="form-group">
-                        <label for="nova_senha">Senha:</label>
-                        <div class="password-field">
-                            <input type="password" id="nova_senha" name="nova_senha" placeholder="••••••••" autocomplete="new-password" required minlength="8">
-                            <button type="button" class="password-toggle" data-password-toggle="nova_senha" aria-label="Mostrar senha">
-                                <img src="../img/olho_fechado.png" alt="Mostrar senha">
-                            </button>
-                        </div>
-
-                        <div class="password-requirements" aria-live="polite">
-                            <div class="req-item req-invalid" id="req-length"><span class="req-icon">ⓘ</span><span>No mínimo 8 caracteres</span></div>
-                            <div class="req-item req-invalid" id="req-upper"><span class="req-icon">ⓘ</span><span>Pelo menos 1 letra maiúscula (A-Z)</span></div>
-                            <div class="req-item req-invalid" id="req-special"><span class="req-icon">ⓘ</span><span>Pelo menos 1 caractere especial (como ! @ # $)</span></div>
-                        </div>
-                    </div>
-
-                    <div class="form-group confirm-group">
-                        <label for="confirmar_senha">Confirmar Senha:</label>
-                        <div class="password-field">
-                            <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="••••••••" autocomplete="new-password" required minlength="8">
-                            <button type="button" class="password-toggle" data-password-toggle="confirmar_senha" aria-label="Mostrar senha">
-                                <img src="../img/olho_fechado.png" alt="Mostrar senha">
-                            </button>
-                        </div>
-                        <p class="match-error" id="match-error">As senhas não coincidem.</p>
-                    </div>
-
-                    <button type="submit" class="btn-submit">Cadastrar</button>
-                </form>
+            <?php if ($erro): ?>
+                <div class="alert alert-error"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></div>
             <?php endif; ?>
+
+            <form action="processar.php" method="POST" id="formReset">
+                <input type="hidden" name="acao" value="redefinir_senha">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
+
+                <div class="input-block">
+                    <label for="nova_senha">Senha:</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="nova_senha" name="nova_senha" required autocomplete="new-password">
+                        <button type="button" class="eye-toggle" data-toggle="nova_senha" aria-label="Ver senha">
+                            <span class="eye-icon">👁</span>
+                        </button>
+                    </div>
+
+                    <div class="checklist">
+                        <div class="check-item check-invalid" id="req-len">
+                            <span class="icon">ⓘ</span> No mínimo 8 caracteres
+                        </div>
+                        <div class="check-item check-invalid" id="req-upper">
+                            <span class="icon">ⓘ</span> Pelo menos 1 letra maiúscula (A-Z)
+                        </div>
+                        <div class="check-item check-invalid" id="req-special">
+                            <span class="icon">ⓘ</span> Pelo menos 1 caracter especial (como ! @ # $)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-block">
+                    <label for="confirmar_senha">Confirmar Senha:</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirmar_senha" name="confirmar_senha" required autocomplete="new-password">
+                        <button type="button" class="eye-toggle" data-toggle="confirmar_senha" aria-label="Ver senha">
+                            <span class="eye-icon">👁</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="btn-single-group">
+                    <button type="submit" class="btn btn-primary btn-full">Cadastrar</button>
+                </div>
+            </form>
         </section>
     </main>
-
     <footer class="recovery-footer">
-        Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
+        Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | DevIN 2026. Todos os direitos reservados.
     </footer>
 
-    <script src="../js/recuperacao.js"></script>
-    <script src="../js/site-navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const novaSenha = document.getElementById('nova_senha');
+            const reqLen = document.getElementById('req-len');
+            const reqUpper = document.getElementById('req-upper');
+            const reqSpecial = document.getElementById('req-special');
+
+            novaSenha.addEventListener('input', () => {
+                const val = novaSenha.value;
+
+                // Mínimo 8 caracteres
+                if (val.length >= 8) {
+                    reqLen.className = 'check-item check-valid';
+                    reqLen.querySelector('.icon').textContent = '✓';
+                } else {
+                    reqLen.className = 'check-item check-invalid';
+                    reqLen.querySelector('.icon').textContent = 'ⓘ';
+                }
+
+                // Maiúscula
+                if (/[A-Z]/.test(val)) {
+                    reqUpper.className = 'check-item check-valid';
+                    reqUpper.querySelector('.icon').textContent = '✓';
+                } else {
+                    reqUpper.className = 'check-item check-invalid';
+                    reqUpper.querySelector('.icon').textContent = 'ⓘ';
+                }
+
+                // Especial
+                if (/[^a-zA-Z0-9]/.test(val)) {
+                    reqSpecial.className = 'check-item check-valid';
+                    reqSpecial.querySelector('.icon').textContent = '✓';
+                } else {
+                    reqSpecial.className = 'check-item check-invalid';
+                    reqSpecial.querySelector('.icon').textContent = 'ⓘ';
+                }
+            });
+
+            // Mostrar / Ocultar Senha
+            document.querySelectorAll('[data-toggle]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-toggle');
+                    const input = document.getElementById(targetId);
+                    if (input) {
+                        const isPass = input.type === 'password';
+                        input.type = isPass ? 'text' : 'password';
+                        btn.classList.toggle('active', isPass);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
