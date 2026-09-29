@@ -26,7 +26,7 @@ unset($_SESSION['erro_redefinir']);
     <main class="recovery-wrapper">
         <section class="card-box" aria-labelledby="reset-title">
             <a class="brand-link" href="../index.php">Dev<span>IN</span></a>
-            <h1 id="reset-title" class="sr-only">Recuperação de senha</h1>
+            <h1 id="reset-title" class="title-page">Recuperação de senha</h1>
 
             <?php if ($erro): ?>
                 <div class="alert alert-error"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></div>
@@ -69,66 +69,22 @@ unset($_SESSION['erro_redefinir']);
                 </div>
 
                 <div class="btn-single-group">
-                    <button type="submit" class="btn btn-primary btn-full">Cadastrar</button>
+                    <button type="submit" class="btn btn-primary btn-cadastrar" id="btnCadastrar">Cadastrar</button>
                 </div>
             </form>
         </section>
     </main>
+
     <footer class="recovery-footer">
         Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | DevIN 2026. Todos os direitos reservados.
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const novaSenha = document.getElementById('nova_senha');
-            const reqLen = document.getElementById('req-len');
-            const reqUpper = document.getElementById('req-upper');
-            const reqSpecial = document.getElementById('req-special');
+ <footer class="recovery-footer">
+        Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | DevIN 2026. Todos os direitos reservados.
+    </footer>
 
-            novaSenha.addEventListener('input', () => {
-                const val = novaSenha.value;
-
-                // Mínimo 8 caracteres
-                if (val.length >= 8) {
-                    reqLen.className = 'check-item check-valid';
-                    reqLen.querySelector('.icon').textContent = '✓';
-                } else {
-                    reqLen.className = 'check-item check-invalid';
-                    reqLen.querySelector('.icon').textContent = 'ⓘ';
-                }
-
-                // Maiúscula
-                if (/[A-Z]/.test(val)) {
-                    reqUpper.className = 'check-item check-valid';
-                    reqUpper.querySelector('.icon').textContent = '✓';
-                } else {
-                    reqUpper.className = 'check-item check-invalid';
-                    reqUpper.querySelector('.icon').textContent = 'ⓘ';
-                }
-
-                // Especial
-                if (/[^a-zA-Z0-9]/.test(val)) {
-                    reqSpecial.className = 'check-item check-valid';
-                    reqSpecial.querySelector('.icon').textContent = '✓';
-                } else {
-                    reqSpecial.className = 'check-item check-invalid';
-                    reqSpecial.querySelector('.icon').textContent = 'ⓘ';
-                }
-            });
-
-            // Mostrar / Ocultar Senha
-            document.querySelectorAll('[data-toggle]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const targetId = btn.getAttribute('data-toggle');
-                    const input = document.getElementById(targetId);
-                    if (input) {
-                        const isPass = input.type === 'password';
-                        input.type = isPass ? 'text' : 'password';
-                        btn.classList.toggle('active', isPass);
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="../js/redefinir.js"></script>
+</body>
+</html>
 </body>
 </html>

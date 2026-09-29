@@ -27,27 +27,30 @@ unset($_SESSION['erro_recuperacao']);
                 <div class="alert alert-error"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></div>
             <?php endif; ?>
 
-            <form action="processar.php" method="POST">
+            <form action="processar.php" method="POST" id="formRecuperacao">
                 <input type="hidden" name="acao" value="solicitar_recuperacao">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
                 <div class="input-block">
                     <label for="email">Email:</label>
                     <div class="input-icon-field">
-                        <span class="icon-mail" aria-hidden="true">✉</span>
-                        <input type="email" id="email" name="email" required placeholder="Informe seu email..." autocomplete="email">
+              
+                        <input type="email" id="email" name="email" required placeholder="✉ Informe seu email..." autocomplete="email">
                     </div>
                 </div>
 
                 <div class="btn-group">
                     <a href="login.php" class="btn btn-secondary">Voltar</a>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <button type="submit" class="btn btn-primary" id="btnEnviar">Enviar</button>
                 </div>
             </form>
         </section>
     </main>
+
     <footer class="recovery-footer">
         Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | DevIN 2026. Todos os direitos reservados.
     </footer>
+
+    <script src="../js/recuperacao.js"></script>
 </body>
 </html>

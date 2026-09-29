@@ -1,4 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Prevenção de múltiplos cliques no envio do e-mail ---
+    const formRecuperacao = document.getElementById('formRecuperacao');
+    const btnEnviar = document.getElementById('btnEnviar');
+
+    if (formRecuperacao && btnEnviar) {
+        formRecuperacao.addEventListener('submit', (e) => {
+            if (btnEnviar.disabled) {
+                e.preventDefault();
+                return;
+            }
+            btnEnviar.disabled = true;
+            btnEnviar.textContent = 'Enviando...';
+        });
+    }
+
+    // --- Tratamentos de formulários e senhas (se presentes na página) ---
     const inputCodigo = document.getElementById('codigo');
     const inputNovaSenha = document.getElementById('nova_senha');
     const inputConfSenha = document.getElementById('confirmar_senha');
@@ -20,31 +36,34 @@ document.addEventListener('DOMContentLoaded', () => {
         inputNovaSenha.addEventListener('input', () => {
             const val = inputNovaSenha.value;
 
-            // Mínimo 8 caracteres
-            if (val.length >= 8) {
-                reqLength.classList.remove('req-invalid');
-                reqLength.classList.add('req-valid');
-            } else {
-                reqLength.classList.remove('req-valid');
-                reqLength.classList.add('req-invalid');
+            if (reqLength) {
+                if (val.length >= 8) {
+                    reqLength.classList.remove('req-invalid');
+                    reqLength.classList.add('req-valid');
+                } else {
+                    reqLength.classList.remove('req-valid');
+                    reqLength.classList.add('req-invalid');
+                }
             }
 
-            // Letra Maiúscula
-            if (/[A-Z]/.test(val)) {
-                reqUpper.classList.remove('req-invalid');
-                reqUpper.classList.add('req-valid');
-            } else {
-                reqUpper.classList.remove('req-valid');
-                reqUpper.classList.add('req-invalid');
+            if (reqUpper) {
+                if (/[A-Z]/.test(val)) {
+                    reqUpper.classList.remove('req-invalid');
+                    reqUpper.classList.add('req-valid');
+                } else {
+                    reqUpper.classList.remove('req-valid');
+                    reqUpper.classList.add('req-invalid');
+                }
             }
 
-            // Caráter Especial
-            if (/[^a-zA-Z0-9]/.test(val)) {
-                reqSpecial.classList.remove('req-invalid');
-                reqSpecial.classList.add('req-valid');
-            } else {
-                reqSpecial.classList.remove('req-valid');
-                reqSpecial.classList.add('req-invalid');
+            if (reqSpecial) {
+                if (/[^a-zA-Z0-9]/.test(val)) {
+                    reqSpecial.classList.remove('req-invalid');
+                    reqSpecial.classList.add('req-valid');
+                } else {
+                    reqSpecial.classList.remove('req-valid');
+                    reqSpecial.classList.add('req-invalid');
+                }
             }
 
             verificarCoincidencia();

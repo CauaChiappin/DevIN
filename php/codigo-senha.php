@@ -44,11 +44,17 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
             <form action="processar.php" method="POST" id="formCodigo">
                 <input type="hidden" name="acao" value="validar_codigo">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="codigo" id="codigo-final">
 
-                <div class="otp-container">
-                    <input type="text" id="codigo" name="codigo" maxlength="7" placeholder="000-000" required autocomplete="off" autofocus class="input-code-mask">
-                </div>
-
+           <div class="code-container">
+    <input type="text" id="code-1" name="digit_1" class="code-input" maxlength="1" pattern="[a-zA-Z0-9]" required autocomplete="off">
+    <input type="text" id="code-2" name="digit_2" class="code-input" maxlength="1" pattern="[a-zA-Z0-9]" required autocomplete="off">
+    <input type="text" id="code-3" name="digit_3" class="code-input" maxlength="1" pattern="[a-zA-Z0-9]" required autocomplete="off">
+    <span class="code-separator">-</span>
+    <input type="text" id="code-4" name="digit_4" class="code-input" maxlength="1" pattern="[a-zA-Z0-9]" required autocomplete="off">
+    <input type="text" id="code-5" name="digit_5" class="code-input" maxlength="1" pattern="[a-zA-Z0-9]" required autocomplete="off">
+    <input type="text" id="code-6" name="digit_6" class="code-input" maxlength="1" pattern="[a-zA-Z0-9]" required autocomplete="off">
+</div>
                 <div class="resend-block">
                     <span>Não recebeu o código? </span>
                     <button type="button" id="btnReenviar" class="link-resend" <?= $cooldownRestante > 0 ? 'disabled' : '' ?>>
@@ -58,7 +64,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
 
                 <div class="btn-group">
                     <a href="recuperacao.php" class="btn btn-secondary">Voltar</a>
-                    <button type="submit" class="btn btn-primary">entrar</button>
+                    <button type="submit" class="btn btn-primary" id="btnEntrar">entrar</button>
                 </div>
             </form>
 
@@ -68,27 +74,55 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
             </form>
         </section>
     </main>
+
     <footer class="recovery-footer">
         Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | DevIN 2026. Todos os direitos reservados.
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const inputCodigo = document.getElementById('codigo');
+            const inputs = document.querySelectorAll('.code-input');
+            const hiddenInput = document.getElementById('codigo-final');
             const btnReenviar = document.getElementById('btnReenviar');
             const formReenviar = document.getElementById('formReenviar');
+            const formCodigo = document.getElementById('formCodigo');
+            const btnEntrar = document.getElementById('btnEntrar');
             let cooldown = <?= $cooldownRestante ?>;
 
-            // Formata a máscara 000-000 e força letras maiúsculas
-            inputCodigo.addEventListener('input', (e) => {
-                let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-                if (val.length > 3) {
-                    val = val.substring(0, 3) + '-' + val.substring(3, 6);
-                }
-                e.target.value = val;
+            function updateHiddenInput() {
+                let fullCode = '';
+                inputs.forEach(input => fullCode += input.value.toUpperCase());
+                hiddenInput.value = fullCode;
+            }
+
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (e.target.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                    updateHiddenInput();
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (pasteData.length === 6) {
+                        pasteData.split('').forEach((char, i) => {
+                            if (inputs[i]) inputs[i].value = char;
+                        });
+                        inputs[inputs.length - 1].focus();
+                        updateHiddenInput();
+                    }
+                });
             });
 
-            // Timer de 60 segundos do reenviar
             if (cooldown > 0 && btnReenviar) {
                 const interval = setInterval(() => {
                     cooldown--;
@@ -105,8 +139,22 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
             if (btnReenviar) {
                 btnReenviar.addEventListener('click', () => {
                     if (!btnReenviar.hasAttribute('disabled')) {
+                        btnReenviar.setAttribute('disabled', 'true');
                         formReenviar.submit();
                     }
+                });
+            }
+
+            if (formCodigo && btnEntrar) {
+                formCodigo.addEventListener('submit', (e) => {
+                    updateHiddenInput();
+                    if (hiddenInput.value.length !== 6) {
+                        e.preventDefault();
+                        alert('Preencha os 6 caracteres do código.');
+                        return;
+                    }
+                    btnEntrar.disabled = true;
+                    btnEntrar.textContent = 'validando...';
                 });
             }
         });

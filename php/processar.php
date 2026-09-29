@@ -18,10 +18,7 @@ requireValidCsrf();
 
 $acao = requestString($_POST, 'acao');
 
-/**
- * Gera código de 6 caracteres alfanuméricos maiúsculos
- */
-function gerarCodigo6(): string {
+function gerarCodigo6Alfanumerico(): string {
     $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $code = '';
     for ($i = 0; $i < 6; $i++) {
@@ -64,15 +61,13 @@ if ($acao === 'solicitar_recuperacao') {
             }
         }
 
-        // Se o e-mail não estiver cadastrado em NENHUMA tabela, devolve erro SEM ativar o mailer
         if (!$usuario) {
-            $_SESSION['erro_recuperacao'] = 'E-mail não encontrado.';
+            $_SESSION['erro_recuperacao'] = 'E-mail não encontrado no sistema.';
             header('Location: recuperacao.php');
             exit;
         }
 
-        // Gera novo código único
-        $codigo = gerarCodigo6();
+        $codigo = gerarCodigo6Alfanumerico();
         $codigoHash = hash('sha256', $codigo);
 
         $mapa = [
@@ -90,10 +85,10 @@ if ($acao === 'solicitar_recuperacao') {
 
         MailerHelper::enviarCodigoRecuperacao6($email, $usuario['nome'], $codigo);
 
-        $_SESSION['recuperacao_email'] = $email;
-        $_SESSION['recuperacao_tipo']  = $usuario['tipo'];
-        $_SESSION['recuperacao_id']    = $usuario['id'];
-        $_SESSION['recuperacao_nome']  = $usuario['nome'];
+        $_SESSION['recuperacao_email']   = $email;
+        $_SESSION['recuperacao_tipo']    = $usuario['tipo'];
+        $_SESSION['recuperacao_id']      = $usuario['id'];
+        $_SESSION['recuperacao_nome']    = $usuario['nome'];
         $_SESSION['ultimo_envio_codigo'] = time();
 
         header('Location: codigo-senha.php');
@@ -136,7 +131,7 @@ if ($acao === 'reenviar_codigo') {
 
     $conn = getDatabaseConnection();
     try {
-        $codigo = gerarCodigo6();
+        $codigo = gerarCodigo6Alfanumerico();
         $codigoHash = hash('sha256', $codigo);
         $tabela = ($tipo === 'empresa') ? 'empresa' : 'pessoa';
         $colId  = ($tipo === 'empresa') ? 'id_empresa' : 'id_pessoa';
@@ -161,7 +156,7 @@ if ($acao === 'reenviar_codigo') {
 
 /*
 |--------------------------------------------------------------------------
-| PÁGINA 6: VALIDAR CÓDIGO (ENTRAR)
+| PÁGINA 6: VALIDAR CÓDIGO (USO ÚNICO)
 |--------------------------------------------------------------------------
 */
 if ($acao === 'validar_codigo') {
@@ -169,7 +164,7 @@ if ($acao === 'validar_codigo') {
     $email = $_SESSION['recuperacao_email'] ?? '';
 
     if (empty($codigoDigitado) || strlen($codigoDigitado) !== 6 || empty($email)) {
-        $_SESSION['erro_codigo'] = 'Informe o código completo de 6 caracteres.';
+        $_SESSION['erro_codigo'] = 'Informe os 6 caracteres do código.';
         header('Location: codigo-senha.php');
         exit;
     }
@@ -198,7 +193,6 @@ if ($acao === 'validar_codigo') {
 
                 if ($usr) {
                     $validado = true;
-                    // Invalida o código no banco imediatamente (uso único)
                     $stmtLimpa = $conn->prepare("UPDATE {$tab['table']} SET token_recuperacao = NULL, token_expiracao = NULL WHERE {$tab['idCol']} = ?");
                     if ($stmtLimpa) {
                         $stmtLimpa->bind_param('i', $usr['id']);
@@ -220,7 +214,7 @@ if ($acao === 'validar_codigo') {
             exit;
         }
 
-        $_SESSION['erro_codigo'] = 'Código incorreto ou expirado. Tente novamente.';
+        $_SESSION['erro_codigo'] = 'Código incorreto ou expirado.';
         header('Location: codigo-senha.php');
         exit;
 
@@ -231,7 +225,7 @@ if ($acao === 'validar_codigo') {
 
 /*
 |--------------------------------------------------------------------------
-| PÁGINA 7: CADASTRAR NOVA SENHA -> REDIRECIONA PARA DASHBOARD
+| PÁGINA 7: REDEFINIR SENHA E REDIRECIONAR PARA O DASHBOARD
 |--------------------------------------------------------------------------
 */
 if ($acao === 'redefinir_senha') {
@@ -252,7 +246,7 @@ if ($acao === 'redefinir_senha') {
     }
 
     if (strlen($novaSenha) < 8 || !preg_match('/[A-Z]/', $novaSenha) || !preg_match('/[^a-zA-Z0-9]/', $novaSenha)) {
-        $_SESSION['erro_redefinir'] = 'A senha não atende a todos os requisitos de segurança.';
+        $_SESSION['erro_redefinir'] = 'A senha não preenche todos os requisitos de segurança.';
         header('Location: redefinir.php');
         exit;
     }
@@ -270,7 +264,6 @@ if ($acao === 'redefinir_senha') {
             $stmt->close();
         }
 
-        // Login automático após cadastrar nova senha
         session_regenerate_id(true);
         $_SESSION['logado']        = true;
         $_SESSION['usuario_id']    = $id;
@@ -280,9 +273,8 @@ if ($acao === 'redefinir_senha') {
 
         unset($_SESSION['recuperacao_verificada'], $_SESSION['recuperacao_id'], $_SESSION['recuperacao_tipo'], $_SESSION['recuperacao_email'], $_SESSION['recuperacao_nome']);
 
-        // Redireciona para o dashboard correspondente
-        $dest = ($tipo === 'empresa') ? 'empresa.php' : 'pessoa.php';
-        header("Location: {$dest}");
+        $destino = ($tipo === 'empresa') ? 'empresa.php' : 'pessoa.php';
+        header("Location: {$destino}");
         exit;
 
     } finally {
