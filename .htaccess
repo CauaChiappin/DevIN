@@ -1,17 +1,12 @@
 RewriteEngine On
 RewriteBase /DevIN/
 
-# Use the PHP directory as the canonical local entry point.
-RewriteRule ^$ php/index.php [R=302,L]
-RewriteRule ^login/?$ php/login.php [R=302,L,NC]
-RewriteRule ^recuperacao/?$ php/recuperacao.php [R=302,L,NC]
-RewriteRule ^redefinir/?$ php/redefinir.php [R=302,L,NC]
-RewriteRule ^processar/?$ php/processar.php [R=302,L,NC]
-RewriteRule ^cadastro(?:-pessoa|_pessoa)?/?$ php/cadastro_pessoa.php [R=302,L,NC]
-RewriteRule ^cadastro(?:-empresa|_empresa)/?$ php/cadastro_empresa.php [R=302,L,NC]
-RewriteRule ^politica(?:-privacidade|_privacidade)/?$ php/politica_privacidade.php [R=302,L,NC]
+# Keep local credentials, repository metadata, and runtime files out of HTTP.
+RewriteRule (^|/)\. - [F,L]
+RewriteRule ^(?:storage|vendor)(?:/|$) - [F,L,NC]
 
-# Redirect remaining single-segment PHP aliases without rewriting real files.
+# Route legacy and root paths through the single PHP route map.
+RewriteRule ^$ php/rotas/rotas.php [END,QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^([a-zA-Z0-9_-]+)/?$ php/$1.php [R=302,L,NC]
+RewriteRule ^([a-zA-Z0-9_.-]+)/?$ php/rotas/rotas.php [END,QSA]

@@ -159,6 +159,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($action === 'create_test_candidates') {
+            if (APP_ENV !== 'development') {
+                throw new RuntimeException('A criação de candidatos de teste está disponível apenas no ambiente local.');
+            }
+
             $empresaId = (int) $_SESSION['usuario_id'];
             $conn = getDatabaseConnection();
 
@@ -190,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cpfTeste      = sprintf('%011d', 90000000000 + ($empresaId * 10) + $indice);
                     $cepTeste      = '01001000';
                     $telefoneTeste = '1199999000' . $indice;
-                    $senhaTeste    = password_hash('teste123', PASSWORD_DEFAULT);
+                    $senhaTeste    = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
 
                     $buscarPessoa->bind_param('s', $emailTeste);
                     $buscarPessoa->execute();
@@ -261,7 +265,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log('Erro no dashboard empresa: ' . $exception->getMessage());
 
         if (in_array($action, ['update_application_status', 'create_test_candidates'], true)) {
-            $_SESSION['candidate_error'] = $exception->getMessage();
+            $_SESSION['candidate_error'] = $exception instanceof mysqli_sql_exception
+                ? 'Não foi possível concluir a ação. Tente novamente.'
+                : $exception->getMessage();
             header('Location: empresa.php?pagina=candidatos');
             exit;
         }
@@ -445,12 +451,14 @@ $talentos = [
                 <?php if (!$candidatos): ?>
                     <p class="empty-state">Ainda não há candidaturas para as suas vagas.</p>
                 <?php endif; ?>
+                <?php if (APP_ENV === 'development'): ?>
                 <form method="post" class="test-candidates-form">
                     <input type="hidden" name="action" value="create_test_candidates">
                     <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
                     <button class="btn primary" type="submit">Criar candidatos de teste</button>
                     <small>Cria ou reinicia dois candidatos pendentes na primeira vaga da empresa.</small>
                 </form>
+                <?php endif; ?>
                 <?php foreach ($candidatos as $candidato): ?>
                     <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-detail-action-label="Aprovar candidato">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
