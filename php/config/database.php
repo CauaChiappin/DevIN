@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
+// Garante que o .env seja carregado antes de tentar ler as variáveis
+require_once __DIR__ . '/auth.php';
+
 function getDatabaseConnection(): mysqli
 {
-    $host = getenv('DEVIN_DB_HOST') ?: 'localhost';
-    $user = getenv('DEVIN_DB_USER') ?: 'root';
-    $pass = getenv('DEVIN_DB_PASS') ?: '';
+    $host   = getenv('DEVIN_DB_HOST') ?: 'localhost';
+    $user   = getenv('DEVIN_DB_USER') ?: 'root';
+    $pass   = getenv('DEVIN_DB_PASS') ?: '';
     $dbname = getenv('DEVIN_DB_NAME') ?: 'devin';
-    $port = (int) (getenv('DEVIN_DB_PORT') ?: 3306);
+    $port   = (int) (getenv('DEVIN_DB_PORT') ?: 3306);
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 

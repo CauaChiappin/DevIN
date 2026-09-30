@@ -1,9 +1,17 @@
-/* Reset Global */
+/* ==========================================
+   RESET GLOBAL E ESTILOS BASE
+   ========================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -14,7 +22,9 @@ body {
     justify-content: center;
 }
 
-/* Container de Tela Dividida Dupla */
+/* ==========================================
+   CONTAINER PRINCIPAL (LAYOUT TELA DIVIDIDA)
+   ========================================== */
 .main-container {
     display: flex;
     width: 100vw;
@@ -34,6 +44,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     overflow-y: auto;
+    max-height: 100vh;
 }
 
 /* LADO DIREITO: AZUL CORPORATIVO */
@@ -46,23 +57,60 @@ body {
     justify-content: center;
 }
 
-/* Logo DevIN */
+/* ==========================================
+   CABEÇALHO E BRANDING
+   ========================================== */
+.cadastro-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    min-height: 44px;
+    gap: 12px;
+}
+
 .brand-logo {
     font-size: 2.2rem;
     font-weight: 800;
     color: #000000;
     letter-spacing: -1px;
-        text-decoration: none;
-        color: #000000;
 }
+
 .brand-logo a { 
-        text-decoration: none;
-        color: #000000;
- }
+    text-decoration: none;
+    color: #000000;
+}
 
-.brand-logo span { color: #004aad; }
+.brand-logo span { 
+    color: #004aad; 
+}
 
-/* Alternador Pessoal / Empresa */
+.cadastro-header .site-menu { 
+    align-items: center; 
+    margin-left: auto; 
+}
+
+.cadastro-header .header-action {
+    align-items: center;
+    background: #004aad;
+    border-radius: 30px;
+    color: #ffffff;
+    display: inline-flex;
+    font-weight: 700;
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px 28px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.cadastro-header .header-action:hover,
+.cadastro-header .header-action:focus-visible { 
+    background: #00357a; 
+}
+
+/* ==========================================
+   ALTERNADOR (PESSOAL / EMPRESA)
+   ========================================== */
 .toggle-container {
     display: flex;
     align-items: center;
@@ -95,7 +143,16 @@ body {
     letter-spacing: 2px;
 }
 
-/* Grid de Duas Colunas */
+/* ==========================================
+   FORMULÁRIO E INPUTS EM FORMATO DE PÍLULA
+   ========================================== */
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #004aad;
+    margin-bottom: 10px;
+}
+
 .register-form {
     flex: 1;
     display: flex;
@@ -115,7 +172,6 @@ body {
     gap: 18px;
 }
 
-/* Elementos de Input em Formato de Pílula */
 .input-group {
     display: flex;
     flex-direction: column;
@@ -129,22 +185,38 @@ body {
     color: #000000;
 }
 
-.input-group input {
+.input-group input,
+.input-group select,
+.input-group textarea {
     width: 100%;
     padding: 12px 20px;
     border: 1.5px solid #000000;
     border-radius: 30px;
     font-size: 1rem;
     outline: none;
-    transition: all 0.2s;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
 }
 
-.input-group input:focus {
+.input-group select,
+.input-group textarea {
+    border-radius: 20px;
+}
+
+.input-group textarea {
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
     border-color: #004aad;
     box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
 }
 
-/* Container do ícone do olho */
+/* Ícone do Olho (Senha) */
 .input-icon-container {
     position: relative;
     display: flex;
@@ -168,7 +240,7 @@ body {
     transform: scale(1.05);
 }
 
-/* Mensagem de Erro "Senhas não coincidem" */
+/* Requisitos de Senha e Validações */
 .error-message-text {
     color: #ef4444;
     font-size: 0.85rem;
@@ -182,7 +254,6 @@ body {
     display: block;
 }
 
-/* Estados Dinâmicos dos Requisitos (Verde / Vermelho) */
 .password-requirements {
     display: flex;
     flex-direction: column;
@@ -200,15 +271,21 @@ body {
     transition: color 0.2s ease;
 }
 
-.requirement-item.req-invalid {
-    color: #ef4444;
+.requirement-item.req-invalid { color: #ef4444; }
+.requirement-item.req-valid   { color: #10b981; }
+
+/* Titulo da tela de Currículo */
+.title-curriculo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #004aad;
+    margin-bottom: 25px;
+    text-align: center;
 }
 
-.requirement-item.req-valid {
-    color: #10b981;
-}
-
-/* Área de Ação e Botão Enviar */
+/* ==========================================
+   AÇÃO DO FORMULÁRIO E BOTÃO ENVIAR
+   ========================================== */
 .form-footer-action {
     display: flex;
     flex-direction: column;
@@ -226,19 +303,34 @@ body {
     font-weight: 700;
     border-radius: 30px;
     cursor: pointer;
-    transition: background-color 0.2s;
-}
-.secreto {
-    text-decoration: none;
-    cursor: default;
+    transition: background-color 0.2s ease;
 }
 
-.btn-submit:hover { background-color: #00357a; }
-.login-redirect { font-size: 0.9rem; color: #000000; }
-.login-redirect a { color: #004aad; font-weight: 700; text-decoration: none; }
-.login-redirect a:hover { text-decoration: underline; }
+.btn-submit:hover { 
+    background-color: #00357a; 
+}
 
-/* Botão de Login Superior Direito */
+.btn-submit:disabled {
+    opacity: .7;
+    cursor: wait;
+}
+
+.login-redirect { 
+    font-size: 0.9rem; 
+    color: #000000; 
+}
+
+.login-redirect a { 
+    color: #004aad; 
+    font-weight: 700; 
+    text-decoration: none; 
+}
+
+.login-redirect a:hover { 
+    text-decoration: underline; 
+}
+
+/* Botão de Login Superior Direito (Mascote Side) */
 .btn-top-login {
     position: absolute;
     top: 40px;
@@ -251,30 +343,33 @@ body {
     font-weight: 700;
     font-size: 1rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    transition: transform 0.2s ease;
 }
 
-.btn-top-login:hover { transform: scale(1.03); }
+.btn-top-login:hover { 
+    transform: scale(1.03); 
+}
 
-/* Espaço do Robô */
+/* Container e Animação do Mascote (Robô) */
 .mascot-container {
-    width: 90%; /* Aumentado um pouco para o robô ter mais presença */
+    width: 90%;
     height: 80%;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    margin-left: -81px; /* Isso faz ele colar na linha e entrar um pouco atrás da curva branca */
+    margin-left: -81px;
     z-index: 1;
 }
 
-/* Nova estilização da tag IMG para se comportar perfeitamente */
 .mascot-img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
 }
 
-/* Rodapé */
+/* ==========================================
+   RODAPÉ E NOTIFICAÇÕES (TOAST)
+   ========================================== */
 .page-footer {
     text-align: center;
     font-size: 0.8rem;
@@ -283,9 +378,10 @@ body {
     margin-top: 20px;
 }
 
-.page-footer span { color: #004aad; }
+.page-footer span { 
+    color: #004aad; 
+}
 
-/* Mensagens do PHP */
 .php-toast {
     position: fixed;
     bottom: 30px;
@@ -293,66 +389,15 @@ body {
     padding: 15px 30px;
     border-radius: 30px;
     font-weight: 700;
-    color: white;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    color: #ffffff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     z-index: 1000;
 }
-.error-toast { background-color: #ef4444; }
+
+.error-toast   { background-color: #ef4444; }
 .success-toast { background-color: #10b981; }
 
-/* Responsividade */
-@media (max-width: 950px) {
-    .main-container { flex-direction: column; height: auto; overflow: visible; }
-    .right-side { display: none; }
-    .left-side { border-radius: 0; padding: 32px 20px; min-height: 100vh; }
-    .form-columns { flex-direction: column; gap: 18px; }
-    .toggle-container { gap: 8px; }
-    .toggle-btn { padding: 10px 18px; }
-    .btn-submit { width: 100%; padding-inline: 20px; }
-}
-
-@media (max-width: 480px) {
-    .brand-logo { font-size: 1.9rem; }
-    .toggle-btn { font-size: 0.9rem; padding-inline: 12px; }
-    .toggle-divider { letter-spacing: 0; }
-    .php-toast { left: 20px; right: 20px; bottom: 20px; text-align: center; }
-}
-        /* Extensão de estilos para alinhar select e textarea ao design de pílula */
-        .input-group select,
-        .input-group textarea {
-            width: 100%;
-            padding: 12px 20px;
-            border: 1.5px solid #000000;
-            border-radius: 20px;
-            font-size: 1rem;
-            outline: none;
-            background-color: #ffffff;
-            transition: all 0.2s;
-        }
-
-        .input-group select:focus,
-        .input-group textarea:focus {
-            border-color: #004aad;
-            box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
-        }
-
-        .input-group textarea {
-            resize: vertical;
-            min-height: 90px;
-            font-family: inherit;
-        }
-
-        .title-curriculo {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #004aad;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-    
-
-/* Easter egg: ponto secreto para o jogo Doom. Mantem exatamente o mesmo
-   aspecto em todos os estados do link, sem azul, sublinhado ou hover. */
+/* Easter Egg: Ponto secreto Doom */
 .secret-doom,
 .secret-doom:link,
 .secret-doom:visited,
@@ -362,8 +407,6 @@ body {
 .secret-doom:focus-visible {
     color: #000000 !important;
     text-decoration: none !important;
-    text-decoration-line: none !important;
-    text-decoration-color: transparent !important;
     background: transparent !important;
     border: 0 !important;
     outline: none !important;
@@ -374,42 +417,25 @@ body {
     cursor: default !important;
 }
 
-html,
-body {
-    max-width: 100%;
-    overflow-x: hidden;
+/* ==========================================
+   RESPONSIVIDADE (MEDIA QUERIES)
+   ========================================== */
+@media (max-width: 950px) {
+    .main-container { flex-direction: column; height: auto; overflow: visible; }
+    .right-side { display: none; }
+    .left-side { border-radius: 0; padding: 32px 20px; min-height: 100vh; max-height: none; }
+    .form-columns { flex-direction: column; gap: 18px; }
+    .toggle-container { gap: 8px; }
+    .toggle-btn { padding: 10px 18px; }
+    .btn-submit { width: 100%; padding-inline: 20px; }
 }
-
-.cadastro-header {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    min-height: 44px;
-    gap: 12px;
-}
-
-.cadastro-header .site-menu { align-items: center; margin-left: auto; }
-.cadastro-header .header-action {
-    align-items: center;
-    background: #004aad;
-    border-radius: 30px;
-    color: #fff;
-    display: inline-flex;
-    font-weight: 700;
-    justify-content: center;
-    min-height: 44px;
-    padding: 8px 28px;
-    text-decoration: none;
-}
-.cadastro-header .header-action:hover,
-.cadastro-header .header-action:focus-visible { background: #00357a; }
 
 @media (max-width: 720px) {
     .left-side { min-height: 100vh; padding: 22px 16px 28px; }
     .cadastro-header { position: relative; }
     .cadastro-header .site-menu-toggle { display: inline-flex; }
     .cadastro-header .site-menu {
-        background: #fff;
+        background: #ffffff;
         border: 1px solid #e1e8f0;
         border-radius: 0 0 16px 16px;
         box-shadow: 0 14px 28px rgba(0, 74, 173, .12);
@@ -423,33 +449,14 @@ body {
     }
     .cadastro-header .site-menu.is-open { display: grid; }
     .cadastro-header .header-action { width: 100%; }
-    .form-columns { gap: 18px; }
     .input-group input,
     .input-group select,
     .input-group textarea { max-width: 100%; }
 }
 
-.btn-submit:disabled {
-    opacity: .7;
-    cursor: wait;
-}
-
-/* Easter egg: o ponto não revela que é um link. */
-.secret-doom,
-.secret-doom:link,
-.secret-doom:visited,
-.secret-doom:hover,
-.secret-doom:active,
-.secret-doom:focus,
-.secret-doom:focus-visible {
-    color: #000 !important;
-    text-decoration: none !important;
-    background: transparent !important;
-    border: 0 !important;
-    outline: 0 !important;
-    box-shadow: none !important;
-    filter: none !important;
-    transform: none !important;
-    transition: none !important;
-    cursor: default !important;
+@media (max-width: 480px) {
+    .brand-logo { font-size: 1.9rem; }
+    .toggle-btn { font-size: 0.9rem; padding-inline: 12px; }
+    .toggle-divider { letter-spacing: 0; }
+    .php-toast { left: 20px; right: 20px; bottom: 20px; text-align: center; }
 }
