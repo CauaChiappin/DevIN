@@ -1,0 +1,17 @@
+RewriteEngine On
+RewriteBase /DevIN/
+
+# Use the PHP directory as the canonical local entry point.
+RewriteRule ^$ php/index.php [R=302,L]
+RewriteRule ^login/?$ php/login.php [R=302,L,NC]
+RewriteRule ^recuperacao/?$ php/recuperacao.php [R=302,L,NC]
+RewriteRule ^redefinir/?$ php/redefinir.php [R=302,L,NC]
+RewriteRule ^processar/?$ php/processar.php [R=302,L,NC]
+RewriteRule ^cadastro(?:-pessoa|_pessoa)?/?$ php/cadastro_pessoa.php [R=302,L,NC]
+RewriteRule ^cadastro(?:-empresa|_empresa)/?$ php/cadastro_empresa.php [R=302,L,NC]
+RewriteRule ^politica(?:-privacidade|_privacidade)/?$ php/politica_privacidade.php [R=302,L,NC]
+
+# Redirect remaining single-segment PHP aliases without rewriting real files.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ php/$1.php [R=302,L,NC]

@@ -2,15 +2,22 @@
 
 declare(strict_types=1);
 
-// 1. Captura e limpa o caminho (PATH) da URL requisitada
+require_once __DIR__ . '/../config/auth.php';
+
+// Remove a base configurada do projeto e o diretório público /php.
 $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
-$urlPath = parse_url($requestUri, PHP_URL_PATH) ?? '/';
+$urlPath = (string) (parse_url($requestUri, PHP_URL_PATH) ?? '/');
+$projectPath = (string) (parse_url(APP_BASE_URL, PHP_URL_PATH) ?? '');
+$routerBasePath = rtrim($projectPath, '/') . '/php';
 
-// 2. Normalização da URL
-// - Remove prefixo da pasta do projeto caso rode em subpasta (ex: /DevIN)
-$url = preg_replace('#^/DevIN#i', '', $urlPath);
+if (strncasecmp($urlPath, $routerBasePath, strlen($routerBasePath)) === 0) {
+    $nextCharacter = $urlPath[strlen($routerBasePath)] ?? '';
+    if ($nextCharacter === '' || $nextCharacter === '/') {
+        $urlPath = substr($urlPath, strlen($routerBasePath));
+    }
+}
 
-// - Remove a barra final (exceto para a raiz '/') e converte para minúsculas
+$url = $urlPath;
 if ($url !== '/' && str_ends_with($url, '/')) {
     $url = rtrim($url, '/');
 }
@@ -32,24 +39,24 @@ switch ($url) {
     case '/login':
     case '/login.php':
     case '/login.html':
-        require __DIR__ . '/login.php';
+        require __DIR__ . '/../login.php';
         break;
 
     // --- RECUPERAÇÃO E REDEFINIÇÃO DE SENHA ---
     case '/recuperacao':
     case '/recuperacao.php':
-        require __DIR__ . '/recuperacao.php';
+        require __DIR__ . '/../recuperacao.php';
         break;
 
     case '/redefinir':
     case '/redefinir.php':
-        require __DIR__ . '/redefinir.php';
+        require __DIR__ . '/../redefinir.php';
         break;
 
     // --- PROCESSAMENTO DE FORMULÁRIOS (POST) ---
     case '/processar':
     case '/processar.php':
-        require __DIR__ . '/processar.php';
+        require __DIR__ . '/../processar.php';
         break;
 
     // --- CADASTROS ---
@@ -57,25 +64,26 @@ switch ($url) {
     case '/cadastro-pessoa':
     case '/cadastro_pessoa':
     case '/cadastro_pessoa.php':
-        require __DIR__ . '/cadastro_pessoa.php';
+        require __DIR__ . '/../cadastro_pessoa.php';
         break;
 
     case '/cadastro-empresa':
     case '/cadastro_empresa':
     case '/cadastro_empresa.php':
-        require __DIR__ . '/cadastro_empresa.php';
+        require __DIR__ . '/../cadastro_empresa.php';
         break;
 
     // --- INSTITUCIONAL ---
     case '/politica-privacidade':
     case '/politica_privacidade':
     case '/politica_privacidade.php':
-        require __DIR__ . '/politica_privacidade.php';
+        require __DIR__ . '/../politica_privacidade.php';
         break;
 
     // --- PÁGINA NÃO ENCONTRADA (404) ---
     default:
         http_response_code(404);
+        $homeUrl = htmlspecialchars(APP_BASE_URL . '/php/index.php', ENT_QUOTES, 'UTF-8');
         echo "<!DOCTYPE html>
         <html lang='pt-BR'>
         <head>
@@ -91,7 +99,7 @@ switch ($url) {
         <body>
             <h1>Erro 404</h1>
             <p>A página que você procurou não foi encontrada.</p>
-            <a href='/'>Voltar para o início</a>
+            <a href='{$homeUrl}'>Voltar para o início</a>
         </body>
         </html>";
         break;

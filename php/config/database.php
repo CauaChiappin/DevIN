@@ -7,11 +7,20 @@ require_once __DIR__ . '/auth.php';
 
 function getDatabaseConnection(): mysqli
 {
-    $host   = getenv('DEVIN_DB_HOST') ?: 'localhost';
-    $user   = getenv('DEVIN_DB_USER') ?: 'root';
-    $pass   = getenv('DEVIN_DB_PASS') ?: '';
-    $dbname = getenv('DEVIN_DB_NAME') ?: 'devin';
-    $port   = (int) (getenv('DEVIN_DB_PORT') ?: 3306);
+    $environmentValue = static function (string $name, string $legacyName, string $default): string {
+        $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
+        if ($value === false || $value === null || $value === '') {
+            $value = $_ENV[$legacyName] ?? $_SERVER[$legacyName] ?? getenv($legacyName);
+        }
+
+        return $value === false || $value === null || $value === '' ? $default : (string) $value;
+    };
+
+    $host   = $environmentValue('DB_HOST', 'DEVIN_DB_HOST', 'localhost');
+    $user   = $environmentValue('DB_USER', 'DEVIN_DB_USER', 'root');
+    $pass   = $environmentValue('DB_PASS', 'DEVIN_DB_PASS', '');
+    $dbname = $environmentValue('DB_NAME', 'DEVIN_DB_NAME', 'devin');
+    $port   = (int) $environmentValue('DB_PORT', 'DEVIN_DB_PORT', '3306');
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
