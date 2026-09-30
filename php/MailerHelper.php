@@ -13,15 +13,29 @@ class MailerHelper
     {
         $mail = new PHPMailer(true);
         $mail->isSMTP();
-        $mail->Host       = $_ENV['SMTP_HOST']       ?? getenv('SMTP_HOST')       ?: 'smtp.gmail.com';
-        $mail->Port       = (int) ($_ENV['SMTP_PORT'] ?? getenv('SMTP_PORT')       ?: 587);
+        
+        // Configurações do Servidor
+        $mail->Host       = $_ENV['SMTP_HOST'] ?? getenv('SMTP_HOST') ?: 'smtp.gmail.com';
+        $mail->Port       = (int) ($_ENV['SMTP_PORT'] ?? getenv('SMTP_PORT') ?: 587);
         $mail->SMTPAuth   = true;
-        $mail->Username   = $_ENV['SMTP_USER']       ?? getenv('SMTP_USER')       ?: '';
-        $mail->Password   = $_ENV['SMTP_PASS']       ?? getenv('SMTP_PASS')       ?: '';
+        
+        // Se as variáveis .env não estiverem a carregar, insira temporariamente os valores aqui para testar:
+        $mail->Username   = $_ENV['SMTP_USER'] ?? getenv('SMTP_USER') ?: 'Devin.Suporte@gmail.com';
+        $mail->Password   = $_ENV['SMTP_PASS'] ?? getenv('SMTP_PASS') ?: 'fxrp qgxe izqo rncx'; // Substitua pela sua senha de app do Gmail
+        
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->CharSet    = 'UTF-8';
 
-        $fromEmail = $_ENV['SMTP_FROM_EMAIL'] ?? getenv('SMTP_FROM_EMAIL') ?: 'Devin.Suporte@gmail.com';
+        // Desativa validação estrita de SSL em localhost (Apenas para Testes Locais)
+        $mail->SMTPOptions = [
+            'ssl' => [
+                'verify_peer'       => false,
+                'verify_peer_name'  => false,
+                'allow_self_signed' => true
+            ]
+        ];
+
+        $fromEmail = $_ENV['SMTP_FROM_EMAIL'] ?? getenv('SMTP_FROM_EMAIL') ?: $mail->Username;
         $fromName  = $_ENV['SMTP_FROM_NAME']  ?? getenv('SMTP_FROM_NAME')  ?: 'DevIN';
         $mail->setFrom($fromEmail, $fromName);
 
@@ -32,6 +46,10 @@ class MailerHelper
     {
         try {
             $mail = self::getMailer();
+
+            // Ative o debug se quiser ver o erro na tela durante o desenvolvimento:
+            // $mail->SMTPDebug = 2; 
+
             $mail->addAddress($emailDestino, $nomeDestino);
             $mail->isHTML(true);
             $mail->Subject = 'DevIN | Código de Recuperação de Senha';
@@ -59,7 +77,8 @@ class MailerHelper
 
             return $mail->send();
         } catch (Exception $e) {
-            error_log('Erro ao enviar e-mail de código: ' . $e->getMessage());
+            // Regista a mensagem de erro exata nos logs do sistema/PHP
+            error_log('Erro ao enviar e-mail de código: ' . $mail->ErrorInfo);
             return false;
         }
     }
