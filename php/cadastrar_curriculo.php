@@ -26,7 +26,12 @@ $emailPessoa = $_SESSION['email_pessoa'] ?? $usuario['email'] ?? '';
 
 $mensagemSucesso = (string) ($_SESSION['sucesso_curriculo'] ?? '');
 $mensagemErro = (string) ($_SESSION['erro_curriculo'] ?? '');
-unset($_SESSION['sucesso_curriculo'], $_SESSION['erro_curriculo']);
+$mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
+$mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
+$mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
+$mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
+$avisoSenha = implode(' ', array_filter([$mensagemSenhaAlterada, $mensagemEmailSenha]));
+unset($_SESSION['sucesso_curriculo'], $_SESSION['erro_curriculo'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro'], $_SESSION['sucesso_login'], $_SESSION['erro_email_senha']);
 
 /*
 |--------------------------------------------------------------------------
@@ -108,6 +113,24 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
         <?php if ($mensagemErro): ?>
             <div class="php-toast error-toast" role="alert">
                 <?= htmlspecialchars($mensagemErro, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($mensagemCadastro): ?>
+            <div class="php-toast success-toast" role="status">
+                <?= htmlspecialchars($mensagemCadastro, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($mensagemEmailCadastro): ?>
+            <div class="php-toast error-toast" role="alert">
+                <?= htmlspecialchars($mensagemEmailCadastro, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($avisoSenha !== ''): ?>
+            <div class="php-toast <?= $mensagemEmailSenha !== '' ? 'error-toast' : 'success-toast' ?>" role="<?= $mensagemEmailSenha !== '' ? 'alert' : 'status' ?>">
+                <?= htmlspecialchars($avisoSenha, ENT_QUOTES, 'UTF-8') ?>
             </div>
         <?php endif; ?>
 

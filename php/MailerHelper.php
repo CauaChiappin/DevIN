@@ -127,4 +127,63 @@ final class MailerHelper
             return false;
         }
     }
+
+    public static function enviarConfirmacaoCadastro(string $emailDestino, string $nomeDestino): bool
+    {
+        try {
+            $mail = self::getMailer();
+            $mail->addAddress($emailDestino, $nomeDestino);
+            $mail->isHTML(true);
+            $mail->Subject = 'DevIN | Cadastro confirmado';
+
+            $nomeSeguro = htmlspecialchars($nomeDestino, ENT_QUOTES, 'UTF-8');
+            $mail->Body = "
+                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
+                    <div style='max-width: 500px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px;'>
+                        <h2 style='color: #004aad;'>Dev<span style='color: #000;'>IN</span></h2>
+                        <h3 style='color: #333;'>Cadastro confirmado!</h3>
+                        <p style='color: #555;'>Olá, <strong>{$nomeSeguro}</strong>.</p>
+                        <p style='color: #555;'>Sua conta foi criada com sucesso na plataforma DevIN. Você já pode acessar sua conta e aproveitar os recursos da plataforma.</p>
+                        <p style='color: #888; font-size: 12px;'>Esta é uma mensagem automática. Não responda a este e-mail.</p>
+                    </div>
+                </div>
+            ";
+            $mail->AltBody = "Olá, {$nomeDestino}. Seu cadastro na plataforma DevIN foi confirmado com sucesso.";
+
+            return $mail->send();
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public static function enviarAvisoAlteracaoSenha(string $emailDestino, string $nomeDestino): bool
+    {
+        try {
+            $mail = self::getMailer();
+            $mail->addAddress($emailDestino, $nomeDestino);
+            $mail->isHTML(true);
+            $mail->Subject = 'DevIN | Sua senha foi alterada';
+
+            $nomeSeguro = htmlspecialchars($nomeDestino, ENT_QUOTES, 'UTF-8');
+            $mail->Body = "
+                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
+                    <div style='max-width: 500px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px;'>
+                        <h2 style='color: #004aad;'>Dev<span style='color: #000;'>IN</span></h2>
+                        <h3 style='color: #333;'>Senha alterada</h3>
+                        <p style='color: #555;'>Olá, <strong>{$nomeSeguro}</strong>.</p>
+                        <p style='color: #555;'>A senha da sua conta DevIN foi alterada com sucesso.</p>
+                        <p style='color: #555;'>Se você não fez essa alteração, recupere o acesso à sua conta e entre em contato com o suporte.</p>
+                        <p style='color: #888; font-size: 12px;'>Esta é uma mensagem automática. Não responda a este e-mail.</p>
+                    </div>
+                </div>
+            ";
+            $mail->AltBody = "Olá, {$nomeDestino}. A senha da sua conta DevIN foi alterada. Se não foi você, recupere o acesso e entre em contato com o suporte.";
+
+            return $mail->send();
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }

@@ -288,14 +288,22 @@ switch ($acao) {
             }
             $stmt->close();
 
+            $nomeUsuario = (string) ($_SESSION['recuperacao_nome'] ?? 'Usuário');
+            $emailUsuario = (string) ($_SESSION['recuperacao_email'] ?? '');
+            $emailAvisoEnviado = filter_var($emailUsuario, FILTER_VALIDATE_EMAIL)
+                && MailerHelper::enviarAvisoAlteracaoSenha($emailUsuario, $nomeUsuario);
+
             secureSessionRegenerate();
             $_SESSION['logado'] = true;
             $_SESSION['usuario_id'] = $idUsuario;
             $_SESSION['usuario_tipo'] = $tipo;
-            $_SESSION['usuario_nome'] = (string) ($_SESSION['recuperacao_nome'] ?? 'Usuário');
-            $_SESSION['usuario_email'] = (string) ($_SESSION['recuperacao_email'] ?? '');
+            $_SESSION['usuario_nome'] = $nomeUsuario;
+            $_SESSION['usuario_email'] = $emailUsuario;
             unset($_SESSION['recuperacao_verificada'], $_SESSION['recuperacao_id'], $_SESSION['recuperacao_tipo'], $_SESSION['recuperacao_email'], $_SESSION['recuperacao_nome']);
             $_SESSION['sucesso_login'] = 'Senha alterada com sucesso.';
+            if (!$emailAvisoEnviado) {
+                $_SESSION['erro_email_senha'] = 'A senha foi alterada, mas não foi possível enviar o aviso por e-mail.';
+            }
             header('Location: ' . ($tipo === 'empresa' ? 'empresa.php' : 'pessoa.php'));
         } catch (Throwable $e) {
             error_log($e->getMessage());

@@ -14,6 +14,11 @@ $usuarioAtual = requireWebAuth('empresa');
 $tipo   = 'empresa';
 $nome   = $_SESSION['usuario_nome']  ?? 'Empresa';
 $email  = $_SESSION['usuario_email'] ?? 'empresa@devin.com';
+$mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
+$mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
+$mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
+$mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
+unset($_SESSION['sucesso_login'], $_SESSION['erro_email_senha'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro']);
 $pagina = requestString($_GET, 'pagina');
 
 $paginasPermitidas = ['inicio', 'candidatos', 'sobre', 'perfil'];
@@ -382,6 +387,18 @@ $talentos = [
 </head>
 <body>
     <main class="dashboard-shell empresa-dashboard page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
+        <?php if ($mensagemSenhaAlterada !== ''): ?>
+            <p class="form-success" role="status"><?= h($mensagemSenhaAlterada) ?></p>
+        <?php endif; ?>
+        <?php if ($mensagemCadastro !== ''): ?>
+            <p class="form-success" role="status"><?= h($mensagemCadastro) ?></p>
+        <?php endif; ?>
+        <?php if ($mensagemEmailSenha !== ''): ?>
+            <p class="form-error" role="alert"><?= h($mensagemEmailSenha) ?></p>
+        <?php endif; ?>
+        <?php if ($mensagemEmailCadastro !== ''): ?>
+            <p class="form-error" role="alert"><?= h($mensagemEmailCadastro) ?></p>
+        <?php endif; ?>
         
         <aside class="sidebar">
             <div class="sidebar-topo">
