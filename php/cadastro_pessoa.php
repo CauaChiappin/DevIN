@@ -7,11 +7,8 @@ ob_start();
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/security.php';
-<<<<<<< HEAD
 require_once __DIR__ . '/config/RateLimiter.php';
-=======
 require_once __DIR__ . '/MailerHelper.php';
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
 
 startSecureSession();
 
@@ -222,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <header class="cadastro-header">
             <div class="brand-logo">
-                <a href="../index.php">
+                <a href="index.php">
                     Dev<span>IN</span>
                 </a>
             </div>

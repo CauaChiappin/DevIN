@@ -21,7 +21,7 @@ unset($_SESSION['erro_recuperacao'], $_SESSION['sucesso_recuperacao']);
 <body>
     <main class="recovery-wrapper">
         <section class="card-box" aria-labelledby="rec-title">
-            <a class="brand-link" href="../index.php">Dev<span>IN</span></a>
+            <a class="brand-link" href="index.php">Dev<span>IN</span></a>
             <h1 id="rec-title">Recuperação de senha</h1>
 
             <?php if ($erro): ?>

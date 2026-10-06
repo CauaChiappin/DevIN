@@ -3,29 +3,42 @@
 declare(strict_types=1);
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once __DIR__ . '/config/auth.php';
 
-$envDirectory = dirname(__DIR__);
-if (is_file($envDirectory . '/.env')) {
-    Dotenv\Dotenv::createImmutable($envDirectory)->safeLoad();
-}
+require_once __DIR__ . '/PHPMailer/src/Exception.php';
+require_once __DIR__ . '/PHPMailer/src/PHPMailer.php';
+require_once __DIR__ . '/PHPMailer/src/SMTP.php';
 
-final class MailerHelper
+class MailerHelper
 {
-    private static function environmentValue(string $name, ?string $default = null): ?string
-    {
-        $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
+    private const CURRICULO_URL = APP_BASE_URL . '/php/cadastrar_curriculo.php';
+    private const DASHBOARD_PESSOA_URL = APP_BASE_URL . '/php/pessoa.php';
 
-<<<<<<< HEAD
-        // Busca as configurações do arquivo .env com fallbacks de segurança
-        $host       = getenv('DEVIN_SMTP_HOST') ?: '';
-        $port       = (int)(getenv('DEVIN_SMTP_PORT') ?: 587);
-        $encryption = strtolower(getenv('DEVIN_SMTP_ENCRYPTION') ?: 'tls');
-        $username   = getenv('DEVIN_SMTP_USERNAME') ?: '';
-        $password   = getenv('DEVIN_SMTP_PASSWORD') ?: '';
-        $fromEmail  = getenv('DEVIN_SMTP_FROM_EMAIL') ?: $username;
-        $fromName   = getenv('DEVIN_SMTP_FROM_NAME') ?: 'Plataforma DevIN';
+    /**
+     * Cria e configura a conexão SMTP do PHPMailer utilizando o .env
+     */
+    private static function getMailer(): PHPMailer
+    {
+        $mail = new PHPMailer(true);
+
+        $environmentValue = static function (string $name, ?string $default = null): ?string {
+            $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
+            if ($value === false || $value === null || trim((string) $value) === '') {
+                return $default;
+            }
+
+            return trim((string) $value);
+        };
+
+        $host       = $environmentValue('DEVIN_SMTP_HOST', '');
+        $port       = (int) $environmentValue('DEVIN_SMTP_PORT', '587');
+        $encryption = strtolower((string) $environmentValue('DEVIN_SMTP_ENCRYPTION', 'tls'));
+        $username   = $environmentValue('DEVIN_SMTP_USERNAME', '');
+        $password   = $environmentValue('DEVIN_SMTP_PASSWORD', '');
+        $fromEmail  = $environmentValue('DEVIN_SMTP_FROM_EMAIL', $username);
+        $fromName   = $environmentValue('DEVIN_SMTP_FROM_NAME', 'Plataforma DevIN');
 
         if ($host === '' || $username === '' || $password === ''
             || !filter_var($fromEmail, FILTER_VALIDATE_EMAIL)
@@ -52,65 +65,39 @@ final class MailerHelper
         $mail->CharSet = 'UTF-8';
         $mail->Timeout = 8;
         $mail->SMTPKeepAlive = false;
-=======
-        if ($value === false || $value === null || trim((string) $value) === '') {
-            return $default;
-        }
 
-        return trim((string) $value);
-    }
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
-
-    private static function getMailer(): PHPMailer
-    {
-        $host = self::environmentValue('SMTP_HOST', 'smtp.gmail.com');
-        $port = (int) self::environmentValue('SMTP_PORT', '587');
-        $username = self::environmentValue('SMTP_USER');
-        $password = self::environmentValue('SMTP_PASS');
-
-        if ($username === null || $password === null) {
-            throw new RuntimeException('Configure SMTP_USER e SMTP_PASS no ambiente.');
-        }
-        // Senhas de app do Gmail são exibidas em grupos; o servidor recebe os 16 caracteres sem espaços.
-        $password = (string) preg_replace('/\s+/', '', $password);
-
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host = $host;
-        $mail->Port = $port;
-        $mail->SMTPAuth = true;
-        $mail->Username = $username;
-        $mail->Password = $password;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->CharSet = PHPMailer::CHARSET_UTF8;
-
-        $environment = strtolower(self::environmentValue('APP_ENV', self::environmentValue('DEVIN_APP_ENV', 'production')));
-        if (in_array($environment, ['local', 'development'], true)) {
-            $mail->SMTPOptions = [
-                'ssl' => [
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true,
-                ],
-            ];
-        }
-
-        $fromEmail = self::environmentValue('SMTP_FROM_EMAIL', $username);
-        $fromName = self::environmentValue('SMTP_FROM_NAME', 'DevIN');
+        // Remetente configurável via .env
         $mail->setFrom($fromEmail, $fromName);
 
         return $mail;
     }
 
-    public static function enviarCodigoRecuperacao6(string $emailDestino, string $nomeDestino, string $codigo): bool
-    {
+    /**
+     * Envia um e-mail HTML.
+     */
+    public static function enviar(
+        string $destinatarioEmail,
+        string $destinatarioNome,
+        string $assunto,
+        string $corpoHtml
+    ): bool {
+        if (!filter_var($destinatarioEmail, FILTER_VALIDATE_EMAIL)) {
+            error_log('E-mail inválido: ' . $destinatarioEmail);
+            return false;
+        }
+
         try {
             $mail = self::getMailer();
-            $mail->addAddress($emailDestino, $nomeDestino);
-            $mail->isHTML(true);
-            $mail->Subject = 'DevIN | Código de Recuperação de Senha';
 
-<<<<<<< HEAD
+            $mail->addAddress(
+                $destinatarioEmail,
+                $destinatarioNome
+            );
+
+            $mail->isHTML(true);
+            $mail->Subject = $assunto;
+            $mail->Body    = $corpoHtml;
+
             /*
              * Versão em texto simples para clientes
              * de e-mail que não exibem HTML.
@@ -169,6 +156,17 @@ final class MailerHelper
         return self::enviar($email, $nome, 'Cadastro da empresa concluído - DevIN', $corpo);
     }
 
+    public static function enviarConfirmacaoCadastro(string $email, string $nome): bool
+    {
+        $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+        $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
+            . "<h2>Olá, {$nomeSeguro}!</h2>"
+            . '<p>Sua conta foi criada com sucesso na plataforma DevIN.</p>'
+            . '<p>Conclua seu currículo para que empresas possam encontrar seu perfil.</p></div>';
+
+        return self::enviar($email, $nome, 'Cadastro confirmado - DevIN', $corpo);
+    }
+
     public static function enviarConfirmacaoExclusao(string $email, string $nome, string $tipo): bool
     {
         if (!in_array($tipo, ['pessoa', 'empresa'], true)) {
@@ -182,6 +180,34 @@ final class MailerHelper
             . '<p>Se você não solicitou essa ação, entre em contato com a equipe do DevIN.</p></div>';
 
         return self::enviar($email, $nome, 'Exclusão da conta concluída - DevIN', $corpo);
+    }
+
+    public static function enviarAvisoAlteracaoSenha(string $email, string $nome): bool
+    {
+        $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+        $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
+            . "<h2>Olá, {$nomeSeguro}.</h2>"
+            . '<p>A senha da sua conta DevIN foi alterada com sucesso.</p>'
+            . '<p>Se você não fez essa alteração, recupere o acesso à sua conta e entre em contato com o suporte.</p></div>';
+
+        return self::enviar($email, $nome, 'Sua senha foi alterada - DevIN', $corpo);
+    }
+
+    public static function enviarCodigoRecuperacao6(string $email, string $nome, string $codigo): bool
+    {
+        $codigo = strtoupper($codigo);
+        if (!preg_match('/^[A-Z0-9]{6}$/', $codigo)) {
+            return false;
+        }
+
+        $codigoSeguro = htmlspecialchars(substr($codigo, 0, 3) . '-' . substr($codigo, 3), ENT_QUOTES, 'UTF-8');
+        $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+        $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
+            . "<h2>Olá, {$nomeSeguro}.</h2>"
+            . "<p>Seu código de recuperação é <strong>{$codigoSeguro}</strong>.</p>"
+            . '<p>Ele expira em 15 minutos e pode ser usado uma única vez.</p></div>';
+
+        return self::enviar($email, $nome, 'Código de recuperação de senha - DevIN', $corpo);
     }
 
     /**
@@ -252,122 +278,19 @@ final class MailerHelper
             $assunto = 'Novo Candidato Disponível - DevIN';
 
             $corpo = "
-=======
-            $codigoFormatado = htmlspecialchars(substr($codigo, 0, 3) . '-' . substr($codigo, 3, 3), ENT_QUOTES, 'UTF-8');
-            $nomeSeguro = htmlspecialchars($nomeDestino, ENT_QUOTES, 'UTF-8');
-            $mail->Body = "
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
                 <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
-                    <div style='max-width: 480px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px; text-align: center;'>
-                        <h2 style='color: #004aad; margin-bottom: 10px;'>Dev<span style='color: #000;'>IN</span></h2>
-                        <h3 style='color: #333;'>Recuperação de senha</h3>
-                        <p style='color: #555;'>Olá, <strong>{$nomeSeguro}</strong>!</p>
-                        <p style='color: #555;'>Use o código abaixo para redefinir sua senha:</p>
-                        <p style='background: #004aad; color: #fff; padding: 12px; font-size: 26px; letter-spacing: 5px;'><strong>{$codigoFormatado}</strong></p>
-                        <p style='color: #777;'>Este código expira em 15 minutos e pode ser usado uma única vez.</p>
-                        <p style='color: #aaa; font-size: 11px;'>Se você não solicitou este código, ignore esta mensagem.</p>
+                    <div style='max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px;'>
+                        <h2 style='color: #2b56f5;'>Olá, {$nomeEmpresa}!</h2>
+                        <p>Um novo candidato está disponível na plataforma <strong>DevIN</strong>.</p>
+                        <p>O candidato <strong>{$nomeSeguro}</strong> acabou de concluir o currículo na plataforma.</p>
+                        <p>Acesse a plataforma para consultar os candidatos disponíveis.</p>
                     </div>
                 </div>
             ";
-            $mail->AltBody = "Olá, {$nomeDestino}. Seu código de recuperação é {$codigo}. Ele expira em 15 minutos.";
 
-            return $mail->send();
-        } catch (Throwable $e) {
-            error_log($e->getMessage());
-            return false;
+            self::enviar($emailEmpresa, $nomeEmpresaOriginal, $assunto, $corpo);
         }
+
+        $result->free();
     }
-<<<<<<< HEAD
-=======
-
-    public static function enviarConfirmacaoCadastroCurriculo(string $emailDestino, string $nomeDestino): bool
-    {
-        try {
-            $mail = self::getMailer();
-            $mail->addAddress($emailDestino, $nomeDestino);
-            $mail->isHTML(true);
-            $mail->Subject = 'DevIN | Currículo cadastrado com sucesso';
-
-            $nomeSeguro = htmlspecialchars($nomeDestino, ENT_QUOTES, 'UTF-8');
-            $mail->Body = "
-                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
-                    <div style='max-width: 500px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px; text-align: center;'>
-                        <h2 style='color: #004aad; margin-bottom: 10px;'>Dev<span style='color: #000;'>IN</span></h2>
-                        <h3 style='color: #333;'>Currículo recebido!</h3>
-                        <p style='color: #555;'>Olá, <strong>{$nomeSeguro}</strong>!</p>
-                        <p style='color: #555;'>Seu currículo foi cadastrado ou atualizado com sucesso na plataforma DevIN.</p>
-                        <p style='color: #555;'>As empresas cadastradas poderão consultar suas qualificações.</p>
-                        <hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'>
-                        <p style='color: #888; font-size: 12px;'>Esta é uma mensagem automática. Não responda a este e-mail.</p>
-                    </div>
-                </div>
-            ";
-            $mail->AltBody = "Olá, {$nomeDestino}. Seu currículo foi cadastrado ou atualizado com sucesso na DevIN.";
-
-            return $mail->send();
-        } catch (Throwable $e) {
-            error_log($e->getMessage());
-            return false;
-        }
-    }
-
-    public static function enviarConfirmacaoCadastro(string $emailDestino, string $nomeDestino): bool
-    {
-        try {
-            $mail = self::getMailer();
-            $mail->addAddress($emailDestino, $nomeDestino);
-            $mail->isHTML(true);
-            $mail->Subject = 'DevIN | Cadastro confirmado';
-
-            $nomeSeguro = htmlspecialchars($nomeDestino, ENT_QUOTES, 'UTF-8');
-            $mail->Body = "
-                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
-                    <div style='max-width: 500px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px;'>
-                        <h2 style='color: #004aad;'>Dev<span style='color: #000;'>IN</span></h2>
-                        <h3 style='color: #333;'>Cadastro confirmado!</h3>
-                        <p style='color: #555;'>Olá, <strong>{$nomeSeguro}</strong>.</p>
-                        <p style='color: #555;'>Sua conta foi criada com sucesso na plataforma DevIN. Você já pode acessar sua conta e aproveitar os recursos da plataforma.</p>
-                        <p style='color: #888; font-size: 12px;'>Esta é uma mensagem automática. Não responda a este e-mail.</p>
-                    </div>
-                </div>
-            ";
-            $mail->AltBody = "Olá, {$nomeDestino}. Seu cadastro na plataforma DevIN foi confirmado com sucesso.";
-
-            return $mail->send();
-        } catch (Throwable $e) {
-            error_log($e->getMessage());
-            return false;
-        }
-    }
-
-    public static function enviarAvisoAlteracaoSenha(string $emailDestino, string $nomeDestino): bool
-    {
-        try {
-            $mail = self::getMailer();
-            $mail->addAddress($emailDestino, $nomeDestino);
-            $mail->isHTML(true);
-            $mail->Subject = 'DevIN | Sua senha foi alterada';
-
-            $nomeSeguro = htmlspecialchars($nomeDestino, ENT_QUOTES, 'UTF-8');
-            $mail->Body = "
-                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
-                    <div style='max-width: 500px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px;'>
-                        <h2 style='color: #004aad;'>Dev<span style='color: #000;'>IN</span></h2>
-                        <h3 style='color: #333;'>Senha alterada</h3>
-                        <p style='color: #555;'>Olá, <strong>{$nomeSeguro}</strong>.</p>
-                        <p style='color: #555;'>A senha da sua conta DevIN foi alterada com sucesso.</p>
-                        <p style='color: #555;'>Se você não fez essa alteração, recupere o acesso à sua conta e entre em contato com o suporte.</p>
-                        <p style='color: #888; font-size: 12px;'>Esta é uma mensagem automática. Não responda a este e-mail.</p>
-                    </div>
-                </div>
-            ";
-            $mail->AltBody = "Olá, {$nomeDestino}. A senha da sua conta DevIN foi alterada. Se não foi você, recupere o acesso e entre em contato com o suporte.";
-
-            return $mail->send();
-        } catch (Throwable $e) {
-            error_log($e->getMessage());
-            return false;
-        }
-    }
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
 }

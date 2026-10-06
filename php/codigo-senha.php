@@ -30,7 +30,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
 <body>
     <main class="recovery-wrapper">
         <section class="card-box" aria-labelledby="code-title">
-            <a class="brand-link" href="../index.php">Dev<span>IN</span></a>
+            <a class="brand-link" href="index.php">Dev<span>IN</span></a>
             <h1 id="code-title">Recuperação de senha</h1>
             <p class="subtitle">insira o código:</p>
 

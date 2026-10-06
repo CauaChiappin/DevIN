@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     novaSenha.addEventListener('input', () => {
         const val = novaSenha.value;
 
-        if (val.length >= 8) {
+        if (val.length >= 12) {
             reqLen.className = 'check-item check-valid';
             reqLen.querySelector('.icon').textContent = '✓';
         } else {

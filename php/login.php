@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <header class="cabecalho-site">
         <div class="logo">
-            <a href="../index.php">Dev<span>IN</span></a>
+            <a href="index.php">Dev<span>IN</span></a>
         </div>
         <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
             <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
@@ -93,9 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <nav class="navegacao">
             <ul>
-                <li><a href="../index.php#conheca">Conheça o DevIN</a></li>
-                <li><a href="../index.php#etapas">Etapas</a></li>
-                <li><a href="../index.php#contato">Contato</a></li>
+                <li><a href="index.php#conheca">Conheça o DevIN</a></li>
+                <li><a href="index.php#etapas">Etapas</a></li>
+                <li><a href="index.php#contato">Contato</a></li>
             </ul>
         </nav>
 

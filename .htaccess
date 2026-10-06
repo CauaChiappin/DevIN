@@ -6,6 +6,12 @@
     RewriteEngine On
     RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
     RewriteRule ^(?:storage|vendor|\.git)(?:/|$) - [F,L,NC]
+
+    RewriteRule ^$ php/rotas/rotas.php [QSA,L]
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteRule ^ php/rotas/rotas.php [QSA,L]
 </IfModule>
 
 <IfModule mod_headers.c>

@@ -8,10 +8,7 @@ require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/MailerHelper.php';
-<<<<<<< HEAD
 require_once __DIR__ . '/config/RateLimiter.php';
-=======
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
 
 startSecureSession();
 
@@ -158,10 +155,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->close();
         }
 
-        if (!MailerHelper::enviarConfirmacaoCadastroEmpresa($email, $nome)) {
-            error_log('Falha ao enviar confirmação de cadastro para empresa.');
-        }
-
         /*
         |--------------------------------------------------------------------------
         | LOGIN AUTOMÁTICO E REDIRECIONAMENTO
@@ -171,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $auth = AuthController::login($email, $senha);
         AuthController::establishSession($auth);
 
-        if (MailerHelper::enviarConfirmacaoCadastro($email, $nome)) {
+        if (MailerHelper::enviarConfirmacaoCadastroEmpresa($email, $nome)) {
             $_SESSION['sucesso_cadastro'] = 'Cadastro confirmado. Enviamos uma confirmação para seu e-mail.';
         } else {
             $_SESSION['erro_email_cadastro'] = 'Seu cadastro foi criado, mas não foi possível enviar o e-mail de confirmação.';
@@ -210,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="left-side">
         <header class="cadastro-header">
             <div class="brand-logo">
-                <a href="../index.php">Dev<span>IN</span></a>
+                <a href="index.php">Dev<span>IN</span></a>
             </div>
 
             <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>

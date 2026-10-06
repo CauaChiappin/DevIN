@@ -17,7 +17,7 @@ require_once __DIR__ . '/config/RateLimiter.php';
 startSecureSession();
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -33,16 +33,6 @@ if (!verifyCsrfToken(requestString($_POST, 'csrf_token'))) {
     exit;
 }
 
-<<<<<<< HEAD
-    $ipBlocked = RateLimiter::consume('recovery:ip:' . RateLimiter::clientIp(), 10, 3600);
-    $emailBlocked = RateLimiter::consume('recovery:email:' . strtolower($email), 3, 3600);
-    if ($ipBlocked > 0 || $emailBlocked > 0) {
-        $_SESSION['email_recuperacao'] = $email;
-        $_SESSION['sucesso_recuperacao'] = 'Se houver uma conta com esse e-mail, enviaremos as instruções de redefinição.';
-        header('Location: redefinir.php');
-        exit;
-    }
-=======
 switch ($acao) {
     case 'solicitar_recuperacao':
         $email = requestString($_POST, 'email');
@@ -51,7 +41,14 @@ switch ($acao) {
             header('Location: recuperacao.php');
             exit;
         }
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
+
+        $ipRetry = RateLimiter::consume('recovery:ip:' . RateLimiter::clientIp(), 10, 3600);
+        $emailRetry = RateLimiter::consume('recovery:email:' . strtolower($email), 3, 3600);
+        if ($ipRetry > 0 || $emailRetry > 0) {
+            $_SESSION['sucesso_recuperacao'] = 'Se houver uma conta com esse e-mail, enviaremos as instruções de recuperação.';
+            header('Location: recuperacao.php');
+            exit;
+        }
 
         $conn = null;
         try {
@@ -95,165 +92,9 @@ switch ($acao) {
             $stmt->execute();
             $stmt->close();
 
-<<<<<<< HEAD
-            $mapaTabelas = [
-                'pessoa'  => ['tabela' => 'pessoa',        'idCol' => 'id_pessoa'],
-                'empresa' => ['tabela' => 'empresa',       'idCol' => 'id_empresa'],
-                'adm'     => ['tabela' => 'administrador', 'idCol' => 'id_administrador'],
-            ];
-
-            $info = $mapaTabelas[$usuario['tipo']];
-
-            // Código válido por 15 minutos
-            $sql = "
-                UPDATE {$info['tabela']}
-                SET
-                    token_recuperacao = ?,
-                    token_expiracao = DATE_ADD(NOW(), INTERVAL 15 MINUTE)
-                WHERE {$info['idCol']} = ?
-            ";
-
-            $stmtToken = $conn->prepare($sql);
-            if ($stmtToken) {
-                $stmtToken->bind_param('si', $codigoHash, $usuario['id']);
-                $stmtToken->execute();
-                $stmtToken->close();
-            }
-
-            // Formatação legível do código (ex: 1234 5678)
-            $codigoFormatado = substr($codigo, 0, 4) . ' ' . substr($codigo, 4, 4);
-            $nomeSeguro = htmlspecialchars($usuario['nome'], ENT_QUOTES, 'UTF-8');
-            $assunto = 'Seu Código de Recuperação - DevIN';
-
-            $corpoHtml = "
-                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
-                    <div style='max-width: 500px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 8px;'>
-                        <h2 style='color: #2b56f5;'>Olá, {$nomeSeguro}!</h2>
-                        <p>Recebemos uma solicitação para redefinir a senha da sua conta no <strong>DevIN</strong>.</p>
-                        <p>Utilize o código de verificação abaixo para criar uma nova senha:</p>
-                        <div style='text-align: center; margin: 25px 0;'>
-                            <span style='background-color: #2b56f5; color: #ffffff; padding: 14px 28px; border-radius: 6px; font-size: 28px; font-weight: bold; letter-spacing: 4px; display: inline-block;'>
-                                {$codigoFormatado}
-                            </span>
-                        </div>
-                        <p>Este código expira em <strong>15 minutos</strong>.</p>
-                        <p style='color: #777; font-size: 12px;'>Se você não solicitou esta alteração, desconsidere este e-mail.</p>
-                    </div>
-                </div>
-            ";
-
-            if (!MailerHelper::enviar($email, $usuario['nome'], $assunto, $corpoHtml)) {
-                error_log('Falha ao enviar e-mail de recuperação para ' . $email);
-            }
-        }
-
-        // Armazena e-mail na sessão para a página redefinir.php
-        $_SESSION['email_recuperacao'] = $email;
-        $_SESSION['sucesso_recuperacao'] = 'Se houver uma conta com esse e-mail, enviaremos as instruções de redefinição.';
-
-        header('Location: redefinir.php');
-        exit;
-
-    } catch (Throwable $e) {
-        error_log('Erro na recuperação de senha: ' . $e->getMessage());
-        $_SESSION['erro_recuperacao'] = 'Não foi possível processar a solicitação. Tente novamente.';
-        header('Location: recuperacao.php');
-        exit;
-    } finally {
-        $conn->close();
-    }
-}
-
-/*
-|--------------------------------------------------------------------------
-| REDEFINIR SENHA COM CÓDIGO DE 8 DÍGITOS
-|--------------------------------------------------------------------------
-*/
-
-if ($acao === 'redefinir_senha') {
-    $email     = trim(requestString($_POST, 'email'));
-    $codigo    = preg_replace('/[^0-9]/', '', requestString($_POST, 'codigo'));
-    $novaSenha = requestString($_POST, 'nova_senha');
-    $confSenha = requestString($_POST, 'confirmar_senha');
-
-    $ipBlocked = RateLimiter::consume('reset:ip:' . RateLimiter::clientIp(), 20, 3600);
-    $emailBlocked = RateLimiter::consume('reset:email:' . strtolower($email), 10, 3600);
-    if ($ipBlocked > 0 || $emailBlocked > 0) {
-        $_SESSION['erro_redefinir'] = 'Muitas tentativas. Aguarde antes de tentar novamente.';
-        header('Location: redefinir.php');
-        exit;
-    }
-
-    if ($email === '' || !hash_equals((string) ($_SESSION['email_recuperacao'] ?? ''), $email)) {
-        $_SESSION['erro_redefinir'] = 'Solicite um novo código de recuperação.';
-        header('Location: recuperacao.php');
-        exit;
-    }
-
-    if (empty($email) || empty($codigo) || empty($novaSenha) || empty($confSenha)) {
-        $_SESSION['erro_redefinir'] = 'Preencha todos os campos.';
-        header('Location: redefinir.php');
-        exit;
-    }
-
-    if (strlen($codigo) !== 8) {
-        $_SESSION['erro_redefinir'] = 'O código deve possuir exatamente 8 dígitos.';
-        header('Location: redefinir.php');
-        exit;
-    }
-
-    if ($novaSenha !== $confSenha) {
-        $_SESSION['erro_redefinir'] = 'As senhas não coincidem.';
-        header('Location: redefinir.php');
-        exit;
-    }
-
-    if (strlen($novaSenha) < 12) {
-        $_SESSION['erro_redefinir'] = 'A senha deve ter no mínimo 12 caracteres.';
-        header('Location: redefinir.php');
-        exit;
-    }
-
-    if (!preg_match('/[A-Z]/', $novaSenha)) {
-        $_SESSION['erro_redefinir'] = 'A senha deve possuir pelo menos uma letra maiúscula.';
-        header('Location: redefinir.php');
-        exit;
-    }
-
-    if (!preg_match('/[^a-zA-Z0-9]/', $novaSenha)) {
-        $_SESSION['erro_redefinir'] = 'A senha deve possuir pelo menos um caractere especial.';
-        header('Location: redefinir.php');
-        exit;
-    }
-
-    $conn = getDatabaseConnection();
-
-    try {
-        $senhaHash  = password_hash($novaSenha, PASSWORD_DEFAULT);
-        $codigoHash = hash('sha256', $codigo);
-        $afetados   = 0;
-        $tabelas    = ['pessoa', 'empresa', 'administrador'];
-
-        foreach ($tabelas as $tabela) {
-            $stmt = $conn->prepare("
-                UPDATE {$tabela}
-                SET
-                    senha_hash = ?,
-                    token_recuperacao = NULL,
-                    token_expiracao = NULL
-                WHERE
-                    email = ?
-                    AND token_recuperacao = ?
-                    AND token_expiracao > NOW()
-            ");
-
-            if ($stmt) {
-                $stmt->bind_param('sss', $senhaHash, $email, $codigoHash);
-=======
             if (!MailerHelper::enviarCodigoRecuperacao6($email, (string) $usuario['nome'], $codigo)) {
                 $stmt = $conn->prepare("UPDATE {$usuario['tabela']} SET token_recuperacao = NULL, token_expiracao = NULL WHERE {$usuario['id_coluna']} = ?");
                 $stmt->bind_param('i', $idUsuario);
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
                 $stmt->execute();
                 $stmt->close();
                 $_SESSION['erro_recuperacao'] = 'Não foi possível enviar o e-mail. Confira a configuração SMTP e tente novamente.';
@@ -281,21 +122,21 @@ if ($acao === 'redefinir_senha') {
         }
         exit;
 
-<<<<<<< HEAD
-        if ($afetados > 0) {
-            unset($_SESSION['email_recuperacao']);
-            RateLimiter::clear('reset:ip:' . RateLimiter::clientIp());
-            RateLimiter::clear('reset:email:' . strtolower($email));
-            session_regenerate_id(true);
-=======
     case 'validar_codigo':
+        $ipRetry = RateLimiter::consume('code:ip:' . RateLimiter::clientIp(), 20, 3600);
+        $emailSessao = strtolower((string) ($_SESSION['recuperacao_email'] ?? ''));
+        $emailRetry = RateLimiter::consume('code:email:' . $emailSessao, 10, 3600);
+        if ($ipRetry > 0 || $emailRetry > 0) {
+            $_SESSION['erro_codigo'] = 'Muitas tentativas. Aguarde antes de tentar novamente.';
+            header('Location: codigo-senha.php');
+            exit;
+        }
         $codigoDigitado = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', requestString($_POST, 'codigo')));
         $email = (string) ($_SESSION['recuperacao_email'] ?? '');
         $hashSessao = (string) ($_SESSION['codigo_recuperacao_hash'] ?? '');
         $codigoCorrespondeASessao = strlen($codigoDigitado) === 6
             && $hashSessao !== ''
             && hash_equals($hashSessao, hash('sha256', $codigoDigitado));
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
 
         if ($email === '') {
             $_SESSION['erro_recuperacao'] = 'Sessão expirada. Inicie a recuperação novamente.';
@@ -374,6 +215,13 @@ if ($acao === 'redefinir_senha') {
             header('Location: recuperacao.php');
             exit;
         }
+        $ipRetry = RateLimiter::consume('resend:ip:' . RateLimiter::clientIp(), 10, 3600);
+        $emailRetry = RateLimiter::consume('resend:email:' . strtolower($email), 5, 3600);
+        if ($ipRetry > 0 || $emailRetry > 0) {
+            $_SESSION['erro_codigo'] = 'Muitas solicitações. Aguarde antes de pedir outro código.';
+            header('Location: codigo-senha.php');
+            exit;
+        }
         if (time() - $ultimoEnvio < 60) {
             $restante = 60 - (time() - $ultimoEnvio);
             $_SESSION['erro_codigo'] = "Aguarde {$restante}s antes de solicitar outro código.";
@@ -424,6 +272,13 @@ if ($acao === 'redefinir_senha') {
         exit;
 
     case 'redefinir_senha':
+        $ipRetry = RateLimiter::consume('reset:ip:' . RateLimiter::clientIp(), 10, 3600);
+        $emailRetry = RateLimiter::consume('reset:email:' . strtolower((string) ($_SESSION['recuperacao_email'] ?? '')), 5, 3600);
+        if ($ipRetry > 0 || $emailRetry > 0) {
+            $_SESSION['erro_redefinir'] = 'Muitas tentativas. Aguarde antes de tentar novamente.';
+            header('Location: redefinir.php');
+            exit;
+        }
         if (empty($_SESSION['recuperacao_verificada'])) {
             header('Location: recuperacao.php');
             exit;
@@ -444,7 +299,7 @@ if ($acao === 'redefinir_senha') {
             header('Location: redefinir.php');
             exit;
         }
-        if (strlen($novaSenha) < 8 || !preg_match('/[A-Z]/', $novaSenha) || !preg_match('/[^a-zA-Z0-9]/', $novaSenha)) {
+        if (strlen($novaSenha) < 12 || !preg_match('/[A-Z]/', $novaSenha) || !preg_match('/[^a-zA-Z0-9]/', $novaSenha)) {
             $_SESSION['erro_redefinir'] = 'A senha não preenche todos os requisitos de segurança.';
             header('Location: redefinir.php');
             exit;
@@ -552,12 +407,6 @@ if ($acao === 'redefinir_senha') {
         exit;
 
     default:
-        header('Location: ../index.php');
+        header('Location: index.php');
         exit;
 }
-<<<<<<< HEAD
-
-header('Location: index.php');
-exit;
-=======
->>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97

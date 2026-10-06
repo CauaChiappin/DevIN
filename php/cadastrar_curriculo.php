@@ -91,7 +91,7 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
 
         <header class="cadastro-header">
             <div class="brand-logo">
-                <a href="../index.php">
+                <a href="index.php">
                     Dev<span>IN</span>
                 </a>
             </div>
