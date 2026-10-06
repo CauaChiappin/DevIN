@@ -20,6 +20,21 @@ const lenis = new Lenis({
 
 let scrollAnterior = window.scrollY; // Armazena a posição de scroll anterior para determinar a direção do scroll
 
+// Links de âncora (#conheca, #etapas...) param abaixo do cabeçalho fixo
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener('click', (evento) => {
+    const id = link.getAttribute('href');
+    if (id.length < 2) return; // ignora href="#"
+    if (id === '#contato') return; // Contato mantém a rolagem padrão de antes
+
+    const alvo = document.querySelector(id);
+    if (!alvo) return;
+
+    evento.preventDefault();
+    lenis.scrollTo(alvo, { offset: -100, duration: 1.2 });
+  });
+});
+
 function atualizarHeader(scroll, direcao = 0) {
   if (header) {
     header.classList.toggle('rolado', scroll > 40); // Adiciona a classe 'rolado' quando o scroll é maior que 40px
@@ -182,7 +197,7 @@ revelar('.linha-curriculo div, .linha-feed img, .formato div, .imagem-suporte', 
   opacity: 0
 });
 
-revelar('.lista-etapas, .marquee-empresas', {
+revelar('.lista-etapas, .marquee-empresas, .acao-empresas', {
   y: 70,
   opacity: 0
 }, {
