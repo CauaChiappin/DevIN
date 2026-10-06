@@ -14,6 +14,11 @@ $usuarioAtual = requireWebAuth('empresa');
 $tipo   = 'empresa';
 $nome   = $_SESSION['usuario_nome']  ?? 'Empresa';
 $email  = $_SESSION['usuario_email'] ?? 'empresa@devin.com';
+$mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
+$mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
+$mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
+$mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
+unset($_SESSION['sucesso_login'], $_SESSION['erro_email_senha'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro']);
 $pagina = requestString($_GET, 'pagina');
 
 $paginasPermitidas = ['inicio', 'candidatos', 'sobre', 'perfil'];
@@ -159,6 +164,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($action === 'create_test_candidates') {
+            if (APP_ENV !== 'development') {
+                throw new RuntimeException('A criação de candidatos de teste está disponível apenas no ambiente local.');
+            }
+
             $empresaId = (int) $_SESSION['usuario_id'];
             $conn = getDatabaseConnection();
 
@@ -261,7 +270,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log('Erro no dashboard empresa: ' . $exception->getMessage());
 
         if (in_array($action, ['update_application_status', 'create_test_candidates'], true)) {
-            $_SESSION['candidate_error'] = $exception->getMessage();
+            $_SESSION['candidate_error'] = $exception instanceof mysqli_sql_exception
+                ? 'Não foi possível concluir a ação. Tente novamente.'
+                : $exception->getMessage();
             header('Location: empresa.php?pagina=candidatos');
             exit;
         }
@@ -376,6 +387,18 @@ $talentos = [
 </head>
 <body>
     <main class="dashboard-shell empresa-dashboard page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
+        <?php if ($mensagemSenhaAlterada !== ''): ?>
+            <p class="form-success" role="status"><?= h($mensagemSenhaAlterada) ?></p>
+        <?php endif; ?>
+        <?php if ($mensagemCadastro !== ''): ?>
+            <p class="form-success" role="status"><?= h($mensagemCadastro) ?></p>
+        <?php endif; ?>
+        <?php if ($mensagemEmailSenha !== ''): ?>
+            <p class="form-error" role="alert"><?= h($mensagemEmailSenha) ?></p>
+        <?php endif; ?>
+        <?php if ($mensagemEmailCadastro !== ''): ?>
+            <p class="form-error" role="alert"><?= h($mensagemEmailCadastro) ?></p>
+        <?php endif; ?>
         
         <aside class="sidebar">
             <div class="sidebar-topo">
@@ -445,12 +468,14 @@ $talentos = [
                 <?php if (!$candidatos): ?>
                     <p class="empty-state">Ainda não há candidaturas para as suas vagas.</p>
                 <?php endif; ?>
+                <?php if (APP_ENV === 'development'): ?>
                 <form method="post" class="test-candidates-form">
                     <input type="hidden" name="action" value="create_test_candidates">
                     <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
                     <button class="btn primary" type="submit">Criar candidatos de teste</button>
                     <small>Cria ou reinicia dois candidatos pendentes na primeira vaga da empresa.</small>
                 </form>
+                <?php endif; ?>
                 <?php foreach ($candidatos as $candidato): ?>
                     <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-detail-action-label="Aprovar candidato">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>

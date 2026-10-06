@@ -8,7 +8,10 @@ require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/MailerHelper.php';
+<<<<<<< HEAD
 require_once __DIR__ . '/config/RateLimiter.php';
+=======
+>>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
 
 startSecureSession();
 
@@ -167,6 +170,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $auth = AuthController::login($email, $senha);
         AuthController::establishSession($auth);
+
+        if (MailerHelper::enviarConfirmacaoCadastro($email, $nome)) {
+            $_SESSION['sucesso_cadastro'] = 'Cadastro confirmado. Enviamos uma confirmação para seu e-mail.';
+        } else {
+            $_SESSION['erro_email_cadastro'] = 'Seu cadastro foi criado, mas não foi possível enviar o e-mail de confirmação.';
+        }
 
         header('Location: ' . AuthController::redirectByUserType($auth['usuario']['tipo']));
         exit;

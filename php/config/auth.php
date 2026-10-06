@@ -2,30 +2,32 @@
 
 declare(strict_types=1);
 
-// 1. Carrega automaticamente as variáveis do arquivo .env na raiz do projeto
-$envPath = __DIR__ . '/../.env';
-if (file_exists($envPath)) {
-    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        $line = trim($line);
-        if ($line === '' || str_starts_with($line, '#')) {
-            continue;
-        }
-        if (str_contains($line, '=')) {
-            list($key, $value) = explode('=', $line, 2);
-            $key = trim($key);
-            $value = trim($value, " \t\n\r\0\x0B\"'");
-            putenv("{$key}={$value}");
-            $_ENV[$key] = $value;
-        }
-    }
+// Carrega o .env da raiz apenas quando ele existe; variáveis do sistema têm prioridade.
+$projectRoot = dirname(__DIR__, 2);
+require_once $projectRoot . '/vendor/autoload.php';
+if (is_file($projectRoot . '/.env')) {
+    Dotenv\Dotenv::createImmutable($projectRoot)->safeLoad();
 }
 
+$environmentValue = static function (string $name, ?string $legacyName = null): ?string {
+    $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
+    if (($value === false || $value === null || $value === '') && $legacyName !== null) {
+        $value = $_ENV[$legacyName] ?? $_SERVER[$legacyName] ?? getenv($legacyName);
+    }
+
+    return $value === false || $value === null || $value === '' ? null : (string) $value;
+};
+
 // 2. Configurações de Ambiente e JWT
+<<<<<<< HEAD
 $environment = (string) (getenv('DEVIN_APP_ENV') ?: 'development');
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 $jwtSecret = (string) (getenv('DEVIN_JWT_SECRET') ?: '');
+=======
+$environment = $environmentValue('APP_ENV', 'DEVIN_APP_ENV') ?? 'development';
+$jwtSecret = $environmentValue('DEVIN_JWT_SECRET') ?? '';
+>>>>>>> bb0413abcd2a8c17f9c53b600f5a5acb10a41c97
 
 if ($jwtSecret === '') {
     if ($environment !== 'development') {
@@ -36,7 +38,7 @@ if ($jwtSecret === '') {
 }
 
 $appBaseUrl = rtrim(
-    (string) (getenv('DEVIN_APP_BASE_URL') ?: 'http://localhost:8080/DevIN'),
+    $environmentValue('APP_URL', 'DEVIN_APP_BASE_URL') ?? 'http://localhost:8080/DevIN',
     '/'
 );
 

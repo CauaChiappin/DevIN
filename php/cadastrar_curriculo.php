@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/MailerHelper.php';
 require_once __DIR__ . '/config/security.php';
 
 /*
@@ -25,101 +24,14 @@ $idPessoa    = (int) $usuario['id'];
 $nomePessoa  = $_SESSION['nome_pessoa']  ?? $usuario['nome']  ?? 'Candidato';
 $emailPessoa = $_SESSION['email_pessoa'] ?? $usuario['email'] ?? '';
 
-$mensagemSucesso = '';
-$mensagemErro    = '';
-
-/*
-|--------------------------------------------------------------------------
-| SALVAR / ATUALIZAR CURRÍCULO (POST)
-|--------------------------------------------------------------------------
-*/
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    requireValidCsrf();
-
-    $nomeSocial       = trim(requestString($_POST, 'nome_social'));
-    $grauEscolaridade = trim(requestString($_POST, 'grau_de_escolaridade'));
-    $cursos           = trim(requestString($_POST, 'cursos'));
-    $experiencia      = trim(requestString($_POST, 'experiencia'));
-    $idiomas          = trim(requestString($_POST, 'idiomas'));
-
-    try {
-        if ($nomeSocial === '') {
-            throw new InvalidArgumentException('Informe seu nome social.');
-        }
-
-        if ($grauEscolaridade === '') {
-            throw new InvalidArgumentException('Selecione seu grau de escolaridade.');
-        }
-
-        $conn = getDatabaseConnection();
-
-        try {
-            // Verifica se o candidato já possui um currículo cadastrado
-            $stmtCheck = $conn->prepare('SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1');
-            $stmtCheck->bind_param('i', $idPessoa);
-            $stmtCheck->execute();
-            $resCheck = $stmtCheck->get_result();
-            $jaExiste = $resCheck && $resCheck->num_rows > 0;
-            $stmtCheck->close();
-
-            if ($jaExiste) {
-                $stmt = $conn->prepare("
-                    UPDATE curriculo
-                    SET
-                        nome_social = ?,
-                        grau_de_escolaridade = ?,
-                        cursos = ?,
-                        experiencia = ?,
-                        idiomas = ?
-                    WHERE id_pessoa = ?
-                ");
-                $stmt->bind_param('sssssi', $nomeSocial, $grauEscolaridade, $cursos, $experiencia, $idiomas, $idPessoa);
-            } else {
-                $stmt = $conn->prepare("
-                    INSERT INTO curriculo
-                    (id_pessoa, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas)
-                    VALUES
-                    (?, ?, ?, ?, ?, ?)
-                ");
-                $stmt->bind_param('isssss', $idPessoa, $nomeSocial, $grauEscolaridade, $cursos, $experiencia, $idiomas);
-            }
-
-            $executou = $stmt->execute();
-            $stmt->close();
-
-            if ($executou) {
-                // Notificações por e-mail apenas na criação inicial do currículo
-                if (!$jaExiste) {
-                    if (!empty($emailPessoa) && filter_var($emailPessoa, FILTER_VALIDATE_EMAIL)) {
-                        MailerHelper::enviarConfirmacaoCadastroCurriculo($emailPessoa, $nomePessoa);
-                    }
-                    MailerHelper::notificarEmpresasNovoCandidato($conn, $nomePessoa);
-                }
-
-                // Desativa a flag de lembrete do e-mail de pendência
-                $stmtLembrete = $conn->prepare('UPDATE pessoa SET lembrete_enviado = 0 WHERE id_pessoa = ?');
-                if ($stmtLembrete) {
-                    $stmtLembrete->bind_param('i', $idPessoa);
-                    $stmtLembrete->execute();
-                    $stmtLembrete->close();
-                }
-
-                header('Location: pessoa.php');
-                exit;
-            }
-
-            $mensagemErro = 'Erro ao salvar o currículo. Tente novamente.';
-
-        } finally {
-            $conn->close();
-        }
-
-    } catch (Throwable $e) {
-        error_log('Erro ao salvar currículo: ' . $e->getMessage());
-        $mensagemErro = $e->getMessage();
-    }
-}
+$mensagemSucesso = (string) ($_SESSION['sucesso_curriculo'] ?? '');
+$mensagemErro = (string) ($_SESSION['erro_curriculo'] ?? '');
+$mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
+$mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
+$mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
+$mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
+$avisoSenha = implode(' ', array_filter([$mensagemSenhaAlterada, $mensagemEmailSenha]));
+unset($_SESSION['sucesso_curriculo'], $_SESSION['erro_curriculo'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro'], $_SESSION['sucesso_login'], $_SESSION['erro_email_senha']);
 
 /*
 |--------------------------------------------------------------------------
@@ -204,7 +116,26 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="cadastrar_curriculo.php" class="register-form">
+        <?php if ($mensagemCadastro): ?>
+            <div class="php-toast success-toast" role="status">
+                <?= htmlspecialchars($mensagemCadastro, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($mensagemEmailCadastro): ?>
+            <div class="php-toast error-toast" role="alert">
+                <?= htmlspecialchars($mensagemEmailCadastro, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($avisoSenha !== ''): ?>
+            <div class="php-toast <?= $mensagemEmailSenha !== '' ? 'error-toast' : 'success-toast' ?>" role="<?= $mensagemEmailSenha !== '' ? 'alert' : 'status' ?>">
+                <?= htmlspecialchars($avisoSenha, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="processar.php" class="register-form">
+            <input type="hidden" name="acao" value="cadastrar_curriculo">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
             <h2 class="title-curriculo">Preenchimento de Currículo</h2>
