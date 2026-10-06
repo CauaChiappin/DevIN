@@ -70,6 +70,24 @@ function requireWebAuth(?string $tipoEsperado = null): array
 
     $loginUrl = APP_BASE_URL . '/php/login.php';
 
+    if (!empty($_SESSION['logado'])) {
+        $now = time();
+        $lastActivity = (int) ($_SESSION['last_activity'] ?? 0);
+        $authTime = (int) ($_SESSION['auth_time'] ?? 0);
+
+        if ($lastActivity === 0 || $authTime === 0
+            || $now - $lastActivity > 1800
+            || $now - $authTime > 43200
+        ) {
+            $_SESSION = [];
+            session_destroy();
+            header('Location: ' . $loginUrl . '?erro=sessao_expirada');
+            exit;
+        }
+
+        $_SESSION['last_activity'] = $now;
+    }
+
     if (empty($_SESSION['logado']) || empty($_SESSION['usuario_id'])) {
         header('Location: ' . $loginUrl);
         exit;

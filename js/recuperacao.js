@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const matchError = document.getElementById('match-error');
 
     const requirements = [
-        [document.getElementById('req-length'), value => value.length >= 8],
+        [document.getElementById('req-length'), value => value.length >= 12],
         [document.getElementById('req-upper'), value => /[A-Z]/.test(value)],
         [document.getElementById('req-special'), value => /[^a-zA-Z0-9]/.test(value)],
     ];
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form?.addEventListener('submit', (event) => {
         const value = senha?.value || '';
         const confirmation = confirmar?.value || '';
-        const valid = value.length >= 8 && /[A-Z]/.test(value) && /[^a-zA-Z0-9]/.test(value) && value === confirmation;
+        const valid = value.length >= 12 && /[A-Z]/.test(value) && /[^a-zA-Z0-9]/.test(value) && value === confirmation;
         if (!valid) {
             event.preventDefault();
             validate();

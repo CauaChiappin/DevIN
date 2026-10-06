@@ -8,6 +8,7 @@ startSecureSession();
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/auth.php';
 require_once __DIR__ . '/MailerHelper.php';
+require_once __DIR__ . '/config/RateLimiter.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: login.php');
@@ -33,16 +34,14 @@ if ($acao === 'solicitar_recuperacao') {
         exit;
     }
 
-    // Cooldown de 2 minutos entre solicitações
-    $agora = time();
-    $ultimoPedido = $_SESSION['ultimo_pedido_recuperacao'] ?? 0;
-    if (($agora - $ultimoPedido) < 120) {
-        $tempoRestante = 120 - ($agora - $ultimoPedido);
-        $_SESSION['erro_recuperacao'] = "Aguarde {$tempoRestante} segundos antes de solicitar um novo código.";
-        header('Location: recuperacao.php');
+    $ipBlocked = RateLimiter::consume('recovery:ip:' . RateLimiter::clientIp(), 10, 3600);
+    $emailBlocked = RateLimiter::consume('recovery:email:' . strtolower($email), 3, 3600);
+    if ($ipBlocked > 0 || $emailBlocked > 0) {
+        $_SESSION['email_recuperacao'] = $email;
+        $_SESSION['sucesso_recuperacao'] = 'Se houver uma conta com esse e-mail, enviaremos as instruções de redefinição.';
+        header('Location: redefinir.php');
         exit;
     }
-    $_SESSION['ultimo_pedido_recuperacao'] = $agora;
 
     $conn = getDatabaseConnection();
 
@@ -132,7 +131,7 @@ if ($acao === 'solicitar_recuperacao') {
 
         // Armazena e-mail na sessão para a página redefinir.php
         $_SESSION['email_recuperacao'] = $email;
-        $_SESSION['sucesso_recuperacao'] = 'Se o e-mail estiver correto, enviamos um código de 8 dígitos.';
+        $_SESSION['sucesso_recuperacao'] = 'Se houver uma conta com esse e-mail, enviaremos as instruções de redefinição.';
 
         header('Location: redefinir.php');
         exit;
@@ -159,6 +158,20 @@ if ($acao === 'redefinir_senha') {
     $novaSenha = requestString($_POST, 'nova_senha');
     $confSenha = requestString($_POST, 'confirmar_senha');
 
+    $ipBlocked = RateLimiter::consume('reset:ip:' . RateLimiter::clientIp(), 20, 3600);
+    $emailBlocked = RateLimiter::consume('reset:email:' . strtolower($email), 10, 3600);
+    if ($ipBlocked > 0 || $emailBlocked > 0) {
+        $_SESSION['erro_redefinir'] = 'Muitas tentativas. Aguarde antes de tentar novamente.';
+        header('Location: redefinir.php');
+        exit;
+    }
+
+    if ($email === '' || !hash_equals((string) ($_SESSION['email_recuperacao'] ?? ''), $email)) {
+        $_SESSION['erro_redefinir'] = 'Solicite um novo código de recuperação.';
+        header('Location: recuperacao.php');
+        exit;
+    }
+
     if (empty($email) || empty($codigo) || empty($novaSenha) || empty($confSenha)) {
         $_SESSION['erro_redefinir'] = 'Preencha todos os campos.';
         header('Location: redefinir.php');
@@ -177,8 +190,8 @@ if ($acao === 'redefinir_senha') {
         exit;
     }
 
-    if (strlen($novaSenha) < 8) {
-        $_SESSION['erro_redefinir'] = 'A senha deve ter no mínimo 8 caracteres.';
+    if (strlen($novaSenha) < 12) {
+        $_SESSION['erro_redefinir'] = 'A senha deve ter no mínimo 12 caracteres.';
         header('Location: redefinir.php');
         exit;
     }
@@ -230,6 +243,8 @@ if ($acao === 'redefinir_senha') {
 
         if ($afetados > 0) {
             unset($_SESSION['email_recuperacao']);
+            RateLimiter::clear('reset:ip:' . RateLimiter::clientIp());
+            RateLimiter::clear('reset:email:' . strtolower($email));
             session_regenerate_id(true);
 
             $_SESSION['sucesso_login'] = 'Senha redefinida com sucesso! Faça seu login.';
@@ -252,4 +267,4 @@ if ($acao === 'redefinir_senha') {
 }
 
 header('Location: index.php');
-exit;   
+exit;

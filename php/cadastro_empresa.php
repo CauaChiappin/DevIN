@@ -7,6 +7,8 @@ ob_start();
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/security.php';
+require_once __DIR__ . '/MailerHelper.php';
+require_once __DIR__ . '/config/RateLimiter.php';
 
 startSecureSession();
 
@@ -30,6 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmeSenha = requestString($_POST, 'confirme_senha');
 
     try {
+        if (RateLimiter::consume('registration:ip:' . RateLimiter::clientIp(), 8, 3600) > 0) {
+            throw new RuntimeException('Muitas tentativas de cadastro. Aguarde e tente novamente.');
+        }
+
         /*
         |--------------------------------------------------------------------------
         | VALIDAÇÕES DOS CAMPOS
@@ -149,6 +155,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->close();
         }
 
+        if (!MailerHelper::enviarConfirmacaoCadastroEmpresa($email, $nome)) {
+            error_log('Falha ao enviar confirmação de cadastro para empresa.');
+        }
+
         /*
         |--------------------------------------------------------------------------
         | LOGIN AUTOMÁTICO E REDIRECIONAMENTO
@@ -239,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="input-group password-wrapper">
                         <label for="confirme_senha">Confirme a sua senha:*</label>
                         <div class="input-icon-container">
-                            <input type="password" id="confirme_senha" name="confirme_senha" required autocomplete="new-password">
+                            <input type="password" id="confirme_senha" name="confirme_senha" required minlength="8" autocomplete="new-password">
                             <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Mostrar ou ocultar senha">
                         </div>
                         <span id="error-match" class="error-message-text">Senhas não coincidem</span>
@@ -260,7 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="input-group password-wrapper">
                         <label for="senha">Senha:*</label>
                         <div class="input-icon-container">
-                            <input type="password" id="senha" name="senha" required autocomplete="new-password">
+                            <input type="password" id="senha" name="senha" required minlength="8" autocomplete="new-password">
                             <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Mostrar ou ocultar senha">
                         </div>
                     </div>
@@ -285,9 +295,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </form>
 
-        <footer class="page-footer">
-            Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
-        </footer>
+  <footer class="page-footer">
+    Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados<a id="secret-doom" href="../html/jogos/doom.html">.</a>
+</footer>  
     </section>
 
     <section class="right-side">

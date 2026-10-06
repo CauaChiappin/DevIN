@@ -57,7 +57,7 @@
                         <div class="input-group password-wrapper">
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
-                                <input type="password" id="confirme_senha" name="confirme_senha" required>
+                                <input type="password" id="confirme_senha" name="confirme_senha" required minlength="12">
                                 <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Mostrar senha">
                             </div>
                             <span id="error-match" class="error-message-text">Senhas não coincidem</span>
@@ -78,14 +78,14 @@
                         <div class="input-group password-wrapper">
                             <label for="senha">Senha:*</label>
                             <div class="input-icon-container">
-                                <input type="password" id="senha" name="senha" required>
+                                <input type="password" id="senha" name="senha" required minlength="12">
                                 <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Mostrar senha">
                             </div>
                         </div>
 
                         <div class="password-requirements">
                             <div class="requirement-item req-invalid" id="req-length">
-                                <span class="req-icon">⚠️</span> No mínimo 8 caracteres
+                                <span class="req-icon">⚠️</span> No mínimo 12 caracteres
                             </div>
                             <div class="requirement-item req-invalid" id="req-upper">
                                 <span class="req-icon">⚠️</span> Pelo menos 1 letra maiúscula (A-Z)

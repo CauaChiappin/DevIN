@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cpfTeste      = sprintf('%011d', 90000000000 + ($empresaId * 10) + $indice);
                     $cepTeste      = '01001000';
                     $telefoneTeste = '1199999000' . $indice;
-                    $senhaTeste    = password_hash('teste123', PASSWORD_DEFAULT);
+                    $senhaTeste    = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
 
                     $buscarPessoa->bind_param('s', $emailTeste);
                     $buscarPessoa->execute();
@@ -637,6 +637,7 @@ $talentos = [
         </form>
     </dialog>
 
+    <script src="../js/site-navigation.js"></script>
     <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>

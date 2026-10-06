@@ -24,6 +24,7 @@ temp/
 cache/
 storage/sessions/*
 !storage/sessions/.gitkeep
+storage/rate-limits/
 
 # Build and coverage output
 dist/

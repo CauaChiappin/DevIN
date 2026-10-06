@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/security.php';
+require_once __DIR__ . '/../MailerHelper.php';
 
 function profileTable(string $tipo): array
 {
@@ -110,8 +111,8 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
         throw new RuntimeException('Perfil não encontrado.');
     }
 
-    $nome = trim($data['nome'] ?? '');
-    $email = filter_var(trim($data['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+    $nome = requestString($data, 'nome');
+    $email = filter_var(requestString($data, 'email'), FILTER_VALIDATE_EMAIL);
 
     if ($nome === '' || !$email) {
         throw new InvalidArgumentException('Informe um nome e e-mail válidos.');
@@ -133,8 +134,8 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
             }
             $stmt->bind_param('ssi', $nome, $email, $id);
         } else {
-            $cep = preg_replace('/\D/', '', $data['cep'] ?? '');
-            $telefone = preg_replace('/\D/', '', $data['telefone'] ?? '');
+            $cep = preg_replace('/\D/', '', requestString($data, 'cep'));
+            $telefone = preg_replace('/\D/', '', requestString($data, 'telefone'));
 
             if (strlen($cep) !== 8 || strlen($telefone) < 10 || strlen($telefone) > 11) {
                 throw new InvalidArgumentException('Informe CEP (8 dígitos) e Telefone (10 ou 11 dígitos) válidos.');
@@ -174,17 +175,39 @@ function deleteProfile(string $tipo, int $id): void
 {
     [$table, $idColumn] = profileTable($tipo);
     $conn = getDatabaseConnection();
+    $email = '';
+    $nome = '';
 
     try {
+        if (in_array($tipo, ['pessoa', 'empresa'], true)) {
+            $stmtProfile = $conn->prepare("SELECT nome, email FROM {$table} WHERE {$idColumn} = ? LIMIT 1");
+            $stmtProfile->bind_param('i', $id);
+            $stmtProfile->execute();
+            $profile = $stmtProfile->get_result()->fetch_assoc();
+            $stmtProfile->close();
+
+            if (!$profile) {
+                throw new RuntimeException('Perfil não encontrado.');
+            }
+
+            $email = (string) $profile['email'];
+            $nome = (string) $profile['nome'];
+        }
+
         $stmt = $conn->prepare("DELETE FROM {$table} WHERE {$idColumn} = ?");
         if (!$stmt) {
             throw new RuntimeException('Não foi possível excluir o perfil.');
         }
         $stmt->bind_param('i', $id);
         $stmt->execute();
+        $deleted = $stmt->affected_rows === 1;
         $stmt->close();
     } finally {
         $conn->close();
+    }
+
+    if ($deleted && $email !== '' && !MailerHelper::enviarConfirmacaoExclusao($email, $nome, $tipo)) {
+        error_log('Falha ao enviar confirmação de exclusão de conta.');
     }
 }
 

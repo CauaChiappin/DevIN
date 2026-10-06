@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/config/RateLimiter.php';
 
 startSecureSession();
 
@@ -12,7 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($_SESSION['logado'])) {
     exit;
 }
 
-$erro = requestString($_GET, 'erro');
+$erro = requestString($_GET, 'erro') === 'sessao_expirada'
+    ? 'Sua sessão expirou. Entre novamente.'
+    : '';
 $emailDigitado = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,7 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $emailDigitado = requestString($_POST, 'email');
         $senhaDigitada = requestString($_POST, 'senha');
 
+        $ipKey = 'login:ip:' . RateLimiter::clientIp();
+        $identityKey = 'login:identity:' . strtolower($emailDigitado);
+        $ipBlocked = RateLimiter::consume($ipKey, 20, 900);
+        $identityBlocked = RateLimiter::consume($identityKey, 8, 900);
+        if ($ipBlocked > 0 || $identityBlocked > 0) {
+            throw new RuntimeException('Muitas tentativas. Aguarde e tente novamente.');
+        }
+
         $auth = AuthController::login($emailDigitado, $senhaDigitada);
+        RateLimiter::clear($ipKey);
+        RateLimiter::clear($identityKey);
         AuthController::establishSession($auth);
 
         // Redirecionamento especial para candidato sem currículo cadastrado

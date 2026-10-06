@@ -23,6 +23,8 @@ if (file_exists($envPath)) {
 
 // 2. Configurações de Ambiente e JWT
 $environment = (string) (getenv('DEVIN_APP_ENV') ?: 'development');
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
 $jwtSecret = (string) (getenv('DEVIN_JWT_SECRET') ?: '');
 
 if ($jwtSecret === '') {

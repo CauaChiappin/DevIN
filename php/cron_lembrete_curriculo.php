@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-if (php_sapi_name() !== 'cli') {
-    header('Content-Type: text/plain; charset=utf-8');
+if (PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    exit;
 }
 
 require_once __DIR__ . '/config/database.php';

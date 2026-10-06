@@ -49,3 +49,23 @@
         }
     }
 })();
+
+document.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+
+    if (form.dataset.submitPending === 'true') {
+        event.preventDefault();
+        return;
+    }
+
+    queueMicrotask(() => {
+        if (event.defaultPrevented || !form.checkValidity()) return;
+
+        form.dataset.submitPending = 'true';
+        form.setAttribute('aria-busy', 'true');
+        form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach((button) => {
+            button.disabled = true;
+        });
+    });
+}, true);

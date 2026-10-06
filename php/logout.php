@@ -21,7 +21,7 @@ if (ini_get('session.use_cookies')) {
             'expires'  => time() - 42000,
             'path'     => $params['path'] ?: '/',
             'domain'   => $params['domain'] ?? '',
-            'secure'   => (bool) $params['secure'],
+            'secure'   => isSecureRequest(),
             'httponly' => (bool) $params['httponly'],
             'samesite' => $params['samesite'] ?? 'Lax',
         ]
@@ -32,16 +32,13 @@ if (ini_get('session.use_cookies')) {
 session_destroy();
 
 // 4. Invalida o cookie JWT (utiliza detecção completa de HTTPS)
-$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-    || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
-
 setcookie(
     JWT_COOKIE_NAME,
     '',
     [
         'expires'  => time() - 3600,
         'path'     => '/',
-        'secure'   => $isHttps,
+        'secure'   => isSecureRequest(),
         'httponly' => true,
         'samesite' => 'Lax',
     ]

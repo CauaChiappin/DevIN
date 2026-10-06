@@ -57,7 +57,7 @@ function checkPasswordMatch() {
 if (senhaInput && confirmeSenhaInput) {
     senhaInput.addEventListener('input', () => {
         const senha = senhaInput.value;
-        updateRequirement(reqLength, senha.length >= 8);
+        updateRequirement(reqLength, senha.length >= 12);
         updateRequirement(reqUpper, /[A-Z]/.test(senha));
         updateRequirement(reqSpecial, /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\/]/.test(senha));
         checkPasswordMatch();
@@ -67,7 +67,7 @@ if (senhaInput && confirmeSenhaInput) {
 
     cadastroForm.addEventListener('submit', (event) => {
         const senha = senhaInput.value;
-        const senhaValida = senha.length >= 8
+        const senhaValida = senha.length >= 12
             && /[A-Z]/.test(senha)
             && /[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\/]/.test(senha);
 

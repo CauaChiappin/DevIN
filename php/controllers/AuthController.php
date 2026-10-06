@@ -23,9 +23,8 @@ class AuthController
         $_SESSION['usuario_email'] = $auth['usuario']['email'];
         $_SESSION['usuario_tipo']  = $auth['usuario']['tipo'];
         $_SESSION['logado']        = true;
-
-        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+        $_SESSION['auth_time']     = time();
+        $_SESSION['last_activity'] = time();
 
         // Cookie JWT protegido
         setcookie(
@@ -34,7 +33,7 @@ class AuthController
             [
                 'expires'  => time() + JWT_EXPIRATION_SECONDS,
                 'path'     => '/',
-                'secure'   => $isHttps,
+                'secure'   => isSecureRequest(),
                 'httponly' => true,
                 'samesite' => 'Lax',
             ]
@@ -68,8 +67,6 @@ class AuthController
             'iat'   => $now,
             'exp'   => $now + JWT_EXPIRATION_SECONDS,
             'sub'   => (string) $usuario['id'],
-            'nome'  => $usuario['nome'],
-            'email' => $usuario['email'],
             'tipo'  => $usuario['tipo'],
         ];
 
@@ -114,7 +111,8 @@ class AuthController
                 $row = $result->fetch_assoc();
                 $stmt->close();
 
-                $senhaHash = $row['senha_hash'] ?? $row['senha'] ?? null;
+                // Never accept legacy/plaintext password columns as credentials.
+                $senhaHash = $row['senha_hash'] ?? null;
 
                 if (!$senhaHash) {
                     continue;

@@ -22,13 +22,21 @@ class MailerHelper
         $mail = new PHPMailer(true);
 
         // Busca as configurações do arquivo .env com fallbacks de segurança
-        $host       = getenv('DEVIN_SMTP_HOST') ?: 'smtp.gmail.com';
+        $host       = getenv('DEVIN_SMTP_HOST') ?: '';
         $port       = (int)(getenv('DEVIN_SMTP_PORT') ?: 587);
         $encryption = strtolower(getenv('DEVIN_SMTP_ENCRYPTION') ?: 'tls');
         $username   = getenv('DEVIN_SMTP_USERNAME') ?: '';
         $password   = getenv('DEVIN_SMTP_PASSWORD') ?: '';
         $fromEmail  = getenv('DEVIN_SMTP_FROM_EMAIL') ?: $username;
         $fromName   = getenv('DEVIN_SMTP_FROM_NAME') ?: 'Plataforma DevIN';
+
+        if ($host === '' || $username === '' || $password === ''
+            || !filter_var($fromEmail, FILTER_VALIDATE_EMAIL)
+            || !in_array($encryption, ['tls', 'ssl'], true)
+            || $port < 1 || $port > 65535
+        ) {
+            throw new RuntimeException('As configurações SMTP estão incompletas ou inválidas.');
+        }
 
         $mail->isSMTP();
         $mail->Host       = $host;
@@ -45,6 +53,8 @@ class MailerHelper
 
         $mail->Port    = $port;
         $mail->CharSet = 'UTF-8';
+        $mail->Timeout = 8;
+        $mail->SMTPKeepAlive = false;
 
         // Remetente configurável via .env
         $mail->setFrom($fromEmail, $fromName);
@@ -122,6 +132,33 @@ class MailerHelper
         ";
 
         return self::enviar($emailCandidato, $nomeCandidato, $assunto, $corpo);
+    }
+
+    public static function enviarConfirmacaoCadastroEmpresa(string $email, string $nome): bool
+    {
+        $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+        $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
+            . "<h2>Olá, {$nomeSeguro}!</h2>"
+            . '<p>O cadastro da sua empresa foi concluído com sucesso.</p>'
+            . '<p>Agora você pode publicar vagas e acompanhar as candidaturas pela plataforma.</p>'
+            . "<p><a href='" . APP_BASE_URL . "/php/empresa.php'>Acessar minha conta</a></p></div>";
+
+        return self::enviar($email, $nome, 'Cadastro da empresa concluído - DevIN', $corpo);
+    }
+
+    public static function enviarConfirmacaoExclusao(string $email, string $nome, string $tipo): bool
+    {
+        if (!in_array($tipo, ['pessoa', 'empresa'], true)) {
+            return false;
+        }
+
+        $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+        $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
+            . "<h2>Olá, {$nomeSeguro}.</h2>"
+            . '<p>A exclusão da sua conta no DevIN foi concluída.</p>'
+            . '<p>Se você não solicitou essa ação, entre em contato com a equipe do DevIN.</p></div>';
+
+        return self::enviar($email, $nome, 'Exclusão da conta concluída - DevIN', $corpo);
     }
 
     /**
