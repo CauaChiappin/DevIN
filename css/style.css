@@ -6,6 +6,7 @@
     --white: #ffffff;
 }
 
+
 * {
     box-sizing: border-box;
 }
@@ -187,16 +188,14 @@ summary:focus-visible {
     position: relative;
     overflow: hidden;
     box-shadow: 0 0 0 rgba(0, 74, 148, 0);
-    
-    /* ADICIONAMOS AS TRANSIÇÕES DE HEIGHT, PADDING E FONT-SIZE AQUI */
-    transition: height .35s ease, 
-                padding .35s ease, 
-                font-size .35s ease, 
-                color .28s ease, 
-                background-color .28s ease, 
-                border-color .28s ease, 
-                box-shadow .28s ease, 
-                transform .28s ease;
+    transition: height .35s ease,
+        padding .35s ease,
+        font-size .35s ease,
+        color .28s ease,
+        background-color .28s ease,
+        border-color .28s ease,
+        box-shadow .28s ease,
+        transform .28s ease;
 }
 
 .botao-azul {
@@ -272,22 +271,50 @@ summary:focus-visible {
     transition: transform .52s cubic-bezier(.16, 1, .3, 1), opacity .28s ease;
 }
 
-.palavra-rotativa-index.saindo { animation: palavra-index-sai .48s cubic-bezier(.5, 0, .8, .35) forwards; }
-.palavra-rotativa-index.entrando { animation: palavra-index-entra .52s cubic-bezier(.16, 1, .3, 1) both; }
-.ponto-rotativo-index.movendo { animation: ponto-index-move .52s cubic-bezier(.16, 1, .3, 1) both; }
+.palavra-rotativa-index.saindo {
+    animation: palavra-index-sai .48s cubic-bezier(.5, 0, .8, .35) forwards;
+}
+
+.palavra-rotativa-index.entrando {
+    animation: palavra-index-entra .52s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.ponto-rotativo-index.movendo {
+    animation: ponto-index-move .52s cubic-bezier(.16, 1, .3, 1) both;
+}
 
 @keyframes palavra-index-sai {
-    to { opacity: 0; filter: blur(3px); transform: translateY(30px) rotate(1deg); }
+    to {
+        opacity: 0;
+        filter: blur(3px);
+        transform: translateY(30px) rotate(1deg);
+    }
 }
 
 @keyframes palavra-index-entra {
-    from { opacity: 0; filter: blur(5px); transform: translateY(-18px); }
-    to { opacity: 1; filter: blur(0); transform: translateY(0); }
+    from {
+        opacity: 0;
+        filter: blur(5px);
+        transform: translateY(-18px);
+    }
+
+    to {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+    }
 }
 
 @keyframes ponto-index-move {
-    0% { opacity: .45; transform: translateX(var(--ponto-deslocamento, 0)) scale(.86); }
-    100% { opacity: 1; transform: translateX(0) scale(1); }
+    0% {
+        opacity: .45;
+        transform: translateX(var(--ponto-deslocamento, 0)) scale(.86);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
 }
 
 .texto-principal p {
@@ -401,7 +428,7 @@ summary:focus-visible {
 }
 
 .bloco-etapas {
-    height: 886px;
+    height: 840px;
     position: relative;
     border-bottom: 1px solid rgba(180, 180, 180, .18);
     overflow: hidden;
@@ -469,6 +496,8 @@ summary:focus-visible {
     line-height: 1.22;
     font-weight: 500;
     transition: color .2s ease;
+    margin: 0 -12px;
+    white-space: nowrap;
 }
 
 .etapa:hover span {
@@ -530,12 +559,12 @@ summary:focus-visible {
 
 .formato {
     position: absolute;
-    left: 250px;
-    top: 399px;
+    left: max(40px, calc(50% - 535px));
+    top: 360px;
     margin: 0;
     display: grid;
-    grid-template-columns: 490px 1fr;
-    gap: 465px;
+    grid-template-columns: 490px 340px;
+    gap: 240px;
     align-items: center;
 }
 
@@ -553,67 +582,59 @@ summary:focus-visible {
 }
 
 .formato p {
-    margin: 0 0 0 38px;
+    margin: 0;
     color: #696969;
     font-size: 22px;
     line-height: 1.35;
     font-weight: 600;
 }
 
+/* ===== EMPRESAS ===== */
+
 .empresas {
-    height: 644px;
-    position: relative;
+    height: auto;
+    padding: 72px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 36px;
     border-bottom: 1px solid rgba(180, 180, 180, .15);
-    padding: 0;
     text-align: center;
     overflow: hidden;
 }
 
-.empresas h2 {
-    font-size: 21px;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 70px;
+.acao-empresas {
+    margin-top: 35px;
 }
 
-.texto-empresas {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 242px;
+.empresas .texto-empresas {
+    position: static;
+    max-width: 720px;
     margin: 0;
-    font-size: 21px;
+    font-size: clamp(20px, 2.4vw, 26px);
     font-weight: 500;
+    line-height: 1.3;
 }
 
 .marquee-empresas {
-    position: absolute;
-    left: 0;
-    right: 0;
+    position: relative;
+    top: auto;
+    width: 100%;
+    margin: 0;
     overflow: hidden;
     display: flex;
-    color: #969da6;
-    font-size: 12px;
-    font-weight: 700;
-    opacity: .58;
+    color: #5f6772;
+    font-size: 18px;
+    font-weight: 600;
+    opacity: 1;
     white-space: nowrap;
     mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
-}
-
-.marquee-direita {
-    top: 372px;
-}
-
-.marquee-esquerda {
-    top: 428px;
 }
 
 .marquee-trilho {
     min-width: max-content;
     display: flex;
     align-items: center;
-    /* REMOVA O GAP DAQUI */
     animation: marquee-esquerda 40s linear infinite;
 }
 
@@ -627,17 +648,23 @@ summary:focus-visible {
 
 .marquee-trilho span {
     min-width: 150px;
-    text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 120px; /* ADICIONE O ESPAÇAMENTO AQUI */
+    margin-right: 120px;
+    text-align: center;
+    transition: color .2s ease;
+}
+
+.marquee-trilho span:hover {
+    color: var(--blue);
 }
 
 .marquee-trilho span::before {
     content: "\25C7";
     margin-right: 10px;
-    color: #aab0b7;
+    color: var(--blue);
+    opacity: .5;
 }
 
 @keyframes marquee-esquerda {
@@ -659,6 +686,14 @@ summary:focus-visible {
         transform: translateX(0);
     }
 }
+
+@media (prefers-reduced-motion: reduce) {
+    .marquee-trilho {
+        animation: none;
+    }
+}
+
+/* ===== CONTATO ===== */
 
 .contato {
     height: 980px;
@@ -696,7 +731,7 @@ summary:focus-visible {
     font-weight: 500;
 }
 
-.info-suporte > p {
+.info-suporte>p {
     margin: 24px 0 28px;
     color: var(--gray);
     font-size: 19px;
@@ -781,9 +816,9 @@ summary:focus-visible {
 
 .imagem-suporte {
     width: 300px;
-    border-radius: 23px; /* Mesmo arredondamento da caixa de SAC */
-    object-fit: cover; /* Garante que a imagem não distorça */
-    box-shadow: 0 14px 28px rgba(0, 74, 148, .1); /* Sombra super leve para destacar (opcional) */
+    border-radius: 23px;
+    object-fit: cover;
+    box-shadow: 0 14px 28px rgba(0, 74, 148, .1);
 }
 
 .perguntas {
@@ -850,6 +885,8 @@ summary:focus-visible {
     padding: 0 29px 18px;
     color: #555;
 }
+
+/* ===== RODAPÉ ===== */
 
 .rodape {
     background: var(--blue);
@@ -938,9 +975,20 @@ summary:focus-visible {
     opacity: .65;
 }
 
-.icone-mail { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 5h20v14H2z" fill="none" stroke="white" stroke-width="2"/><path d="M2 5l10 8 10-8" fill="none" stroke="white" stroke-width="2"/></svg>') no-repeat center / contain; background: white; }
-.icone-fone { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 2c1 4 2 6 4 8s4 3 8 4l2-3c2 1 4 2 4 4v3c0 2-2 3-4 3C10 21 3 14 3 4c0-2 1-4 3-4h3l2 4-2 2z" fill="none" stroke="white" stroke-width="1.5"/></svg>') no-repeat center / contain; background: white; }
-.icone-ajuda { -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="white" stroke-width="2"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4" fill="none" stroke="white" stroke-width="2"/><circle cx="12" cy="17" r="1" fill="white"/></svg>') no-repeat center / contain; background: white; }
+.icone-mail {
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 5h20v14H2z" fill="none" stroke="white" stroke-width="2"/><path d="M2 5l10 8 10-8" fill="none" stroke="white" stroke-width="2"/></svg>') no-repeat center / contain;
+    background: white;
+}
+
+.icone-fone {
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 2c1 4 2 6 4 8s4 3 8 4l2-3c2 1 4 2 4 4v3c0 2-2 3-4 3C10 21 3 14 3 4c0-2 1-4 3-4h3l2 4-2 2z" fill="none" stroke="white" stroke-width="1.5"/></svg>') no-repeat center / contain;
+    background: white;
+}
+
+.icone-ajuda {
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="white" stroke-width="2"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4" fill="none" stroke="white" stroke-width="2"/><circle cx="12" cy="17" r="1" fill="white"/></svg>') no-repeat center / contain;
+    background: white;
+}
 
 .linha-rodape {
     grid-column: 1 / -1;
@@ -958,7 +1006,10 @@ summary:focus-visible {
     font-weight: 500;
 }
 
+/* ===== RESPONSIVO ===== */
+
 @media (max-width: 900px) {
+
     .tamanho-tela,
     .conteudo-rodape {
         width: 100%;
@@ -1032,14 +1083,13 @@ summary:focus-visible {
     .cabecalho-etapas,
     .lista-etapas,
     .formato,
-    .empresas h2,
-    .empresas-destaque,
-    .texto-empresas,
-    .marquee-empresas,
     .suporte,
     .perguntas {
         position: static;
     }
+    .formato {
+    gap: 25px;
+}
 
     .linha-curriculo,
     .linha-feed {
@@ -1067,18 +1117,14 @@ summary:focus-visible {
         justify-self: center;
     }
 
-    .texto-empresas {
+    .empresas .texto-empresas {
         max-width: 620px;
-        margin: 24px auto 0;
+        margin: 0 auto;
     }
 
     .marquee-empresas {
-        margin: 34px -22px 0;
-        font-size: 12px;
-    }
-
-    .marquee-esquerda {
-        margin-top: 18px;
+        margin: 0;
+        font-size: 16px;
     }
 
     .marquee-trilho {
@@ -1119,22 +1165,34 @@ summary:focus-visible {
     }
 }
 
-    @media (max-width: 720px) {
-        html,
-        body {
-            max-width: 100%;
-            overflow-x: hidden;
-        }
+@media (max-width: 720px) {
 
-        body { padding-top: 72px; }
-    .cabecalho-site { height: 72px; }
+    html,
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    body {
+        padding-top: 72px;
+    }
+
+    .cabecalho-site {
+        height: 72px;
+    }
+
     .navegacao {
         width: 100%;
         height: 72px;
         grid-template-columns: 1fr auto;
         padding: 0 16px;
     }
-    .navegacao .site-menu-toggle { grid-column: 2; grid-row: 1; }
+
+    .navegacao .site-menu-toggle {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
     .navegacao [data-site-menu] {
         grid-column: 1 / -1;
         grid-row: 2;
@@ -1145,19 +1203,50 @@ summary:focus-visible {
         background: var(--bg);
         box-shadow: 0 14px 28px rgba(0, 0, 0, .08);
     }
-    .navegacao [data-site-menu].is-open { display: grid; gap: 18px; }
+
+    .navegacao [data-site-menu].is-open {
+        display: grid;
+        gap: 18px;
+    }
+
     .navegacao .menu,
-    .navegacao .acoes { align-items: stretch; flex-direction: column; gap: 10px; }
+    .navegacao .acoes {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+    }
+
     .navegacao .menu a,
-    .navegacao .acoes .botao { min-height: 44px; justify-content: center; width: 100%; }
+    .navegacao .acoes .botao {
+        min-height: 44px;
+        justify-content: center;
+        width: 100%;
+    }
+
     .principal,
     .sobre,
     .bloco-etapas,
     .empresas,
-    .contato { padding: 38px 16px; }
-    .texto-principal h1 { font-size: clamp(38px, 11vw, 62px); }
-    .lista-etapas { transform: none; }
-    .conteudo-rodape { grid-template-columns: 1fr; gap: 24px; padding: 34px 22px; }
+    .contato {
+        padding: 38px 16px;
+    }
+
+    .texto-principal h1 {
+        font-size: clamp(38px, 11vw, 62px);
+    }
+
+    .lista-etapas {
+        transform: none;
+    }
+
+    .conteudo-rodape {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 34px 22px;
+    }
+
     .coluna-rodape,
-    .marca-rodape { text-align: center; }
-}
+    .marca-rodape {
+        text-align: center;
+    }
+};
