@@ -9,9 +9,9 @@ function profileTable(string $tipo): array
 {
     return match ($tipo) {
         'empresa' => ['empresa', 'id_empresa'],
-        'adm' => ['administrador', 'id_administrador'],
-        'pessoa' => ['pessoa', 'id_pessoa'],
-        default => throw new InvalidArgumentException('Tipo de perfil inválido.'),
+        'adm'     => ['administrador', 'id_administrador'],
+        'pessoa'  => ['pessoa', 'id_pessoa'],
+        default   => throw new InvalidArgumentException('Tipo de perfil inválido.'),
     };
 }
 
@@ -46,7 +46,7 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
         throw new RuntimeException('Não foi possível enviar a foto.');
     }
 
-    $maxBytes = 5 * 1024 * 1024;
+    $maxBytes = 5 * 1024 * 1024; // Limitado a 5 MB
     if (($upload['size'] ?? 0) <= 0 || ($upload['size'] ?? 0) > $maxBytes) {
         throw new InvalidArgumentException('A foto deve ter no máximo 5 MB.');
     }
@@ -54,7 +54,7 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($upload['tmp_name']);
     $extensions = [
         'image/jpeg' => 'jpg',
-        'image/png' => 'png',
+        'image/png'  => 'png',
         'image/webp' => 'webp',
     ];
 
@@ -67,16 +67,15 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
         throw new RuntimeException('Não foi possível ler a foto enviada.');
     }
 
-    // As colunas foto de pessoa e empresa são MEDIUMBLOB no banco.
     return $contents;
 }
 
 function ensureUniqueEmail(string $tipo, int $id, string $email): void
 {
     $tables = [
-        'pessoa' => ['id_pessoa', 'pessoa'],
+        'pessoa'  => ['id_pessoa', 'pessoa'],
         'empresa' => ['id_empresa', 'empresa'],
-        'adm' => ['id_administrador', 'administrador'],
+        'adm'     => ['id_administrador', 'administrador'],
     ];
 
     $conn = getDatabaseConnection();
@@ -119,6 +118,7 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     }
 
     ensureUniqueEmail($tipo, $id, $email);
+
     $foto = $tipo === 'adm'
         ? null
         : saveProfilePhoto($tipo, $id, $upload, $currentProfile['foto'] ?? null);
@@ -128,16 +128,22 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     try {
         if ($tipo === 'adm') {
             $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ? WHERE {$idColumn} = ?");
+            if (!$stmt) {
+                throw new RuntimeException('Falha ao preparar atualização do perfil.');
+            }
             $stmt->bind_param('ssi', $nome, $email, $id);
         } else {
             $cep = preg_replace('/\D/', '', $data['cep'] ?? '');
             $telefone = preg_replace('/\D/', '', $data['telefone'] ?? '');
 
-            if (strlen($cep) !== 8 || strlen($telefone) < 10) {
-                throw new InvalidArgumentException('Informe CEP e telefone válidos.');
+            if (strlen($cep) !== 8 || strlen($telefone) < 10 || strlen($telefone) > 11) {
+                throw new InvalidArgumentException('Informe CEP (8 dígitos) e Telefone (10 ou 11 dígitos) válidos.');
             }
 
             $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?");
+            if (!$stmt) {
+                throw new RuntimeException('Falha ao preparar atualização do perfil.');
+            }
             $stmt->bind_param('sssssi', $nome, $email, $cep, $telefone, $foto, $id);
         }
 
@@ -171,6 +177,9 @@ function deleteProfile(string $tipo, int $id): void
 
     try {
         $stmt = $conn->prepare("DELETE FROM {$table} WHERE {$idColumn} = ?");
+        if (!$stmt) {
+            throw new RuntimeException('Não foi possível excluir o perfil.');
+        }
         $stmt->bind_param('i', $id);
         $stmt->execute();
         $stmt->close();

@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteBase /DevIN/
+
+# Keep local credentials, repository metadata, and runtime files out of HTTP.
+RewriteRule (^|/)\. - [F,L]
+RewriteRule ^(?:storage|vendor)(?:/|$) - [F,L,NC]
+
+# Route legacy and root paths through the single PHP route map.
+RewriteRule ^$ php/rotas/rotas.php [END,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_.-]+)/?$ php/rotas/rotas.php [END,QSA]
