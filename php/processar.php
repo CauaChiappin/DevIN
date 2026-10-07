@@ -299,7 +299,7 @@ switch ($acao) {
             header('Location: redefinir.php');
             exit;
         }
-        if (strlen($novaSenha) < 12 || !preg_match('/[A-Z]/', $novaSenha) || !preg_match('/[^a-zA-Z0-9]/', $novaSenha)) {
+        if (strlen($novaSenha) < 8|| !preg_match('/[A-Z]/', $novaSenha) || !preg_match('/[^a-zA-Z0-9]/', $novaSenha)) {
             $_SESSION['erro_redefinir'] = 'A senha não preenche todos os requisitos de segurança.';
             header('Location: redefinir.php');
             exit;
