@@ -39,7 +39,7 @@ unset($_SESSION['erro_redefinir']);
                 <div class="input-block">
                     <label for="nova_senha">Senha:</label>
                     <div class="password-wrapper">
-                        <input type="password" id="nova_senha" name="nova_senha" required minlength="12" autocomplete="new-password">
+                        <input type="password" id="nova_senha" name="nova_senha" required minlength="8" autocomplete="new-password">
                         <button type="button" class="eye-toggle" data-toggle="nova_senha" aria-label="Ver senha">
                             <span class="eye-icon">👁</span>
                         </button>
@@ -47,7 +47,7 @@ unset($_SESSION['erro_redefinir']);
 
                     <div class="checklist">
                         <div class="check-item check-invalid" id="req-len">
-                            <span class="icon">ⓘ</span> No mínimo 12 caracteres
+                            <span class="icon">ⓘ</span> No mínimo 8 caracteres
                         </div>
                         <div class="check-item check-invalid" id="req-upper">
                             <span class="icon">ⓘ</span> Pelo menos 1 letra maiúscula (A-Z)
@@ -61,7 +61,7 @@ unset($_SESSION['erro_redefinir']);
                 <div class="input-block">
                     <label for="confirmar_senha">Confirmar Senha:</label>
                     <div class="password-wrapper">
-                        <input type="password" id="confirmar_senha" name="confirmar_senha" required minlength="12" autocomplete="new-password">
+                        <input type="password" id="confirmar_senha" name="confirmar_senha" required minlength="8" autocomplete="new-password">
                         <button type="button" class="eye-toggle" data-toggle="confirmar_senha" aria-label="Ver senha">
                             <span class="eye-icon">👁</span>
                         </button>
