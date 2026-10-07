@@ -387,17 +387,21 @@ $talentos = [
 </head>
 <body>
     <main class="dashboard-shell empresa-dashboard page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
-        <?php if ($mensagemSenhaAlterada !== ''): ?>
-            <p class="form-success" role="status"><?= h($mensagemSenhaAlterada) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemCadastro !== ''): ?>
-            <p class="form-success" role="status"><?= h($mensagemCadastro) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemEmailSenha !== ''): ?>
-            <p class="form-error" role="alert"><?= h($mensagemEmailSenha) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemEmailCadastro !== ''): ?>
-            <p class="form-error" role="alert"><?= h($mensagemEmailCadastro) ?></p>
+        <?php if ($mensagemSenhaAlterada !== '' || $mensagemCadastro !== '' || $mensagemEmailSenha !== '' || $mensagemEmailCadastro !== ''): ?>
+            <div class="dashboard-toast" role="status" aria-live="polite">
+                <?php if ($mensagemSenhaAlterada !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemSenhaAlterada) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemCadastro !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemCadastro) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemEmailSenha !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h($mensagemEmailSenha) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemEmailCadastro !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h($mensagemEmailCadastro) ?></p>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
         
         <aside class="sidebar">
@@ -665,5 +669,16 @@ $talentos = [
     <script src="../js/site-navigation.js"></script>
     <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard.js"></script>
+    <script>
+        (function () {
+            var toast = document.querySelector('.dashboard-toast');
+            if (!toast) return;
+            setTimeout(function () {
+                toast.style.transition = 'opacity .4s ease';
+                toast.style.opacity = '0';
+                setTimeout(function () { toast.remove(); }, 420);
+            }, 4000);
+        })();
+    </script>
 </body>
 </html>
