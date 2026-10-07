@@ -200,15 +200,43 @@ class MailerHelper
             return false;
         }
 
-        $codigoSeguro = htmlspecialchars(substr($codigo, 0, 3) . '-' . substr($codigo, 3), ENT_QUOTES, 'UTF-8');
-        $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
-        $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
-            . "<h2>Olá, {$nomeSeguro}.</h2>"
-            . "<p>Seu código de recuperação é <strong>{$codigoSeguro}</strong>.</p>"
-            . '<p>Ele expira em 15 minutos e pode ser usado uma única vez.</p></div>';
+        $codigoSeguro = htmlspecialchars(substr($codigo, 0, 3) . ' ' . substr($codigo, 3), ENT_QUOTES, 'UTF-8');
+        $nomeSeguro   = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+
+        $corpo = "
+            <div style='font-family:Arial,sans-serif;background-color:#f4f6f9;padding:32px 16px;'>
+                <div style='max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;padding:36px 32px;box-shadow:0 2px 8px rgba(0,0,0,.08);'>
+
+                    <h2 style='margin:0 0 8px;color:#1a1a2e;font-size:22px;'>Olá, {$nomeSeguro}!</h2>
+                    <p style='margin:0 0 28px;color:#555;font-size:15px;line-height:1.5;'>
+                        Recebemos uma solicitação para recuperar o acesso à sua conta no <strong>DevIN</strong>.<br>
+                        Use o código abaixo para continuar:
+                    </p>
+
+                    <p style='text-align:center;margin:0 0 28px;font-size:15px;color:#555;'>
+                        Seu código de verificação:
+                        <span style='font-size:32px;font-weight:700;color:#1a1a2e;letter-spacing:8px;font-family:\"Courier New\",Courier,monospace;background:#eef2ff;padding:4px 16px;border-radius:6px;vertical-align:middle;'>
+                            {$codigoSeguro}
+                        </span>
+                    </p>
+
+                    <p style='margin:0 0 24px;color:#888;font-size:13px;text-align:center;'>
+                        &#9200; Este código expira em <strong>15 minutos</strong> e é válido para uso único.
+                    </p>
+
+                    <hr style='border:none;border-top:1px solid #ebebeb;margin:0 0 20px;'>
+
+                    <p style='margin:0;color:#aaa;font-size:12px;text-align:center;'>
+                        Se você não solicitou essa recuperação, ignore este e-mail.<br>
+                        Sua senha permanece inalterada.
+                    </p>
+                </div>
+            </div>
+        ";
 
         return self::enviar($email, $nome, 'Código de recuperação de senha - DevIN', $corpo);
     }
+
 
     /**
      * Envia lembrete para pessoa que ainda não criou o currículo.
