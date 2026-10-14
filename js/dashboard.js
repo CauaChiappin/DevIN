@@ -9,6 +9,31 @@
     const profileModal = document.querySelector('#profileModal');
     const rotatingWord = document.querySelector('[data-rotating-word]');
 
+    const messagesLink = document.querySelector('[data-messages-api]');
+    const unreadBadge = messagesLink?.querySelector('[data-message-unread-badge]');
+    const refreshMessageCount = async () => {
+        if (!messagesLink || !unreadBadge) return;
+        const url = new URL(messagesLink.dataset.messagesApi, window.location.href);
+        url.searchParams.set('acao', 'nao_lidas');
+        const response = await fetch(url, { credentials: 'same-origin' });
+        const data = await response.json();
+        if (!response.ok || data.sucesso !== true) {
+            throw new Error(data.mensagem || 'Não foi possível atualizar as mensagens não lidas.');
+        }
+
+        unreadBadge.hidden = data.nao_lidas === 0;
+        unreadBadge.textContent = String(data.nao_lidas);
+        unreadBadge.setAttribute('aria-label', `${data.nao_lidas} mensagens não lidas`);
+    };
+    if (messagesLink) {
+        refreshMessageCount().catch((error) => console.error(error));
+        window.setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                refreshMessageCount().catch((error) => console.error(error));
+            }
+        }, 15000);
+    }
+
     // Sidebar: preferência fica salva somente no navegador deste usuário.
     if (dashboardShell && menuToggle) {
         const fechado = localStorage.getItem('devin-menu-fechado') === 'true';
@@ -209,6 +234,7 @@
     // Loading para qualquer formulário que realmente será enviado.
     document.querySelectorAll('form').forEach((form) => {
         form.addEventListener('submit', () => {
+            if (form.matches('[data-chat-form]')) return;
             const submitter = form.querySelector('button[type="submit"]:focus, button[type="submit"]:last-of-type');
             if (!submitter || submitter.dataset.loading === 'true') return;
             submitter.dataset.loading = 'true';

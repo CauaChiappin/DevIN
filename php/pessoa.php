@@ -19,7 +19,7 @@ $mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
 unset($_SESSION['sucesso_login'], $_SESSION['erro_email_senha'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro']);
 $pagina        = requestString($_GET, 'pagina');
 
-$paginasPermitidas = ['inicio', 'vagas', 'sobre', 'perfil'];
+$paginasPermitidas = ['inicio', 'vagas', 'sobre', 'perfil', 'mensagens'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
     $pagina = 'inicio';
 }
@@ -177,6 +177,9 @@ unset($vaga);
     <title>DevIN | Dashboard Candidato</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
+    <?php if ($pagina === 'mensagens'): ?>
+        <link rel="stylesheet" href="../css/chat.css?v=<?= filemtime(__DIR__ . '/../css/chat.css') ?>">
+    <?php endif; ?>
 </head>
 
 <body>
@@ -210,6 +213,9 @@ unset($vaga);
                 <a class="<?= ativo($pagina, 'vagas') ?>" href="pessoa.php?pagina=vagas">
                     <?= dashboardIcon('briefcase') ?><span class="menu-text">Minhas Vagas</span>
                 </a>
+                <a class="<?= ativo($pagina, 'mensagens') ?>" href="pessoa.php?pagina=mensagens" data-messages-api="../php/mensagens_api.php">
+                    <?= dashboardIcon('users') ?><span class="menu-text">Mensagens</span><span class="message-unread-badge" data-message-unread-badge hidden></span>
+                </a>
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="pessoa.php?pagina=sobre">
                     <?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span>
                 </a>
@@ -239,7 +245,7 @@ unset($vaga);
         </aside>
 
         <section class="lista-area">
-            <?php if ($pagina !== 'sobre'): ?>
+            <?php if (!in_array($pagina, ['sobre', 'mensagens'], true)): ?>
                 <?= dashboardListHeader(
                     $pagina,
                     $pagina === 'vagas' ? 'Minhas candidaturas' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas'),
@@ -251,7 +257,39 @@ unset($vaga);
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php if ($pagina === 'sobre'): ?>
+            <?php if ($pagina === 'mensagens'): ?>
+                <section class="chat-app" data-chat-app data-api="../php/mensagens_api.php" data-csrf="<?= h(csrfToken()) ?>">
+                    <aside class="chat-contacts">
+                        <div class="chat-contacts-heading">
+                            <h1>Mensagens</h1>
+                            <span class="chat-unread-total" data-chat-unread-total hidden></span>
+                        </div>
+                        <p class="chat-notification" data-chat-notification role="status" aria-live="polite"></p>
+                        <label class="chat-search">
+                            <span class="sr-only">Buscar pessoas e empresas</span>
+                            <input type="search" data-chat-search placeholder="Buscar pessoas e empresas">
+                        </label>
+                        <p class="chat-status" data-chat-contacts-status role="status">Carregando contatos...</p>
+                        <nav class="chat-contact-list" data-chat-contacts aria-label="Contatos"></nav>
+                    </aside>
+                    <section class="chat-conversation" aria-label="Conversa">
+                        <header class="chat-conversation-header" data-chat-header>
+                            <strong data-chat-title>Escolha alguém para conversar</strong>
+                            <span data-chat-subtitle>Mensagens privadas entre usuários da DevIN</span>
+                            <button class="chat-delete-conversation" type="button" data-chat-delete-conversation disabled>Excluir conversa</button>
+                        </header>
+                        <div class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-relevant="additions text">
+                            <p class="chat-empty">Selecione um contato para iniciar ou continuar uma conversa.</p>
+                        </div>
+                        <form class="chat-composer" data-chat-form>
+                            <label class="sr-only" for="chat-message">Sua mensagem</label>
+                            <textarea id="chat-message" name="message" maxlength="2000" placeholder="Escreva uma mensagem..." required disabled data-chat-input></textarea>
+                            <button type="submit" disabled data-chat-send>Enviar</button>
+                        </form>
+                        <p class="chat-status chat-send-status" data-chat-send-status role="status"></p>
+                    </section>
+                </section>
+            <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
             <?php elseif ($pagina === 'perfil'): ?>
                 <section class="perfil-card">
@@ -315,9 +353,9 @@ unset($vaga);
             <?php endif; ?>
         </section>
 
-        <?php if ($pagina !== 'sobre' && $pagina !== 'perfil'): ?>
+        <?php if (!in_array($pagina, ['sobre', 'perfil', 'mensagens'], true)): ?>
             <?= dashboardDetailPanel() ?>
-        <?php else: ?>
+        <?php elseif ($pagina !== 'mensagens'): ?>
             <aside class="detalhe-area">
                 <?php if ($pagina === 'sobre'): ?>
                     <h2>Contato</h2>
@@ -390,7 +428,10 @@ unset($vaga);
 
     <script src="../js/site-navigation.js"></script>
     <script src="../js/dashboard-menu.js"></script>
-    <script src="../js/dashboard.js"></script>
+    <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
+    <?php if ($pagina === 'mensagens'): ?>
+        <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>
+    <?php endif; ?>
 </body>
 
 </html>
