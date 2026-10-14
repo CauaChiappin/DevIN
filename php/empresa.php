@@ -17,6 +17,7 @@ $email  = $_SESSION['usuario_email'] ?? 'empresa@devin.com';
 $mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
 $mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
 $mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
+unset($_SESSION['sucesso_cadastro']); // Garante que a mensagem não volta a aparecer[cite: 3]
 $mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
 unset($_SESSION['sucesso_login'], $_SESSION['erro_email_senha'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro']);
 $pagina = requestString($_GET, 'pagina');
@@ -370,10 +371,7 @@ foreach ($candidatos as &$candidato) {
 }
 unset($candidato);
 
-$talentos = [
-    ['nome' => 'Marina Santos', 'resumo' => 'React, CSS e comunicação clara.', 'detalhe' => 'Marina tem interesse em vagas de front-end júnior e disponibilidade para conversar esta semana.'],
-    ['nome' => 'Lucas Pereira', 'resumo' => 'PHP, MySQL e lógica de programação.', 'detalhe' => 'Lucas procura primeira oportunidade em desenvolvimento web e já criou projetos escolares com banco de dados.'],
-];
+$talentos = [];
 
 ?>
 <!DOCTYPE html>
@@ -662,7 +660,6 @@ $talentos = [
         </form>
     </dialog>
 
-    <script src="../js/site-navigation.js"></script>
     <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
