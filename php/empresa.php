@@ -17,7 +17,7 @@ $email  = $_SESSION['usuario_email'] ?? 'empresa@devin.com';
 $mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
 $mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
 $mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
-unset($_SESSION['sucesso_cadastro']); // Garante que a mensagem não volta a aparecer[cite: 3]
+unset($_SESSION['sucesso_cadastro']); // Garante que a mensagem não volta a aparecer[cite: 3]asd
 $mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
 unset($_SESSION['sucesso_login'], $_SESSION['erro_email_senha'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro']);
 $pagina = requestString($_GET, 'pagina');
