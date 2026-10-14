@@ -59,6 +59,8 @@
         .map((word) => word[0]).join('').toUpperCase() || 'DI';
 
     const renderList = (element, items, timeline = false) => {
+        /* Reconstrói listas a partir dos atributos do card. Usa textContent e nós de texto,
+         * não innerHTML, para que nomes e descrições sejam exibidos como texto literal. */
         if (!element) return;
         element.replaceChildren();
         items.forEach((item) => {
@@ -77,6 +79,8 @@
     };
 
     const renderDetail = (card) => {
+        /* O card concentra resumo, etiquetas e experiência em data-*. Ao selecioná-lo, estes valores
+         * preenchem o painel lateral sem uma nova consulta ao servidor. */
         const content = detailPanel?.querySelector('[data-detail-content]');
         if (!detailPanel || !content) return;
 
@@ -127,6 +131,7 @@
 
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {
         card.addEventListener('click', (event) => {
+            // Cliques em controles internos executam sua ação própria e não trocam a seleção do card.
             if (event.target.closest('button, a, form, summary, input, textarea, select')) return;
 
             document.querySelectorAll('.item-card[data-detail]').forEach((item) => {
@@ -227,6 +232,8 @@
     const cardTags = (card) => String(card.dataset.detailTags || '')
         .split('|').map((tag) => tag.trim()).filter(Boolean);
     const updateCardVisibility = () => {
+        /* Compara o termo com texto visível e metadados do card, além da categoria selecionada.
+         * A busca é local: não faz uma requisição a cada tecla nem altera dados armazenados. */
         const term = normalizeSearch(searchInput?.value);
         const activeFilter = filterSelect?.value || '';
 
@@ -246,6 +253,7 @@
     };
 
     if (filterSelect) {
+        // Monta as opções de filtro com as tags existentes nos cartões renderizados.
         const tags = [...new Set(detailCards.flatMap(cardTags))]
             .sort((first, second) => first.localeCompare(second, 'pt-BR'));
         const options = ['', ...tags].map((tag) => {

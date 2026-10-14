@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+// Este script altera e-mails e dados; só pode ser executado pelo agendador no terminal.
 if (PHP_SAPI !== 'cli') {
     http_response_code(404);
     exit;
@@ -51,6 +52,7 @@ try {
 
     $encontrouPendentes = false;
 
+    // Marca o lembrete somente depois de enviar, evitando registrar como enviado em falhas SMTP.
     while ($pessoa = $result->fetch_assoc()) {
         $encontrouPendentes = true;
 

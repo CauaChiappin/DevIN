@@ -6,6 +6,8 @@ class Jwt
 {
     public static function encode(array $payload, string $secret): string
     {
+        /* Serializa cabeçalho e dados em Base64 URL-safe e assina as duas partes com HMAC-SHA256.
+         * A assinatura detecta alterações, mas não criptografa o conteúdo do payload. */
         $header = [
             'alg' => 'HS256',
             'typ' => 'JWT',
@@ -28,6 +30,7 @@ class Jwt
         $headerEncoded = self::base64UrlEncode($headerJson);
         $payloadEncoded = self::base64UrlEncode($payloadJson);
 
+        // Assina header e payload juntos para detectar qualquer alteração no token.
         $signature = hash_hmac(
             'sha256',
             $headerEncoded . '.' . $payloadEncoded,
@@ -42,6 +45,7 @@ class Jwt
 
     public static function decode(string $token, string $secret): array
     {
+        // Um JWT tem exatamente três partes separadas por ponto: cabeçalho, dados e assinatura.
         $parts = explode('.', $token);
 
         if (count($parts) !== 3) {
@@ -62,6 +66,7 @@ class Jwt
             throw new RuntimeException('Token JWT inválido.');
         }
 
+        // Recalcula a assinatura esperada com o segredo do servidor antes de confiar nos claims.
         $signature = self::base64UrlDecode($signatureEncoded);
 
         $expectedSignature = hash_hmac(
@@ -71,6 +76,7 @@ class Jwt
             true
         );
 
+        // Só interpreta os dados depois de confirmar a assinatura com comparação segura.
         if (!hash_equals($expectedSignature, $signature)) {
             throw new RuntimeException('Assinatura do token inválida.');
         }
@@ -103,6 +109,7 @@ class Jwt
             throw new RuntimeException('Tipo do token inválido.');
         }
 
+        // Confere emissor, campos obrigatórios e datas para rejeitar token alterado ou expirado.
         if (!isset($payload['iss']) || !hash_equals(JWT_ISSUER, (string) $payload['iss'])) {
             throw new RuntimeException('Emissor do token inválido.');
         }
@@ -125,6 +132,7 @@ class Jwt
 
     private static function base64UrlEncode(string $data): string
     {
+        // JWT troca caracteres do Base64 padrão e remove padding para ser seguro em URLs e cabeçalhos.
         return rtrim(
             strtr(base64_encode($data), '+/', '-_'),
             '='
@@ -133,6 +141,7 @@ class Jwt
 
     private static function base64UrlDecode(string $data): string
     {
+        // Restaura o alfabeto e o padding exigido pelo decodificador estrito do PHP.
         $data = strtr($data, '-_', '+/');
 
         $remainder = strlen($data) % 4;

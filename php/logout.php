@@ -8,6 +8,7 @@ startSecureSession();
 require_once __DIR__ . '/config/auth.php';
 
 // 1. Limpa todas as variáveis de sessão
+// Remove os dados da sessão atual antes de invalidar os identificadores no navegador.
 $_SESSION = [];
 
 // 2. Invalida o cookie de sessão do navegador

@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/config/security.php';
 startSecureSession();
 
+/* O e-mail guardado na sessão representa a conta escolhida na etapa anterior; sem ele,
+ * não existe destinatário associado ao código e a pessoa deve reiniciar a recuperação. */
 if (empty($_SESSION['recuperacao_email'])) {
     header('Location: recuperacao.php');
     exit;
@@ -12,6 +14,7 @@ if (empty($_SESSION['recuperacao_email'])) {
 
 $erro =$_SESSION['erro_codigo'] ?? '';
 $sucesso =$_SESSION['sucesso_codigo'] ?? '';
+// Consome as mensagens flash para que elas apareçam apenas nesta resposta.
 unset($_SESSION['erro_codigo'],$_SESSION['sucesso_codigo']);
 
 $ultimoEnvio =$_SESSION['ultimo_envio_codigo'] ?? 0;
@@ -42,6 +45,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
             <?php endif; ?>
 
             <form action="processar.php" method="POST" id="formCodigo">
+                <!-- A ação informa ao backend qual etapa do fluxo deve processar; CSRF valida a origem da solicitação. -->
                 <input type="hidden" name="acao" value="validar_codigo">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                 <input type="hidden" name="codigo" id="codigo-final">
@@ -90,6 +94,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
             let cooldown = <?= $cooldownRestante ?>;
 
             function updateHiddenInput() {
+                // Junta os campos visuais em um único valor que o backend recebe como código completo.
                 let fullCode = '';
                 inputs.forEach(input => fullCode += input.value.toUpperCase());
                 hiddenInput.value = fullCode;
@@ -97,6 +102,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
 
             inputs.forEach((input, index) => {
                 input.addEventListener('input', (e) => {
+                    // Mantém cada campo em maiúsculas e remove caracteres fora do formato do código.
                     e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
                     if (e.target.value.length === 1 && index < inputs.length - 1) {
                         inputs[index + 1].focus();
@@ -111,6 +117,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
                 });
 
                 input.addEventListener('paste', (e) => {
+                    // Distribui um código copiado entre os seis campos, sem deixar o navegador colar em um só.
                     e.preventDefault();
                     const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
                     if (pasteData.length === 6) {
@@ -124,6 +131,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
             });
 
             if (cooldown > 0 && btnReenviar) {
+                // Atualiza a contagem visual até o instante em que o reenvio volta a ficar disponível.
                 const interval = setInterval(() => {
                     cooldown--;
                     if (cooldown <= 0) {
@@ -139,6 +147,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
             if (btnReenviar) {
                 btnReenviar.addEventListener('click', () => {
                     if (!btnReenviar.hasAttribute('disabled')) {
+                        // Bloqueia cliques repetidos no navegador e envia o formulário de reenvio ao servidor.
                         btnReenviar.setAttribute('disabled', 'true');
                         formReenviar.submit();
                     }
@@ -148,6 +157,7 @@ $cooldownRestante = max(0, 60 -$tempoPassado);
             if (formCodigo && btnEntrar) {
                 formCodigo.addEventListener('submit', (e) => {
                     updateHiddenInput();
+                    // Evita uma requisição incompleta; a validade real do código continua sendo conferida no servidor.
                     if (hiddenInput.value.length !== 6) {
                         e.preventDefault();
                         alert('Preencha os 6 caracteres do código.');

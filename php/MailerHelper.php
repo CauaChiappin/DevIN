@@ -17,6 +17,7 @@ class MailerHelper
      */
     private static function getMailer(): PHPMailer
     {
+        // Centraliza a configuração SMTP para que todos os modelos usem o mesmo transporte seguro.
         $mail = new PHPMailer(true);
 
         $environmentValue = static function (string $name, ?string $default = null): ?string {
@@ -36,6 +37,7 @@ class MailerHelper
         $fromEmail  = $environmentValue('DEVIN_SMTP_FROM_EMAIL', $username);
         $fromName   = $environmentValue('DEVIN_SMTP_FROM_NAME', 'Plataforma DevIN');
 
+        // Falha cedo se faltarem credenciais ou se a configuração de transporte não for válida.
         if ($host === '' || $username === '' || $password === ''
             || !filter_var($fromEmail, FILTER_VALIDATE_EMAIL)
             || !in_array($encryption, ['tls', 'ssl'], true)
@@ -77,6 +79,7 @@ class MailerHelper
         string $assunto,
         string $corpoHtml
     ): bool {
+        // Valida o destino antes de criar a conexão e registra erros sem interromper a página.
         if (!filter_var($destinatarioEmail, FILTER_VALIDATE_EMAIL)) {
             error_log('E-mail inválido: ' . $destinatarioEmail);
             return false;
@@ -118,6 +121,7 @@ class MailerHelper
         string $emailCandidato,
         string $nomeCandidato
     ): bool {
+        // Escapa dados variáveis antes de inseri-los nos modelos de e-mail HTML.
         $nomeSeguro = htmlspecialchars($nomeCandidato, ENT_QUOTES, 'UTF-8');
         $assunto    = 'Cadastro e Currículo Concluídos - DevIN';
 
@@ -191,6 +195,7 @@ class MailerHelper
 
     public static function enviarCodigoRecuperacao6(string $email, string $nome, string $codigo): bool
     {
+        // Aceita somente seis caracteres alfanuméricos antes de montar a mensagem de recuperação.
         $codigo = strtoupper($codigo);
         if (!preg_match('/^[A-Z0-9]{6}$/', $codigo)) {
             return false;
@@ -243,6 +248,7 @@ class MailerHelper
         mysqli $conn,
         string $nomeCandidato
     ): void {
+        // Busca destinos cadastrados uma vez; cada endereço é validado antes do envio individual.
         $query = "
             SELECT nome, email 
             FROM empresa 

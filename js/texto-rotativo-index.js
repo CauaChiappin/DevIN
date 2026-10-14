@@ -2,6 +2,7 @@ const rotatingIndexWord = document.querySelector('[data-rotating-word-index]');
 const rotatingIndexPoint = document.querySelector('[data-rotating-point-index]');
 
 if (rotatingIndexWord) {
+  // Alterna palavras e move o ponto decorativo para acompanhar a largura do texto.
   const words = ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'];
   let currentWord = 0;
   let changingWord = false;
@@ -14,6 +15,7 @@ if (rotatingIndexWord) {
     rotatingIndexWord.classList.add('saindo');
 
     window.setTimeout(() => {
+      // Mede o ponto antes e depois da troca para animar sua mudança de posição.
       const pointBeforeChange = rotatingIndexPoint?.getBoundingClientRect();
       currentWord = (currentWord + 1) % words.length;
       rotatingIndexWord.textContent = words[currentWord];

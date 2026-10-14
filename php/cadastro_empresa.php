@@ -21,8 +21,11 @@ $erro = '';
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /* Primeiro valida CSRF; depois normaliza nomes e números para que formatação visual
+     * como pontos e traços não altere as verificações de CNPJ, CEP e telefone. */
     requireValidCsrf();
 
+    // Normaliza textos e remove pontuação dos números antes de validar e salvar os dados.
     $nome          = trim(requestString($_POST, 'nome'));
     $email         = trim(requestString($_POST, 'email'));
     $cnpj          = preg_replace('/[^0-9]/', '', requestString($_POST, 'cnpj'));
@@ -32,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmeSenha = requestString($_POST, 'confirme_senha');
 
     try {
+        // Limita cadastros por IP para reduzir automação e abuso do formulário.
         if (RateLimiter::consume('registration:ip:' . RateLimiter::clientIp(), 8, 3600) > 0) {
             throw new RuntimeException('Muitas tentativas de cadastro. Aguarde e tente novamente.');
         }
@@ -41,6 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         | VALIDAÇÕES DOS CAMPOS
         |--------------------------------------------------------------------------
         */
+
+        // A validação no servidor é a regra efetiva; atributos HTML melhoram a experiência, mas podem ser contornados.
 
         if ($nome === '') {
             throw new Exception('Informe o nome da empresa.');
@@ -99,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             // 1. E-mail único entre todos os tipos de conta
             foreach (['pessoa', 'empresa', 'administrador'] as $tabelaEmail) {
+                // O nome da tabela vem de uma lista fixa; o e-mail segue como parâmetro preparado.
                 $stmtEmail = $conn->prepare("SELECT email FROM {$tabelaEmail} WHERE email = ? LIMIT 1");
 
                 if (!$stmtEmail) {
@@ -116,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            // 2. CNPJ único na tabela empresa
+            // CNPJ único na tabela de empresas, consultado como parâmetro para não misturar dado e SQL.
             $stmtCnpj = $conn->prepare('SELECT id_empresa FROM empresa WHERE cnpj = ? LIMIT 1');
             if ($stmtCnpj) {
                 $stmtCnpj->bind_param('s', $cnpj);
@@ -136,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             |--------------------------------------------------------------------------
             */
 
+            // Guarda apenas o hash; PASSWORD_DEFAULT permite ao PHP escolher um algoritmo seguro padrão.
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
             if ($senhaHash === false) {
                 throw new RuntimeException('Não foi possível proteger a senha.');
@@ -147,6 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new RuntimeException('Erro ao preparar o cadastro da empresa.');
             }
 
+            // Os valores são enviados separadamente do SQL para evitar injeção de comandos.
             $stmtInsert->bind_param('ssssss', $nome, $cnpj, $cep, $email, $senhaHash, $telefone);
             $stmtInsert->execute();
             $stmtInsert->close();
@@ -161,6 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         |--------------------------------------------------------------------------
         */
 
+        // Autentica a conta recém-criada, inicia a sessão e segue para o painel conforme o tipo de usuário.
         $auth = AuthController::login($email, $senha);
         AuthController::establishSession($auth);
 
@@ -224,11 +234,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php if (!empty($erro)): ?>
             <div class="php-toast error-toast" role="alert">
+            <!-- Escapa a mensagem antes de inseri-la no HTML para evitar execução de conteúdo enviado. -->
                 <?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?>
             </div>
         <?php endif; ?>
 
         <form action="cadastro_empresa.php" method="POST" class="register-form" id="formCadastro">
+            <!-- O token oculto acompanha o POST e é conferido pelo backend antes de processar o cadastro. -->
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
             <div class="form-columns">

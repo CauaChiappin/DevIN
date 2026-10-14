@@ -2,6 +2,7 @@
   'use strict';
 
   const canvas = document.querySelector('[data-doom-canvas], #doom-canvas');
+  // O jogo só cria controles e loop de desenho se o canvas estiver presente.
   if (!canvas) return;
 
   const context = canvas.getContext('2d');
@@ -35,6 +36,7 @@
   let fireCooldown = 0;
   let damageCooldown = 0;
 
+  // Reinicia jogador, inimigos, projéteis e indicadores para iniciar uma partida limpa.
   function resetGame() {
     player = { x: 2.5, y: 1.5, angle: 0, health: 100 };
     enemies = [
@@ -66,6 +68,7 @@
     if (enemiesOutput) enemiesOutput.textContent = String(enemies.length);
   }
 
+  // Converte coordenadas do jogo em célula do mapa e trata bordas como parede.
   function isWall(x, y) {
     const column = Math.floor(x);
     const row = Math.floor(y);
@@ -73,11 +76,13 @@
   }
 
   function canMove(x, y, radius) {
+    // Testa os quatro cantos do corpo para evitar atravessar paredes ao mover-se na diagonal.
     return !isWall(x - radius, y - radius) && !isWall(x + radius, y - radius)
       && !isWall(x - radius, y + radius) && !isWall(x + radius, y + radius);
   }
 
   function moveEntity(entity, dx, dy, radius) {
+    // Resolve os eixos separadamente e permite deslizar pela parede quando apenas um eixo está bloqueado.
     if (canMove(entity.x + dx, entity.y, radius)) entity.x += dx;
     if (canMove(entity.x, entity.y + dy, radius)) entity.y += dy;
   }
@@ -86,6 +91,7 @@
     return names.some((name) => keys.has(name));
   }
 
+  // Atualiza movimento e colisões usando delta em segundos, independente da taxa de quadros.
   function update(delta) {
     if (gameState !== 'playing') return;
 
@@ -100,6 +106,7 @@
     damageCooldown -= delta;
     if (pressed(' ', 'Space') && fireCooldown <= 0) fire();
 
+    // Projéteis expiram ao bater em parede ou inimigo; um acerto também atualiza a pontuação.
     shots.forEach((shot) => {
       shot.x += shot.vx * delta;
       shot.y += shot.vy * delta;

@@ -1,4 +1,5 @@
 (function () {
+    // Não inicializa o jogo em páginas que não possuem o tabuleiro correspondente.
     const board = document.querySelector("#pacman-board");
     if (!board) return;
 
@@ -8,6 +9,7 @@
     const messageEl = document.querySelector("[data-message]");
     const restartButton = document.querySelector("[data-restart]");
 
+    // Cada caractere do mapa representa parede, espaço, ponto, bônus ou posição inicial.
     const maps = [
         [
             "#####################",
@@ -79,6 +81,7 @@
     const cellSize = () => board.querySelector(".cell")?.offsetWidth || 24;
     const offset = () => parseInt(getComputedStyle(board).paddingLeft, 10) || 0;
 
+    // Converte o mapa textual em células HTML e reposiciona jogador e fantasmas.
     function loadLevel() {
         grid = maps[level].map((row, y) => row.split("").map((tile, x) => {
             if (tile === "P") {
@@ -137,6 +140,7 @@
     }
 
     function canMove(x, y) {
+        // Bloqueia linhas fora do mapa, mas permite que o jogador use o túnel e reapareça na outra lateral.
         if (y < 0 || y >= grid.length) return false;
         if (x < 0 || x >= grid[y].length) return true;
         return grid[y][x] !== "#";
@@ -147,6 +151,7 @@
         if (actor.x >= grid[0].length) actor.x = 0;
     }
 
+    // Aplica a direção solicitada quando possível, coleta itens e atualiza a pontuação.
     function movePacman() {
         if (canMove(pacman.x + pacman.next.x, pacman.y + pacman.next.y)) pacman.dir = pacman.next;
         if (canMove(pacman.x + pacman.dir.x, pacman.y + pacman.dir.y)) {
@@ -155,6 +160,7 @@
             wrap(pacman);
         }
 
+        // A célula é limpa após a coleta para que o mesmo ponto não some novamente à pontuação.
         const tile = grid[pacman.y][pacman.x];
         if (tile === "." || tile === "o") {
             score += tile === "o" ? 50 : 10;

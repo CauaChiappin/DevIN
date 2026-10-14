@@ -23,6 +23,7 @@ function getBearerToken(): ?string
         $authorization = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
     }
 
+    // APIs aceitam Bearer no cabeçalho; páginas web podem usar o cookie HttpOnly.
     if (preg_match('/Bearer\s+(.+)/i', $authorization, $matches)) {
         return trim($matches[1]);
     }
@@ -49,6 +50,7 @@ function authUser(): array
  */
 function requireAuth(): array
 {
+    // Middleware de API: converte falhas de token em HTTP 401 JSON e interrompe a execução protegida.
     try {
         return authUser();
     } catch (Throwable $exception) {
@@ -66,6 +68,8 @@ function requireAuth(): array
  */
 function requireWebAuth(?string $tipoEsperado = null): array
 {
+    /* Middleware de páginas: verifica sessão, expiração e tipo de conta antes de fornecer
+     * os dados autenticados ao restante do script. */
     startSecureSession();
 
     $loginUrl = APP_BASE_URL . '/php/login.php';
@@ -75,6 +79,7 @@ function requireWebAuth(?string $tipoEsperado = null): array
         $lastActivity = (int) ($_SESSION['last_activity'] ?? 0);
         $authTime = (int) ($_SESSION['auth_time'] ?? 0);
 
+        // Encerra sessões inativas após 30 min e sessões com mais de 12 horas.
         if ($lastActivity === 0 || $authTime === 0
             || $now - $lastActivity > 1800
             || $now - $authTime > 43200
@@ -95,6 +100,7 @@ function requireWebAuth(?string $tipoEsperado = null): array
 
     $tipo = (string) ($_SESSION['usuario_tipo'] ?? '');
 
+    // Usuários autenticados são enviados ao painel do próprio perfil, sem acesso cruzado.
     if ($tipoEsperado !== null && $tipo !== $tipoEsperado) {
         $rotas = [
             'adm'     => APP_BASE_URL . '/php/adm.php',
@@ -121,11 +127,13 @@ function requireWebAuth(?string $tipoEsperado = null): array
  */
 function requirePessoaComCurriculo(): array
 {
+    // Reaproveita as verificações de sessão e acrescenta a regra de currículo obrigatório.
     $usuario = requireWebAuth('pessoa');
     $possuiCurriculo = false;
 
     try {
         $conn = getDatabaseConnection();
+        // O dashboard só fica disponível depois que existe currículo associado à conta.
         $stmt = $conn->prepare(
             'SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1'
         );

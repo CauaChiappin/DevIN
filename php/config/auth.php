@@ -6,10 +6,12 @@ declare(strict_types=1);
 $projectRoot = dirname(__DIR__, 2);
 require_once $projectRoot . '/vendor/autoload.php';
 if (is_file($projectRoot . '/.env')) {
+    // safeLoad mantém o sistema inicializável quando o .env não existe no ambiente.
     Dotenv\Dotenv::createImmutable($projectRoot)->safeLoad();
 }
 
 $environmentValue = static function (string $name, ?string $legacyName = null): ?string {
+    // Permite configurar o app pelo servidor sem depender exclusivamente de um arquivo .env.
     $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
     if (($value === false || $value === null || $value === '') && $legacyName !== null) {
         $value = $_ENV[$legacyName] ?? $_SERVER[$legacyName] ?? getenv($legacyName);
@@ -29,9 +31,11 @@ if ($jwtSecret === '') {
         throw new RuntimeException('Configure DEVIN_JWT_SECRET antes de iniciar a aplicação.');
     }
 
+    // Segredo determinístico facilita o ambiente local; fora dele a aplicação exige um segredo configurado.
     $jwtSecret = hash('sha256', __DIR__ . '|devin-local-secret');
 }
 
+// Remove a barra final para evitar barras duplicadas nas URLs montadas pelas páginas.
 $appBaseUrl = rtrim(
     $environmentValue('APP_URL', 'DEVIN_APP_BASE_URL') ?? 'http://localhost:8080/DevIN',
     '/'

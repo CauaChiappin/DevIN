@@ -8,6 +8,7 @@ require_once __DIR__ . '/../MailerHelper.php';
 
 function profileTable(string $tipo): array
 {
+    // Mapa fechado evita que o tipo recebido controle diretamente nomes de tabela SQL.
     return match ($tipo) {
         'empresa' => ['empresa', 'id_empresa'],
         'adm'     => ['administrador', 'id_administrador'],
@@ -39,6 +40,8 @@ function findProfile(string $tipo, int $id): ?array
 
 function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $currentPhoto): ?string
 {
+    /* Mantém a foto atual quando não há novo envio; quando há, verifica erro, tamanho e conteúdo
+     * antes de retornar os bytes que serão gravados no perfil. */
     if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
         return $currentPhoto;
     }
@@ -52,6 +55,7 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
         throw new InvalidArgumentException('A foto deve ter no máximo 5 MB.');
     }
 
+    // Confere o conteúdo real do arquivo; não confia apenas na extensão enviada pelo navegador.
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($upload['tmp_name']);
     $extensions = [
         'image/jpeg' => 'jpg',
@@ -82,6 +86,7 @@ function ensureUniqueEmail(string $tipo, int $id, string $email): void
     $conn = getDatabaseConnection();
 
     try {
+        // Permite que a própria conta mantenha o e-mail, mas bloqueia endereço usado por outra.
         foreach ($tables as $tableTipo => [$idColumn, $table]) {
             $stmt = $conn->prepare("SELECT {$idColumn} FROM {$table} WHERE email = ? LIMIT 1");
             if (!$stmt) {
@@ -106,6 +111,7 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
 {
     [$table, $idColumn] = profileTable($tipo);
 
+    // Carrega o registro atual para validar existência e preservar a foto quando não houver upload novo.
     $currentProfile = findProfile($tipo, $id);
     if (!$currentProfile) {
         throw new RuntimeException('Perfil não encontrado.');
@@ -118,6 +124,7 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
         throw new InvalidArgumentException('Informe um nome e e-mail válidos.');
     }
 
+    // Verifica duplicidade antes de salvar e valida foto/contato conforme o perfil.
     ensureUniqueEmail($tipo, $id, $email);
 
     $foto = $tipo === 'adm'
@@ -127,6 +134,7 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     $conn = getDatabaseConnection();
 
     try {
+        // Administradores têm apenas nome/e-mail; os demais perfis também atualizam contato e foto.
         if ($tipo === 'adm') {
             $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ? WHERE {$idColumn} = ?");
             if (!$stmt) {
@@ -163,6 +171,7 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
 
 function updateLanguage(string $tipo, int $id, string $idioma): void
 {
+    // Aceita somente idiomas suportados e guarda a preferência na sessão do navegador.
     if (!in_array($idioma, ['pt-BR', 'en', 'es'], true)) {
         throw new InvalidArgumentException('Idioma inválido.');
     }
@@ -194,6 +203,7 @@ function deleteProfile(string $tipo, int $id): void
             $nome = (string) $profile['nome'];
         }
 
+        // O ID é parâmetro preparado; tabela e coluna foram selecionadas pelo mapa fechado.
         $stmt = $conn->prepare("DELETE FROM {$table} WHERE {$idColumn} = ?");
         if (!$stmt) {
             throw new RuntimeException('Não foi possível excluir o perfil.');
@@ -213,6 +223,7 @@ function deleteProfile(string $tipo, int $id): void
 
 function listProfiles(string $tipo): array
 {
+    // Retorna uma lista compacta ordenada para interfaces que precisam apenas identificar perfis.
     [$table, $idColumn] = profileTable($tipo);
     $conn = getDatabaseConnection();
 

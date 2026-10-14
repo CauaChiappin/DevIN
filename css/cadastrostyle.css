@@ -26,6 +26,7 @@ body {
    CONTAINER PRINCIPAL (LAYOUT TELA DIVIDIDA)
    ========================================== */
 .main-container {
+    /* Divide a tela entre formulário e área ilustrada do cadastro. */
     display: flex;
     width: 100vw;
     height: 100vh;
@@ -161,6 +162,7 @@ body {
 }
 
 .form-columns {
+    /* Distribui campos em colunas iguais sem deixar conteúdo longo estourar a largura. */
     display: flex;
     gap: 40px;
 }

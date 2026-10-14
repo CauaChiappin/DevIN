@@ -21,6 +21,8 @@ $erro = '';
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /* O POST é tratado só depois de confirmar o token vinculado à sessão. Em seguida,
+     * os valores numéricos são normalizados sem pontuação para validar e salvar um formato único. */
     requireValidCsrf();
 
     $nome          = trim(requestString($_POST, 'nome'));
@@ -32,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmeSenha = requestString($_POST, 'confirme_senha');
 
     try {
+        // Limita criações repetidas de conta feitas a partir do mesmo IP.
         if (RateLimiter::consume('registration:ip:' . RateLimiter::clientIp(), 8, 3600) > 0) {
             throw new RuntimeException('Muitas tentativas de cadastro. Aguarde e tente novamente.');
         }
@@ -41,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         | VALIDAÇÕES DOS CAMPOS
         |--------------------------------------------------------------------------
         */
+
+        // Essas verificações no servidor continuam obrigatórias mesmo que o navegador valide os campos do formulário.
 
         if ($nome === '') {
             throw new Exception('Informe seu nome.');
@@ -98,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             // 1. E-mail único entre todos os tipos de conta
+            // Procura e-mail duplicado em todos os tipos de conta usando consultas preparadas.
             foreach (['pessoa', 'empresa', 'administrador'] as $tabelaEmail) {
                 $stmtEmail = $conn->prepare("SELECT email FROM {$tabelaEmail} WHERE email = ? LIMIT 1");
 
@@ -116,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            // 2. CPF único na tabela pessoa
+            // CPF também precisa ser único; o parâmetro evita concatenar o valor recebido ao SQL.
             $stmtCpf = $conn->prepare('SELECT id_pessoa FROM pessoa WHERE cpf = ? LIMIT 1');
             if ($stmtCpf) {
                 $stmtCpf->bind_param('s', $cpf);
@@ -136,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             |--------------------------------------------------------------------------
             */
 
+            // Salva um hash irreversível da senha, nunca a senha digitada em texto puro.
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
             if ($senhaHash === false) {
                 throw new RuntimeException('Não foi possível proteger a senha.');
@@ -168,6 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         |--------------------------------------------------------------------------
         */
 
+        // Cria a sessão imediatamente e leva a pessoa à próxima etapa do onboarding, sem pedir novo login.
         $auth = AuthController::login($email, $senha);
         AuthController::establishSession($auth);
 
@@ -251,6 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form action="cadastro_pessoa.php" method="POST" class="register-form" id="formCadastro">
+            <!-- Token oculto necessário para que o backend aceite o POST do cadastro. -->
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
             <div class="form-columns">

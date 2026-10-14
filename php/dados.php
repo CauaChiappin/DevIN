@@ -6,6 +6,7 @@ declare(strict_types=1);
 // DevIN - Dados e Configurações da Landing Page
 // ============================================
 
+// Dados compartilhados pela landing page para manter textos de contato em um único lugar.
 $site = [
     'nome'     => 'DevIN',
     'email'    => 'contato@devin.com.br',

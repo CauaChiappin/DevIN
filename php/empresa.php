@@ -23,6 +23,7 @@ $pagina = requestString($_GET, 'pagina');
 
 $paginasPermitidas = ['inicio', 'candidatos', 'sobre', 'perfil'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
+    // Limita a navegação a seções implementadas no painel da empresa.
     $pagina = 'inicio';
 }
 
@@ -33,6 +34,7 @@ if (!in_array($pagina, $paginasPermitidas, true)) {
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Toda ação que altera vaga, candidatura ou perfil exige token CSRF válido.
     requireValidCsrf();
 
     $action = requestString($_POST, 'action');
@@ -48,6 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                /* Atualiza apenas se a vaga associada pertence à empresa autenticada.
+                 * Isso aplica autorização no próprio SQL, além de validar o status permitido acima. */
                 $stmt = $conn->prepare('
                     UPDATE candidatura c
                     INNER JOIN vagas v ON v.id_vaga = c.id_vaga
@@ -87,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                // O ID da empresa vem da sessão autenticada, não de um campo do formulário.
                 $stmt = $conn->prepare('INSERT INTO vagas (titulo, descricao, tempo_vaga, id_empresa) VALUES (?, ?, CURDATE(), ?)');
                 if (!$stmt) {
                     throw new RuntimeException('Não foi possível criar a vaga.');
@@ -116,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                // Inclui o proprietário no WHERE para impedir edição de vaga de outra empresa.
                 $stmt = $conn->prepare('UPDATE vagas SET titulo = ?, descricao = ? WHERE id_vaga = ? AND id_empresa = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Não foi possível editar a vaga.');
@@ -142,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                // A condição de proprietário impede que uma empresa exclua vagas de outra.
                 $stmt = $conn->prepare('DELETE FROM vagas WHERE id_vaga = ? AND id_empresa = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Não foi possível excluir a vaga.');
@@ -164,6 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($action === 'create_test_candidates') {
+            /* Ferramenta de demonstração restrita ao ambiente local. A transação mantém pessoa e candidatura
+             * consistentes: qualquer falha pode desfazer o conjunto sem deixar registros pela metade. */
             if (APP_ENV !== 'development') {
                 throw new RuntimeException('A criação de candidatos de teste está disponível apenas no ambiente local.');
             }
@@ -247,6 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        // Operações de perfil reutilizam validações comuns e mantêm os dados da sessão atualizados.
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_email']   = trim(requestString($_POST, 'email'));
@@ -311,6 +321,7 @@ try {
     $conn = getDatabaseConnection();
     try {
         // 1. Busca Vagas Criadas pela Empresa
+        // Carrega somente vagas da empresa autenticada para a área de gerenciamento.
         $stmtVagas = $conn->prepare("
             SELECT id_vaga, titulo, COALESCE(descricao, '') AS descricao, tempo_vaga
             FROM vagas
@@ -342,6 +353,7 @@ try {
             WHERE v.id_empresa = ?
             ORDER BY c.data_candidatura DESC, c.id_candidatura DESC
         ';
+        // Monta candidatos relacionados às vagas da empresa usando consultas preparadas.
         $stmtCandidatos = $conn->prepare($sqlCandidatos);
         if ($stmtCandidatos) {
             $stmtCandidatos->bind_param('i', $empresaId);

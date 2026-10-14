@@ -6,6 +6,7 @@ require_once __DIR__ . '/auth.php';
 
 function isSecureRequest(): bool
 {
+    // Considera proxy reverso para que cookies Secure funcionem quando HTTPS termina antes do PHP.
     return APP_ENV !== 'development'
         || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
         || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
@@ -20,6 +21,7 @@ function startSecureSession(): void
         return;
     }
 
+    // Salva sessões em diretório próprio, fora das pastas públicas do site.
     $sessionPath = dirname(__DIR__, 2) . '/storage/sessions';
     if (!is_dir($sessionPath)) {
         @mkdir($sessionPath, 0700, true);
@@ -29,6 +31,8 @@ function startSecureSession(): void
         session_save_path($sessionPath);
     }
 
+    /* Restringe a sessão a cookies e ativa atributos de proteção contra roubo e envio cross-site.
+     * O early return acima evita tentar redefinir parâmetros depois que a sessão já começou. */
     ini_set('session.use_strict_mode', '1');
     ini_set('session.use_only_cookies', '1');
     ini_set('session.use_trans_sid', '0');
@@ -55,6 +59,7 @@ function csrfToken(): string
     startSecureSession();
 
     if (empty($_SESSION['csrf_token'])) {
+        // Gera token imprevisível e o mantém na sessão para comparar no envio do formulário.
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
 
@@ -65,6 +70,7 @@ function verifyCsrfToken(?string $token): bool
 {
     startSecureSession();
 
+    // hash_equals compara em tempo constante para não revelar o token por diferenças de tempo.
     return is_string($token)
         && $token !== ''
         && !empty($_SESSION['csrf_token'])

@@ -12,6 +12,8 @@ require_once __DIR__ . '/config/security.php';
 |--------------------------------------------------------------------------
 */
 
+/* A identidade não vem do formulário: requireWebAuth lê a sessão validada e também
+ * confere o perfil, evitando que outra categoria abra a área de currículo. */
 $usuario = requireWebAuth('pessoa');
 
 /*
@@ -31,6 +33,7 @@ $mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
 $mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
 $mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
 $avisoSenha = implode(' ', array_filter([$mensagemSenhaAlterada, $mensagemEmailSenha]));
+// Estas mensagens são flash: a página as mostra uma vez e remove-as antes do próximo carregamento.
 unset($_SESSION['sucesso_curriculo'], $_SESSION['erro_curriculo'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro'], $_SESSION['sucesso_login'], $_SESSION['erro_email_senha']);
 
 /*
@@ -44,6 +47,8 @@ $dadosCurriculo = [];
 try {
     $conn = getDatabaseConnection();
     try {
+        /* A consulta usa o ID vindo da sessão, então a página só carrega o currículo do usuário atual.
+         * O placeholder e bind_param separam o valor do SQL e evitam concatenar entrada na consulta. */
         $stmtFetch = $conn->prepare("
             SELECT nome_social, grau_de_escolaridade, cursos, experiencia, idiomas
             FROM curriculo
@@ -68,6 +73,8 @@ $cGrauEscolaridade = $dadosCurriculo['grau_de_escolaridade'] ?? '';
 $cCursos           = $dadosCurriculo['cursos']               ?? '';
 $cExperiencia      = $dadosCurriculo['experiencia']          ?? '';
 $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
+
+// Valores ausentes viram strings vazias para que o formulário funcione tanto no primeiro acesso quanto na edição.
 
 ?>
 <!DOCTYPE html>
@@ -135,6 +142,8 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
         <?php endif; ?>
 
         <form method="POST" action="processar.php" class="register-form">
+            <!-- `acao` seleciona o fluxo de gravação em processar.php; o token CSRF abaixo permite ao servidor
+                 confirmar que o envio veio de um formulário associado à sessão deste navegador. -->
             <input type="hidden" name="acao" value="cadastrar_curriculo">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
