@@ -54,6 +54,7 @@ label {
 }
 
 .input-container {
+    /* Posiciona o ícone dentro do campo sem alterar o fluxo do formulário. */
     position: relative;
     display: flex;
     align-items: center;

@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Obtém os campos e indicadores usados para feedback imediato durante a redefinição.
     const novaSenha = document.getElementById('nova_senha');
     const reqLen = document.getElementById('req-len');
     const reqUpper = document.getElementById('req-upper');
@@ -6,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formReset = document.getElementById('formReset');
     const btnCadastrar = document.getElementById('btnCadastrar');
 
+    // Atualiza cada requisito visual conforme a senha é digitada.
     novaSenha.addEventListener('input', () => {
         const val = novaSenha.value;
 
@@ -34,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Os botões revelam apenas o campo indicado pelo atributo data-toggle.
     document.querySelectorAll('[data-toggle]').forEach(btn => {
         btn.addEventListener('click', () => {
             const targetId = btn.getAttribute('data-toggle');
@@ -48,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (formReset && btnCadastrar) {
         formReset.addEventListener('submit', (e) => {
+            // Desabilita o botão depois da validação visual para impedir alterações duplicadas.
             if (btnCadastrar.disabled) {
                 e.preventDefault();
                 return;

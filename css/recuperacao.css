@@ -14,6 +14,7 @@ body {
 }
 
 .recovery-wrapper {
+    /* Centraliza o cartão de recuperação e deixa o rodapé fora da área principal. */
     display: flex;
     justify-content: center;
     align-items: center;

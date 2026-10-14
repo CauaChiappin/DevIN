@@ -2,11 +2,13 @@
     'use strict';
 
     const init = (root = document) => {
+        // Encontra o botão e o menu dentro do documento ou da raiz fornecida para reutilizar o módulo.
         const toggle = root.querySelector('[data-site-menu-toggle]');
         const menu = root.querySelector('[data-site-menu]') || root.querySelector('.navegacao');
 
         if (!toggle || !menu) return null;
 
+        // Mantém estado visual e atributos acessíveis sincronizados.
         const setOpen = (open) => {
             menu.classList.toggle('is-open', open);
             toggle.setAttribute('aria-expanded', String(open));
@@ -51,6 +53,7 @@
 })();
 
 document.addEventListener('submit', (event) => {
+    // Intercepta envios repetidos e marca o formulário como ocupado sem cancelar validações nativas.
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
 

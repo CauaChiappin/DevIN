@@ -22,6 +22,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
 }
 
 $acao = requestString($_POST, 'acao');
+// Valida CSRF antes de qualquer operação que altere dados ou estado da sessão.
 if (!verifyCsrfToken(requestString($_POST, 'csrf_token'))) {
     if ($acao === 'cadastrar_curriculo') {
         $_SESSION['erro_curriculo'] = 'Sessão inválida ou expirada. Atualize a página e tente novamente.';
@@ -35,6 +36,7 @@ if (!verifyCsrfToken(requestString($_POST, 'csrf_token'))) {
 
 switch ($acao) {
     case 'solicitar_recuperacao':
+        // Etapa 1: identifica a conta e envia um código temporário sem armazenar o código em texto puro.
         $email = requestString($_POST, 'email');
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $_SESSION['erro_recuperacao'] = 'Informe um e-mail válido.';
@@ -42,6 +44,7 @@ switch ($acao) {
             exit;
         }
 
+        // Limita por IP e por endereço para dificultar abuso sem depender só do navegador.
         $ipRetry = RateLimiter::consume('recovery:ip:' . RateLimiter::clientIp(), 10, 3600);
         $emailRetry = RateLimiter::consume('recovery:email:' . strtolower($email), 3, 3600);
         if ($ipRetry > 0 || $emailRetry > 0) {
@@ -85,6 +88,7 @@ switch ($acao) {
             for ($i = 0; $i < 6; $i++) {
                 $codigo .= $alfabeto[random_int(0, strlen($alfabeto) - 1)];
             }
+            // Persiste apenas o hash do código e define prazo de validade no banco.
             $codigoHash = hash('sha256', $codigo);
             $stmt = $conn->prepare("UPDATE {$usuario['tabela']} SET token_recuperacao = ?, token_expiracao = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE {$usuario['id_coluna']} = ?");
             $idUsuario = (int) $usuario['id'];
@@ -123,6 +127,8 @@ switch ($acao) {
         exit;
 
     case 'validar_codigo':
+        // Etapa 2: confere o código na sessão e no banco; ao aceitar, invalida o código e libera a troca.
+        // Aplica limites antes de comparar o código para dificultar tentativas automatizadas.
         $ipRetry = RateLimiter::consume('code:ip:' . RateLimiter::clientIp(), 20, 3600);
         $emailSessao = strtolower((string) ($_SESSION['recuperacao_email'] ?? ''));
         $emailRetry = RateLimiter::consume('code:email:' . $emailSessao, 10, 3600);
@@ -134,6 +140,7 @@ switch ($acao) {
         $codigoDigitado = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', requestString($_POST, 'codigo')));
         $email = (string) ($_SESSION['recuperacao_email'] ?? '');
         $hashSessao = (string) ($_SESSION['codigo_recuperacao_hash'] ?? '');
+        // Compara o hash em tempo constante e exige exatamente seis caracteres válidos.
         $codigoCorrespondeASessao = strlen($codigoDigitado) === 6
             && $hashSessao !== ''
             && hash_equals($hashSessao, hash('sha256', $codigoDigitado));
@@ -204,6 +211,7 @@ switch ($acao) {
         exit;
 
     case 'reenviar_codigo':
+        // Emite novo código apenas para a conta guardada na sessão e respeita limites e intervalo mínimo.
         $email = (string) ($_SESSION['recuperacao_email'] ?? '');
         $idUsuario = (int) ($_SESSION['recuperacao_id'] ?? 0);
         $tipo = (string) ($_SESSION['recuperacao_tipo'] ?? '');
@@ -222,6 +230,7 @@ switch ($acao) {
             header('Location: codigo-senha.php');
             exit;
         }
+        // O intervalo de 60 segundos complementa o limite por hora configurado acima.
         if (time() - $ultimoEnvio < 60) {
             $restante = 60 - (time() - $ultimoEnvio);
             $_SESSION['erro_codigo'] = "Aguarde {$restante}s antes de solicitar outro código.";
@@ -272,6 +281,7 @@ switch ($acao) {
         exit;
 
     case 'redefinir_senha':
+        // Etapa final: exige código validado, salva nova senha como hash e inicia a sessão do usuário.
         $ipRetry = RateLimiter::consume('reset:ip:' . RateLimiter::clientIp(), 10, 3600);
         $emailRetry = RateLimiter::consume('reset:email:' . strtolower((string) ($_SESSION['recuperacao_email'] ?? '')), 5, 3600);
         if ($ipRetry > 0 || $emailRetry > 0) {
@@ -279,6 +289,7 @@ switch ($acao) {
             header('Location: redefinir.php');
             exit;
         }
+        // Exige a etapa de verificação concluída antes de aceitar uma nova senha.
         if (empty($_SESSION['recuperacao_verificada'])) {
             header('Location: recuperacao.php');
             exit;
@@ -307,6 +318,7 @@ switch ($acao) {
 
         $tabela = $tipo === 'empresa' ? 'empresa' : 'pessoa';
         $idColuna = $tipo === 'empresa' ? 'id_empresa' : 'id_pessoa';
+        // Atualiza somente o hash; a sessão autenticada é renovada após a troca.
         $senhaHash = password_hash($novaSenha, PASSWORD_DEFAULT);
         $conn = null;
         try {
@@ -348,8 +360,10 @@ switch ($acao) {
         exit;
 
     case 'cadastrar_curriculo':
+        // Salva currículo somente para a pessoa autenticada, atualizando o registro existente quando necessário.
         $conn = null;
         try {
+            // Usa o ID da sessão autenticada, sem aceitar que o formulário escolha outro candidato.
             $usuario = requireWebAuth('pessoa');
             $idPessoa = (int) $usuario['id'];
             $nomePessoa = (string) ($usuario['nome'] ?? 'Candidato');
@@ -371,6 +385,7 @@ switch ($acao) {
             $jaExiste = $stmt->get_result()->num_rows > 0;
             $stmt->close();
 
+            // Atualiza o currículo existente ou cria o primeiro registro para esta pessoa.
             if ($jaExiste) {
                 $stmt = $conn->prepare('UPDATE curriculo SET nome_social = ?, grau_de_escolaridade = ?, cursos = ?, experiencia = ?, idiomas = ? WHERE id_pessoa = ?');
                 $stmt->bind_param('sssssi', $nomeSocial, $grauEscolaridade, $cursos, $experiencia, $idiomas, $idPessoa);

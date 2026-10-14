@@ -30,6 +30,7 @@ $pagina        = requestString($_GET, 'pagina');
 
 $paginasPermitidas = ['inicio', 'vagas', 'sobre', 'perfil', 'mensagens'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
+    // Aceita apenas as seções válidas do painel do candidato.
     $pagina = 'inicio';
 }
 
@@ -40,12 +41,14 @@ if (!in_array($pagina, $paginasPermitidas, true)) {
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Valida CSRF antes de aceitar candidatura ou alteração de perfil.
     requireValidCsrf();
 
     try {
         $action = requestString($_POST, 'action');
 
         if ($action === 'apply_job') {
+            // A candidatura pertence ao ID da sessão; o cliente envia apenas qual vaga deseja solicitar.
             $vagaId = (int) requestString($_POST, 'id_vaga');
             if ($vagaId <= 0) {
                 throw new InvalidArgumentException('Vaga inválida.');
@@ -53,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                // Confirma que a vaga ainda existe antes de registrar a candidatura.
                 $check = $conn->prepare('SELECT id_vaga FROM vagas WHERE id_vaga = ? LIMIT 1');
                 $check->bind_param('i', $vagaId);
                 $check->execute();
@@ -63,6 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new InvalidArgumentException('A vaga não está mais disponível.');
                 }
 
+                /* A consulta evita uma candidatura repetida antes do INSERT; ambos os IDs vêm
+                 * da sessão e do formulário validado, e são enviados como parâmetros inteiros. */
                 $duplicate = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_pessoa = ? AND id_vaga = ? LIMIT 1');
                 $duplicate->bind_param('ii', $idPessoaAtual, $vagaId);
                 $duplicate->execute();
@@ -73,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new InvalidArgumentException('Você já se candidatou a esta vaga.');
                 }
 
+                // Cria o registro inicial como pendente para análise da empresa responsável.
                 $stmt = $conn->prepare('INSERT INTO candidatura (data_candidatura, status, id_pessoa, id_vaga) VALUES (CURDATE(), ?, ?, ?)');
                 $status = 'pendente';
                 $stmt->bind_param('sii', $status, $idPessoaAtual, $vagaId);
@@ -146,6 +153,8 @@ $vagasCandidatadas = [];
 try {
     $conn = getDatabaseConnection();
     try {
+        // Relaciona cada vaga à empresa e restringe candidaturas ao usuário autenticado.
+        // Carrega vagas com seus dados de empresa para a lista de oportunidades disponíveis.
         $stmt = $conn->prepare("
             SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga,
                    e.id_empresa, e.nome AS empresa
@@ -157,6 +166,7 @@ try {
         $vagasDisponiveis = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
 
+        // Busca apenas candidaturas deste usuário, junto ao status e aos dados da vaga.
         $stmt = $conn->prepare("
             SELECT c.id_candidatura, c.status, c.data_candidatura, v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa
             FROM candidatura c

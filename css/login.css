@@ -19,6 +19,7 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
    3. CORPO CENTRAL (ROBÔ + CARD LADO A LADO)
    ========================================================================== */
 .conteudo-login {
+    /* Mantém a ilustração e o formulário lado a lado no espaço principal da tela. */
     display: flex;
     justify-content: center; 
     align-items: center;     

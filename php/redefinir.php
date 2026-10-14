@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/config/security.php';
 startSecureSession();
 
+/* A sessão só recebe esta marca após o servidor validar o código de recuperação. Sem ela,
+ * o acesso direto à URL retorna ao início e não permite trocar a senha de outra conta. */
 if (empty($_SESSION['recuperacao_verificada'])) {
     header('Location: recuperacao.php');
     exit;
@@ -33,6 +35,7 @@ unset($_SESSION['erro_redefinir']);
             <?php endif; ?>
 
             <form action="processar.php" method="POST" id="formReset">
+                <!-- O backend usa a ação e o token para validar e processar a troca de senha. -->
                 <input type="hidden" name="acao" value="redefinir_senha">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 

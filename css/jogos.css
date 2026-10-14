@@ -39,6 +39,7 @@ body.game-page {
 }
 
 .arcade-button:hover, .arcade-button:focus-visible { border-color: var(--arcade-cyan); outline: 0; }
+/* No arcade próprio, o palco cresce e o placar mantém largura fixa ao lado. */
 .arcade-main { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; margin-top: 24px; }
 
 .game-stage, .score-panel, .doom-stage, .emulator-stage {
@@ -55,6 +56,7 @@ body.game-page {
 .score-row span { color: #fff; font-size: 24px; font-weight: 800; }
 .hint { color: var(--arcade-muted); font-size: 13px; line-height: 1.5; }
 
+/* O tabuleiro usa células fixas para que paredes e personagens coincidam com o mapa do jogo. */
 #pacman-board {
     display: grid;
     grid-template-columns: repeat(21, 24px);

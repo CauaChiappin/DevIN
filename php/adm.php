@@ -6,6 +6,7 @@ require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/helpers.php';
 
+// Garante que apenas uma sessão administrativa alcance ações de moderação.
 $usuarioAtual = requireWebAuth('adm');
 
 $tipo    = 'adm';
@@ -15,6 +16,7 @@ $pagina  = requestString($_GET, 'pagina');
 
 $paginasPermitidas = ['inicio', 'candidatos', 'posts', 'sobre', 'perfil'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
+    // Usa uma lista permitida para evitar que a URL selecione páginas arbitrárias.
     $pagina = 'inicio';
 }
 
@@ -25,11 +27,13 @@ if (!in_array($pagina, $paginasPermitidas, true)) {
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Toda alteração administrativa precisa trazer o token associado à sessão atual.
     requireValidCsrf();
 
     try {
         $action = requestString($_POST, 'action');
 
+        // A mesma ação trata exclusões de três tipos; um mapa fechado escolhe tabela e chave primária.
         if (in_array($action, ['admin_delete_pessoa', 'admin_delete_empresa', 'admin_delete_vaga'], true)) {
             $id = (int) requestString($_POST, 'id');
             if ($id <= 0) {
@@ -42,6 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'admin_delete_vaga'    => ['vagas', 'id_vaga'],
             ];
 
+            /* A lista fechada limita quais tabelas/colunas podem ser usadas no SQL dinâmico.
+             * O identificador do registro permanece como parâmetro preparado. */
             [$table, $column] = $targets[$action];
             $conn = getDatabaseConnection();
 
@@ -123,9 +129,11 @@ $vagasAdmin    = [];
 try {
     $conn = getDatabaseConnection();
     try {
+        // A consulta reúne os dados necessários para montar a lista de empresas moderáveis.
         $resultEmpresas = $conn->query('SELECT id_empresa AS id, nome, email, cnpj FROM empresa ORDER BY nome');
         $empresasAdmin  = $resultEmpresas ? $resultEmpresas->fetch_all(MYSQLI_ASSOC) : [];
 
+        // LEFT JOIN mantém candidatos sem currículo na lista e COALESCE evita valores nulos na interface.
         $resultPessoas  = $conn->query('
             SELECT p.id_pessoa AS id, p.nome, p.email, p.cpf,
                 COALESCE(cu.nome_social, "") AS nome_social,
@@ -139,6 +147,7 @@ try {
         ');
         $usuariosAdmin  = $resultPessoas ? $resultPessoas->fetch_all(MYSQLI_ASSOC) : [];
 
+        // INNER JOIN associa cada vaga ao nome da empresa que a publicou.
         $resultVagas    = $conn->query("
             SELECT v.id_vaga AS id, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa
             FROM vagas v

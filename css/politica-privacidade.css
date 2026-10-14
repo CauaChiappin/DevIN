@@ -9,6 +9,7 @@ a { text-decoration: none; }
 .voltar { min-height: 40px; display: inline-flex; align-items: center; padding: 0 18px; border: 2px solid var(--blue); border-radius: 11px; color: var(--blue); font-weight: 600; transition: .2s ease; }
 .voltar:hover { color: var(--white); background: var(--blue); transform: translateY(-1px); }
 .pagina-politica { width: min(900px, calc(100% - 40px)); margin: 48px auto 70px; }
+/* O cabeçalho em gradiente destaca título e resumo antes das seções legais. */
 .hero-politica { padding: 46px 56px; border-radius: 30px; color: var(--white); background: linear-gradient(125deg, #003a76, #0755a7); box-shadow: 0 20px 45px rgba(0, 74, 148, .2); }
 .eyebrow { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .12em; opacity: .8; }
 h1 { margin: 0; font-size: clamp(32px, 5vw, 48px); line-height: 1.12; }

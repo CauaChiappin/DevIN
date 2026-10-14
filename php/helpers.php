@@ -23,6 +23,7 @@ function h(?string $valor): string
  */
 function dashboardListHeader(string $pagina, string $titulo, string $placeholder, string $contador = ''): string
 {
+    // Escapa textos dinâmicos antes de compor o HTML compartilhado do cabeçalho.
     $countMarkup = $contador === ''
         ? ''
         : '<span class="result-count">' . h($contador) . '</span>';
@@ -60,6 +61,7 @@ function dashboardCardTags(string $tags): string
  */
 function dashboardCandidateDetails(array $candidate): array
 {
+    // Divide habilidades escritas em linhas ou separadas por vírgula, ponto e vírgula ou barra.
     $text = static fn(string $key): string => trim((string) ($candidate[$key] ?? ''));
     $splitSkills = static function (string $value): array {
         $items = preg_split('/[\r\n,;|]+/u', $value) ?: [];
@@ -156,6 +158,7 @@ function profileAvatar(array $perfil, string $classes): string
         if ($finfo === null) {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
         }
+        // Só embute conteúdo binário quando o MIME detectado corresponde a uma imagem aceita.
         $mime = $finfo->buffer($foto);
 
         if (in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {

@@ -1,12 +1,15 @@
 <FilesMatch "(?i)^(\.env(?:\..*)?|composer\.(?:json|lock)|phpunit\.xml(?:\.dist)?|.*\.(?:sql|sqlite3?|log|bak|old|swp))$">
+    # Evita que arquivos de configuração, banco e cópias de segurança sejam servidos pela web.
     Require all denied
 </FilesMatch>
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # Mantém exceção para .well-known e bloqueia acesso a diretórios internos do projeto.
     RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
     RewriteRule ^(?:storage|vendor|\.git)(?:/|$) - [F,L,NC]
 
+    # Encaminha URLs amigáveis ao roteador, preservando parâmetros da query string.
     RewriteRule ^$ php/rotas/rotas.php [QSA,L]
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
@@ -15,6 +18,7 @@
 </IfModule>
 
 <IfModule mod_headers.c>
+    # Reduz execução de conteúdo inesperado, enquadramento externo e permissões desnecessárias.
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"

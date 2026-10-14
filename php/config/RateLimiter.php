@@ -11,6 +11,9 @@ final class RateLimiter
 {
     public static function consume(string $key, int $limit, int $windowSeconds): int
     {
+        /* Conta chamadas em uma janela fixa. O arquivo é travado durante leitura e gravação
+         * para que requisições simultâneas não percam incrementos da contagem. */
+        // Cada chave tem seu próprio arquivo; o hash não deixa IPs ou e-mails visíveis no nome.
         $directory = dirname(__DIR__, 2) . '/storage/rate-limits';
         if (!is_dir($directory) && !mkdir($directory, 0700, true) && !is_dir($directory)) {
             throw new RuntimeException('Rate limiter storage is unavailable.');
@@ -26,6 +29,7 @@ final class RateLimiter
         }
 
         try {
+            // O bloqueio exclusivo evita que duas requisições alterem a contagem ao mesmo tempo.
             rewind($handle);
             $contents = stream_get_contents($handle);
             $record = is_string($contents) ? json_decode($contents, true) : null;
@@ -41,6 +45,7 @@ final class RateLimiter
             }
 
             $retryAfter = max(0, $record['started'] + $windowSeconds - $now);
+            // Retorna segundos restantes quando o limite já foi atingido; zero significa permitido.
             if ($record['count'] >= $limit) {
                 return $retryAfter;
             }
@@ -60,6 +65,7 @@ final class RateLimiter
 
     public static function clear(string $key): void
     {
+        // Uma autenticação bem-sucedida pode limpar a contagem para que falhas antigas não mantenham o usuário bloqueado.
         $path = dirname(__DIR__, 2) . '/storage/rate-limits/' . hash('sha256', $key) . '.json';
         if (is_file($path)) {
             @unlink($path);
@@ -68,6 +74,7 @@ final class RateLimiter
 
     public static function clientIp(): string
     {
+        // Usa REMOTE_ADDR, que o servidor define, em vez de confiar em cabeçalhos encaminhados pelo cliente.
         $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
         return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : 'unknown';
     }

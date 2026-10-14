@@ -38,11 +38,13 @@
 .site-menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
 [data-site-menu] a:focus-visible {
+    /* Preserva um foco visível ao navegar pelo menu usando teclado. */
     outline: 3px solid rgba(0, 74, 148, .25);
     outline-offset: 4px;
 }
 
 @media (max-width: 720px) {
+    /* Em celulares, o botão controla a visibilidade do menu expansível. */
     .site-menu-toggle { display: inline-flex; }
 
     [data-site-menu] {
@@ -55,6 +57,7 @@
 }
 
 @media (min-width: 721px) {
+    /* Em telas maiores, os links voltam ao fluxo normal do cabeçalho. */
     [data-site-menu] {
         display: contents;
     }
