@@ -185,9 +185,7 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
             </div>
 
             <div class="form-footer-action">
-                <a href="../php/pessoa.php">
-    <button type="submit" class="btn-submit">Finalizar e Salvar Currículo</button>
-</a>
+                <button type="submit" class="btn-submit">Finalizar e Salvar Currículo</button>
                 <div class="login-redirect">
                     Deseja sair do sistema? <a href="logout.php">Clique aqui</a>
                 </div>

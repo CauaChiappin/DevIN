@@ -392,7 +392,7 @@ switch ($acao) {
             } else {
                 $_SESSION['erro_curriculo'] = 'Currículo salvo, mas não foi possível enviar o e-mail de confirmação.';
             }
-            header('Location: cadastrar_curriculo.php');
+            header('Location: pessoa.php');
         } catch (Throwable $e) {
             error_log($e->getMessage());
             $_SESSION['erro_curriculo'] = $e instanceof InvalidArgumentException
