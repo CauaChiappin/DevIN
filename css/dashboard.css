@@ -1398,30 +1398,107 @@ a {
 }
 
 .dashboard-shell .sidebar {
-    /* Esta é a sidebar azul do dashboard. */
+    position: relative;
     padding: 24px 16px;
-    background: #004a94;
-    /* border e box-shadow zerados removem qualquer linha na lateral do painel. */
+    background:
+        radial-gradient(ellipse at 18% 0%, rgba(72, 159, 239, .2), transparent 42%),
+        linear-gradient(180deg, #07539a 0%, #064582 52%, #07376b 100%);
     border: 0;
-    box-shadow: none;
+    box-shadow: 8px 0 28px rgba(8, 48, 88, .08);
     color: #dbeeff;
 }
 
 .dashboard-shell .brand { color: #fff; font-size: 21px; }
 .dashboard-shell .brand > .ui-icon { color: #fff; width: 25px; height: 25px; }
 .dashboard-shell .brand-text span { color: #a9d6ff; }
-.dashboard-shell .menu-toggle { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.35); }
+.dashboard-shell .menu-toggle {
+    border-color: rgba(255, 255, 255, .22);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .1);
+    transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.dashboard-shell .menu-toggle:hover { border-color: rgba(255, 255, 255, .42); background: rgba(255, 255, 255, .18); }
+.dashboard-shell .menu-toggle:focus-visible,
+.dashboard-shell .menu-principal a:focus-visible,
+.dashboard-shell .perfil-link:focus-visible,
+.dashboard-shell .perfil-menu button:focus-visible,
+.dashboard-shell .sair:focus-visible {
+    outline: 3px solid rgba(169, 214, 255, .8);
+    outline-offset: 3px;
+}
 .dashboard-shell .menu-toggle span { background: #fff; }
-.dashboard-shell .menu-principal { padding-top: 28px; }
+.dashboard-shell .menu-principal { gap: 8px; padding-top: 30px; }
 .dashboard-shell .menu-principal a,
 .dashboard-shell .perfil-link,
-.dashboard-shell .perfil-menu button { min-height: 44px; color: #dbeeff; font-size: 14px; font-weight: 500; }
-.dashboard-shell .menu-principal a.ativo { padding: 7px 10px; background: rgba(255,255,255,.16); color: #fff; }
-/* Garante que os componentes internos da sidebar também não recriem uma linha. */
-.dashboard-shell .conta { border: 0; padding-top: 14px; box-shadow: none; }
+.dashboard-shell .perfil-menu button {
+    min-height: 46px;
+    color: #dbeeff;
+    font-size: 14px;
+    font-weight: 500;
+}
+.dashboard-shell .menu-principal a {
+    position: relative;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+.dashboard-shell .menu-principal a:hover {
+    transform: translateX(2px);
+    border-color: rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, .1);
+    color: #fff;
+}
+.dashboard-shell .menu-principal a.ativo {
+    padding: 0 12px;
+    border-color: rgba(255, 255, 255, .16);
+    background: rgba(255, 255, 255, .16);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+    color: #fff;
+}
+.dashboard-shell .menu-principal a.ativo::before {
+    position: absolute;
+    top: 9px;
+    bottom: 9px;
+    left: 0;
+    width: 3px;
+    border-radius: 0 4px 4px 0;
+    background: #bfe3ff;
+    content: "";
+}
+.dashboard-shell .menu-principal a .ui-icon { width: 20px; height: 20px; }
+.dashboard-shell .conta {
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, .14);
+}
+.dashboard-shell .perfil-link {
+    padding: 5px 9px;
+    border-radius: 11px;
+    transition: background-color .18s ease, color .18s ease;
+}
+.dashboard-shell .perfil-link:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.dashboard-shell .perfil-link .avatar-mini { border-color: rgba(255, 255, 255, .6); }
 .dashboard-shell .perfil-dropdown { border: 0; box-shadow: none; }
-.dashboard-shell .perfil-menu { border-color: rgba(255,255,255,.14); background: #003d7a; box-shadow: none; }
-.dashboard-shell .sair { color: #b8dcfb; font-size: 14px; text-decoration: none; }
+.dashboard-shell .perfil-menu {
+    margin-top: 6px;
+    border-color: rgba(255, 255, 255, .14);
+    border-radius: 12px;
+    background: rgba(3, 49, 94, .92);
+    box-shadow: 0 12px 28px rgba(0, 24, 50, .18);
+}
+.dashboard-shell .perfil-menu button { padding: 4px 6px; border-radius: 8px; }
+.dashboard-shell .perfil-menu button:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.dashboard-shell .sair {
+    min-height: 42px;
+    padding: 0 9px;
+    border-radius: 10px;
+    color: #c5e2fb;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color .18s ease, color .18s ease;
+}
+.dashboard-shell .sair:hover { background: rgba(255, 255, 255, .08); color: #fff; }
 
 .dashboard-shell .lista-area {
     padding: 24px 20px 32px;
@@ -2211,6 +2288,15 @@ a {
         border-right: 0;
         border-bottom: 1px solid var(--line);
         overflow: visible;
+    }
+
+    .dashboard-shell .sidebar {
+        height: auto;
+        min-height: 0;
+        padding: 12px 16px;
+        border: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, .14);
+        box-shadow: 0 6px 18px rgba(8, 48, 88, .1);
     }
 
     .sidebar-topo {
