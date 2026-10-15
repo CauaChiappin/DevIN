@@ -711,6 +711,25 @@ a {
     overflow: hidden;
 }
 
+.message-unread-badge {
+    display: inline-grid;
+    min-width: 19px;
+    height: 19px;
+    flex: 0 0 auto;
+    place-items: center;
+    margin-left: auto;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #df1f2d;
+    color: #fff;
+    font-size: 11px;
+    line-height: 1;
+}
+
+.message-unread-badge[hidden] {
+    display: none;
+}
+
 .menu-principal a.ativo,
 .perfil-link.ativo {
     width: 100%;

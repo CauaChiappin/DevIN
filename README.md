@@ -13,3 +13,9 @@ O lembrete de currículo após uma hora depende do Agendador de Tarefas do Windo
 - Argumentos: `-f C:\xampp\htdocs\DevIN\php\cron_lembrete_curriculo.php`
 
 O script aceita execução apenas pela CLI e marca o lembrete como enviado somente após sucesso no SMTP.
+
+## Mensagens no dashboard
+
+As conversas privadas entre contas de pessoa e empresa funcionam sem criar a tabela `mensagens`: por enquanto, as mensagens ficam em um arquivo temporário local compartilhado pela instalação. Elas não são sincronizadas com outras instalações e podem ser apagadas pela limpeza dos arquivos temporários do sistema. A lista de contatos continua usando as contas cadastradas no banco de dados. A área de mensagens atualiza conversas abertas automaticamente a cada quatro segundos.
+
+O menu de três pontos em cada mensagem permite ocultá-la para a própria conta; em mensagens enviadas, também é possível apagá-la para os dois participantes. A opção para todos remove o texto original e deixa um aviso no lugar. Uma conversa inteira pode ser limpa pelo botão no cabeçalho, apenas para a conta que executa a ação.
