@@ -160,6 +160,15 @@
             const menuItems = document.createElement('div');
             menuItems.className = 'chat-message-menu-items';
 
+            menu.addEventListener('toggle', () => {
+                if (menu.open) {
+                    messagesElement.querySelectorAll('.chat-message-menu[open]').forEach((openMenu) => {
+                        if (openMenu !== menu) openMenu.open = false;
+                    });
+                }
+                bubble.classList.toggle('chat-bubble--menu-open', menu.open);
+            });
+
             const addAction = (label, action) => {
                 const button = document.createElement('button');
                 button.type = 'button';
@@ -317,8 +326,26 @@
     });
 
     searchInput.addEventListener('input', renderContacts);
+    document.addEventListener('click', (event) => {
+        if (event.target instanceof Element && event.target.closest('.chat-message-menu')) return;
+        messagesElement.querySelectorAll('.chat-message-menu[open]').forEach((menu) => {
+            menu.open = false;
+        });
+    });
+
+    const resizeMessageInput = () => {
+        messageInput.style.height = 'auto';
+        const maxHeight = Number.parseFloat(window.getComputedStyle(messageInput).maxHeight);
+        const height = Number.isFinite(maxHeight)
+            ? Math.min(messageInput.scrollHeight, maxHeight)
+            : messageInput.scrollHeight;
+        messageInput.style.height = `${height}px`;
+        messageInput.style.overflowY = messageInput.scrollHeight > height ? 'auto' : 'hidden';
+    };
+
+    messageInput.addEventListener('input', resizeMessageInput);
     messageInput.addEventListener('keydown', (event) => {
-        if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+        if (event.key !== 'Enter' || !event.ctrlKey || event.isComposing) return;
         event.preventDefault();
         form.requestSubmit();
     });
@@ -342,6 +369,7 @@
                 }),
             });
             messageInput.value = '';
+            resizeMessageInput();
             await loadMessages(false);
             try {
                 await refreshContacts();
