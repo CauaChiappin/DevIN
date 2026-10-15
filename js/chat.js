@@ -317,6 +317,12 @@
     });
 
     searchInput.addEventListener('input', renderContacts);
+    messageInput.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+        event.preventDefault();
+        form.requestSubmit();
+    });
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (!activeContact || !messageInput.value.trim()) return;
