@@ -8,6 +8,7 @@
     const settingsModal = document.querySelector('#settingsModal');
     const profileModal = document.querySelector('#profileModal');
     const rotatingWord = document.querySelector('[data-rotating-word]');
+    const translate = (value) => window.DevINTranslate?.(value) ?? value;
 
     const messagesLink = document.querySelector('[data-messages-api]');
     const unreadBadge = messagesLink?.querySelector('[data-message-unread-badge]');
@@ -18,12 +19,12 @@
         const response = await fetch(url, { credentials: 'same-origin' });
         const data = await response.json();
         if (!response.ok || data.sucesso !== true) {
-            throw new Error(data.mensagem || 'Não foi possível atualizar as mensagens não lidas.');
+            throw new Error(translate(data.mensagem || 'Não foi possível atualizar as mensagens não lidas.'));
         }
 
         unreadBadge.hidden = data.nao_lidas === 0;
         unreadBadge.textContent = String(data.nao_lidas);
-        unreadBadge.setAttribute('aria-label', `${data.nao_lidas} mensagens não lidas`);
+        unreadBadge.setAttribute('aria-label', translate(`${data.nao_lidas} mensagens não lidas`));
     };
     if (messagesLink) {
         refreshMessageCount().catch((error) => console.error(error));
@@ -105,13 +106,13 @@
         const content = detailPanel?.querySelector('[data-detail-content]');
         if (!detailPanel || !content) return;
 
-        const title = card.querySelector('h2')?.textContent?.trim() || 'Detalhes do registro';
-        const subtitle = card.querySelector('p')?.textContent?.trim() || 'Informacoes da plataforma';
+        const title = card.querySelector('h2')?.textContent?.trim() || translate('Detalhes do registro');
+        const subtitle = card.querySelector('p')?.textContent?.trim() || translate('Informacoes da plataforma');
         const name = card.dataset.detailName || card.dataset.jobTitle || title;
         const role = card.dataset.detailRole || subtitle;
         const summary = card.dataset.detailSummary || card.dataset.detail || subtitle;
-        const tags = splitItems(card.dataset.detailTags, ['DevIN', 'Informacao disponivel']);
-        const experience = splitItems(card.dataset.detailExperience, [`Registro selecionado::${role}`]);
+        const tags = splitItems(card.dataset.detailTags, ['DevIN', translate('Informacao disponivel')]);
+        const experience = splitItems(card.dataset.detailExperience, [`${translate('Registro selecionado')}::${role}`]);
 
         detailPanel.querySelector('[data-detail-placeholder]')?.setAttribute('hidden', '');
         content.hidden = false;
@@ -124,7 +125,7 @@
         if (avatar) avatar.textContent = getInitials(name);
         if (nameElement) nameElement.textContent = name;
         if (roleElement) roleElement.textContent = role;
-        if (metaElement) metaElement.textContent = card.dataset.detailMeta || 'Disponivel na plataforma';
+        if (metaElement) metaElement.textContent = card.dataset.detailMeta || translate('Disponivel na plataforma');
         if (summaryElement) summaryElement.textContent = summary;
         renderList(detailPanel.querySelector('[data-detail-tags]'), tags);
         renderList(detailPanel.querySelector('[data-detail-experience]'), experience, true);
@@ -174,7 +175,7 @@
 
     document.querySelectorAll('[data-confirm-logout]').forEach((link) => {
         link.addEventListener('click', (event) => {
-            const message = link.dataset.confirmLogout || 'Tem certeza que deseja sair da sua conta?';
+            const message = link.dataset.confirmLogout || translate('Tem certeza que deseja sair da sua conta?');
             if (!window.confirm(message)) event.preventDefault();
         });
     });
@@ -182,7 +183,7 @@
     // Confirmação de exclusão da conta.
     document.querySelectorAll('[data-delete-account]').forEach((button) => {
         button.addEventListener('click', (event) => {
-            if (!window.confirm('Tem certeza? Esta ação exclui sua conta permanentemente.')) {
+            if (!window.confirm(translate('Tem certeza? Esta ação exclui sua conta permanentemente.'))) {
                 event.preventDefault();
             }
         });
@@ -216,7 +217,7 @@
             const allowed = ['image/jpeg', 'image/png', 'image/webp'];
             if (!allowed.includes(photo.type) || photo.size > 5 * 1024 * 1024) {
                 event.currentTarget.value = '';
-                window.alert('Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.');
+                window.alert(translate('Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.'));
                 return;
             }
 
@@ -225,7 +226,7 @@
                 preview.replaceChildren();
                 const image = document.createElement('img');
                 image.src = previewUrl;
-                image.alt = 'Prévia da foto de perfil';
+                image.alt = translate('Prévia da foto de perfil');
                 preview.appendChild(image);
             });
         });
@@ -240,7 +241,7 @@
             submitter.dataset.loading = 'true';
             submitter.disabled = true;
             submitter.dataset.originalText = submitter.textContent;
-            submitter.textContent = 'Processando...';
+            submitter.textContent = translate('Processando...');
         });
     });
 
@@ -277,7 +278,7 @@
         const options = ['', ...tags].map((tag) => {
             const option = document.createElement('option');
             option.value = tag;
-            option.textContent = tag || 'Todos';
+            option.textContent = translate(tag || 'Todos');
             return option;
         });
         filterSelect.replaceChildren(...options);
@@ -296,7 +297,11 @@
 
     // Palavra animada da página institucional.
     if (rotatingWord) {
-        const words = ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'];
+        const words = document.documentElement.lang === 'en'
+            ? ['future', 'world', 'universe', 'progress', 'market', 'tomorrow']
+            : document.documentElement.lang === 'es'
+                ? ['futuro', 'mundo', 'universo', 'progreso', 'mercado', 'mañana']
+                : ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'];
         let currentWord = 0;
         let changing = false;
 

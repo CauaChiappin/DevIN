@@ -169,7 +169,7 @@ unset($vaga);
 
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="<?= h($idiomaAtual) ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -404,22 +404,29 @@ unset($vaga);
     </dialog>
 
     <!-- Modal Configurações -->
-    <dialog class="settings-modal" id="settingsModal">
-        <form method="post" class="modal-form">
-            <button class="modal-close" value="close" aria-label="Fechar">×</button>
-            <h2>Configurações</h2>
-            <label>Idioma
+    <dialog class="settings-modal" id="settingsModal" aria-labelledby="settingsModalTitle">
+        <form method="post" class="modal-form settings-form">
+            <header class="settings-heading">
+                <h2 id="settingsModalTitle">Configurações</h2>
+                <button class="modal-close" type="button" data-close-modal aria-label="Fechar">×</button>
+            </header>
+            <label class="settings-field"><span>Idioma</span>
                 <select name="idioma">
                     <option value="pt-BR" <?= $idiomaAtual === 'pt-BR' ? 'selected' : '' ?>>Português</option>
                     <option value="en" <?= $idiomaAtual === 'en' ? 'selected' : '' ?>>Inglês</option>
                     <option value="es" <?= $idiomaAtual === 'es' ? 'selected' : '' ?>>Espanhol</option>
                 </select>
+                <small>Escolha o idioma usado na sua experiência na DevIN.</small>
             </label>
             <input type="hidden" name="action" value="update_settings">
             <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
             <button class="btn primary" type="submit">Salvar idioma</button>
         </form>
         <form method="post" class="modal-form account-delete-form">
+            <div class="account-delete-copy">
+                <strong>Excluir conta</strong>
+                <p>A exclusão da conta é permanente e não pode ser desfeita.</p>
+            </div>
             <input type="hidden" name="action" value="delete_account">
             <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
             <button class="btn danger" type="submit" data-delete-account>Excluir conta</button>
@@ -428,6 +435,7 @@ unset($vaga);
 
     <script src="../js/site-navigation.js"></script>
     <script src="../js/dashboard-menu.js"></script>
+    <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>

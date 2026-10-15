@@ -44,8 +44,24 @@
 .profile-photo-preview,
 .current-user-avatar {
     overflow: hidden;
-    background: radial-gradient(circle at 50% 38%, #ffffff 0 17%, #111111 18% 33%, transparent 34%), radial-gradient(circle at 50% 82%, #111111 0 32%, transparent 33%), #f3f3f3;
 }
+
+.current-user-avatar:not(.has-photo) {
+    display: inline-grid;
+    place-items: center;
+    border-color: transparent;
+    background: var(--blue-soft);
+    color: var(--blue);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.avatar-mini.current-user-avatar:not(.has-photo) { font-size: 13px; }
+.avatar-foto.current-user-avatar:not(.has-photo) { font-size: 9px; }
+.avatar-grande.current-user-avatar:not(.has-photo) { font-size: 16px; }
+.profile-photo-preview.current-user-avatar:not(.has-photo) { font-size: 24px; }
 
 /* Fotos PNG/WebP transparentes usam uma base limpa, sem exibir o avatar-padrão por trás. */
 .current-user-avatar.has-photo {
@@ -582,6 +598,7 @@ a {
 }
 
 .perfil-dropdown { width: 100%; }
+.dashboard-shell .perfil-dropdown { position: relative; }
 .perfil-dropdown > summary { list-style: none; }
 .perfil-dropdown > summary::-webkit-details-marker { display: none; }
 
@@ -751,6 +768,10 @@ a {
 }
 
 .perfil-menu {
+    position: absolute;
+    z-index: 5;
+    bottom: calc(100% + 8px);
+    left: 0;
     width: 100%;
     padding: 12px;
     border: 1px solid #7ca7dc;
@@ -878,7 +899,7 @@ a {
     display: inline-block;
     flex: 0 0 auto;
     border-radius: 50%;
-    background: radial-gradient(circle at 50% 38%, #ffffff 0 17%, #111111 18% 33%, transparent 34%), radial-gradient(circle at 50% 82%, #111111 0 32%, transparent 33%), #f3f3f3;
+    background: #e8f0ff;
     border: 2px solid #d7d7d7;
 }
 
@@ -1394,6 +1415,123 @@ a {
     margin: 0;
 }
 
+#settingsModal .settings-form {
+    gap: 18px;
+    padding: 24px 26px;
+}
+
+#settingsModal {
+    width: min(440px, calc(100% - 32px));
+    border-radius: 14px;
+    color: #24364a;
+    box-shadow: 0 24px 64px rgba(8, 48, 88, .2);
+}
+
+#settingsModal .settings-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+#settingsModal .settings-heading h2 {
+    color: #173b58;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+#settingsModal .modal-close {
+    position: static;
+    display: grid;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 10px;
+    color: #62788d;
+    font-size: 22px;
+    line-height: 1;
+    transition: background-color .18s ease, color .18s ease;
+}
+
+#settingsModal .modal-close:hover {
+    background: #e8f0ff;
+    color: var(--blue);
+}
+
+#settingsModal .settings-field {
+    gap: 7px;
+    color: #34475a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#settingsModal .settings-field select {
+    height: 40px;
+    padding: 0 12px;
+    border-color: #d5dee7;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #203448;
+    font-size: 14px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+#settingsModal .settings-field select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0, 84, 159, .12);
+}
+
+#settingsModal .settings-field small {
+    color: #6d7d8d;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.45;
+}
+
+#settingsModal .settings-form .btn.primary {
+    min-width: 120px;
+    min-height: 38px;
+    border-radius: 9px;
+    box-shadow: none;
+    transition: background-color .18s ease;
+}
+
+#settingsModal .settings-form .btn.primary:hover {
+    background: #064781;
+}
+
+#settingsModal .account-delete-form {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 26px 20px;
+    border-top: 1px solid #e7edf3;
+    background: #f7f9fc;
+}
+
+#settingsModal .account-delete-copy strong {
+    color: #34475a;
+    font-size: 12px;
+}
+
+#settingsModal .account-delete-copy p {
+    margin: 4px 0 0;
+    color: #6d7d8d;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+#settingsModal .account-delete-form .btn.danger {
+    min-height: 34px;
+    border-radius: 8px;
+    transition: background-color .18s ease;
+}
+
+#settingsModal .account-delete-form .btn.danger:hover {
+    background: #bd1825;
+}
+
 .modal-close {
     position: absolute;
     right: 12px;
@@ -1500,7 +1638,6 @@ a {
 .dashboard-shell .perfil-link .avatar-mini { border-color: rgba(255, 255, 255, .6); }
 .dashboard-shell .perfil-dropdown { border: 0; box-shadow: none; }
 .dashboard-shell .perfil-menu {
-    margin-top: 6px;
     border-color: rgba(255, 255, 255, .14);
     border-radius: 12px;
     background: rgba(3, 49, 94, .92);
@@ -2396,6 +2533,15 @@ a {
 .candidate-actions button:disabled {
     opacity: .65;
     cursor: wait;
+}
+
+@media (max-width: 520px) {
+    #settingsModal .settings-form { padding: 22px 20px; }
+    #settingsModal .account-delete-form {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 16px 20px 20px;
+    }
 }
 
 .form-error,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/security.php';
 require_once __DIR__ . '/../MailerHelper.php';
+require_once __DIR__ . '/ProfileLanguagePreference.php';
 
 function profileTable(string $tipo): array
 {
@@ -163,8 +164,11 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
 
 function updateLanguage(string $tipo, int $id, string $idioma): void
 {
-    if (!in_array($idioma, ['pt-BR', 'en', 'es'], true)) {
-        throw new InvalidArgumentException('Idioma inválido.');
+    $conn = getDatabaseConnection();
+    try {
+        ProfileLanguagePreference::save($conn, $tipo, $id, $idioma);
+    } finally {
+        $conn->close();
     }
 
     startSecureSession();
