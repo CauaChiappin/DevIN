@@ -110,7 +110,7 @@ HTML;
 
 /**
  * Monta o avatar reutilizado no menu, no modal e no perfil.
- * Se não houver foto válida, retorna somente o span com o fundo padrão do CSS.
+ * Se não houver foto válida, exibe as iniciais do nome como avatar padrão.
  */
 function profileAvatar(array $perfil, string $classes): string
 {
@@ -139,7 +139,16 @@ function profileAvatar(array $perfil, string $classes): string
         ? '<img src="' . h($foto) . '" alt="Foto de perfil">'
         : '';
 
-    return '<span class="' . h($classes) . ' current-user-avatar' . ($imagem !== '' ? ' has-photo' : '') . '">' . $imagem . '</span>';
+    $partesNome = preg_split('/\s+/u', trim((string) ($perfil['nome'] ?? '')), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    $iniciais = '';
+    foreach (array_slice($partesNome, 0, 2) as $parte) {
+        if (preg_match('/^./u', $parte, $matches) === 1) {
+            $iniciais .= $matches[0];
+        }
+    }
+    $conteudo = $imagem !== '' ? $imagem : h($iniciais !== '' ? $iniciais : 'DI');
+
+    return '<span class="' . h($classes) . ' current-user-avatar' . ($imagem !== '' ? ' has-photo' : '') . '">' . $conteudo . '</span>';
 }
 
 /** 

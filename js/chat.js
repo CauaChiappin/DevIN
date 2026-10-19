@@ -4,8 +4,10 @@
     const app = document.querySelector('[data-chat-app]');
     if (!app) return;
 
-    const translate = (value) => window.DevINTranslate?.(value) || value;
-    const locale = document.documentElement.lang || 'pt-BR';
+    const translate = (value) => window.DevINTranslate?.(value) ?? value;
+    const locale = document.documentElement.lang === 'en'
+        ? 'en-US'
+        : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR';
     const apiUrl = app.dataset.api;
     const csrfToken = app.dataset.csrf;
     const contactsElement = app.querySelector('[data-chat-contacts]');
@@ -60,7 +62,7 @@
             `${contact.nome} ${contact.rotulo}`.toLocaleLowerCase(locale).includes(filter));
 
         if (visibleContacts.length === 0) {
-            contactsStatus.textContent = contacts.length ? 'Nenhum contato encontrado.' : 'Ainda não há outros usuários cadastrados.';
+            contactsStatus.textContent = translate(contacts.length ? 'Nenhum contato encontrado.' : 'Ainda não há outros usuários cadastrados.');
             return;
         }
 
@@ -118,7 +120,11 @@
                     return contact.nao_lidas > (previous?.nao_lidas || 0);
                 });
                 notificationElement.textContent = contactWithNewMessages
-                    ? translate(`Nova mensagem de ${contactWithNewMessages.nome}. ${unreadTotal} mensagens não lidas.`)
+                    ? (document.documentElement.lang === 'en'
+                        ? `New message from ${contactWithNewMessages.nome}. ${unreadTotal} unread messages.`
+                        : document.documentElement.lang === 'es'
+                            ? `Nuevo mensaje de ${contactWithNewMessages.nome}. ${unreadTotal} mensajes sin leer.`
+                            : `Nova mensagem de ${contactWithNewMessages.nome}. ${unreadTotal} mensagens não lidas.`)
                     : translate(`${unreadTotal} mensagens não lidas.`);
                 window.clearTimeout(notificationTimeout);
                 notificationTimeout = window.setTimeout(() => {
@@ -141,7 +147,7 @@
         const text = document.createElement('p');
         if (message.apagada_para_todos) {
             bubble.classList.add('chat-bubble--deleted');
-            text.textContent = message.minha ? 'Você apagou esta mensagem' : 'Esta mensagem foi apagada';
+            text.textContent = translate(message.minha ? 'Você apagou esta mensagem' : 'Esta mensagem foi apagada');
         } else {
             text.textContent = message.mensagem;
         }
@@ -161,6 +167,15 @@
             menuButton.textContent = '⋮';
             const menuItems = document.createElement('div');
             menuItems.className = 'chat-message-menu-items';
+
+            menu.addEventListener('toggle', () => {
+                if (menu.open) {
+                    messagesElement.querySelectorAll('.chat-message-menu[open]').forEach((openMenu) => {
+                        if (openMenu !== menu) openMenu.open = false;
+                    });
+                }
+                bubble.classList.toggle('chat-bubble--menu-open', menu.open);
+            });
 
             const addAction = (label, action) => {
                 const button = document.createElement('button');
@@ -219,7 +234,7 @@
             if (messagesElement.childElementCount === 0) {
                 const empty = document.createElement('p');
                 empty.className = 'chat-empty';
-                empty.textContent = 'Esta conversa ainda não tem mensagens. Envie a primeira!';
+                empty.textContent = translate('Esta conversa ainda não tem mensagens. Envie a primeira!');
                 messagesElement.appendChild(empty);
             } else {
                 messagesElement.querySelector('.chat-empty')?.remove();
@@ -278,7 +293,7 @@
         messagesElement.replaceChildren();
         const loading = document.createElement('p');
         loading.className = 'chat-empty';
-        loading.textContent = 'Carregando conversa...';
+        loading.textContent = translate('Carregando conversa...');
         messagesElement.appendChild(loading);
         await loadMessages(true);
         try {
@@ -319,10 +334,28 @@
     });
 
     searchInput.addEventListener('input', renderContacts);
+    document.addEventListener('click', (event) => {
+        if (event.target instanceof Element && event.target.closest('.chat-message-menu')) return;
+        messagesElement.querySelectorAll('.chat-message-menu[open]').forEach((menu) => {
+            menu.open = false;
+        });
+    });
+
+    const resizeMessageInput = () => {
+        messageInput.style.height = 'auto';
+        const maxHeight = Number.parseFloat(window.getComputedStyle(messageInput).maxHeight);
+        const height = Number.isFinite(maxHeight)
+            ? Math.min(messageInput.scrollHeight, maxHeight)
+            : messageInput.scrollHeight;
+        messageInput.style.height = `${height}px`;
+        messageInput.style.overflowY = messageInput.scrollHeight > height ? 'auto' : 'hidden';
+    };
+
+    messageInput.addEventListener('input', resizeMessageInput);
     messageInput.addEventListener('keydown', (event) => {
-        if (event.key !== 'Enter' || !event.ctrlKey) return;
+        if (event.key !== 'Enter' || !event.ctrlKey || event.isComposing) return;
         event.preventDefault();
-        if (activeContact && !sendButton.disabled) form.requestSubmit(sendButton);
+        if (activeContact && !sendButton.disabled) form.requestSubmit();
     });
 
     form.addEventListener('submit', async (event) => {
@@ -344,6 +377,7 @@
                 }),
             });
             messageInput.value = '';
+            resizeMessageInput();
             await loadMessages(false);
             try {
                 await refreshContacts();

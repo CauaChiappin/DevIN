@@ -425,6 +425,7 @@ unset($vaga);
                     <option value="en" <?= $idiomaAtual === 'en' ? 'selected' : '' ?>>Inglês</option>
                     <option value="es" <?= $idiomaAtual === 'es' ? 'selected' : '' ?>>Espanhol</option>
                 </select>
+                <small>Escolha o idioma usado na sua experiência na DevIN.</small>
             </label>
             <input type="hidden" name="action" value="update_settings">
             <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
