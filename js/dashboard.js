@@ -8,6 +8,8 @@
     const settingsModal = document.querySelector('#settingsModal');
     const profileModal = document.querySelector('#profileModal');
     const rotatingWord = document.querySelector('[data-rotating-word]');
+    const interfaceLocale = document.documentElement.lang || 'pt-BR';
+    const translate = window.DevINTranslate || ((value) => value);
 
     const messagesLink = document.querySelector('[data-messages-api]');
     const unreadBadge = messagesLink?.querySelector('[data-message-unread-badge]');
@@ -23,7 +25,7 @@
 
         unreadBadge.hidden = data.nao_lidas === 0;
         unreadBadge.textContent = String(data.nao_lidas);
-        unreadBadge.setAttribute('aria-label', `${data.nao_lidas} mensagens não lidas`);
+        unreadBadge.setAttribute('aria-label', translate(`${data.nao_lidas} mensagens não lidas`));
     };
     if (messagesLink) {
         refreshMessageCount().catch((error) => console.error(error));
@@ -182,7 +184,7 @@
     // Confirmação de exclusão da conta.
     document.querySelectorAll('[data-delete-account]').forEach((button) => {
         button.addEventListener('click', (event) => {
-            if (!window.confirm('Tem certeza? Esta ação exclui sua conta permanentemente.')) {
+            if (!window.confirm(translate('Tem certeza? Esta ação exclui sua conta permanentemente.'))) {
                 event.preventDefault();
             }
         });
@@ -216,7 +218,7 @@
             const allowed = ['image/jpeg', 'image/png', 'image/webp'];
             if (!allowed.includes(photo.type) || photo.size > 5 * 1024 * 1024) {
                 event.currentTarget.value = '';
-                window.alert('Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.');
+                window.alert(translate('Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.'));
                 return;
             }
 
@@ -249,7 +251,7 @@
     const filterButton = document.querySelector('[data-toggle-filters]');
     const filterMenu = document.querySelector('[data-filter-menu]');
     const filterSelect = document.querySelector('[data-card-filter]');
-    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase('pt-BR');
+    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale);
     const cardTags = (card) => String(card.dataset.detailTags || '')
         .split('|').map((tag) => tag.trim()).filter(Boolean);
     const updateCardVisibility = () => {
@@ -264,7 +266,7 @@
                 card.dataset.detailRole,
                 card.dataset.detailTags,
                 card.dataset.detailExperience,
-            ].join(' ').toLocaleLowerCase('pt-BR');
+            ].join(' ').toLocaleLowerCase(interfaceLocale);
             const matchesSearch = term === '' || searchableContent.includes(term);
             const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter);
             card.hidden = !matchesSearch || !matchesFilter;
@@ -296,7 +298,7 @@
 
     // Palavra animada da página institucional.
     if (rotatingWord) {
-        const words = ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'];
+        const words = ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'].map(translate);
         let currentWord = 0;
         let changing = false;
 
@@ -333,6 +335,13 @@
                 changing = false;
             }, 800);
         }, 3000);
+    }
+
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('configuracoes') === '1' && settingsModal?.showModal) {
+        settingsModal.showModal();
+        url.searchParams.delete('configuracoes');
+        window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
     }
 
     if (new URLSearchParams(window.location.search).get('perfil') === 'meu' && profileModal?.showModal) {

@@ -89,7 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'update_settings') {
             updateLanguage($tipo, $idPessoaAtual, requestString($_POST, 'idioma') ?: 'pt-BR');
-            header('Location: pessoa.php?configuracoes=1');
+            $_SESSION['settings_success'] = 'Idioma salvo com sucesso.';
+            header('Location: pessoa.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1');
             exit;
         }
 
@@ -105,6 +106,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? $exception->getMessage()
                 : 'Não foi possível enviar a candidatura. Tente novamente.';
             header('Location: pessoa.php?pagina=inicio');
+        } elseif ($action === 'update_settings') {
+            $_SESSION['settings_error'] = 'Não foi possível salvar o idioma. Tente novamente.';
+            header('Location: pessoa.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1');
         } else {
             $_SESSION['profile_error'] = 'Não foi possível concluir a operação. Tente novamente.';
             header('Location: pessoa.php?pagina=perfil');
@@ -124,7 +128,7 @@ if (!$perfilAtual) {
     header('Location: logout.php');
     exit;
 }
-$idiomaAtual = $_SESSION['idioma'] ?? 'pt-BR';
+$idiomaAtual = getProfileLanguage($tipo, $idPessoaAtual);
 
 $vagasDisponiveis  = [];
 $minhasCandidaturas = [];
@@ -169,7 +173,7 @@ unset($vaga);
 
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="<?= h($idiomaAtual) ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -404,12 +408,19 @@ unset($vaga);
     </dialog>
 
     <!-- Modal Configurações -->
-    <dialog class="settings-modal" id="settingsModal">
-        <form method="post" class="modal-form">
-            <button class="modal-close" value="close" aria-label="Fechar">×</button>
-            <h2>Configurações</h2>
-            <label>Idioma
-                <select name="idioma">
+    <dialog class="settings-modal" id="settingsModal" aria-labelledby="settingsModalTitle">
+        <form method="post" class="modal-form settings-form">
+            <button class="modal-close" type="button" data-close-modal aria-label="Fechar">×</button>
+            <h2 id="settingsModalTitle">Configurações</h2>
+            <p class="settings-description">Personalize o idioma da interface da sua conta.</p>
+            <?php if (!empty($_SESSION['settings_error'])): ?>
+                <p class="form-error" role="alert"><?= h($_SESSION['settings_error']); unset($_SESSION['settings_error']); ?></p>
+            <?php endif; ?>
+            <?php if (!empty($_SESSION['settings_success'])): ?>
+                <p class="form-success" role="status"><?= h($_SESSION['settings_success']); unset($_SESSION['settings_success']); ?></p>
+            <?php endif; ?>
+            <label for="settingsLanguage">Idioma
+                <select id="settingsLanguage" name="idioma">
                     <option value="pt-BR" <?= $idiomaAtual === 'pt-BR' ? 'selected' : '' ?>>Português</option>
                     <option value="en" <?= $idiomaAtual === 'en' ? 'selected' : '' ?>>Inglês</option>
                     <option value="es" <?= $idiomaAtual === 'es' ? 'selected' : '' ?>>Espanhol</option>
@@ -417,17 +428,24 @@ unset($vaga);
             </label>
             <input type="hidden" name="action" value="update_settings">
             <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-            <button class="btn primary" type="submit">Salvar idioma</button>
+            <button class="btn primary settings-save" type="submit">Salvar alterações</button>
         </form>
-        <form method="post" class="modal-form account-delete-form">
-            <input type="hidden" name="action" value="delete_account">
-            <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-            <button class="btn danger" type="submit" data-delete-account>Excluir conta</button>
-        </form>
+        <section class="settings-danger-zone">
+            <div>
+                <h3>Excluir conta</h3>
+                <p>Essa ação é permanente e não pode ser desfeita.</p>
+            </div>
+            <form method="post" class="account-delete-form">
+                <input type="hidden" name="action" value="delete_account">
+                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                <button class="btn danger" type="submit" data-delete-account>Excluir conta</button>
+            </form>
+        </section>
     </dialog>
 
     <script src="../js/site-navigation.js"></script>
     <script src="../js/dashboard-menu.js"></script>
+    <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>

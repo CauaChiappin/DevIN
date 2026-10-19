@@ -4,6 +4,8 @@
     const app = document.querySelector('[data-chat-app]');
     if (!app) return;
 
+    const translate = (value) => window.DevINTranslate?.(value) || value;
+    const locale = document.documentElement.lang || 'pt-BR';
     const apiUrl = app.dataset.api;
     const csrfToken = app.dataset.csrf;
     const contactsElement = app.querySelector('[data-chat-contacts]');
@@ -43,19 +45,19 @@
         });
         const data = await response.json();
         if (!response.ok || data.sucesso !== true) {
-            throw new Error(data.mensagem || 'Não foi possível concluir a solicitação.');
+            throw new Error(translate(data.mensagem || 'Não foi possível concluir a solicitação.'));
         }
         return data;
     };
 
     const initials = (name) => String(name).trim().split(/\s+/).slice(0, 2)
-        .map((part) => part.charAt(0)).join('').toLocaleUpperCase('pt-BR') || 'DI';
+        .map((part) => part.charAt(0)).join('').toLocaleUpperCase(locale) || 'DI';
 
     const renderContacts = () => {
         contactsElement.replaceChildren();
-        const filter = searchInput.value.trim().toLocaleLowerCase('pt-BR');
+        const filter = searchInput.value.trim().toLocaleLowerCase(locale);
         const visibleContacts = contacts.filter((contact) =>
-            `${contact.nome} ${contact.rotulo}`.toLocaleLowerCase('pt-BR').includes(filter));
+            `${contact.nome} ${contact.rotulo}`.toLocaleLowerCase(locale).includes(filter));
 
         if (visibleContacts.length === 0) {
             contactsStatus.textContent = contacts.length ? 'Nenhum contato encontrado.' : 'Ainda não há outros usuários cadastrados.';
@@ -86,7 +88,7 @@
                 const unread = document.createElement('span');
                 unread.className = 'chat-contact-unread';
                 unread.textContent = String(contact.nao_lidas);
-                unread.setAttribute('aria-label', `${contact.nao_lidas} mensagens não lidas`);
+                unread.setAttribute('aria-label', translate(`${contact.nao_lidas} mensagens não lidas`));
                 button.appendChild(unread);
             }
             contactsElement.appendChild(button);
@@ -106,7 +108,7 @@
             if (unreadTotalElement) {
                 unreadTotalElement.hidden = unreadTotal === 0;
                 unreadTotalElement.textContent = String(unreadTotal);
-                unreadTotalElement.setAttribute('aria-label', `${unreadTotal} mensagens não lidas`);
+                unreadTotalElement.setAttribute('aria-label', translate(`${unreadTotal} mensagens não lidas`));
             }
 
             if (contactsLoaded && unreadTotal > previousUnreadTotal && notificationElement) {
@@ -116,8 +118,8 @@
                     return contact.nao_lidas > (previous?.nao_lidas || 0);
                 });
                 notificationElement.textContent = contactWithNewMessages
-                    ? `Nova mensagem de ${contactWithNewMessages.nome}. ${unreadTotal} mensagens não lidas.`
-                    : `${unreadTotal} mensagens não lidas.`;
+                    ? translate(`Nova mensagem de ${contactWithNewMessages.nome}. ${unreadTotal} mensagens não lidas.`)
+                    : translate(`${unreadTotal} mensagens não lidas.`);
                 window.clearTimeout(notificationTimeout);
                 notificationTimeout = window.setTimeout(() => {
                     notificationElement.textContent = '';
@@ -148,14 +150,14 @@
         time.dateTime = message.enviada_em;
         time.textContent = Number.isNaN(date.getTime())
             ? ''
-            : date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            : date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
         bubble.append(text, time);
 
         if (!message.apagada_para_todos) {
             const menu = document.createElement('details');
             menu.className = 'chat-message-menu';
             const menuButton = document.createElement('summary');
-            menuButton.setAttribute('aria-label', 'Ações da mensagem');
+            menuButton.setAttribute('aria-label', translate('Ações da mensagem'));
             menuButton.textContent = '⋮';
             const menuItems = document.createElement('div');
             menuItems.className = 'chat-message-menu-items';
@@ -171,8 +173,8 @@
                 menuItems.appendChild(button);
             };
 
-            addAction('Excluir para mim', 'excluir_mensagem');
-            if (message.minha) addAction('Excluir para todos', 'excluir_para_todos');
+            addAction(translate('Excluir para mim'), 'excluir_mensagem');
+            if (message.minha) addAction(translate('Excluir para todos'), 'excluir_para_todos');
             menu.append(menuButton, menuItems);
             bubble.appendChild(menu);
         }
@@ -236,9 +238,9 @@
     const deleteMessage = async (messageId, action, button) => {
         if (!activeContact) return;
         const excluirParaTodos = action === 'excluir_para_todos';
-        const confirmacao = excluirParaTodos
+        const confirmacao = translate(excluirParaTodos
             ? 'Excluir esta mensagem para você e para o outro participante?'
-            : 'Excluir esta mensagem só para você?';
+            : 'Excluir esta mensagem só para você?');
         if (!window.confirm(confirmacao)) return;
 
         button.disabled = true;
@@ -267,7 +269,7 @@
         messageViewVersion += 1;
         lastMessageId = 0;
         titleElement.textContent = contact.nome;
-        subtitleElement.textContent = `${contact.rotulo} · Atualização automática`;
+        subtitleElement.textContent = `${translate(contact.rotulo)} · ${translate('Atualização automática')}`;
         messageInput.disabled = false;
         sendButton.disabled = false;
         deleteConversationButton.disabled = true;
@@ -288,7 +290,7 @@
     };
 
     deleteConversationButton.addEventListener('click', async () => {
-        if (!activeContact || !window.confirm('Excluir esta conversa só para você?')) return;
+        if (!activeContact || !window.confirm(translate('Excluir esta conversa só para você?'))) return;
 
         deleteConversationButton.disabled = true;
         sendStatus.textContent = '';
@@ -317,12 +319,18 @@
     });
 
     searchInput.addEventListener('input', renderContacts);
+    messageInput.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' || !event.ctrlKey) return;
+        event.preventDefault();
+        if (activeContact && !sendButton.disabled) form.requestSubmit(sendButton);
+    });
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (!activeContact || !messageInput.value.trim()) return;
 
         sendButton.disabled = true;
-        sendButton.textContent = 'Enviando...';
+        sendButton.textContent = translate('Enviando...');
         sendStatus.textContent = '';
         try {
             await request({}, {
@@ -346,7 +354,7 @@
             sendStatus.textContent = error.message;
         } finally {
             sendButton.disabled = !activeContact;
-            sendButton.textContent = 'Enviar';
+            sendButton.textContent = translate('Enviar');
             messageInput.focus();
         }
     });

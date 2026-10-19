@@ -161,10 +161,70 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     }
 }
 
+function ensureLanguagePreferencesTable(mysqli $conn): void
+{
+    static $tableEnsured = false;
+    if ($tableEnsured) {
+        return;
+    }
+
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS preferencias_dashboard (
+            perfil_tipo VARCHAR(16) NOT NULL,
+            perfil_id INT UNSIGNED NOT NULL,
+            idioma VARCHAR(5) NOT NULL DEFAULT 'pt-BR',
+            atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (perfil_tipo, perfil_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+    $tableEnsured = true;
+}
+
+function getProfileLanguage(string $tipo, int $id): string
+{
+    profileTable($tipo);
+    $conn = getDatabaseConnection();
+
+    try {
+        ensureLanguagePreferencesTable($conn);
+        $stmt = $conn->prepare('SELECT idioma FROM preferencias_dashboard WHERE perfil_tipo = ? AND perfil_id = ? LIMIT 1');
+        $stmt->bind_param('si', $tipo, $id);
+        $stmt->execute();
+        $preference = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        $idioma = (string) ($preference['idioma'] ?? 'pt-BR');
+        if (!in_array($idioma, ['pt-BR', 'en', 'es'], true)) {
+            throw new RuntimeException('O idioma salvo para o perfil é inválido.');
+        }
+
+        $_SESSION['idioma'] = $idioma;
+        return $idioma;
+    } finally {
+        $conn->close();
+    }
+}
+
 function updateLanguage(string $tipo, int $id, string $idioma): void
 {
+    profileTable($tipo);
     if (!in_array($idioma, ['pt-BR', 'en', 'es'], true)) {
         throw new InvalidArgumentException('Idioma inválido.');
+    }
+
+    $conn = getDatabaseConnection();
+    try {
+        ensureLanguagePreferencesTable($conn);
+        $stmt = $conn->prepare("
+            INSERT INTO preferencias_dashboard (perfil_tipo, perfil_id, idioma)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE idioma = VALUES(idioma)
+        ");
+        $stmt->bind_param('sis', $tipo, $id, $idioma);
+        $stmt->execute();
+        $stmt->close();
+    } finally {
+        $conn->close();
     }
 
     startSecureSession();
