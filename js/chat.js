@@ -17,6 +17,10 @@
     const notificationElement = app.querySelector('[data-chat-notification]');
     const titleElement = app.querySelector('[data-chat-title]');
     const subtitleElement = app.querySelector('[data-chat-subtitle]');
+    const conversationAvatar = app.querySelector('[data-chat-avatar]');
+    const backToContactsButton = app.querySelector('[data-chat-back]');
+    const conversationMenu = app.querySelector('.chat-conversation-menu');
+    const conversationMenuToggle = app.querySelector('[data-chat-menu-toggle]');
     const deleteConversationButton = app.querySelector('[data-chat-delete-conversation]');
     const messagesElement = app.querySelector('[data-chat-messages]');
     const form = app.querySelector('[data-chat-form]');
@@ -55,6 +59,26 @@
     const initials = (name) => String(name).trim().split(/\s+/).slice(0, 2)
         .map((part) => part.charAt(0)).join('').toLocaleUpperCase(locale) || 'DI';
 
+    const renderAvatar = (element, contact) => {
+        if (!element) return;
+
+        const fallback = initials(contact.nome);
+        element.textContent = fallback;
+
+        const url = new URL(apiUrl, window.location.href);
+        url.searchParams.set('acao', 'foto');
+        url.searchParams.set('tipo', contact.tipo);
+        url.searchParams.set('id', String(contact.id));
+
+        const image = document.createElement('img');
+        image.src = url.toString();
+        image.alt = '';
+        image.addEventListener('error', () => {
+            element.textContent = fallback;
+        }, { once: true });
+        element.replaceChildren(image);
+    };
+
     const renderContacts = () => {
         contactsElement.replaceChildren();
         const filter = searchInput.value.trim().toLocaleLowerCase(locale);
@@ -76,7 +100,7 @@
 
             const avatar = document.createElement('span');
             avatar.className = 'chat-contact-avatar';
-            avatar.textContent = initials(contact.nome);
+            renderAvatar(avatar, contact);
 
             const copy = document.createElement('span');
             copy.className = 'chat-contact-copy';
@@ -281,14 +305,17 @@
 
     const openConversation = async (contact) => {
         activeContact = contact;
+        app.classList.add('chat-conversation-open');
         messageViewVersion += 1;
         lastMessageId = 0;
         titleElement.textContent = contact.nome;
         subtitleElement.textContent = `${translate(contact.rotulo)} · ${translate('Atualização automática')}`;
+        renderAvatar(conversationAvatar, contact);
         messageInput.disabled = false;
         sendButton.disabled = false;
         deleteConversationButton.disabled = true;
         sendStatus.textContent = '';
+        messageInput.focus();
         renderContacts();
         messagesElement.replaceChildren();
         const loading = document.createElement('p');
@@ -301,12 +328,22 @@
         } catch (error) {
             contactsStatus.textContent = error.message;
         }
-        messageInput.focus();
     };
+
+    backToContactsButton?.addEventListener('click', () => {
+        app.classList.remove('chat-conversation-open');
+        messageInput.blur();
+        contactsElement.querySelector('[aria-pressed="true"]')?.focus();
+    });
+
+    conversationMenu?.addEventListener('toggle', () => {
+        conversationMenuToggle?.setAttribute('aria-expanded', String(conversationMenu.open));
+    });
 
     deleteConversationButton.addEventListener('click', async () => {
         if (!activeContact || !window.confirm(translate('Excluir esta conversa só para você?'))) return;
 
+        conversationMenu.open = false;
         deleteConversationButton.disabled = true;
         sendStatus.textContent = '';
         try {
@@ -335,10 +372,15 @@
 
     searchInput.addEventListener('input', renderContacts);
     document.addEventListener('click', (event) => {
-        if (event.target instanceof Element && event.target.closest('.chat-message-menu')) return;
-        messagesElement.querySelectorAll('.chat-message-menu[open]').forEach((menu) => {
-            menu.open = false;
-        });
+        if (!(event.target instanceof Element)) return;
+        if (!event.target.closest('.chat-message-menu')) {
+            messagesElement.querySelectorAll('.chat-message-menu[open]').forEach((menu) => {
+                menu.open = false;
+            });
+        }
+        if (conversationMenu?.open && !conversationMenu.contains(event.target)) {
+            conversationMenu.open = false;
+        }
     });
 
     const resizeMessageInput = () => {

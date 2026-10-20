@@ -167,6 +167,43 @@ try {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $acao = requestString($_GET, 'acao');
 
+            if ($acao === 'foto') {
+                $tipo = requestString($_GET, 'tipo');
+                $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
+                $perfis = [
+                    'pessoa' => ['pessoa', 'id_pessoa'],
+                    'empresa' => ['empresa', 'id_empresa'],
+                ];
+                if (!isset($perfis[$tipo]) || $id === false || $id < 1) {
+                    throw new InvalidArgumentException('Perfil inválido.');
+                }
+
+                [$tabela, $colunaId] = $perfis[$tipo];
+                $stmt = $conn->prepare("SELECT foto FROM {$tabela} WHERE {$colunaId} = ? LIMIT 1");
+                $stmt->bind_param('i', $id);
+                $stmt->execute();
+                $foto = $stmt->get_result()->fetch_column();
+                $stmt->close();
+                $conn->close();
+
+                if (!is_string($foto) || $foto === '') {
+                    http_response_code(404);
+                    exit;
+                }
+
+                $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($foto);
+                if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
+                    http_response_code(404);
+                    exit;
+                }
+
+                header('Content-Type: ' . $mime);
+                header('Cache-Control: private, max-age=300');
+                header('X-Content-Type-Options: nosniff');
+                echo $foto;
+                exit;
+            }
+
             if ($acao === 'contatos') {
                 $resumo = acessarArmazenamentoMensagens(
                     static fn (array &$armazenadas): array => resumirConversasChat($armazenadas, $ator)

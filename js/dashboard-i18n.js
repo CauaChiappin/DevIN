@@ -76,12 +76,16 @@
             'Contatos': 'Contacts',
             'Conversa': 'Conversation',
             'Escolha alguém para conversar': 'Choose someone to chat with',
+            'Selecione um contato para iniciar ou continuar uma conversa.': 'Select a contact to start or continue a conversation.',
+            'Carregando conversa...': 'Loading conversation...',
             'Escreva uma mensagem...': 'Write a message...',
             'Enviar': 'Send',
             'Processando...': 'Processing...',
             'Nenhum contato encontrado.': 'No contacts found.',
             'Ainda não há outros usuários cadastrados.': 'There are no other registered users yet.',
             'Atualização automática': 'Live updates',
+            'Excluir conversa': 'Delete conversation',
+            'Opções da conversa': 'Conversation options',
             'Esta conversa ainda não tem mensagens. Envie a primeira!': 'This conversation has no messages yet. Send the first one!',
             'Excluir esta conversa só para você?': 'Delete this conversation just for you?',
             'Excluir esta mensagem para você e para o outro participante?': 'Delete this message for you and the other participant?',
@@ -95,7 +99,27 @@
             'mensagens não lidas.': 'unread messages.',
             'Tem certeza que deseja sair da sua conta?': 'Are you sure you want to log out?',
             'Tem certeza? Esta ação exclui sua conta permanentemente.': 'Are you sure? This will permanently delete your account.',
-            'Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.': 'Choose a JPG, PNG, or WEBP image up to 5 MB.'
+            'Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.': 'Choose a JPG, PNG, or WEBP image up to 5 MB.',
+            'Nossa história': 'Our story',
+            'Conectando talentos ao': 'Connecting tech talent to',
+            'da tecnologia': 'in technology',
+            'A DevIN nasceu para transformar a forma como desenvolvedores': 'DevIN was created to transform the way developers',
+            'encontram oportunidades - "simples, rápido e eficiente".': 'find opportunities — "simple, fast, and efficient."',
+            'Visão': 'Vision',
+            'Ser referência na conexão entre talentos de tecnologia e empresas, promovendo crescimento profissional e inovação no mercado digital.': 'To be a leading platform connecting tech talent with companies, fostering professional growth and innovation in the digital market.',
+            'Missão': 'Mission',
+            'Conectar desenvolvedores de todos os níveis a oportunidades de trabalho, tornando o processo de recrutamento mais simples e eficiente.': 'To connect developers at every level with job opportunities, making recruitment simpler and more efficient.',
+            'Quem somos': 'Who are',
+            'nós?': 'we?',
+            'A DevIN nasceu com o propósito de transformar a forma como profissionais de tecnologia encontram oportunidades. Desenvolvida no ambiente educacional da Escola Profª Alcina Dantas Feijão.': 'DevIN was created to transform how technology professionals find opportunities. It was developed in the educational environment of Escola Profª Alcina Dantas Feijão.',
+            'Hoje, a DevIN oferece um ambiente moderno onde empresas podem divulgar vagas e gerenciar candidatos, enquanto usuários criam perfis, buscam empregos, estágios e programas de aprendizagem.': 'Today, DevIN offers a modern platform where companies can post jobs and manage candidates, while users create profiles and look for jobs, internships, and apprenticeships.',
+            'Time fundador': 'Founding team',
+            'Cofundador · caua.lima@scseduca.com.br': 'Co-founder · caua.lima@scseduca.com.br',
+            'Cofundador · enzo.camargo@scseduca.com.br': 'Co-founder · enzo.camargo@scseduca.com.br',
+            'Cofundador · joao.sousa2@scseduca.com.br': 'Co-founder · joao.sousa2@scseduca.com.br',
+            'Foto de Cauã Chiappin de Lima': 'Photo of Cauã Chiappin de Lima',
+            'Foto de Enzo Vasconcelos de Camargo': 'Photo of Enzo Vasconcelos de Camargo',
+            'Foto de João Vitor da Silva e Sousa': 'Photo of João Vitor da Silva e Sousa'
         },
         es: {
             'Início': 'Inicio',
@@ -123,12 +147,16 @@
             'Contatos': 'Contactos',
             'Conversa': 'Conversación',
             'Escolha alguém para conversar': 'Elige a alguien para conversar',
+            'Selecione um contato para iniciar ou continuar uma conversa.': 'Selecciona un contacto para iniciar o continuar una conversación.',
+            'Carregando conversa...': 'Cargando conversación...',
             'Escreva uma mensagem...': 'Escribe un mensaje...',
             'Enviar': 'Enviar',
             'Processando...': 'Procesando...',
             'Nenhum contato encontrado.': 'No se encontraron contactos.',
             'Ainda não há outros usuários cadastrados.': 'Todavía no hay otros usuarios registrados.',
             'Atualização automática': 'Actualización automática',
+            'Excluir conversa': 'Eliminar conversación',
+            'Opções da conversa': 'Opciones de conversación',
             'Esta conversa ainda não tem mensagens. Envie a primeira!': 'Esta conversación aún no tiene mensajes. ¡Envía el primero!',
             'Excluir esta conversa só para você?': '¿Eliminar esta conversación solo para ti?',
             'Excluir esta mensagem para você e para o outro participante?': '¿Eliminar este mensaje para ti y para la otra persona?',
@@ -142,7 +170,27 @@
             'mensagens não lidas.': 'mensajes sin leer.',
             'Tem certeza que deseja sair da sua conta?': '¿Seguro que quieres cerrar sesión?',
             'Tem certeza? Esta ação exclui sua conta permanentemente.': '¿Estás seguro? Esta acción eliminará tu cuenta permanentemente.',
-            'Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.': 'Elige una imagen JPG, PNG o WEBP de hasta 5 MB.'
+            'Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.': 'Elige una imagen JPG, PNG o WEBP de hasta 5 MB.',
+            'Nossa história': 'Nuestra historia',
+            'Conectando talentos ao': 'Conectando talentos con el',
+            'da tecnologia': 'de la tecnología',
+            'A DevIN nasceu para transformar a forma como desenvolvedores': 'DevIN nació para transformar la forma en que los desarrolladores',
+            'encontram oportunidades - "simples, rápido e eficiente".': 'encuentran oportunidades: "simple, rápido y eficiente".',
+            'Visão': 'Visión',
+            'Ser referência na conexão entre talentos de tecnologia e empresas, promovendo crescimento profissional e inovação no mercado digital.': 'Ser un referente en la conexión entre talentos tecnológicos y empresas, promoviendo el crecimiento profesional y la innovación en el mercado digital.',
+            'Missão': 'Misión',
+            'Conectar desenvolvedores de todos os níveis a oportunidades de trabalho, tornando o processo de recrutamento mais simples e eficiente.': 'Conectar a desarrolladores de todos los niveles con oportunidades laborales, haciendo que el proceso de selección sea más sencillo y eficiente.',
+            'Quem somos': 'Sobre',
+            'nós?': 'nosotros',
+            'A DevIN nasceu com o propósito de transformar a forma como profissionais de tecnologia encontram oportunidades. Desenvolvida no ambiente educacional da Escola Profª Alcina Dantas Feijão.': 'DevIN nació con el propósito de transformar la forma en que los profesionales de tecnología encuentran oportunidades. Fue desarrollada en el entorno educativo de la Escola Profª Alcina Dantas Feijão.',
+            'Hoje, a DevIN oferece um ambiente moderno onde empresas podem divulgar vagas e gerenciar candidatos, enquanto usuários criam perfis, buscam empregos, estágios e programas de aprendizagem.': 'Hoy, DevIN ofrece un entorno moderno donde las empresas pueden publicar ofertas y gestionar candidatos, mientras los usuarios crean perfiles y buscan empleos, prácticas y programas de aprendizaje.',
+            'Time fundador': 'Equipo fundador',
+            'Cofundador · caua.lima@scseduca.com.br': 'Cofundador · caua.lima@scseduca.com.br',
+            'Cofundador · enzo.camargo@scseduca.com.br': 'Cofundador · enzo.camargo@scseduca.com.br',
+            'Cofundador · joao.sousa2@scseduca.com.br': 'Cofundador · joao.sousa2@scseduca.com.br',
+            'Foto de Cauã Chiappin de Lima': 'Foto de Cauã Chiappin de Lima',
+            'Foto de Enzo Vasconcelos de Camargo': 'Foto de Enzo Vasconcelos de Camargo',
+            'Foto de João Vitor da Silva e Sousa': 'Foto de João Vitor da Silva e Sousa'
         }
     };
 
@@ -169,7 +217,7 @@
     }
 
     document.querySelectorAll('*').forEach((element) => {
-        for (const attribute of ['placeholder', 'aria-label', 'title', 'data-confirm-logout']) {
+        for (const attribute of ['placeholder', 'aria-label', 'title', 'alt', 'data-confirm-logout']) {
             if (element.hasAttribute(attribute)) {
                 element.setAttribute(attribute, translate(element.getAttribute(attribute)));
             }

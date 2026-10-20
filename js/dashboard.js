@@ -209,6 +209,14 @@
         });
     });
 
+    document.querySelectorAll('.perfil-dropdown').forEach((dropdown) => {
+        document.addEventListener('click', (event) => {
+            if (event.target instanceof Node && !dropdown.contains(event.target)) {
+                dropdown.removeAttribute('open');
+            }
+        });
+    });
+
     // Pré-visualização segura da foto.
     document.querySelectorAll(".profile-photo input[type='file']").forEach((input) => {
         input.addEventListener('change', (event) => {
