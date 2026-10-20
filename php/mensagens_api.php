@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
+require_once __DIR__ . '/helpers.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -351,16 +352,37 @@ try {
                     exit;
                 }
 
-                $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($foto);
+                $conteudoFoto = $foto;
+                $caminhoFoto = profilePhotoFilePath($foto, $tipo, $id);
+                if ($caminhoFoto !== null) {
+                    $conteudoFoto = file_get_contents($caminhoFoto);
+                    if ($conteudoFoto === false) {
+                        http_response_code(404);
+                        exit;
+                    }
+                }
+
+                $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($conteudoFoto);
                 if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
                     http_response_code(404);
                     exit;
                 }
 
+                $etag = '"' . hash('sha256', $conteudoFoto) . '"';
+                header('ETag: ' . $etag);
+                header('Cache-Control: private, no-cache, must-revalidate');
+                $etagsSolicitadas = array_map(
+                    'trim',
+                    explode(',', $_SERVER['HTTP_IF_NONE_MATCH'] ?? '')
+                );
+                if (in_array($etag, $etagsSolicitadas, true) || in_array('*', $etagsSolicitadas, true)) {
+                    http_response_code(304);
+                    exit;
+                }
+
                 header('Content-Type: ' . $mime);
-                header('Cache-Control: private, max-age=300');
                 header('X-Content-Type-Options: nosniff');
-                echo $foto;
+                echo $conteudoFoto;
                 exit;
             }
 

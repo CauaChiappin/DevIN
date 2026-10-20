@@ -38,10 +38,10 @@ function findProfile(string $tipo, int $id): ?array
     }
 }
 
-function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $currentPhoto): ?string
+function saveProfilePhoto(string $tipo, int $id, ?array $upload): ?string
 {
     if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-        return $currentPhoto;
+        return null;
     }
 
     if (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK || !is_uploaded_file($upload['tmp_name'])) {
@@ -64,12 +64,18 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
         throw new InvalidArgumentException('Envie uma imagem JPG, PNG ou WEBP válida.');
     }
 
-    $contents = file_get_contents($upload['tmp_name']);
-    if ($contents === false) {
-        throw new RuntimeException('Não foi possível ler a foto enviada.');
+    $uploadDirectory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads';
+    if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0750, true) && !is_dir($uploadDirectory)) {
+        throw new RuntimeException('Não foi possível preparar o armazenamento da foto.');
     }
 
-    return $contents;
+    $fileName = 'profile-' . $tipo . '-' . $id . '-' . bin2hex(random_bytes(8)) . '.' . $extensions[$mime];
+    $filePath = $uploadDirectory . DIRECTORY_SEPARATOR . $fileName;
+    if (!move_uploaded_file($upload['tmp_name'], $filePath)) {
+        throw new RuntimeException('Não foi possível salvar a foto enviada.');
+    }
+
+    return 'uploads/' . $fileName;
 }
 
 function ensureUniqueEmail(string $tipo, int $id, string $email): void
@@ -121,11 +127,10 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
 
     ensureUniqueEmail($tipo, $id, $email);
 
-    $foto = $tipo === 'adm'
-        ? null
-        : saveProfilePhoto($tipo, $id, $upload, $currentProfile['foto'] ?? null);
+    $foto = $tipo === 'adm' ? null : saveProfilePhoto($tipo, $id, $upload);
 
     $conn = getDatabaseConnection();
+    $perfilAtualizado = false;
 
     try {
         if ($tipo === 'adm') {
@@ -142,11 +147,17 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
                 throw new InvalidArgumentException('Informe CEP (8 dígitos) e Telefone (10 ou 11 dígitos) válidos.');
             }
 
-            $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?");
+            $stmt = $foto === null
+                ? $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ? WHERE {$idColumn} = ?")
+                : $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?");
             if (!$stmt) {
                 throw new RuntimeException('Falha ao preparar atualização do perfil.');
             }
-            $stmt->bind_param('sssssi', $nome, $email, $cep, $telefone, $foto, $id);
+            if ($foto === null) {
+                $stmt->bind_param('ssssi', $nome, $email, $cep, $telefone, $id);
+            } else {
+                $stmt->bind_param('sssssi', $nome, $email, $cep, $telefone, $foto, $id);
+            }
         }
 
         if (!$stmt->execute()) {
@@ -154,11 +165,19 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
         }
 
         $stmt->close();
+        $perfilAtualizado = true;
     } catch (mysqli_sql_exception $e) {
         error_log('Erro ao atualizar perfil: ' . $e->getMessage());
         throw new RuntimeException('Não foi possível salvar as alterações.');
     } finally {
         $conn->close();
+        if (!$perfilAtualizado && is_string($foto)) {
+            $uploadDirectory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads';
+            $filePath = $uploadDirectory . DIRECTORY_SEPARATOR . basename($foto);
+            if (str_starts_with($foto, 'uploads/profile-' . $tipo . '-' . $id . '-')) {
+                @unlink($filePath);
+            }
+        }
     }
 }
 

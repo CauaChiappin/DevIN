@@ -109,6 +109,39 @@ HTML;
 }
 
 /**
+ * Resolve fotos armazenadas no diretório de uploads, inclusive nomes legados.
+ */
+function profilePhotoFilePath(string $foto, ?string $tipo = null, ?int $id = null): ?string
+{
+    if (str_starts_with($foto, 'uploads/')) {
+        $caminhoRelativo = substr($foto, strlen('uploads/'));
+    } elseif (preg_match('/^(pessoa|empresa)-(\d+)-[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$/D', $foto, $matches) === 1) {
+        if (($tipo !== null && $matches[1] !== $tipo) || ($id !== null && (int) $matches[2] !== $id)) {
+            return null;
+        }
+        $caminhoRelativo = $foto;
+    } else {
+        return null;
+    }
+
+    $diretorioUploads = realpath(__DIR__ . DIRECTORY_SEPARATOR . 'uploads');
+    if ($diretorioUploads === false) {
+        return null;
+    }
+
+    $caminhoArquivo = realpath(
+        $diretorioUploads . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $caminhoRelativo)
+    );
+    $prefixoUploads = rtrim($diretorioUploads, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+    return $caminhoArquivo !== false
+        && is_file($caminhoArquivo)
+        && str_starts_with(strtolower($caminhoArquivo), strtolower($prefixoUploads))
+        ? $caminhoArquivo
+        : null;
+}
+
+/**
  * Monta o avatar reutilizado no menu, no modal e no perfil.
  * Se não houver foto válida, exibe as iniciais do nome como avatar padrão.
  */
@@ -116,9 +149,10 @@ function profileAvatar(array $perfil, string $classes): string
 {
     static $finfo = null;
     $foto = $perfil['foto'] ?? '';
+    $caminhoArquivo = is_string($foto) ? profilePhotoFilePath($foto) : null;
 
     // Trata imagens armazenadas em BLOB (Bytes brutos no banco)
-    if (is_string($foto) && $foto !== '' && !str_starts_with($foto, 'uploads/')) {
+    if (is_string($foto) && $foto !== '' && $caminhoArquivo === null) {
         if ($finfo === null) {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
         }
@@ -130,13 +164,11 @@ function profileAvatar(array $perfil, string $classes): string
         }
     }
 
-    // Trata arquivos salvos em disco (na pasta uploads/)
-    // Garante a verificação correta do caminho independente se helpers.php está no /php ou na raiz
-    $baseDir = dirname(__DIR__);
-    $caminhoArquivo = $baseDir . '/' . ltrim($foto, '/');
-
-    $imagem = is_string($foto) && str_starts_with($foto, 'uploads/') && is_file($caminhoArquivo)
-        ? '<img src="' . h($foto) . '" alt="Foto de perfil">'
+    $caminhoPublico = $caminhoArquivo === null
+        ? ''
+        : (str_starts_with($foto, 'uploads/') ? $foto : 'uploads/' . basename($caminhoArquivo));
+    $imagem = $caminhoPublico !== ''
+        ? '<img src="' . h($caminhoPublico) . '" alt="Foto de perfil">'
         : '';
 
     $partesNome = preg_split('/\s+/u', trim((string) ($perfil['nome'] ?? '')), -1, PREG_SPLIT_NO_EMPTY) ?: [];

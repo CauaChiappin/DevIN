@@ -684,6 +684,27 @@ a {
     width: 48px;
 }
 
+.dashboard-shell.menu-fechado .sidebar {
+    z-index: 20;
+    overflow: visible;
+}
+
+.dashboard-shell.menu-fechado .perfil-menu {
+    bottom: 0;
+    left: calc(100% + 8px);
+    width: 190px;
+    overflow: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dashboard-shell.menu-fechado .perfil-menu .menu-text {
+    width: auto;
+    opacity: 1;
+    pointer-events: auto;
+    overflow: visible;
+}
+
 .brand-mark {
     width: 30px;
     height: 24px;
@@ -2250,6 +2271,7 @@ a {
     border-color: #dde6ee;
     border-radius: 10px;
 }
+.dashboard-shell .item-card[hidden] { display: none; }
 
 .dashboard-shell .item-card h2 {
     margin: 0 0 2px;

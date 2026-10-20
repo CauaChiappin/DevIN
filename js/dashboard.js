@@ -213,6 +213,10 @@
         button.addEventListener('click', () => button.closest('dialog')?.close());
     });
 
+    profileModal?.addEventListener('click', (event) => {
+        if (event.target === profileModal) profileModal.close();
+    });
+
     document.querySelectorAll('[data-open-settings]').forEach((button) => {
         button.addEventListener('click', () => {
             document.querySelector('.perfil-dropdown')?.removeAttribute('open');
@@ -277,6 +281,17 @@
     const filterButton = document.querySelector('[data-toggle-filters]');
     const filterMenu = document.querySelector('[data-filter-menu]');
     const filterSelect = document.querySelector('[data-card-filter]');
+    const searchEmptyState = detailCards.length
+        ? document.createElement('p')
+        : null;
+    if (searchEmptyState) {
+        searchEmptyState.className = 'empty-state search-empty-state';
+        searchEmptyState.setAttribute('role', 'status');
+        searchEmptyState.setAttribute('aria-live', 'polite');
+        searchEmptyState.textContent = translate('Nenhum resultado encontrado.');
+        searchEmptyState.hidden = true;
+        detailCards[0].before(searchEmptyState);
+    }
     const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale);
     const cardTags = (card) => String(card.dataset.detailTags || '')
         .split('|').map((tag) => tag.trim()).filter(Boolean);
@@ -297,6 +312,10 @@
             const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter);
             card.hidden = !matchesSearch || !matchesFilter;
         });
+
+        const hasActiveSearch = term !== '' || activeFilter !== '';
+        const hasVisibleCards = detailCards.some((card) => !card.hidden);
+        if (searchEmptyState) searchEmptyState.hidden = !hasActiveSearch || hasVisibleCards;
     };
 
     if (filterSelect) {
@@ -319,6 +338,7 @@
     });
 
     searchInput?.addEventListener('input', updateCardVisibility);
+    updateCardVisibility();
 
     document.querySelector('.busca')?.addEventListener('submit', (event) => event.preventDefault());
 
