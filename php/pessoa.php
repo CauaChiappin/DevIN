@@ -16,7 +16,16 @@ $mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
 $mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
 $mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
 $mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
-unset($_SESSION['sucesso_login'], $_SESSION['erro_email_senha'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro']);
+$mensagemCurriculoSalvo = (string) ($_SESSION['sucesso_curriculo'] ?? '');
+$mensagemEmailCurriculo = (string) ($_SESSION['erro_curriculo'] ?? '');
+unset(
+    $_SESSION['sucesso_login'],
+    $_SESSION['erro_email_senha'],
+    $_SESSION['sucesso_cadastro'],
+    $_SESSION['erro_email_cadastro'],
+    $_SESSION['sucesso_curriculo'],
+    $_SESSION['erro_curriculo']
+);
 $pagina        = requestString($_GET, 'pagina');
 
 $paginasPermitidas = ['inicio', 'vagas', 'sobre', 'perfil', 'mensagens'];
@@ -200,6 +209,12 @@ unset($vaga);
         <?php endif; ?>
         <?php if ($mensagemEmailCadastro !== ''): ?>
             <p class="form-error" role="alert"><?= h($mensagemEmailCadastro) ?></p>
+        <?php endif; ?>
+        <?php if ($mensagemCurriculoSalvo !== ''): ?>
+            <p class="form-success" role="status"><?= h($mensagemCurriculoSalvo) ?></p>
+        <?php endif; ?>
+        <?php if ($mensagemEmailCurriculo !== ''): ?>
+            <p class="form-error" role="alert"><?= h($mensagemEmailCurriculo) ?></p>
         <?php endif; ?>
         <aside class="sidebar">
             <div class="sidebar-topo">
