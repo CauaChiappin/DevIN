@@ -473,6 +473,7 @@ $talentos = [
                     </aside>
                     <section class="chat-conversation" aria-label="Conversa">
                         <header class="chat-conversation-header" data-chat-header>
+                            <button class="chat-back-to-contacts" type="button" data-chat-back aria-label="Voltar para contatos">←</button>
                             <strong data-chat-title>Escolha alguém para conversar</strong>
                             <span data-chat-subtitle>Mensagens privadas entre usuários da DevIN</span>
                             <button class="chat-delete-conversation" type="button" data-chat-delete-conversation disabled>Excluir conversa</button>

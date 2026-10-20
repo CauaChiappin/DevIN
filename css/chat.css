@@ -6,7 +6,7 @@
     display: flex;
     height: 100vh;
     min-height: 0;
-    padding: 14px;
+    padding: 0;
     overflow: hidden;
     background: #f7f5f0;
 }
@@ -40,7 +40,7 @@
 
 .chat-contacts h1 {
     margin: 0;
-    color: #173b58;
+    color: var(--blue);
     font-family: Georgia, serif;
     font-size: 22px;
 }
@@ -198,6 +198,10 @@
     padding: 10px 18px;
     border-bottom: 1px solid #e5e8e9;
     background: #f8fbff;
+}
+
+.chat-back-to-contacts {
+    display: none;
 }
 
 .chat-conversation-header strong {
@@ -446,6 +450,7 @@
 @media (max-width: 720px) {
     .dashboard-shell.page-mensagens {
         height: 100vh;
+        height: 100dvh;
         min-height: 0;
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: auto minmax(0, 1fr);
@@ -462,12 +467,48 @@
     .dashboard-shell.page-mensagens .lista-area {
         height: auto;
         min-height: 0;
-        padding: 8px;
+        padding: 0;
     }
 
     .chat-app {
-        grid-template-columns: minmax(112px, 34%) minmax(0, 1fr);
+        flex: 1;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr);
         border-radius: 8px;
+    }
+
+    .chat-contacts {
+        border-right: 0;
+    }
+
+    .chat-conversation {
+        display: none;
+    }
+
+    .chat-app.chat-conversation-open .chat-contacts {
+        display: none;
+    }
+
+    .chat-app.chat-conversation-open .chat-conversation {
+        display: grid;
+    }
+
+    .chat-back-to-contacts {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        min-width: 34px;
+        min-height: 36px;
+        padding: 0 8px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--blue);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
     }
 
     .chat-contacts {
@@ -507,7 +548,20 @@
 
     .chat-conversation-header {
         min-height: 62px;
-        padding: 10px;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        padding: 8px;
+    }
+
+    .chat-conversation-header strong,
+    .chat-conversation-header span {
+        grid-column: 2;
+    }
+
+    .chat-delete-conversation {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+        padding: 6px;
+        font-size: 10px;
     }
 
     .chat-messages {

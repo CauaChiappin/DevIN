@@ -17,6 +17,7 @@
     const notificationElement = app.querySelector('[data-chat-notification]');
     const titleElement = app.querySelector('[data-chat-title]');
     const subtitleElement = app.querySelector('[data-chat-subtitle]');
+    const backToContactsButton = app.querySelector('[data-chat-back]');
     const deleteConversationButton = app.querySelector('[data-chat-delete-conversation]');
     const messagesElement = app.querySelector('[data-chat-messages]');
     const form = app.querySelector('[data-chat-form]');
@@ -281,6 +282,7 @@
 
     const openConversation = async (contact) => {
         activeContact = contact;
+        app.classList.add('chat-conversation-open');
         messageViewVersion += 1;
         lastMessageId = 0;
         titleElement.textContent = contact.nome;
@@ -303,6 +305,12 @@
         }
         messageInput.focus();
     };
+
+    backToContactsButton?.addEventListener('click', () => {
+        app.classList.remove('chat-conversation-open');
+        messageInput.blur();
+        contactsElement.querySelector('[aria-pressed="true"]')?.focus();
+    });
 
     deleteConversationButton.addEventListener('click', async () => {
         if (!activeContact || !window.confirm(translate('Excluir esta conversa só para você?'))) return;
