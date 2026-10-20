@@ -137,9 +137,26 @@
             action.hidden = !selectedActionTarget;
             if (selectedActionTarget) action.textContent = card.dataset.detailActionLabel || selectedActionTarget.textContent.trim();
         }
+
+        const chatAction = detailPanel.querySelector('[data-start-chat]');
+        if (chatAction) {
+            chatAction.hidden = !card.dataset.chatType || !card.dataset.chatId;
+            chatAction.dataset.chatType = card.dataset.chatType || '';
+            chatAction.dataset.chatId = card.dataset.chatId || '';
+        }
     };
 
     detailPanel?.querySelector('[data-detail-action]')?.addEventListener('click', () => selectedActionTarget?.click());
+    document.addEventListener('click', (event) => {
+        if (!(event.target instanceof Element)) return;
+        const button = event.target.closest('[data-start-chat]:not([hidden])');
+        if (!button || !button.dataset.chatType || !button.dataset.chatId) return;
+        const destination = new URL(window.location.href);
+        destination.searchParams.set('pagina', 'mensagens');
+        destination.searchParams.set('contato_tipo', button.dataset.chatType);
+        destination.searchParams.set('contato_id', button.dataset.chatId);
+        window.location.assign(destination);
+    });
 
     const clearDetail = () => {
         detailCards.forEach((card) => card.classList.remove('selecionado'));
@@ -150,6 +167,7 @@
         detailPanel.querySelector('[data-detail-content]')?.setAttribute('hidden', '');
         detailPanel.querySelector('[data-detail-placeholder]')?.removeAttribute('hidden');
         detailPanel.querySelector('[data-detail-action]')?.setAttribute('hidden', '');
+        detailPanel.querySelector('[data-start-chat]')?.setAttribute('hidden', '');
     };
 
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {

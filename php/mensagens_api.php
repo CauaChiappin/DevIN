@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/security.php';
+require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -25,17 +26,161 @@ function chaveAtorChat(array $ator): string
     return $ator['tipo'] . ':' . $ator['id'];
 }
 
+function registrarConversaChat(array $ator, string $tipo, int $id): void
+{
+    $participantes = [chaveAtorChat($ator), $tipo . ':' . $id];
+    sort($participantes, SORT_STRING);
+    $chaveAtor = chaveAtorChat($ator);
+
+    acessarArmazenamentoMensagens(static function (array &$conversas) use ($participantes, $chaveAtor): void {
+        foreach ($conversas as &$conversa) {
+            if (($conversa['participantes'] ?? null) !== $participantes) {
+                continue;
+            }
+
+            $ocultadaPara = $conversa['ocultada_para'] ?? [];
+            $conversa['ocultada_para'] = array_values(array_filter(
+                $ocultadaPara,
+                static fn ($participante): bool => $participante !== $chaveAtor
+            ));
+            unset($conversa);
+            return;
+        }
+        unset($conversa);
+
+        $conversas[] = [
+            'participantes' => $participantes,
+            'ocultada_para' => [],
+        ];
+    }, 'conversas');
+}
+
 function mensagemOcultaParaAtor(array $mensagem, array $ator): bool
 {
     return in_array(chaveAtorChat($ator), $mensagem['ocultada_para'] ?? [], true);
 }
 
-function resumirConversasChat(array $mensagens, array $ator): array
+function traduzirMensagemMyMemory(string $texto, string $idioma): string
+{
+    if (!function_exists('curl_init')) {
+        responderMensagens([
+            'sucesso' => false,
+            'mensagem' => 'A extensão cURL do PHP é necessária para traduzir mensagens.',
+        ], 503);
+    }
+
+    $idiomasMyMemory = ['pt-BR' => 'pt-BR', 'en' => 'en', 'es' => 'es'];
+    $idiomaAlvo = $idiomasMyMemory[$idioma] ?? null;
+    if ($idiomaAlvo === null) {
+        throw new RuntimeException('O idioma selecionado para tradução é inválido.');
+    }
+
+    $restante = $texto;
+    $trechos = [];
+    while (strlen($restante) > 450) {
+        $trecho = mb_strcut($restante, 0, 450, 'UTF-8');
+        $ultimoEspaco = mb_strrpos($trecho, ' ');
+        $tamanhoTrecho = $ultimoEspaco !== false && $ultimoEspaco > 0
+            ? $ultimoEspaco + 1
+            : mb_strlen($trecho, 'UTF-8');
+        $trechos[] = mb_substr($restante, 0, $tamanhoTrecho, 'UTF-8');
+        $restante = mb_substr($restante, $tamanhoTrecho, null, 'UTF-8');
+    }
+    if ($restante !== '') {
+        $trechos[] = $restante;
+    }
+
+    $traducao = '';
+    foreach ($trechos as $trecho) {
+        $url = 'https://api.mymemory.translated.net/get?' . http_build_query([
+            'q' => $trecho,
+            'langpair' => 'autodetect|' . $idiomaAlvo,
+        ]);
+        $curl = curl_init($url);
+        if ($curl === false) {
+            throw new RuntimeException('Não foi possível iniciar a conexão com o serviço de tradução.');
+        }
+
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT => 12,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+        ]);
+
+        $resposta = curl_exec($curl);
+        $status = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+        $erro = curl_error($curl);
+        curl_close($curl);
+
+        if (!is_string($resposta) || $status < 200 || $status >= 300) {
+            error_log('Falha no serviço MyMemory: HTTP ' . $status . ($erro !== '' ? ' (' . $erro . ')' : ''));
+            responderMensagens([
+                'sucesso' => false,
+                'mensagem' => 'Não foi possível traduzir agora. Tente novamente.',
+            ], 503);
+        }
+
+        try {
+            $dados = json_decode($resposta, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            error_log('Resposta inválida do serviço MyMemory.');
+            throw new RuntimeException('O serviço de tradução retornou uma resposta inválida.', 0, $exception);
+        }
+
+        if (!empty($dados['quotaFinished'])) {
+            responderMensagens([
+                'sucesso' => false,
+                'mensagem' => 'Limite gratuito diário de tradução atingido. Tente novamente amanhã.',
+            ], 429);
+        }
+
+        $statusTraducao = (int) ($dados['responseStatus'] ?? 0);
+        $textoTraduzido = $dados['responseData']['translatedText'] ?? null;
+        if ($statusTraducao !== 200 || !is_string($textoTraduzido) || $textoTraduzido === '') {
+            error_log('MyMemory não retornou tradução válida: ' . (string) ($dados['responseDetails'] ?? ''));
+            responderMensagens([
+                'sucesso' => false,
+                'mensagem' => 'Não foi possível traduzir agora. Tente novamente.',
+            ], 503);
+        }
+
+        $traducao .= $textoTraduzido;
+    }
+
+    return $traducao;
+}
+
+function resumirConversasChat(array $mensagens, array $ator, array $conversas = []): array
 {
     $contatos = [];
 
+    foreach ($conversas as $conversa) {
+        $participantes = $conversa['participantes'] ?? [];
+        if (!is_array($participantes) || mensagemOcultaParaAtor($conversa, $ator)) {
+            continue;
+        }
+
+        $atorChave = chaveAtorChat($ator);
+        if (!in_array($atorChave, $participantes, true)) {
+            continue;
+        }
+        $outroParticipante = array_values(array_filter(
+            $participantes,
+            static fn ($participante): bool => is_string($participante) && $participante !== $atorChave
+        ))[0] ?? '';
+        [$tipoContato, $idContato] = array_pad(explode(':', $outroParticipante, 2), 2, '');
+        if (!in_array($tipoContato, ['pessoa', 'empresa'], true) || (int) $idContato < 1) {
+            continue;
+        }
+
+        $chave = $tipoContato . ':' . (int) $idContato;
+        $contatos[$chave] = ['ultima_mensagem_id' => 0, 'nao_lidas' => 0];
+    }
+
     foreach ($mensagens as $mensagem) {
-        if (mensagemOcultaParaAtor($mensagem, $ator)) {
+        if (!isset($mensagem['remetente_tipo'], $mensagem['destinatario_tipo']) || mensagemOcultaParaAtor($mensagem, $ator)) {
             continue;
         }
 
@@ -67,10 +212,25 @@ function resumirConversasChat(array $mensagens, array $ator): array
     ];
 }
 
-function acessarArmazenamentoMensagens(callable $operacao): mixed
+function resumirArmazenamentoChat(array $ator): array
 {
+    $mensagens = acessarArmazenamentoMensagens(static fn (array &$armazenadas): array => $armazenadas);
+    $conversas = acessarArmazenamentoMensagens(
+        static fn (array &$armazenadas): array => $armazenadas,
+        'conversas'
+    );
+
+    return resumirConversasChat($mensagens, $ator, $conversas);
+}
+
+function acessarArmazenamentoMensagens(callable $operacao, string $recurso = 'mensagens'): mixed
+{
+    if (!in_array($recurso, ['mensagens', 'conversas'], true)) {
+        throw new InvalidArgumentException('Armazenamento de mensagens inválido.');
+    }
+
     $caminho = sys_get_temp_dir() . DIRECTORY_SEPARATOR
-        . 'devin-mensagens-' . hash('sha256', dirname(__DIR__)) . '.json';
+        . 'devin-' . $recurso . '-' . hash('sha256', dirname(__DIR__)) . '.json';
     $arquivo = fopen($caminho, 'c+');
     if ($arquivo === false) {
         throw new RuntimeException('Não foi possível abrir o armazenamento temporário de mensagens.');
@@ -133,7 +293,7 @@ function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array
 
     $tabela = $tipo === 'pessoa' ? 'pessoa' : 'empresa';
     $coluna = $tipo === 'pessoa' ? 'id_pessoa' : 'id_empresa';
-    $stmt = $conn->prepare("SELECT {$coluna} AS id, nome FROM {$tabela} WHERE {$coluna} = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT {$coluna} AS id, nome, email FROM {$tabela} WHERE {$coluna} = ? LIMIT 1");
     $stmt->bind_param('i', $id);
     $stmt->execute();
     $usuario = $stmt->get_result()->fetch_assoc() ?: null;
@@ -204,39 +364,64 @@ try {
                 exit;
             }
 
-            if ($acao === 'contatos') {
-                $resumo = acessarArmazenamentoMensagens(
-                    static fn (array &$armazenadas): array => resumirConversasChat($armazenadas, $ator)
-                );
-                $contatos = [];
-                $resultPessoas = $conn->query('SELECT id_pessoa AS id, nome FROM pessoa ORDER BY nome');
-                foreach ($resultPessoas->fetch_all(MYSQLI_ASSOC) as $pessoa) {
-                    if ($ator['tipo'] !== 'pessoa' || (int) $pessoa['id'] !== $ator['id']) {
-                        $chave = 'pessoa:' . (int) $pessoa['id'];
-                        $contatos[] = [
-                            'id' => (int) $pessoa['id'],
-                            'tipo' => 'pessoa',
-                            'nome' => (string) $pessoa['nome'],
-                            'rotulo' => 'Pessoa',
-                            'ultima_mensagem_id' => $resumo['contatos'][$chave]['ultima_mensagem_id'] ?? 0,
-                            'nao_lidas' => $resumo['contatos'][$chave]['nao_lidas'] ?? 0,
-                        ];
-                    }
+            if ($acao === 'buscar_contatos') {
+                $termo = requestString($_GET, 'termo');
+                if (mb_strlen($termo) < 2 || mb_strlen($termo) > 100) {
+                    responderMensagens(['sucesso' => true, 'contatos' => []]);
                 }
 
-                $resultEmpresas = $conn->query('SELECT id_empresa AS id, nome FROM empresa ORDER BY nome');
-                foreach ($resultEmpresas->fetch_all(MYSQLI_ASSOC) as $empresa) {
-                    if ($ator['tipo'] !== 'empresa' || (int) $empresa['id'] !== $ator['id']) {
-                        $chave = 'empresa:' . (int) $empresa['id'];
-                        $contatos[] = [
-                            'id' => (int) $empresa['id'],
-                            'tipo' => 'empresa',
-                            'nome' => (string) $empresa['nome'],
-                            'rotulo' => 'Empresa',
-                            'ultima_mensagem_id' => $resumo['contatos'][$chave]['ultima_mensagem_id'] ?? 0,
-                            'nao_lidas' => $resumo['contatos'][$chave]['nao_lidas'] ?? 0,
+                $contatosEncontrados = [];
+                $busca = '%' . $termo . '%';
+                foreach ([
+                    'pessoa' => ['pessoa', 'id_pessoa', 'Pessoa'],
+                    'empresa' => ['empresa', 'id_empresa', 'Empresa'],
+                ] as $tipo => [$tabela, $colunaId, $rotulo]) {
+                    $stmt = $conn->prepare(
+                        "SELECT {$colunaId} AS id, nome, email FROM {$tabela}
+                         WHERE (nome LIKE ? OR email LIKE ?)
+                           AND NOT ({$colunaId} = ? AND ? = ?)
+                         ORDER BY nome LIMIT 25"
+                    );
+                    $stmt->bind_param('ssiss', $busca, $busca, $ator['id'], $tipo, $ator['tipo']);
+                    $stmt->execute();
+                    foreach ($stmt->get_result()->fetch_all(MYSQLI_ASSOC) as $usuario) {
+                        $contatosEncontrados[] = [
+                            'id' => (int) $usuario['id'],
+                            'tipo' => $tipo,
+                            'nome' => (string) $usuario['nome'],
+                            'email' => (string) $usuario['email'],
+                            'rotulo' => $rotulo,
+                            'nao_lidas' => 0,
+                            'ultima_mensagem_id' => 0,
                         ];
                     }
+                    $stmt->close();
+                }
+
+                usort($contatosEncontrados, static fn (array $a, array $b): int =>
+                    strnatcasecmp($a['nome'], $b['nome']) ?: strnatcasecmp($a['email'], $b['email'])
+                );
+                responderMensagens(['sucesso' => true, 'contatos' => array_slice($contatosEncontrados, 0, 30)]);
+            }
+
+            if ($acao === 'contatos') {
+                $resumo = resumirArmazenamentoChat($ator);
+                $contatos = [];
+                foreach ($resumo['contatos'] as $chave => $infoContato) {
+                    [$tipoContato, $idContato] = explode(':', $chave, 2);
+                    $usuario = buscarUsuarioChat($conn, $tipoContato, (int) $idContato);
+                    if ($usuario === null) {
+                        continue;
+                    }
+                    $contatos[] = [
+                        'id' => (int) $usuario['id'],
+                        'tipo' => $tipoContato,
+                        'nome' => (string) $usuario['nome'],
+                        'email' => (string) $usuario['email'],
+                        'rotulo' => $tipoContato === 'pessoa' ? 'Pessoa' : 'Empresa',
+                        'ultima_mensagem_id' => $infoContato['ultima_mensagem_id'],
+                        'nao_lidas' => $infoContato['nao_lidas'],
+                    ];
                 }
 
                 usort($contatos, static function (array $a, array $b): int {
@@ -251,9 +436,7 @@ try {
             }
 
             if ($acao === 'nao_lidas') {
-                $resumo = acessarArmazenamentoMensagens(
-                    static fn (array &$armazenadas): array => resumirConversasChat($armazenadas, $ator)
-                );
+                $resumo = resumirArmazenamentoChat($ator);
                 responderMensagens(['sucesso' => true, 'nao_lidas' => $resumo['nao_lidas']]);
             }
 
@@ -268,7 +451,10 @@ try {
 
                 $resultado = acessarArmazenamentoMensagens(static function (array &$armazenadas) use ($ator, $tipo, $id, $depoisDe): array {
                     $conversa = array_values(array_filter($armazenadas, static function (array $mensagem) use ($ator, $tipo, $id): bool {
-                        if (mensagemOcultaParaAtor($mensagem, $ator)) {
+                        if (
+                            !isset($mensagem['remetente_tipo'], $mensagem['remetente_id'], $mensagem['destinatario_tipo'], $mensagem['destinatario_id'])
+                            || mensagemOcultaParaAtor($mensagem, $ator)
+                        ) {
                             return false;
                         }
 
@@ -287,6 +473,12 @@ try {
                     usort($conversa, static fn (array $a, array $b): int => $a['id'] <=> $b['id']);
 
                     foreach ($armazenadas as &$mensagem) {
+                        if (
+                            !isset($mensagem['remetente_tipo'], $mensagem['remetente_id'], $mensagem['destinatario_tipo'], $mensagem['destinatario_id'])
+                            || !array_key_exists('lida_em', $mensagem)
+                        ) {
+                            continue;
+                        }
                         if (
                             !mensagemOcultaParaAtor($mensagem, $ator)
                             && $mensagem['remetente_tipo'] === $tipo
@@ -350,6 +542,43 @@ try {
         }
 
         $acao = is_string($entrada['acao'] ?? null) ? $entrada['acao'] : '';
+        if ($acao === 'iniciar_conversa') {
+            $tipo = is_string($entrada['tipo'] ?? null) ? $entrada['tipo'] : '';
+            $id = filter_var($entrada['id'] ?? null, FILTER_VALIDATE_INT);
+            if ($id === false || $id < 1) {
+                throw new InvalidArgumentException('Parâmetros da conversa inválidos.');
+            }
+
+            $destinatario = destinatarioValido($conn, $ator, $tipo, $id);
+            registrarConversaChat($ator, $tipo, $id);
+            responderMensagens([
+                'sucesso' => true,
+                'contato' => [
+                    'id' => $id,
+                    'tipo' => $tipo,
+                    'nome' => (string) $destinatario['nome'],
+                    'email' => (string) $destinatario['email'],
+                    'rotulo' => $tipo === 'pessoa' ? 'Pessoa' : 'Empresa',
+                    'nao_lidas' => 0,
+                    'ultima_mensagem_id' => 0,
+                ],
+            ]);
+        }
+
+        if ($acao === 'traduzir') {
+            $texto = is_string($entrada['texto'] ?? null) ? trim($entrada['texto']) : '';
+            if ($texto === '' || mb_strlen($texto) > 2000) {
+                throw new InvalidArgumentException('A mensagem precisa ter entre 1 e 2.000 caracteres para ser traduzida.');
+            }
+
+            $idioma = ProfileLanguagePreference::load($conn, $ator['tipo'], $ator['id']);
+            responderMensagens([
+                'sucesso' => true,
+                'traducao' => traduzirMensagemMyMemory($texto, $idioma),
+                'idioma' => $idioma,
+            ]);
+        }
+
         if ($acao === 'excluir_mensagem') {
             $idMensagem = filter_var($entrada['id_mensagem'] ?? null, FILTER_VALIDATE_INT);
             if ($idMensagem === false || $idMensagem < 1) {
@@ -436,6 +665,11 @@ try {
             acessarArmazenamentoMensagens(static function (array &$armazenadas) use ($ator, $tipo, $id): void {
                 $chaveAtor = chaveAtorChat($ator);
                 foreach ($armazenadas as &$mensagem) {
+                    if (
+                        !isset($mensagem['remetente_tipo'], $mensagem['remetente_id'], $mensagem['destinatario_tipo'], $mensagem['destinatario_id'])
+                    ) {
+                        continue;
+                    }
                     $mensagemPertenceAConversa = (
                         $mensagem['remetente_tipo'] === $ator['tipo']
                         && (int) $mensagem['remetente_id'] === $ator['id']
@@ -459,6 +693,22 @@ try {
                 }
                 unset($mensagem);
             });
+            acessarArmazenamentoMensagens(static function (array &$conversas) use ($ator, $tipo, $id): void {
+                $participantes = [chaveAtorChat($ator), $tipo . ':' . $id];
+                sort($participantes, SORT_STRING);
+                $chaveAtor = chaveAtorChat($ator);
+                foreach ($conversas as &$conversa) {
+                    if (($conversa['participantes'] ?? null) !== $participantes) {
+                        continue;
+                    }
+                    $ocultadaPara = $conversa['ocultada_para'] ?? [];
+                    if (!in_array($chaveAtor, $ocultadaPara, true)) {
+                        $ocultadaPara[] = $chaveAtor;
+                        $conversa['ocultada_para'] = $ocultadaPara;
+                    }
+                }
+                unset($conversa);
+            }, 'conversas');
 
             responderMensagens(['sucesso' => true]);
         }
@@ -475,6 +725,7 @@ try {
         }
 
         destinatarioValido($conn, $ator, $tipo, $id);
+        registrarConversaChat($ator, $tipo, $id);
         $novaMensagem = acessarArmazenamentoMensagens(static function (array &$armazenadas) use ($ator, $tipo, $id, $mensagem): array {
             $proximoId = 1;
             foreach ($armazenadas as $armazenada) {

@@ -1979,7 +1979,11 @@ a {
     background: #4ab876;
 }
 
-.detail-action {
+.detail-action,
+.detail-chat-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-width: 92px;
     min-height: 32px;
     padding: 7px 13px;
@@ -1992,7 +1996,10 @@ a {
     cursor: pointer;
 }
 
-.detail-action:hover { background: #004a8e; }
+.detail-action[hidden],
+.detail-chat-action[hidden] { display: none; }
+.detail-action:hover,
+.detail-chat-action:hover { background: #004a8e; }
 .detail-section { padding-top: 18px; }
 
 .detail-section h3 {
@@ -2073,7 +2080,8 @@ a {
 @media (max-width: 720px) {
     .dashboard-shell .profile-detail-panel { padding: 24px 16px 30px; }
     .detail-profile-header { grid-template-columns: 50px minmax(0, 1fr); }
-    .detail-action { grid-column: 2; justify-self: start; }
+    .detail-action,
+    .detail-chat-action { grid-column: 2; justify-self: start; }
     .detail-placeholder { min-height: 220px; }
 }
 
@@ -2274,6 +2282,16 @@ a {
     align-self: end;
 }
 
+.dashboard-shell .item-card > .card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    align-self: end;
+}
+
+.dashboard-shell .item-card > .card-actions form { margin: 0; }
+
 .card-tags {
     display: flex;
     flex-wrap: wrap;
@@ -2326,6 +2344,9 @@ a {
     .dashboard-shell .compact-list-header .busca { order: 3; flex-basis: 100%; }
     .dashboard-shell .compact-list-header .compact-search-field { max-width: none; }
     .dashboard-shell .compact-list-header .result-count { margin-left: auto; }
+    .dashboard-shell .item-card { grid-template-columns: 36px minmax(0, 1fr); }
+    .dashboard-shell .item-card > .card-actions,
+    .dashboard-shell .item-card > .acoes-card { grid-column: 2; justify-self: end; flex-wrap: wrap; }
 }
 
 /* Sobre nós: usa a mesma base clara das telas de vagas e candidatos. */

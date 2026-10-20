@@ -172,6 +172,7 @@ function dashboardDetailPanel(): string
                 <p class="detail-meta" data-detail-meta>DevIN</p>
             </div>
             <button class="detail-action" type="button" data-detail-action hidden></button>
+            <button class="detail-chat-action" type="button" data-start-chat hidden>Conversar</button>
         </header>
         <section class="detail-section">
             <h3>Sobre</h3>
