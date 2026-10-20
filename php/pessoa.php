@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $_SESSION['job_success'] = 'Candidatura enviada com sucesso.';
-            header('Location: pessoa.php?pagina=vagas');
+            header('Location: pessoa.php?pagina=inicio');
             exit;
         }
 
@@ -141,6 +141,7 @@ $idiomaAtual = getProfileLanguage($tipo, $idPessoaAtual);
 
 $vagasDisponiveis  = [];
 $minhasCandidaturas = [];
+$vagasCandidatadas = [];
 
 try {
     $conn = getDatabaseConnection();
@@ -168,6 +169,10 @@ try {
         $stmt->execute();
         $minhasCandidaturas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
+
+        foreach ($minhasCandidaturas as $candidatura) {
+            $vagasCandidatadas[(int) $candidatura['id_vaga']] = true;
+        }
     } finally {
         $conn->close();
     }
@@ -366,19 +371,25 @@ unset($vaga);
                     <p class="empty-state">Ainda não há vagas publicadas.</p>
                 <?php endif; ?>
                 <?php foreach ($vagasDisponiveis as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="Vaga disponível|<?= h($vaga['empresa']) ?>" data-detail-experience="Vaga publicada::Confira os requisitos e envie sua candidatura" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
+                    <?php $jaSeCandidatou = isset($vagasCandidatadas[(int) $vaga['id_vaga']]); ?>
+                    <?php $statusVaga = $jaSeCandidatou ? 'Candidatura enviada' : 'Vaga disponível'; ?>
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
-                            <?= dashboardCardTags('Vaga disponível|' . $vaga['empresa']) ?>
+                            <?= dashboardCardTags($statusVaga . '|' . $vaga['empresa']) ?>
                         </div>
                         <div class="card-actions">
                             <form method="post">
                                 <input type="hidden" name="action" value="apply_job">
                                 <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
                                 <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
-                                <button class="btn primary" type="submit" data-detail-action-target>Candidatar-se</button>
+                                <?php if ($jaSeCandidatou): ?>
+                                    <button class="btn applied" type="button" disabled>Candidatou-se</button>
+                                <?php else: ?>
+                                    <button class="btn primary" type="submit" data-detail-action-target>Candidatar-se</button>
+                                <?php endif; ?>
                             </form>
                             <button class="btn primary" type="button" data-start-chat data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">Conversar</button>
                         </div>

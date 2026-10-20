@@ -93,9 +93,9 @@
             if (timeline) {
                 const [title, description] = item.split('::').map((part) => part.trim());
                 const heading = document.createElement('strong');
-                heading.textContent = title || 'DevIN';
+                heading.textContent = translate(title || 'DevIN');
                 row.appendChild(heading);
-                if (description) row.append(document.createTextNode(description));
+                if (description) row.append(document.createTextNode(translate(description)));
             } else {
                 row.textContent = item;
             }
@@ -112,7 +112,7 @@
         const name = card.dataset.detailName || card.dataset.jobTitle || title;
         const role = card.dataset.detailRole || subtitle;
         const summary = card.dataset.detailSummary || card.dataset.detail || subtitle;
-        const tags = splitItems(card.dataset.detailTags, ['DevIN', translate('Informacao disponivel')]);
+        const tags = splitItems(card.dataset.detailTags, ['DevIN', translate('Informacao disponivel')]).map(translate);
         const experience = splitItems(card.dataset.detailExperience, [`${translate('Registro selecionado')}::${role}`]);
 
         detailPanel.querySelector('[data-detail-placeholder]')?.setAttribute('hidden', '');
@@ -135,7 +135,7 @@
         const action = detailPanel.querySelector('[data-detail-action]');
         if (action) {
             action.hidden = !selectedActionTarget;
-            if (selectedActionTarget) action.textContent = card.dataset.detailActionLabel || selectedActionTarget.textContent.trim();
+            if (selectedActionTarget) action.textContent = translate(card.dataset.detailActionLabel || selectedActionTarget.textContent.trim());
         }
 
         const chatAction = detailPanel.querySelector('[data-start-chat]');
