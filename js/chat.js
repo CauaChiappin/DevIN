@@ -19,6 +19,8 @@
     const subtitleElement = app.querySelector('[data-chat-subtitle]');
     const conversationAvatar = app.querySelector('[data-chat-avatar]');
     const backToContactsButton = app.querySelector('[data-chat-back]');
+    const conversationMenu = app.querySelector('.chat-conversation-menu');
+    const conversationMenuToggle = app.querySelector('[data-chat-menu-toggle]');
     const deleteConversationButton = app.querySelector('[data-chat-delete-conversation]');
     const messagesElement = app.querySelector('[data-chat-messages]');
     const form = app.querySelector('[data-chat-form]');
@@ -334,9 +336,14 @@
         contactsElement.querySelector('[aria-pressed="true"]')?.focus();
     });
 
+    conversationMenu?.addEventListener('toggle', () => {
+        conversationMenuToggle?.setAttribute('aria-expanded', String(conversationMenu.open));
+    });
+
     deleteConversationButton.addEventListener('click', async () => {
         if (!activeContact || !window.confirm(translate('Excluir esta conversa só para você?'))) return;
 
+        conversationMenu.open = false;
         deleteConversationButton.disabled = true;
         sendStatus.textContent = '';
         try {
@@ -365,10 +372,15 @@
 
     searchInput.addEventListener('input', renderContacts);
     document.addEventListener('click', (event) => {
-        if (event.target instanceof Element && event.target.closest('.chat-message-menu')) return;
-        messagesElement.querySelectorAll('.chat-message-menu[open]').forEach((menu) => {
-            menu.open = false;
-        });
+        if (!(event.target instanceof Element)) return;
+        if (!event.target.closest('.chat-message-menu')) {
+            messagesElement.querySelectorAll('.chat-message-menu[open]').forEach((menu) => {
+                menu.open = false;
+            });
+        }
+        if (conversationMenu?.open && !conversationMenu.contains(event.target)) {
+            conversationMenu.open = false;
+        }
     });
 
     const resizeMessageInput = () => {

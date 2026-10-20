@@ -474,10 +474,19 @@ $talentos = [
                     <section class="chat-conversation" aria-label="Conversa">
                         <header class="chat-conversation-header" data-chat-header>
                             <button class="chat-back-to-contacts" type="button" data-chat-back aria-label="Voltar para contatos">←</button>
-                            <span class="chat-header-avatar" data-chat-avatar aria-hidden="true"></span>
-                            <strong data-chat-title>Escolha alguém para conversar</strong>
-                            <span data-chat-subtitle>Mensagens privadas entre usuários da DevIN</span>
-                            <button class="chat-delete-conversation" type="button" data-chat-delete-conversation disabled>Excluir conversa</button>
+                            <div class="chat-header-contact">
+                                <span class="chat-header-avatar" data-chat-avatar aria-hidden="true"></span>
+                                <span class="chat-header-copy">
+                                    <strong data-chat-title>Escolha alguém para conversar</strong>
+                                    <span data-chat-subtitle>Mensagens privadas entre usuários da DevIN</span>
+                                </span>
+                            </div>
+                            <details class="chat-conversation-menu">
+                                <summary data-chat-menu-toggle aria-label="Opções da conversa" aria-expanded="false">⋮</summary>
+                                <div class="chat-conversation-menu-items">
+                                    <button class="chat-delete-conversation" type="button" data-chat-delete-conversation disabled>Excluir conversa</button>
+                                </div>
+                            </details>
                         </header>
                         <div class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-relevant="additions text">
                             <p class="chat-empty">Selecione um contato para iniciar ou continuar uma conversa.</p>

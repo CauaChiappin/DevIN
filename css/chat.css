@@ -199,13 +199,20 @@
 
 .chat-conversation-header {
     display: grid;
-    gap: 4px;
     min-height: 66px;
     align-content: center;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     padding: 10px 18px;
     border-bottom: 1px solid #e5e8e9;
     background: #f8fbff;
+}
+
+.chat-header-contact {
+    display: flex;
+    min-width: 0;
+    grid-column: 1;
+    align-items: center;
+    gap: 10px;
 }
 
 .chat-back-to-contacts {
@@ -216,8 +223,6 @@
     display: grid;
     width: 40px;
     height: 40px;
-    grid-column: 1;
-    grid-row: 1 / span 2;
     flex: 0 0 auto;
     place-items: center;
     overflow: hidden;
@@ -228,8 +233,13 @@
     font-weight: 700;
 }
 
-.chat-conversation-header strong {
-    grid-column: 2;
+.chat-header-copy {
+    display: grid;
+    min-width: 0;
+    gap: 3px;
+}
+
+.chat-header-copy strong {
     overflow: hidden;
     color: #111b21;
     font-size: 15px;
@@ -237,32 +247,75 @@
     white-space: nowrap;
 }
 
-.chat-conversation-header span {
-    grid-column: 2;
+.chat-header-copy > span {
+    overflow: hidden;
     color: #667781;
     font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chat-conversation-menu {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+}
+
+.chat-conversation-menu > summary {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border-radius: 50%;
+    color: #54656f;
+    font-size: 22px;
+    line-height: 1;
+    list-style: none;
+    cursor: pointer;
+}
+
+.chat-conversation-menu > summary::-webkit-details-marker {
+    display: none;
+}
+
+.chat-conversation-menu > summary:hover,
+.chat-conversation-menu[open] > summary {
+    background: #e4e6e7;
+}
+
+.chat-conversation-menu-items {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    z-index: 5;
+    min-width: 168px;
+    padding: 5px;
+    border: 1px solid #e5e8e9;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(11, 20, 26, .16);
 }
 
 .chat-delete-conversation {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    padding: 8px 11px;
+    width: 100%;
+    padding: 9px 10px;
     border: 0;
-    border-radius: 8px;
+    border-radius: 7px;
     background: transparent;
-    color: #54656f;
-    font-size: 11px;
-    font-weight: 700;
+    color: #b4232d;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
     cursor: pointer;
 }
 
 .chat-delete-conversation:not(:disabled):hover {
-    background: #e4e6e7;
-    color: #b4232d;
+    background: #fff1f2;
 }
 
 .chat-delete-conversation:disabled {
-    opacity: .5;
+    color: #8a949c;
     cursor: not-allowed;
 }
 
@@ -407,7 +460,7 @@
 
 .chat-composer {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 8px;
     padding: 10px 16px;
     border-top: 1px solid #e5e8e9;
@@ -572,48 +625,54 @@
 
     .chat-conversation-header {
         min-height: 58px;
-        grid-template-columns: auto auto minmax(0, 1fr) auto;
-        grid-template-rows: auto auto;
+        grid-template-columns: auto minmax(0, 1fr) auto;
         align-items: center;
         column-gap: 6px;
-        row-gap: 0;
         padding: 6px 8px;
     }
 
     .chat-back-to-contacts {
         grid-column: 1;
-        grid-row: 1 / span 2;
         min-width: 28px;
         min-height: 36px;
         padding: 0 4px;
     }
 
-    .chat-conversation-header > strong {
-        grid-column: 3;
-        grid-row: 1;
+    .chat-header-contact {
+        grid-column: 2;
+        gap: 8px;
     }
 
     .chat-header-avatar {
         width: 34px;
         height: 34px;
-        grid-column: 2;
-        grid-row: 1 / span 2;
     }
 
-    .chat-conversation-header > [data-chat-subtitle] {
+    .chat-header-copy {
+        display: block;
+    }
+
+    .chat-header-copy strong {
+        display: block;
+        font-size: 14px;
+    }
+
+    .chat-header-copy > span {
+        display: none;
+    }
+
+    .chat-conversation-menu {
         grid-column: 3;
-        grid-row: 2;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        grid-row: 1;
     }
 
-    .chat-delete-conversation {
-        grid-column: 4;
-        grid-row: 1 / span 2;
-        padding: 6px 4px;
-        font-size: 9px;
-        white-space: nowrap;
+    .chat-conversation-menu > summary {
+        width: 32px;
+        height: 36px;
+    }
+
+    .chat-conversation-menu-items {
+        min-width: 158px;
     }
 
     .chat-messages {
@@ -632,7 +691,6 @@
 
     .chat-composer {
         gap: 6px;
-        align-items: center;
         padding: 7px 6px;
     }
 
