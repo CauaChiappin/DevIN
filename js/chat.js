@@ -35,8 +35,11 @@
     let contactsRequestInProgress = false;
     let contacts = [];
     let contactsLoaded = false;
+    let searchResults = null;
+    let searchVersion = 0;
     let unreadTotal = 0;
     let notificationTimeout = 0;
+    let searchTimeout = 0;
 
     const request = async (query, options = {}) => {
         const url = new URL(apiUrl, window.location.href);
@@ -82,11 +85,19 @@
     const renderContacts = () => {
         contactsElement.replaceChildren();
         const filter = searchInput.value.trim().toLocaleLowerCase(locale);
-        const visibleContacts = contacts.filter((contact) =>
-            `${contact.nome} ${contact.rotulo}`.toLocaleLowerCase(locale).includes(filter));
+        const searching = filter.length >= 2;
+        const source = searching ? (searchResults || []) : contacts;
+        const visibleContacts = searching
+            ? source
+            : source.filter((contact) =>
+                `${contact.nome} ${contact.email || ''} ${contact.rotulo}`.toLocaleLowerCase(locale).includes(filter));
 
         if (visibleContacts.length === 0) {
-            contactsStatus.textContent = translate(contacts.length ? 'Nenhum contato encontrado.' : 'Ainda não há outros usuários cadastrados.');
+            contactsStatus.textContent = searching
+                ? translate(searchResults === null ? 'Buscando pessoas e empresas...' : 'Nenhum usuário encontrado.')
+                : translate(filter.length === 1
+                    ? 'Digite pelo menos 2 caracteres para buscar.'
+                    : (filter ? 'Nenhum contato encontrado.' : 'Nenhuma conversa por aqui. Busque alguém para começar.'));
             return;
         }
 
@@ -107,7 +118,7 @@
             const name = document.createElement('strong');
             name.textContent = contact.nome;
             const type = document.createElement('small');
-            type.textContent = contact.rotulo;
+            type.textContent = searching ? contact.email : translate(contact.rotulo);
             copy.append(name, type);
             button.append(avatar, copy);
             if (contact.nao_lidas > 0) {
@@ -163,6 +174,34 @@
         }
     };
 
+    const searchContacts = async () => {
+        const term = searchInput.value.trim();
+        const version = ++searchVersion;
+        window.clearTimeout(searchTimeout);
+
+        if (term.length < 2) {
+            searchResults = null;
+            renderContacts();
+            return;
+        }
+
+        searchResults = null;
+        renderContacts();
+        searchTimeout = window.setTimeout(async () => {
+            try {
+                const data = await request({ acao: 'buscar_contatos', termo: term });
+                if (version !== searchVersion || searchInput.value.trim() !== term) return;
+                searchResults = data.contatos;
+                renderContacts();
+            } catch (error) {
+                if (version !== searchVersion) return;
+                searchResults = [];
+                contactsStatus.textContent = error.message;
+                contactsElement.replaceChildren();
+            }
+        }, 250);
+    };
+
     const renderMessage = (message, existingBubble = null) => {
         const bubble = document.createElement('article');
         bubble.className = `chat-bubble${message.minha ? ' chat-bubble--mine' : ''}`;
@@ -207,13 +246,49 @@
                 button.textContent = label;
                 button.addEventListener('click', () => {
                     menu.open = false;
-                    void deleteMessage(message.id, action, button);
+                    void action(button);
                 });
                 menuItems.appendChild(button);
             };
 
-            addAction(translate('Excluir para mim'), 'excluir_mensagem');
-            if (message.minha) addAction(translate('Excluir para todos'), 'excluir_para_todos');
+            if (!message.minha) {
+                const translation = document.createElement('section');
+                translation.className = 'chat-translation';
+                translation.hidden = true;
+                const translationLabel = document.createElement('strong');
+                translationLabel.textContent = translate('Tradução');
+                const translationText = document.createElement('p');
+                translation.append(translationLabel, translationText);
+                bubble.appendChild(translation);
+
+                addAction(translate('Traduzir mensagem'), async (button) => {
+                    button.disabled = true;
+                    button.textContent = translate('Traduzindo...');
+                    translation.hidden = false;
+                    translationLabel.textContent = translate('Tradução');
+                    translationText.textContent = '';
+                    try {
+                        const data = await request({}, {
+                            method: 'POST',
+                            headers: { 'X-CSRF-Token': csrfToken },
+                            body: JSON.stringify({ acao: 'traduzir', texto: message.mensagem }),
+                        });
+                        translationText.textContent = data.traducao;
+                    } catch (error) {
+                        translationLabel.textContent = translate('Falha na tradução');
+                        translationText.textContent = error.message;
+                    } finally {
+                        button.disabled = false;
+                        button.textContent = translate('Traduzir novamente');
+                    }
+                });
+            }
+            addAction(translate('Excluir para mim'), (button) =>
+                deleteMessage(message.id, 'excluir_mensagem', button));
+            if (message.minha) {
+                addAction(translate('Excluir para todos'), (button) =>
+                    deleteMessage(message.id, 'excluir_para_todos', button));
+            }
             menu.append(menuButton, menuItems);
             bubble.appendChild(menu);
         }
@@ -304,7 +379,8 @@
     };
 
     const openConversation = async (contact) => {
-        activeContact = contact;
+        activeContact = { ...contact };
+        const requestedContact = activeContact;
         app.classList.add('chat-conversation-open');
         messageViewVersion += 1;
         lastMessageId = 0;
@@ -322,12 +398,32 @@
         loading.className = 'chat-empty';
         loading.textContent = translate('Carregando conversa...');
         messagesElement.appendChild(loading);
+        try {
+            const data = await request({}, {
+                method: 'POST',
+                headers: { 'X-CSRF-Token': csrfToken },
+                body: JSON.stringify({
+                    acao: 'iniciar_conversa',
+                    tipo: requestedContact.tipo,
+                    id: requestedContact.id,
+                }),
+            });
+            if (activeContact !== requestedContact) return false;
+            activeContact = data.contato;
+            titleElement.textContent = activeContact.nome;
+            subtitleElement.textContent = `${translate(activeContact.rotulo)} · ${translate('Atualização automática')}`;
+            renderAvatar(conversationAvatar, activeContact);
+        } catch (error) {
+            if (activeContact === requestedContact) sendStatus.textContent = error.message;
+            return false;
+        }
         await loadMessages(true);
         try {
             await refreshContacts();
         } catch (error) {
             contactsStatus.textContent = error.message;
         }
+        return true;
     };
 
     backToContactsButton?.addEventListener('click', () => {
@@ -370,7 +466,7 @@
         }
     });
 
-    searchInput.addEventListener('input', renderContacts);
+    searchInput.addEventListener('input', searchContacts);
     document.addEventListener('click', (event) => {
         if (!(event.target instanceof Element)) return;
         if (!event.target.closest('.chat-message-menu')) {
@@ -435,10 +531,33 @@
         }
     });
 
-    refreshContacts()
-        .catch((error) => {
+    const initializeChat = async () => {
+        try {
+            await refreshContacts();
+            const parameters = new URLSearchParams(window.location.search);
+            const tipo = parameters.get('contato_tipo');
+            const id = Number(parameters.get('contato_id'));
+            if (!['pessoa', 'empresa'].includes(tipo) || !Number.isInteger(id) || id < 1) return;
+
+            const opened = await openConversation({
+                tipo,
+                id,
+                nome: translate('Carregando conversa...'),
+                email: '',
+                rotulo: tipo === 'pessoa' ? 'Pessoa' : 'Empresa',
+                nao_lidas: 0,
+                ultima_mensagem_id: 0,
+            });
+            if (!opened) return;
+            parameters.delete('contato_tipo');
+            parameters.delete('contato_id');
+            const cleanUrl = `${window.location.pathname}?${parameters.toString()}${window.location.hash}`;
+            window.history.replaceState({}, '', cleanUrl);
+        } catch (error) {
             contactsStatus.textContent = error.message;
-        });
+        }
+    };
+    void initializeChat();
 
     window.setInterval(() => {
         if (document.visibilityState !== 'visible') return;

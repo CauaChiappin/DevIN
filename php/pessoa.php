@@ -137,7 +137,8 @@ try {
     $conn = getDatabaseConnection();
     try {
         $stmt = $conn->prepare("
-            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga, e.nome AS empresa
+            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga,
+                   e.id_empresa, e.nome AS empresa
             FROM vagas v
             INNER JOIN empresa e ON e.id_empresa = v.id_empresa
             ORDER BY v.id_vaga DESC
@@ -350,19 +351,22 @@ unset($vaga);
                     <p class="empty-state">Ainda não há vagas publicadas.</p>
                 <?php endif; ?>
                 <?php foreach ($vagasDisponiveis as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="Vaga disponível|<?= h($vaga['empresa']) ?>" data-detail-experience="Vaga publicada::Confira os requisitos e envie sua candidatura" data-detail-action-label="Candidatar-se">
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="Vaga disponível|<?= h($vaga['empresa']) ?>" data-detail-experience="Vaga publicada::Confira os requisitos e envie sua candidatura" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
                             <?= dashboardCardTags('Vaga disponível|' . $vaga['empresa']) ?>
                         </div>
-                        <form method="post">
-                            <input type="hidden" name="action" value="apply_job">
-                            <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                            <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
-                            <button class="btn primary" type="submit" data-detail-action-target>Candidatar-se</button>
-                        </form>
+                        <div class="card-actions">
+                            <form method="post">
+                                <input type="hidden" name="action" value="apply_job">
+                                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
+                                <button class="btn primary" type="submit" data-detail-action-target>Candidatar-se</button>
+                            </form>
+                            <button class="btn primary" type="button" data-start-chat data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">Conversar</button>
+                        </div>
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>

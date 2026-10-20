@@ -335,6 +335,7 @@ try {
         $sqlCandidatos = '
             SELECT
                 c.id_candidatura,
+                p.id_pessoa,
                 c.status,
                 c.data_candidatura,
                 p.nome,
@@ -535,7 +536,7 @@ $talentos = [
                 </form>
                 <?php endif; ?>
                 <?php foreach ($candidatos as $candidato): ?>
-                    <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-detail-action-label="Aprovar candidato">
+                    <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-detail-action-label="Aprovar candidato" data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('user') ?></span>
                         <div>
                             <h2><?= h($candidato['nome']) ?></h2>
@@ -543,6 +544,7 @@ $talentos = [
                             <?= dashboardCardTags('Candidatura|' . ucfirst($candidato['status'])) ?>
                         </div>
                         <div class="acoes-card">
+                            <button class="btn primary" type="button" data-start-chat data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">Conversar</button>
                             <?php if ($candidato['status'] === 'pendente'): ?>
                                 <form method="post" class="candidate-actions">
                                     <input type="hidden" name="action" value="update_application_status">
