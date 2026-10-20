@@ -17,6 +17,7 @@
     const notificationElement = app.querySelector('[data-chat-notification]');
     const titleElement = app.querySelector('[data-chat-title]');
     const subtitleElement = app.querySelector('[data-chat-subtitle]');
+    const conversationAvatar = app.querySelector('[data-chat-avatar]');
     const backToContactsButton = app.querySelector('[data-chat-back]');
     const deleteConversationButton = app.querySelector('[data-chat-delete-conversation]');
     const messagesElement = app.querySelector('[data-chat-messages]');
@@ -56,6 +57,26 @@
     const initials = (name) => String(name).trim().split(/\s+/).slice(0, 2)
         .map((part) => part.charAt(0)).join('').toLocaleUpperCase(locale) || 'DI';
 
+    const renderAvatar = (element, contact) => {
+        if (!element) return;
+
+        const fallback = initials(contact.nome);
+        element.textContent = fallback;
+
+        const url = new URL(apiUrl, window.location.href);
+        url.searchParams.set('acao', 'foto');
+        url.searchParams.set('tipo', contact.tipo);
+        url.searchParams.set('id', String(contact.id));
+
+        const image = document.createElement('img');
+        image.src = url.toString();
+        image.alt = '';
+        image.addEventListener('error', () => {
+            element.textContent = fallback;
+        }, { once: true });
+        element.replaceChildren(image);
+    };
+
     const renderContacts = () => {
         contactsElement.replaceChildren();
         const filter = searchInput.value.trim().toLocaleLowerCase(locale);
@@ -77,7 +98,7 @@
 
             const avatar = document.createElement('span');
             avatar.className = 'chat-contact-avatar';
-            avatar.textContent = initials(contact.nome);
+            renderAvatar(avatar, contact);
 
             const copy = document.createElement('span');
             copy.className = 'chat-contact-copy';
@@ -287,10 +308,12 @@
         lastMessageId = 0;
         titleElement.textContent = contact.nome;
         subtitleElement.textContent = `${translate(contact.rotulo)} · ${translate('Atualização automática')}`;
+        renderAvatar(conversationAvatar, contact);
         messageInput.disabled = false;
         sendButton.disabled = false;
         deleteConversationButton.disabled = true;
         sendStatus.textContent = '';
+        messageInput.focus();
         renderContacts();
         messagesElement.replaceChildren();
         const loading = document.createElement('p');
@@ -303,7 +326,6 @@
         } catch (error) {
             contactsStatus.textContent = error.message;
         }
-        messageInput.focus();
     };
 
     backToContactsButton?.addEventListener('click', () => {
