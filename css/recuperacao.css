@@ -1,154 +1,287 @@
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
     background-color: #f7f9fc;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.recovery-wrapper {
+    display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    flex: 1;
+    padding: 40px 20px;
 }
 
-.container-recuperacao {
-    width: 100%;
-    max-width: 400px;
-}
-
-.card-recuperacao {
+.card-box {
     background: #ffffff;
-    padding: 35px 30px;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    border-radius: 28px;
+    padding: 40px 35px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     text-align: center;
 }
 
-.logo {
-    font-size: 32px;
+.brand-link {
+    font-size: 2.4rem;
     font-weight: 800;
+    color: #000000;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.brand-link span {
+    color: #004aad;
+}
+
+.card-box h1,
+.title-page {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    color: #888888;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.alert {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.alert-error {
+    background-color: #fde8e8;
+    color: #e53e3e;
+}
+
+.alert-success {
+    background-color: #def7ec;
+    color: #03543f;
+}
+
+.input-block {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.input-block label {
+    display: block;
+    font-weight: 700;
+    font-size: 1rem;
     color: #000000;
     margin-bottom: 8px;
 }
 
-.logo span {
-    color: #0047ab;
-}
-
-.titulo {
-    font-size: 20px;
-    font-weight: 700;
-    color: #111111;
-    margin-bottom: 20px;
-}
-
-.alerta {
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    margin-bottom: 18px;
-    text-align: center;
-}
-
-.alerta-erro {
-    background-color: #fdecea;
-    color: #d93025;
-}
-
-.alerta-sucesso {
-    background-color: #e6f4ea;
-    color: #1e8e3e;
-}
-
-.grupo-input {
-    text-align: left;
-    margin-bottom: 14px;
-}
-
-.grupo-input label {
-    display: block;
-    font-size: 13px;
-    font-weight: 700;
-    color: #222222;
-    margin-bottom: 6px;
-}
-
-.campo-senha {
+.input-icon-field,
+.password-wrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.campo-senha input {
+.input-icon-field .icon-mail {
+    position: absolute;
+    left: 14px;
+    font-size: 1.2rem;
+    color: #000000;
+}
+
+.input-icon-field input {
+    padding-left: 42px;
+}
+
+.input-block input {
     width: 100%;
-    padding: 10px 40px 10px 16px;
-    border: 1.5px solid #444444;
-    border-radius: 25px;
-    font-size: 14px;
+    padding: 12px 16px;
+    border: 1.5px solid #000000;
+    border-radius: 18px;
+    font-size: 1rem;
     outline: none;
-    transition: border-color 0.2s;
 }
 
-.campo-senha input:focus {
-    border-color: #0047ab;
+.password-wrapper input {
+    padding-right: 42px;
 }
 
-.icone-olho {
+.eye-toggle {
     position: absolute;
     right: 14px;
-    width: 18px;
-    height: 18px;
+    background: none;
+    border: none;
     cursor: pointer;
-    user-select: none;
-    opacity: 0.75;
-    transition: opacity 0.2s;
+    font-size: 1.2rem;
+    opacity: 0.7;
 }
 
-.icone-olho:hover {
+.eye-toggle.active {
     opacity: 1;
 }
 
-.requisitos-senha {
-    list-style: none;
-    text-align: left;
-    margin: 8px 0 18px 4px;
-    font-size: 12px;
-}
-
-.requisitos-senha li {
-    margin-bottom: 5px;
+/* Estrutura das 6 Caixas do Código */
+.code-container {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    transition: color 0.2s;
+    margin: 20px 0;
 }
 
-.requisitos-senha li.invalido {
-    color: #888888;
+.code-input {
+    width: 44px;
+    height: 52px;
+    text-align: center;
+    font-size: 1.4rem !important;
+    font-weight: 800;
+    color: #333333;
+    border: 1.5px solid #000000 !important;
+    border-radius: 12px !important;
+    outline: none;
+    padding: 0 !important;
 }
 
-.requisitos-senha li.valido {
-    color: #1e8e3e;
-    font-weight: 500;
+.code-input:focus {
+    border-color: #004aad !important;
+    box-shadow: 0 0 5px rgba(0, 74, 173, 0.3);
 }
 
-.btn-submit {
-    width: 100%;
-    padding: 12px;
-    background-color: #0047ab;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 700;
+.code-separator {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #000000;
+}
+
+.resend-block {
+    font-size: 0.85rem;
+    color: #004aad;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.link-resend {
+    background: none;
     border: none;
-    border-radius: 25px;
+    color: #004aad;
+    text-decoration: underline;
     cursor: pointer;
-    margin-top: 8px;
-    transition: background-color 0.2s;
+    font-weight: 600;
+    font-size: 0.85rem;
 }
 
-.btn-submit:hover {
-    background-color: #003580;
+.link-resend:disabled {
+    color: #aaa;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+/* Checklist da Senha */
+.checklist {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.check-item {
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.check-invalid {
+    color: #555555;
+}
+
+.check-valid {
+    color: #10b981;
+}
+
+/* Botões */
+.btn-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.btn-single-group {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #004aad;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #00357a;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-cadastrar {
+    width: 65%;
+    border-radius: 25px;
+}
+
+/* Estado de Bloqueio/Desativado */
+.btn:disabled,
+.btn-primary:disabled {
+    background-color: #002a66;
+    opacity: 0.65;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.recovery-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #000000;
+    font-weight: 600;
+    padding: 20px;
+}
+
+.recovery-footer span {
+    color: #004aad;
 }
