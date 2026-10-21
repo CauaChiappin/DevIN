@@ -1,11 +1,23 @@
 (() => {
   const fallbackHeader = document.querySelector('.cabecalho-site');
+  const initialAnchor = window.location.hash.length > 1 && window.location.hash !== '#contato'
+    ? document.getElementById(window.location.hash.slice(1))
+    : null;
+
   if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined' || typeof Lenis === 'undefined') {
     const atualizarHeaderFallback = () => {
       if (fallbackHeader) fallbackHeader.classList.toggle('rolado', window.scrollY > 40);
     };
     atualizarHeaderFallback();
     window.addEventListener('scroll', atualizarHeaderFallback, { passive: true });
+    if (initialAnchor) {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, Math.max(
+          0,
+          window.scrollY + initialAnchor.getBoundingClientRect().top - 100
+        ));
+      });
+    }
     return;
   }
 
@@ -212,5 +224,11 @@ revelarGrupo('.perguntas', {
   y: -35,
   opacity: 0
 });
+
+if (initialAnchor) {
+  requestAnimationFrame(() => {
+    lenis.scrollTo(initialAnchor, { offset: -100, duration: 0 });
+  });
+}
 
 })();

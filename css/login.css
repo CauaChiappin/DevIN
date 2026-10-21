@@ -16,63 +16,6 @@
 body { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--black); overflow-x: hidden; }
 
 /* ==========================================================================
-   2. CABEÇALHO (HEADER)
-   ========================================================================== */
-.cabecalho-site {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;            
-    padding: 20px 50px;             
-    background-color: var(--bg); 
-}
-
-.logo a {
-    font-size: 32px;
-    font-weight: bold;
-    color: var(--black); 
-    text-decoration: none;
-}
-
-.logo span {
-    color: var(--blue); 
-}
-
-.navegacao ul {
-    display: flex;
-    list-style: none; 
-    gap: 30px;        
-}
-
-.navegacao a {
-    text-decoration: none;
-    color: var(--black); 
-    font-size: 18px;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.navegacao a:hover {
-    color: var(--blue); 
-}
-
-.botao-azul {
-    display: inline-block;
-    text-decoration: none;
-    color: var(--blue); 
-    border: 2px solid var(--blue); 
-    padding: 10px 25px;
-    border-radius: 12px; 
-    font-size: 18px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.botao-azul:hover {
-    background-color: var(--blue); 
-    color: var(--white); 
-}
-
-/* ==========================================================================
    3. CORPO CENTRAL (ROBÔ + CARD LADO A LADO)
    ========================================================================== */
 .conteudo-login {
@@ -226,7 +169,8 @@ body {
 }
 
 img { max-width: 100%; }
-.cabecalho-site .site-menu-toggle { color: var(--black); }
+.cabecalho-site,
+.cabecalho-site * { font-family: "Poppins", Arial, sans-serif; }
 
 @media (max-width: 1050px) {
     .conteudo-login { gap: clamp(40px, 12vw, 180px); }
@@ -234,34 +178,6 @@ img { max-width: 100%; }
 }
 
 @media (max-width: 720px) {
-    .cabecalho-site {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 10px;
-        padding: 14px 16px;
-    }
-    .cabecalho-site .site-menu-toggle { display: inline-flex; justify-self: end; }
-    .cabecalho-site .navegacao {
-        display: none;
-        grid-column: 1 / -1;
-        grid-row: 2;
-        flex-direction: column;
-        gap: 4px;
-        padding: 14px 0;
-    }
-    .cabecalho-site .navegacao.is-open { display: flex; }
-    .cabecalho-site .navegacao a {
-        align-items: center;
-        display: flex;
-        min-height: 44px;
-        padding: 8px 12px;
-    }
-    .cabecalho-site .acoes {
-        grid-column: 1 / -1;
-        grid-row: 3;
-        justify-content: stretch;
-    }
-    .cabecalho-site .acoes .botao { justify-content: center; min-height: 44px; width: 100%; }
     .conteudo-login {
         flex-direction: column;
         gap: 22px;
