@@ -298,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
   <footer class="page-footer">
-    Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados<a id="secret-doom" href="../html/jogos/doom.html">.</a>
+    Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados<a class="secret-doom" href="../html/jogos/doom.html">.</a>
 </footer>  
     </section>
 

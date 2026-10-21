@@ -115,6 +115,37 @@ body.game-page {
 .emulator-frame iframe { border: 0; display: block; height: 100%; width: 100%; }
 .doom-emulator-frame { aspect-ratio: 4 / 3; }
 .doom-emulator-frame iframe { height: 62.5%; transform: scale(1.6); transform-origin: top left; width: 62.5%; }
+.maze-stage { display: grid; gap: 16px; margin-top: 24px; overflow: hidden; padding: 16px; }
+#public-maze-canvas, #arcade-canvas { display: block; height: auto; max-width: 100%; outline: none; width: 100%; }
+.arcade-portal .portal-content { display: grid; gap: 24px; margin-top: 24px; }
+.portal-intro, .portal-games, .arcade-play-panel, .admin-progress { background: linear-gradient(180deg, rgba(17, 24, 39, .96), rgba(11, 18, 32, .96)); border: 1px solid rgba(148, 163, 184, .28); border-radius: 12px; padding: 20px; }
+.portal-intro h1 { font-size: clamp(30px, 5vw, 48px); margin: 4px 0 8px; }
+.portal-intro p { color: var(--arcade-muted); line-height: 1.6; }
+.portal-intro .portal-eyebrow { color: var(--arcade-cyan); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+.portal-layout { align-items: start; display: grid; gap: 18px; grid-template-columns: minmax(240px, .7fr) minmax(0, 1.3fr); }
+.portal-games { display: grid; gap: 10px; padding: 12px; }
+.portal-game-card { background: #0b1220; border: 1px solid rgba(148, 163, 184, .24); border-radius: 10px; color: var(--arcade-text); cursor: pointer; display: grid; gap: 5px; grid-template-columns: 34px 1fr; padding: 13px; text-align: left; }
+.portal-game-card:hover, .portal-game-card:focus-visible { border-color: var(--arcade-cyan); outline: none; }
+.portal-game-card strong, .portal-game-card span:not(.portal-game-icon) { grid-column: 2; }
+.portal-game-card span:not(.portal-game-icon) { color: var(--arcade-muted); font-size: 12px; line-height: 1.45; }
+.portal-game-icon { color: var(--arcade-cyan); font-size: 24px; grid-row: span 2; }
+.arcade-play-panel { display: grid; gap: 12px; min-width: 0; }
+.arcade-play-heading { align-items: center; display: flex; gap: 12px; justify-content: space-between; }
+.arcade-play-heading p, .admin-progress p { color: var(--arcade-muted); font-size: 13px; line-height: 1.5; margin-top: 4px; }
+.arcade-canvas-wrap { background: #020617; border: 1px solid rgba(96, 165, 250, .35); border-radius: 8px; overflow: hidden; position: relative; }
+.arcade-overlay { align-items: center; background: rgba(2, 6, 23, .88); color: #fff; display: flex; font-size: clamp(17px, 3vw, 25px); font-weight: 800; inset: 0; justify-content: center; padding: 24px; position: absolute; text-align: center; }
+.arcade-overlay[hidden] { display: none; }
+.arcade-live-stats { color: var(--arcade-muted); display: flex; flex-wrap: wrap; gap: 20px; }
+.arcade-live-stats strong { color: var(--arcade-yellow); }
+.arcade-feedback { color: var(--arcade-cyan); font-size: 13px; min-height: 1.4em; }
+.admin-progress h2 { margin-bottom: 5px; }
+.admin-progress-table { margin-top: 14px; overflow-x: auto; }
+.admin-progress-grid { border-collapse: collapse; min-width: 720px; width: 100%; }
+.admin-progress-grid th, .admin-progress-grid td { border-bottom: 1px solid rgba(148, 163, 184, .2); padding: 10px; text-align: left; }
+.admin-progress-grid th { color: var(--arcade-cyan); font-size: 12px; }
+.admin-progress-grid td { font-size: 13px; }
+.danger-button { color: #fecaca; }
+.arcade-unlock-status { background: #111827; border: 1px solid var(--arcade-cyan); border-radius: 8px; bottom: 16px; color: var(--arcade-text); padding: 12px 16px; position: fixed; right: 16px; z-index: 20; }
 .arcade-footer { color: var(--arcade-muted); font-size: 12px; margin-top: 22px; }
 
 @keyframes pulse {
@@ -127,6 +158,7 @@ body.game-page {
     .arcade-main { grid-template-columns: 1fr; }
     .game-stage { min-height: auto; overflow-x: auto; place-items: start center; }
     .score-panel { grid-template-columns: repeat(3, 1fr); }
+    .portal-layout { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
@@ -135,6 +167,9 @@ body.game-page {
     .cell { height: 18px; width: 18px; }
     .pacman, .ghost { height: 15px; width: 15px; }
     .score-panel { grid-template-columns: 1fr; }
+    .portal-intro, .arcade-play-panel, .admin-progress { padding: 14px; }
+    .arcade-play-heading { align-items: flex-start; flex-direction: column; }
+    .arcade-live-stats { gap: 8px 14px; }
 }
 
 html,

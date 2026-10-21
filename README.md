@@ -23,3 +23,11 @@ O menu de três pontos em cada mensagem permite ocultá-la para a própria conta
 As preferências de idioma do dashboard são salvas por conta na tabela `preferencias_dashboard`, criada automaticamente no primeiro acesso ao dashboard. A interface oferece português, inglês e espanhol; a preferência permanece após sair e entrar novamente.
 
 Para traduzir mensagens recebidas, a opção **Traduzir mensagem** no menu de três pontos usa a API pública MyMemory, sem exigir conta ou chave. O texto só é enviado ao provedor quando a pessoa solicita a tradução; a resposta aparece junto ao original e usa o idioma selecionado no dashboard. O serviço limita o uso anônimo a 5.000 caracteres por dia e cada trecho da solicitação a 500 bytes. A tradução depende da disponibilidade do serviço e as mensagens selecionadas são enviadas a terceiros.
+
+## Jogos
+
+O acesso público em `html/jogos/doom.html` mantém o DOOM incorporado e o Labirinto DevIN. O labirinto tem fases, coleta de cristais, perseguidores e vidas, mas não grava progresso. É um jogo original, sem reproduzir mapas, personagens, arte ou sons de Pac-Man.
+
+Depois de entrar em qualquer dashboard, digite a sequência Konami com as setas, `B`, `A` e `Enter` para liberar `php/arcade.php`. O portal também valida a sessão no servidor; abrir o endereço diretamente não libera o acesso. A liberação dura até duas horas, mas termina antes quando a sessão expira ou a conta sai.
+
+O portal contém Labirinto DevIN, Snake, Blocos, Quebra-blocos, Memória e Salto de Ritmo. A tabela `progresso_jogos` é criada automaticamente no primeiro acesso à API de jogos. Cada conta salva recorde, maior fase alcançada e horário da última atividade. Administradores veem os registros de todas as contas e podem remover registros indevidos; os dados são pontuações de jogos executados no navegador, não resultados certificados contra adulteração.

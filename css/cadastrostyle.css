@@ -398,13 +398,7 @@ body {
 .success-toast { background-color: #10b981; }
 
 /* Easter Egg: Ponto secreto Doom */
-.secret-doom,
-.secret-doom:link,
-.secret-doom:visited,
-.secret-doom:hover,
-.secret-doom:active,
-.secret-doom:focus,
-.secret-doom:focus-visible {
+.secret-doom{
     color: #000000 !important;
     text-decoration: none !important;
     background: transparent !important;

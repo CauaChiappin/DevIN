@@ -18,6 +18,7 @@ class AuthController
     {
         startSecureSession();
         secureSessionRegenerate();
+        unset($_SESSION['arcade_unlock']);
 
         $_SESSION['usuario_id']    = $auth['usuario']['id'];
         $_SESSION['usuario_nome']  = $auth['usuario']['nome'];

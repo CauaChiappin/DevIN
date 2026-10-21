@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="../../">
-    <title>DevIN Arcade - Pac-Man</title>
+    <title>DevIN Arcade - Labirinto</title>
     <link rel="stylesheet" href="css/jogos.css">
     <link rel="stylesheet" href="css/site-navigation.css">
     <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 </head>
-<body class="game-page">
+<body class="game-page" data-game-mode="public-maze">
     <div class="arcade-shell">
         <header class="arcade-header">
             <a class="arcade-logo" href="html/index.html">Dev<span>IN</span> Arcade</a>
@@ -19,32 +19,31 @@
             <div class="site-menu" id="site-menu" data-site-menu>
                 <nav class="arcade-nav" aria-label="Jogos">
                     <a class="arcade-button" href="html/index.html">Voltar ao site</a>
-                    <a class="arcade-button" href="html/jogos/doom.html">Doom</a>
+                    <a class="arcade-button" href="html/jogos/doom.html">DOOM</a>
                 </nav>
             </div>
         </header>
 
-        <main class="emulator-stage">
-            <section class="score-panel" aria-label="Pac-Man emulado">
-                <div class="score-row"><strong>Jogo</strong><span>Pac-Man Arcade Enhanced</span></div>
-                <p class="hint">Player emulado via Internet Archive. Clique no botao de energia do player para carregar o jogo.</p>
+        <main class="maze-stage">
+            <section class="score-panel" aria-label="Informações do jogo">
+                <div class="score-row"><strong>Jogo</strong><span>Labirinto DevIN</span></div>
+                <p class="hint">Colete todos os cristais para avançar. Cristais grandes permitem escapar dos perseguidores por alguns segundos. Esta versão pública não salva progresso.</p>
+                <p class="hint">Controles: setas ou W, A, S, D.</p>
             </section>
-
-            <div class="emulator-frame">
-                <iframe
-                    title="Pac-Man emulado"
-                    src="https://archive.org/embed/pacmanae_a2600"
-                    allow="fullscreen; autoplay; gamepad"
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="arcade-canvas-wrap">
+                <canvas id="public-maze-canvas" width="640" height="480" aria-label="Jogo de labirinto"></canvas>
+                <div class="arcade-overlay" data-game-overlay hidden></div>
+            </div>
+            <div class="arcade-live-stats" aria-live="polite">
+                <span>Pontos: <strong data-game-score>0</strong></span>
+                <span>Fase: <strong data-game-level>1</strong></span>
+                <button class="arcade-button" type="button" data-restart-game>Reiniciar</button>
             </div>
         </main>
 
-        <footer class="arcade-footer">
-            <span>DevIN | Escola Profa. Alcina Dantas Feijao | 2026</span>
-        </footer>
+        <footer class="arcade-footer"><span>DevIN | Escola Profa. Alcina Dantas Feijão | 2026</span></footer>
     </div>
-
-<script src="js/site-navigation.js"></script>
+    <script src="js/arcade-games.js"></script>
+    <script src="js/site-navigation.js"></script>
 </body>
 </html>
