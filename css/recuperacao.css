@@ -9,16 +9,6 @@ body {
     background-color: #f7f9fc;
     min-height: 100vh;
     display: flex;
-<<<<<<< HEAD
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.recovery-wrapper {
-    /* Centraliza o cartão de recuperação e deixa o rodapé fora da área principal. */
-    display: flex;
-=======
->>>>>>> 0fb4e5cc50e2b591cbc4e805c54be8aa7773b392
     justify-content: center;
     align-items: center;
     padding: 20px;
@@ -159,29 +149,6 @@ body {
     transition: background-color 0.2s;
 }
 
-<<<<<<< HEAD
-/* Estado de Bloqueio/Desativado */
-.btn:disabled,
-.btn-primary:disabled {
-    background-color: #002a66;
-    opacity: 0.65;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-.recovery-footer {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #000000;
-    font-weight: 600;
-    padding: 20px;
-}
-
-.recovery-footer span {
-    color: #004aad;
-}
-=======
 .btn-submit:hover {
     background-color: #003580;
 }
->>>>>>> 0fb4e5cc50e2b591cbc4e805c54be8aa7773b392
