@@ -28,7 +28,7 @@ unset(
 );
 $pagina        = requestString($_GET, 'pagina');
 
-$paginasPermitidas = ['inicio', 'vagas', 'sobre', 'perfil', 'mensagens'];
+$paginasPermitidas = ['inicio', 'vagas', 'curriculo', 'sobre', 'perfil', 'mensagens'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
     $pagina = 'inicio';
 }
@@ -142,10 +142,22 @@ $idiomaAtual = getProfileLanguage($tipo, $idPessoaAtual);
 $vagasDisponiveis  = [];
 $minhasCandidaturas = [];
 $vagasCandidatadas = [];
+$curriculoAtual = [];
 
 try {
     $conn = getDatabaseConnection();
     try {
+        $stmt = $conn->prepare(
+            'SELECT nome_social, grau_de_escolaridade, cursos, experiencia, idiomas
+             FROM curriculo
+             WHERE id_pessoa = ?
+             LIMIT 1'
+        );
+        $stmt->bind_param('i', $idPessoaAtual);
+        $stmt->execute();
+        $curriculoAtual = $stmt->get_result()->fetch_assoc() ?? [];
+        $stmt->close();
+
         $stmt = $conn->prepare("
             SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga,
                    e.id_empresa, e.nome AS empresa
@@ -242,6 +254,9 @@ unset($vaga);
                 <a class="<?= ativo($pagina, 'vagas') ?>" href="pessoa.php?pagina=vagas">
                     <?= dashboardIcon('briefcase') ?><span class="menu-text">Minhas Vagas</span>
                 </a>
+                <a class="<?= ativo($pagina, 'curriculo') ?>" href="pessoa.php?pagina=curriculo">
+                    <?= dashboardIcon('file') ?><span class="menu-text">Meu currículo</span>
+                </a>
                 <a class="<?= ativo($pagina, 'mensagens') ?>" href="pessoa.php?pagina=mensagens" data-messages-api="../php/mensagens_api.php">
                     <?= dashboardIcon('users') ?><span class="menu-text">Mensagens</span><span class="message-unread-badge" data-message-unread-badge hidden></span>
                 </a>
@@ -274,7 +289,7 @@ unset($vaga);
         </aside>
 
         <section class="lista-area">
-            <?php if (!in_array($pagina, ['sobre', 'mensagens'], true)): ?>
+            <?php if (!in_array($pagina, ['sobre', 'mensagens', 'curriculo'], true)): ?>
                 <?= dashboardListHeader(
                     $pagina,
                     $pagina === 'vagas' ? 'Minhas candidaturas' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas'),
@@ -328,6 +343,44 @@ unset($vaga);
                         </form>
                         <p class="chat-status chat-send-status" data-chat-send-status role="status"></p>
                     </section>
+                </section>
+            <?php elseif ($pagina === 'curriculo'): ?>
+                <section class="dashboard-resume">
+                    <header class="dashboard-resume__header">
+                        <div>
+                            <p class="dashboard-resume__eyebrow">CRIADOR DE CURRÍCULO COM IA</p>
+                            <h1>Seu currículo, pronto para sua próxima oportunidade</h1>
+                            <p>A IA organiza e melhora a apresentação das informações que você cadastrou. Você revisa o resultado antes de imprimir ou salvar.</p>
+                        </div>
+                    </header>
+
+                    <div class="dashboard-resume__content">
+                        <section class="dashboard-resume__generator" aria-labelledby="resume-generator-title" data-resume-csrf="<?= h(csrfToken()) ?>">
+                            <div class="dashboard-resume__generator-icon" aria-hidden="true">✦</div>
+                            <h2 id="resume-generator-title">Gerar meu currículo</h2>
+                            <p>Usaremos seu nome social, escolaridade, cursos, experiência e idiomas para criar um currículo claro e profissional. A IA não deve inventar dados; confira o texto antes de usar.</p>
+                            <label class="dashboard-resume__consent">
+                                <input type="checkbox" data-resume-consent>
+                                <span>Entendo que, ao gerar, os dados do meu currículo serão enviados ao Google Gemini para criar o texto. A chave da API fica protegida no servidor.</span>
+                            </label>
+                            <div class="dashboard-resume__actions">
+                                <button class="dashboard-resume__button dashboard-resume__button--primary" type="button" data-generate-resume disabled>✦ Gerar currículo com IA</button>
+                                <button class="dashboard-resume__button dashboard-resume__button--secondary" type="button" data-print-resume hidden>Imprimir / Salvar PDF</button>
+                                <a class="dashboard-resume__button dashboard-resume__button--secondary" href="cadastrar_curriculo.php">Editar meus dados</a>
+                            </div>
+                            <p class="dashboard-resume__status" data-resume-status role="status" aria-live="polite">Seus dados só serão enviados quando você confirmar e solicitar a geração.</p>
+                            <p class="dashboard-resume__privacy">A geração usa uma API externa e pode consumir cota da chave configurada pelo DevIN.</p>
+                        </section>
+
+                        <article class="dashboard-resume__paper dashboard-resume__paper--empty" data-resume-output aria-label="Currículo gerado" aria-live="polite">
+                            <div class="dashboard-resume__empty-state" data-resume-empty>
+                                <span aria-hidden="true">▤</span>
+                                <h2>Seu currículo aparecerá aqui</h2>
+                                <p>Confirme o envio dos dados e clique em <strong>Gerar currículo com IA</strong>.</p>
+                            </div>
+                            <div data-resume-content hidden></div>
+                        </article>
+                    </div>
                 </section>
             <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
@@ -402,7 +455,7 @@ unset($vaga);
             <?php endif; ?>
         </section>
 
-        <?php if (!in_array($pagina, ['sobre', 'perfil', 'mensagens'], true)): ?>
+        <?php if (!in_array($pagina, ['sobre', 'perfil', 'mensagens', 'curriculo'], true)): ?>
             <?= dashboardDetailPanel() ?>
         <?php elseif ($pagina !== 'mensagens'): ?>
             <aside class="detalhe-area">
@@ -495,6 +548,9 @@ unset($vaga);
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>
+    <?php endif; ?>
+    <?php if ($pagina === 'curriculo'): ?>
+        <script src="../js/curriculo.js?v=<?= filemtime(__DIR__ . '/../js/curriculo.js') ?>" defer></script>
     <?php endif; ?>
     <script>
         (function () {

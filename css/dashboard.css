@@ -283,6 +283,20 @@ a {
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
 }
 
+.dashboard-shell.page-curriculo {
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+}
+
+.page-curriculo .detalhe-area,
+.page-curriculo .dashboard-header,
+.page-curriculo .busca {
+    display: none;
+}
+
+.page-curriculo .lista-area {
+    padding: 32px;
+}
+
 .page-sobre .detalhe-area,
 .page-sobre .dashboard-header,
 .page-sobre .busca {
@@ -2806,4 +2820,264 @@ body.account-deleting .dashboard-shell {
     transform: none !important;
     transition: none !important;
     cursor: default !important;
+}
+
+/* Criador de currículo ocupa toda a área útil do dashboard. */
+.dashboard-shell.page-curriculo {
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+}
+
+.dashboard-shell.page-curriculo .lista-area {
+    width: 100%;
+    min-width: 0;
+    padding: clamp(24px, 3vw, 48px);
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__header {
+    margin-bottom: 28px;
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__header h1 {
+    max-width: 900px;
+    font-size: clamp(28px, 3.2vw, 42px);
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__content {
+    grid-template-columns: minmax(320px, .72fr) minmax(0, 1.55fr);
+    gap: clamp(20px, 2.5vw, 36px);
+}
+
+.dashboard-resume__generator {
+    align-self: start;
+    padding: clamp(24px, 3vw, 40px);
+    border: 1px solid #d6e2ef;
+    border-radius: 18px;
+    background: linear-gradient(150deg, #fff 0%, #f4f9ff 100%);
+    box-shadow: 0 12px 32px rgba(14, 72, 125, .08);
+}
+
+.dashboard-resume__generator-icon {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    margin-bottom: 22px;
+    border-radius: 15px;
+    background: #e4f1ff;
+    color: #07539a;
+    font-size: 28px;
+}
+
+.dashboard-resume__generator h2 {
+    margin: 0 0 12px;
+    color: #12345b;
+    font-size: clamp(20px, 2vw, 26px);
+}
+
+.dashboard-resume__generator > p {
+    color: #586779;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.dashboard-resume__consent {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-items: start;
+    gap: 11px;
+    margin: 24px 0;
+    padding: 16px;
+    border: 1px solid #d8e4f1;
+    border-radius: 12px;
+    background: #fff;
+    color: #43556a;
+    font-size: 12px;
+    line-height: 1.6;
+    cursor: pointer;
+}
+
+.dashboard-resume__consent input {
+    width: 18px;
+    height: 18px;
+    margin: 1px 0 0;
+    accent-color: #07539a;
+}
+
+.dashboard-resume__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.dashboard-resume__button {
+    min-height: 48px;
+    font-size: 13px;
+}
+
+.dashboard-resume__button--primary:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.dashboard-resume__status {
+    min-height: 42px;
+    margin: 14px 0 0 !important;
+    color: #526579 !important;
+    font-size: 12px !important;
+}
+
+.dashboard-resume__status[data-state="success"] {
+    color: #187343 !important;
+}
+
+.dashboard-resume__status[data-state="error"] {
+    color: #b42332 !important;
+}
+
+.dashboard-resume__privacy {
+    margin: 14px 0 0 !important;
+    padding-top: 14px;
+    border-top: 1px solid #dce6f0;
+    color: #68798c !important;
+    font-size: 11px !important;
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__paper {
+    min-width: 0;
+    min-height: min(72vh, 860px);
+    padding: clamp(32px, 5vw, 72px);
+    border: 1px solid #e1e7ee;
+    border-radius: 4px;
+    box-shadow: 0 14px 36px rgba(17, 42, 71, .09);
+}
+
+.dashboard-resume__paper--empty {
+    display: grid;
+    place-items: center;
+    background-image: linear-gradient(#f8fafc 1px, transparent 1px);
+    background-size: 100% 32px;
+}
+
+.dashboard-resume__empty-state {
+    max-width: 390px;
+    padding: 30px;
+    color: #718096;
+    text-align: center;
+}
+
+.dashboard-resume__empty-state > span {
+    display: inline-grid;
+    width: 64px;
+    height: 64px;
+    place-items: center;
+    border-radius: 20px;
+    background: #eaf3ff;
+    color: #07539a;
+    font-size: 30px;
+}
+
+.dashboard-resume__empty-state h2 {
+    margin: 20px 0 8px;
+    color: #244362;
+    font-size: 19px;
+}
+
+.dashboard-resume__empty-state p {
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.dashboard-resume__paper [data-resume-content] > h2 {
+    margin: 0 0 34px;
+    padding-bottom: 18px;
+    border-bottom: 3px solid #07539a;
+    color: #12345b;
+    font-family: Georgia, serif;
+    font-size: clamp(30px, 4vw, 44px);
+    overflow-wrap: anywhere;
+}
+
+.dashboard-resume__section {
+    margin: 0 0 30px;
+}
+
+.dashboard-resume__section h3 {
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.dashboard-resume__section p {
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-line;
+}
+
+@media print {
+    body {
+        overflow: visible !important;
+    }
+
+    .dashboard-shell.page-curriculo {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .dashboard-shell.page-curriculo .sidebar,
+    .dashboard-shell.page-curriculo .dashboard-resume__generator,
+    .dashboard-shell.page-curriculo .dashboard-toast {
+        display: none !important;
+    }
+
+    .dashboard-shell.page-curriculo .lista-area {
+        height: auto;
+        padding: 0;
+        overflow: visible;
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__content {
+        display: block;
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__paper {
+        min-height: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .dashboard-resume__section {
+        break-inside: avoid;
+    }
+}
+
+@media (max-width: 980px) {
+    .dashboard-shell.page-curriculo {
+        grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 720px) {
+    .dashboard-shell.page-curriculo {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-shell.page-curriculo .lista-area {
+        padding: 22px 16px 30px;
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__content {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__paper {
+        min-height: 480px;
+        padding: 32px 24px;
+    }
 }
