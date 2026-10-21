@@ -88,7 +88,25 @@ $isAdmin = $usuario['tipo'] === 'adm';
                     </div>
                     <div class="arcade-canvas-wrap">
                         <canvas id="arcade-canvas" width="640" height="480" aria-label="Tela do jogo"></canvas>
-                        <div class="arcade-overlay" data-game-overlay>Escolha um jogo para começar.</div>
+                        <div class="arcade-overlay" data-game-overlay>
+                            <span data-game-overlay-message>Escolha um jogo para começar.</span>
+                            <section class="game-start-card" data-game-intro hidden aria-live="polite">
+                                <p class="portal-eyebrow">ANTES DE COMEÇAR</p>
+                                <h2 data-game-intro-title></h2>
+                                <p data-game-description></p>
+                                <p class="game-start-controls" data-game-controls></p>
+                                <button class="arcade-button game-start-button" type="button" data-start-game>Iniciar jogo</button>
+                            </section>
+                            <section class="game-over-card" data-game-over hidden aria-live="polite">
+                                <p class="portal-eyebrow">FIM DE JOGO</p>
+                                <h2>Partida encerrada</h2>
+                                <p data-game-over-score></p>
+                                <h3>Classificação — 10 melhores</h3>
+                                <p data-leaderboard-message>Carregando classificação…</p>
+                                <ol class="game-leaderboard" data-game-leaderboard></ol>
+                                <button class="arcade-button" type="button" data-game-over-restart>Jogar novamente</button>
+                            </section>
+                        </div>
                     </div>
                     <div class="arcade-live-stats" aria-live="polite">
                         <span>Pontos: <strong data-game-score>0</strong></span>

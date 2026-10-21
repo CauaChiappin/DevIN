@@ -44,6 +44,18 @@ function ensureArcadeProgressTable(mysqli $conn): void
     ');
 }
 
+function arcadeGameLimits(): array
+{
+    return [
+        'maze' => ['score_per_second' => 1200, 'seconds_per_level' => 8],
+        'snake' => ['score_per_second' => 2000, 'seconds_per_level' => 2],
+        'tetris' => ['score_per_second' => 5000, 'seconds_per_level' => 12],
+        'breakout' => ['score_per_second' => 1000, 'seconds_per_level' => 5],
+        'memory' => ['score_per_second' => 800, 'seconds_per_level' => 5],
+        'runner' => ['score_per_second' => 350, 'seconds_per_level' => 4],
+    ];
+}
+
 try {
     $usuario = requireWebAuth();
     requireArcadeUnlock($usuario);
@@ -89,9 +101,25 @@ try {
 
     requireValidCsrf();
     $action = requestString($_POST, 'acao');
+    $allowedGames = array_keys(arcadeGameLimits());
+    if ($action === 'iniciar') {
+        $game = requestString($_POST, 'jogo');
+        if (!in_array($game, $allowedGames, true)) {
+            $conn->close();
+            arcadeRespond(['sucesso' => false, 'mensagem' => 'Jogo inválido.'], 422);
+        }
+
+        $_SESSION['arcade_games'][$game] = [
+            'iniciado_em' => time(),
+            'recorde' => 0,
+            'maior_fase' => 1,
+        ];
+        $conn->close();
+        arcadeRespond(['sucesso' => true]);
+    }
+
     if ($action === 'salvar') {
         $game = requestString($_POST, 'jogo');
-        $allowedGames = ['maze', 'snake', 'tetris', 'breakout', 'memory', 'runner'];
         $score = filter_var($_POST['recorde'] ?? null, FILTER_VALIDATE_INT);
         $level = filter_var($_POST['fase'] ?? null, FILTER_VALIDATE_INT);
         if (!in_array($game, $allowedGames, true) || $score === false || $score < 0 || $score > 100000000
@@ -101,6 +129,26 @@ try {
             arcadeRespond(['sucesso' => false, 'mensagem' => 'Dados de progresso inválidos.'], 422);
         }
 
+        $gameSession = $_SESSION['arcade_games'][$game] ?? null;
+        if (!is_array($gameSession) || !isset($gameSession['iniciado_em'])) {
+            $conn->close();
+            arcadeRespond(['sucesso' => false, 'mensagem' => 'Inicie uma partida válida antes de salvar o progresso.'], 403);
+        }
+
+        $elapsed = max(1, time() - (int) $gameSession['iniciado_em']);
+        $limits = arcadeGameLimits()[$game];
+        $maximumScore = $elapsed * $limits['score_per_second'];
+        $maximumLevel = 1 + (int) floor($elapsed / $limits['seconds_per_level']);
+        if ($score > $maximumScore || $level > $maximumLevel
+            || $score < (int) ($gameSession['recorde'] ?? 0)
+            || $level < (int) ($gameSession['maior_fase'] ?? 1)
+        ) {
+            $conn->close();
+            arcadeRespond(['sucesso' => false, 'mensagem' => 'Pontuação ou fase incompatível com o tempo de partida.'], 422);
+        }
+
+        $_SESSION['arcade_games'][$game]['recorde'] = $score;
+        $_SESSION['arcade_games'][$game]['maior_fase'] = $level;
         $stmt = $conn->prepare('
             INSERT INTO progresso_jogos (perfil_tipo, perfil_id, jogo, recorde, maior_fase, ultima_atividade)
             VALUES (?, ?, ?, ?, ?, NOW())
@@ -114,6 +162,32 @@ try {
         $stmt->close();
         $conn->close();
         arcadeRespond(['sucesso' => true]);
+    }
+
+    if ($action === 'classificacao') {
+        $game = requestString($_POST, 'jogo');
+        if (!in_array($game, $allowedGames, true)) {
+            $conn->close();
+            arcadeRespond(['sucesso' => false, 'mensagem' => 'Jogo inválido.'], 422);
+        }
+
+        $stmt = $conn->prepare("
+            SELECT COALESCE(NULLIF(p.nome, ''), NULLIF(e.nome, ''), NULLIF(a.nome, ''), 'Conta removida') AS nome,
+                   gp.recorde, gp.maior_fase
+            FROM progresso_jogos gp
+            LEFT JOIN pessoa p ON gp.perfil_tipo = 'pessoa' AND p.id_pessoa = gp.perfil_id
+            LEFT JOIN empresa e ON gp.perfil_tipo = 'empresa' AND e.id_empresa = gp.perfil_id
+            LEFT JOIN administrador a ON gp.perfil_tipo = 'adm' AND a.id_administrador = gp.perfil_id
+            WHERE gp.jogo = ?
+            ORDER BY gp.recorde DESC, gp.maior_fase DESC, gp.ultima_atividade ASC
+            LIMIT 10
+        ");
+        $stmt->bind_param('s', $game);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $conn->close();
+        arcadeRespond(['sucesso' => true, 'classificacao' => $rows]);
     }
 
     if ($action === 'excluir' && $usuario['tipo'] === 'adm') {

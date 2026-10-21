@@ -13,15 +13,29 @@
     const titleEl = document.querySelector('[data-game-title]');
     const hintEl = document.querySelector('[data-game-hint]');
     const overlayEl = document.querySelector('[data-game-overlay]');
+    const overlayMessageEl = document.querySelector('[data-game-overlay-message]');
+    const gameIntroEl = document.querySelector('[data-game-intro]');
+    const gameIntroTitleEl = document.querySelector('[data-game-intro-title]');
+    const gameDescriptionEl = document.querySelector('[data-game-description]');
+    const gameControlsEl = document.querySelector('[data-game-controls]');
     const scoreEl = document.querySelector('[data-game-score]');
     const levelEl = document.querySelector('[data-game-level]');
     const bestEl = document.querySelector('[data-game-best]');
     const feedbackEl = document.querySelector('[data-arcade-feedback]');
     const restartButton = document.querySelector('[data-restart-game]');
+    const startButton = document.querySelector('[data-start-game]');
+    const gameOverEl = document.querySelector('[data-game-over]');
+    const gameOverScoreEl = document.querySelector('[data-game-over-score]');
+    const leaderboardMessageEl = document.querySelector('[data-leaderboard-message]');
+    const leaderboardEl = document.querySelector('[data-game-leaderboard]');
+    const gameOverRestartButton = document.querySelector('[data-game-over-restart]');
     const progress = {};
     let engine = null;
     let lastFrame = 0;
     let saveTimer = 0;
+    let selectedGame = null;
+    let countdownInterval = 0;
+    let countdownTimeout = 0;
 
     const colors = {
         bg: '#020617', wall: '#2563eb', line: '#60a5fa',
@@ -31,12 +45,36 @@
     };
 
     const games = {
-        maze: { title: 'Labirinto DevIN', hint: 'Setas ou WASD para mover. Cristais especiais deixam os perseguidores vulneráveis.' },
-        snake: { title: 'Snake', hint: 'Setas ou WASD para mover. Colete orbes; a cada cinco, você avança de fase.' },
-        tetris: { title: 'Blocos', hint: '← → move, ↑ gira, ↓ acelera e Espaço derruba a peça.' },
-        breakout: { title: 'Quebra-blocos', hint: 'Use ← →, A/D ou o mouse para mover a plataforma.' },
-        memory: { title: 'Memória', hint: 'Clique nas cartas para encontrar todos os pares.' },
-        runner: { title: 'Salto de Ritmo', hint: 'Pressione Espaço, ↑ ou clique para pular os obstáculos.' }
+        maze: {
+            title: 'Labirinto DevIN',
+            description: 'Explore o labirinto, colete cristais e evite os perseguidores. Cristais especiais deixam os perseguidores vulneráveis.',
+            hint: 'Controles: setas ou WASD para mover.'
+        },
+        snake: {
+            title: 'Snake',
+            description: 'Colete orbes para crescer e avançar de fase sem bater nas bordas ou em si mesmo.',
+            hint: 'Controles: setas ou WASD para mover.'
+        },
+        tetris: {
+            title: 'Blocos',
+            description: 'Encaixe as peças e complete linhas para pontuar e aumentar o nível.',
+            hint: 'Controles: ← → move, ↑ gira, ↓ acelera e Espaço derruba a peça.'
+        },
+        breakout: {
+            title: 'Quebra-blocos',
+            description: 'Rebata a bola com a plataforma, limpe os blocos e alcance novas fases.',
+            hint: 'Controles: ← →, A/D ou mouse para mover a plataforma.'
+        },
+        memory: {
+            title: 'Memória',
+            description: 'Encontre todos os pares de cartas usando o menor número de tentativas.',
+            hint: 'Controles: clique nas cartas para revelar os pares.'
+        },
+        runner: {
+            title: 'Salto de Ritmo',
+            description: 'Corra e pule obstáculos para avançar por trechos cada vez mais rápidos.',
+            hint: 'Controles: Espaço, ↑ ou clique para pular.'
+        }
     };
 
     const cellRect = (x, y, size, left, top) => ({
@@ -52,8 +90,17 @@
 
     function showOverlay(text, visible = true) {
         if (!overlayEl) return;
-        overlayEl.textContent = text;
+        if (overlayMessageEl) overlayMessageEl.textContent = text;
+        else overlayEl.textContent = text;
         overlayEl.hidden = !visible;
+    }
+
+    function clearCountdown() {
+        window.clearInterval(countdownInterval);
+        window.clearTimeout(countdownTimeout);
+        countdownInterval = 0;
+        countdownTimeout = 0;
+        if (startButton) startButton.disabled = false;
     }
 
     async function apiRequest(values, method = 'POST') {
@@ -73,32 +120,46 @@
         return data;
     }
 
-    async function saveProgress() {
-        if (!portal || !engine) return;
+    async function saveProgress(gameState = engine) {
+        if (!portal || !gameState) return;
         try {
             await apiRequest({
                 acao: 'salvar',
-                jogo: engine.game,
-                recorde: String(engine.score),
-                fase: String(engine.level)
+                jogo: gameState.game,
+                recorde: String(gameState.score),
+                fase: String(gameState.level)
             });
-            progress[engine.game] = {
-                ...(progress[engine.game] || {}),
-                recorde: Math.max(engine.score, progress[engine.game]?.recorde || 0),
-                maior_fase: Math.max(engine.level, progress[engine.game]?.maior_fase || 0)
+            progress[gameState.game] = {
+                ...(progress[gameState.game] || {}),
+                recorde: Math.max(gameState.score, progress[gameState.game]?.recorde || 0),
+                maior_fase: Math.max(gameState.level, progress[gameState.game]?.maior_fase || 0)
             };
             if (feedbackEl) feedbackEl.textContent = 'Progresso salvo.';
-            setStats();
+            if (engine === gameState) setStats();
         } catch (error) {
             if (feedbackEl) feedbackEl.textContent = error.message;
         }
     }
 
-    function gameOver() {
+    async function gameOver() {
         if (!engine || engine.ended) return;
-        engine.ended = true;
-        showOverlay(`Fim de jogo — ${engine.score} pontos. Reinicie para jogar novamente.`);
-        saveProgress();
+        const endedGame = engine;
+        endedGame.ended = true;
+        if (!portal || !gameOverEl) {
+            showOverlay(`Fim de jogo — ${endedGame.score} pontos. Reinicie para jogar novamente.`);
+            return;
+        }
+
+        restartButton.hidden = true;
+        if (gameIntroEl) gameIntroEl.hidden = true;
+        gameOverEl.hidden = false;
+        if (overlayMessageEl) overlayMessageEl.hidden = true;
+        showOverlay('', true);
+        gameOverScoreEl.textContent = `Sua pontuação: ${endedGame.score} pontos · Fase ${endedGame.level}`;
+        leaderboardMessageEl.textContent = 'Carregando classificação…';
+        leaderboardEl.replaceChildren();
+        await saveProgress(endedGame);
+        await loadLeaderboard(endedGame.game);
     }
 
     function drawBackground() {
@@ -505,6 +566,7 @@
                         }
                     } else {
                         state.lock = true;
+                        if (state.attempts >= pairCount * 3) gameOver();
                         setTimeout(() => {
                             state.first.revealed = false; card.revealed = false;
                             state.first = null; state.lock = false;
@@ -588,21 +650,87 @@
 
     const factories = { maze: mazeEngine, snake: snakeEngine, tetris: tetrisEngine, breakout: breakoutEngine, memory: memoryEngine, runner: runnerEngine };
 
-    function launch(game) {
+    async function launch(game) {
         if (!factories[game]) return;
+        clearCountdown();
+        if (portal) await apiRequest({ acao: 'iniciar', jogo: game });
         engine = factories[game](1, 0);
+        saveTimer = 0;
         if (portal) {
             titleEl.textContent = games[game].title;
             hintEl.textContent = games[game].hint;
             restartButton.hidden = false;
+            gameOverEl.hidden = true;
             const prior = progress[game];
             bestEl.textContent = String(prior?.recorde || 0);
             feedbackEl.textContent = prior ? `Maior fase registrada: ${prior.maior_fase}.` : '';
+            if (gameIntroEl) gameIntroEl.hidden = true;
             showOverlay('', false);
         } else {
             showOverlay('', false);
         }
         setStats();
+    }
+
+    function selectGame(game) {
+        if (!factories[game]) return;
+        clearCountdown();
+        selectedGame = game;
+        engine = null;
+        if (!portal) {
+            launch(game);
+            return;
+        }
+
+        const details = games[game];
+        titleEl.textContent = details.title;
+        hintEl.textContent = 'Leia as instruções e inicie quando estiver pronto.';
+        gameIntroTitleEl.textContent = details.title;
+        gameDescriptionEl.textContent = details.description;
+        gameControlsEl.textContent = details.hint;
+        gameIntroEl.hidden = false;
+        if (gameOverEl) gameOverEl.hidden = true;
+        restartButton.hidden = true;
+        scoreEl.textContent = '0';
+        levelEl.textContent = '1';
+        bestEl.textContent = String(progress[game]?.recorde || 0);
+        feedbackEl.textContent = '';
+        showOverlay('', true);
+        if (overlayMessageEl) overlayMessageEl.hidden = true;
+    }
+
+    function startSelectedGame() {
+        if (!selectedGame || !portal) return;
+        clearCountdown();
+        engine = null;
+        restartButton.hidden = true;
+        gameOverEl.hidden = true;
+        if (startButton) startButton.disabled = true;
+        gameIntroEl.hidden = true;
+        if (overlayMessageEl) overlayMessageEl.hidden = false;
+
+        let seconds = 3;
+        showOverlay(`O jogo começa em ${seconds}...`);
+        countdownInterval = window.setInterval(() => {
+            seconds -= 1;
+            if (seconds > 0) showOverlay(`O jogo começa em ${seconds}...`);
+        }, 1000);
+        countdownTimeout = window.setTimeout(() => {
+            launch(selectedGame).catch((error) => {
+                gameIntroEl.hidden = false;
+                if (overlayMessageEl) overlayMessageEl.hidden = true;
+                showOverlay('', true);
+                feedbackEl.textContent = error.message;
+                if (startButton) startButton.disabled = false;
+            });
+        }, 3000);
+    }
+
+    function restartCurrentGame() {
+        if (!engine?.game) return;
+        selectedGame = engine.game;
+        if (portal) startSelectedGame();
+        else launch(selectedGame);
     }
 
     async function loadProgress() {
@@ -612,6 +740,31 @@
             if (engine) setStats();
         } catch (error) {
             if (feedbackEl) feedbackEl.textContent = error.message;
+        }
+    }
+
+    async function loadLeaderboard(game) {
+        try {
+            const data = await apiRequest({ acao: 'classificacao', jogo: game });
+            if (!data.classificacao.length) {
+                leaderboardMessageEl.textContent = 'Ainda não há pontuações para este jogo.';
+                return;
+            }
+
+            leaderboardMessageEl.textContent = '';
+            const rows = document.createDocumentFragment();
+            data.classificacao.forEach((item, index) => {
+                const row = document.createElement('li');
+                const name = document.createElement('span');
+                const score = document.createElement('strong');
+                name.textContent = `${index + 1}. ${item.nome}`;
+                score.textContent = `${item.recorde} pts · fase ${item.maior_fase}`;
+                row.append(name, score);
+                rows.appendChild(row);
+            });
+            leaderboardEl.replaceChildren(rows);
+        } catch (error) {
+            leaderboardMessageEl.textContent = error.message;
         }
     }
 
@@ -655,16 +808,20 @@
     }
 
     document.querySelectorAll('[data-launch-game]').forEach((button) => {
-        button.addEventListener('click', () => launch(button.dataset.launchGame));
+        button.addEventListener('click', () => selectGame(button.dataset.launchGame));
     });
-    restartButton?.addEventListener('click', () => launch(engine?.game || 'maze'));
+    startButton?.addEventListener('click', startSelectedGame);
+    gameOverRestartButton?.addEventListener('click', restartCurrentGame);
+    restartButton?.addEventListener('click', restartCurrentGame);
 
     window.addEventListener('keydown', (event) => {
         if (!engine || engine.ended) return;
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(event.code)) event.preventDefault();
         engine.key(event.code);
     });
-    activeCanvas.addEventListener('pointerdown', (event) => engine?.pointer?.(event));
+    activeCanvas.addEventListener('pointerdown', (event) => {
+        if (!engine?.ended) engine?.pointer?.(event);
+    });
 
     function frame(timestamp) {
         const delta = lastFrame ? Math.min(timestamp - lastFrame, 80) : 16;
