@@ -75,7 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/login.css?v=<?= filemtime(__DIR__ . '/../css/login.css') ?>">
+    <link rel="stylesheet" href="../css/style.css?v=<?= filemtime(__DIR__ . '/../css/style.css') ?>">
     <link rel="stylesheet" href="../css/site-navigation.css">
     <title>DevIN | Login</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
@@ -84,24 +88,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
     <header class="cabecalho-site">
-        <div class="logo">
-            <a href="index.php">Dev<span>IN</span></a>
-        </div>
-        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
-            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-        </button>
-
         <nav class="navegacao">
-            <ul>
-                <li><a href="index.php#conheca">Conheça o DevIN</a></li>
-                <li><a href="index.php#etapas">Etapas</a></li>
-                <li><a href="index.php#contato">Contato</a></li>
-            </ul>
+            <a class="marca" href="index.php#inicio">Dev<span>IN</span></a>
+            <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu"
+                aria-expanded="false" data-site-menu-toggle>
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+            </button>
+            <div class="site-menu" id="site-menu" data-site-menu>
+                <div class="menu">
+                    <a href="index.php#conheca">Conheça o DevIN</a>
+                    <a href="index.php#etapas">Etapas</a>
+                    <a href="index.php#contato">Contato</a>
+                </div>
+                <div class="acoes">
+                    <a class="botao botao-branco" href="cadastro_pessoa.php">Cadastrar-se</a>
+                </div>
+            </div>
         </nav>
-
-        <div class="acoes">
-            <a class="botao-azul" href="cadastro_pessoa.php">Cadastrar-se</a>
-        </div>
     </header>
 
     <main class="conteudo-login">
