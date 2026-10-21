@@ -217,9 +217,19 @@
         const time = document.createElement('time');
         const date = new Date(message.enviada_em);
         time.dateTime = message.enviada_em;
-        time.textContent = Number.isNaN(date.getTime())
-            ? ''
-            : date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+        if (!Number.isNaN(date.getTime())) {
+            const now = new Date();
+            const yesterday = new Date(now);
+            yesterday.setDate(now.getDate() - 1);
+            const sameDay = (first, second) => first.toDateString() === second.toDateString();
+            const formattedTime = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+
+            time.textContent = sameDay(date, now)
+                ? formattedTime
+                : sameDay(date, yesterday)
+                    ? `${translate('Ontem')}, ${formattedTime}`
+                    : `${date.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' })} ${formattedTime}`;
+        }
         bubble.append(text, time);
 
         if (!message.apagada_para_todos) {

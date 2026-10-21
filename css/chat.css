@@ -405,6 +405,7 @@
     color: #667781;
     font-size: 10px;
     text-align: right;
+    white-space: nowrap;
 }
 
 .chat-bubble--deleted p {
