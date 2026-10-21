@@ -1562,7 +1562,9 @@ a {
 }
 
 #settingsModal .modal-close {
-    position: static;
+    position: absolute;
+    top: 24px;
+    right: 26px;
     display: grid;
     width: 30px;
     height: 30px;
@@ -1627,8 +1629,7 @@ a {
     align-items: center;
     gap: 14px;
     padding: 16px 26px 20px;
-    border-top: 1px solid #e7edf3;
-    background: #f7f9fc;
+    background: transparent;
 }
 
 #settingsModal .account-delete-copy strong {
@@ -1646,11 +1647,73 @@ a {
 #settingsModal .account-delete-form .btn.danger {
     min-height: 34px;
     border-radius: 8px;
-    transition: background-color .18s ease;
+    border: 1px solid #fecdd3;
+    background: #fff1f2;
+    color: #b42332;
+    box-shadow: none;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
 }
 
 #settingsModal .account-delete-form .btn.danger:hover {
-    background: #bd1825;
+    border-color: #fda4af;
+    background: #ffe4e6;
+    color: #9f1239;
+}
+
+#settingsModal .account-delete-form .btn.danger:active {
+    border-color: #e11d48;
+    background: #fecdd3;
+    color: #881337;
+    transform: scale(.96);
+}
+
+#settingsModal .account-delete-form .btn.danger:focus-visible {
+    outline: 3px solid rgba(225, 29, 72, .2);
+    outline-offset: 2px;
+}
+
+body.account-deleting .dashboard-shell {
+    animation: account-shatter .38s cubic-bezier(.55, .05, .8, .35) forwards;
+    pointer-events: none;
+}
+
+@keyframes account-shatter {
+    0% {
+        clip-path: inset(0);
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0) scale(1);
+    }
+    30% {
+        clip-path: polygon(0 0, 100% 0, 100% 35%, 83% 38%, 100% 43%, 100% 100%, 62% 100%, 58% 82%, 53% 100%, 0 100%);
+        opacity: .9;
+        transform: translate3d(-7px, 2px, 0) rotate(-.4deg);
+    }
+    68% {
+        clip-path: polygon(0 0, 24% 0, 22% 18%, 55% 13%, 58% 0, 100% 0, 100% 30%, 82% 34%, 100% 43%, 100% 100%, 65% 100%, 62% 84%, 50% 100%, 0 100%, 8% 72%, 0 64%, 18% 53%, 0 41%, 20% 31%);
+        opacity: .55;
+        transform: translate3d(12px, 12px, 0) rotate(1deg) scale(.97);
+    }
+    100% {
+        clip-path: polygon(0 0, 24% 0, 22% 18%, 55% 13%, 58% 0, 100% 0, 100% 30%, 82% 34%, 100% 43%, 100% 100%, 65% 100%, 62% 84%, 50% 100%, 0 100%, 8% 72%, 0 64%, 18% 53%, 0 41%, 20% 31%);
+        opacity: 0;
+        transform: translate3d(-12px, 28px, 0) rotate(-2deg) scale(.94);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.account-deleting .dashboard-shell {
+        animation: account-shatter-fade .15s ease-out forwards;
+    }
+
+    #settingsModal .account-delete-form .btn.danger {
+        transition: none;
+    }
+}
+
+@keyframes account-shatter-fade {
+    to {
+        opacity: 0;
+    }
 }
 
 .modal-close {

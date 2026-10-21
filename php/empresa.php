@@ -264,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'delete_account') {
             deleteProfile($tipo, (int) $_SESSION['usuario_id']);
-            header('Location: logout.php');
+            header('Location: logout.php?destino=index');
             exit;
         }
     } catch (Throwable $exception) {

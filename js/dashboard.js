@@ -199,12 +199,22 @@
         });
     });
 
-    // Confirmação de exclusão da conta.
-    document.querySelectorAll('[data-delete-account]').forEach((button) => {
-        button.addEventListener('click', (event) => {
+    const deleteForms = new Set([...document.querySelectorAll('[data-delete-account]')]
+        .map((button) => button.closest('form'))
+        .filter(Boolean));
+    deleteForms.forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            if (form.dataset.deleteConfirmed === 'true') return;
             if (!window.confirm(translate('Tem certeza? Esta ação exclui sua conta permanentemente.'))) {
                 event.preventDefault();
+                return;
             }
+
+            event.preventDefault();
+            form.closest('dialog')?.close();
+            document.body.classList.add('account-deleting');
+            const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 150 : 380;
+            window.setTimeout(() => HTMLFormElement.prototype.submit.call(form), delay);
         });
     });
 
@@ -215,6 +225,10 @@
 
     profileModal?.addEventListener('click', (event) => {
         if (event.target === profileModal) profileModal.close();
+    });
+
+    settingsModal?.addEventListener('click', (event) => {
+        if (event.target === settingsModal) settingsModal.close();
     });
 
     document.querySelectorAll('[data-open-settings]').forEach((button) => {

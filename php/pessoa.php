@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'delete_account') {
             deleteProfile($tipo, $idPessoaAtual);
-            header('Location: logout.php');
+            header('Location: logout.php?destino=index');
             exit;
         }
     } catch (Throwable $exception) {
@@ -203,23 +203,27 @@ unset($vaga);
 
 <body>
     <main class="dashboard-shell page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
-        <?php if ($mensagemSenhaAlterada !== ''): ?>
-            <p class="form-success" role="status"><?= h($mensagemSenhaAlterada) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemCadastro !== ''): ?>
-            <p class="form-success" role="status"><?= h($mensagemCadastro) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemEmailSenha !== ''): ?>
-            <p class="form-error" role="alert"><?= h($mensagemEmailSenha) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemEmailCadastro !== ''): ?>
-            <p class="form-error" role="alert"><?= h($mensagemEmailCadastro) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemCurriculoSalvo !== ''): ?>
-            <p class="form-success" role="status"><?= h($mensagemCurriculoSalvo) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemEmailCurriculo !== ''): ?>
-            <p class="form-error" role="alert"><?= h($mensagemEmailCurriculo) ?></p>
+        <?php if ($mensagemSenhaAlterada !== '' || $mensagemCadastro !== '' || $mensagemEmailSenha !== '' || $mensagemEmailCadastro !== '' || $mensagemCurriculoSalvo !== '' || $mensagemEmailCurriculo !== ''): ?>
+            <div class="dashboard-toast" role="status" aria-live="polite">
+                <?php if ($mensagemSenhaAlterada !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemSenhaAlterada) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemCadastro !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemCadastro) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemEmailSenha !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemEmailSenha) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemEmailCadastro !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemEmailCadastro) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemCurriculoSalvo !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemCurriculoSalvo) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemEmailCurriculo !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemEmailCurriculo) ?></p>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
         <aside class="sidebar">
             <div class="sidebar-topo">
@@ -492,6 +496,17 @@ unset($vaga);
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>
     <?php endif; ?>
+    <script>
+        (function () {
+            var toast = document.querySelector('.dashboard-toast');
+            if (!toast) return;
+            setTimeout(function () {
+                toast.style.transition = 'opacity .4s ease';
+                toast.style.opacity = '0';
+                setTimeout(function () { toast.remove(); }, 420);
+            }, 4000);
+        })();
+    </script>
 </body>
 
 </html>
