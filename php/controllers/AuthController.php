@@ -6,6 +6,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/security.php';
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../auth/Jwt.php';
+require_once __DIR__ . '/ProfileLanguagePreference.php';
 
 class AuthController
 {
@@ -24,6 +25,7 @@ class AuthController
         $_SESSION['usuario_nome']  = $auth['usuario']['nome'];
         $_SESSION['usuario_email'] = $auth['usuario']['email'];
         $_SESSION['usuario_tipo']  = $auth['usuario']['tipo'];
+        $_SESSION['idioma']        = $auth['usuario']['idioma'] ?? 'pt-BR';
         $_SESSION['logado']        = true;
         $_SESSION['auth_time']     = time();
         $_SESSION['last_activity'] = time();
@@ -56,8 +58,18 @@ class AuthController
         }
 
         $conn = getDatabaseConnection();
-        $usuario = self::findUserByEmail($conn, $emailValidado);
-        $conn->close();
+        try {
+            $usuario = self::findUserByEmail($conn, $emailValidado);
+            if ($usuario) {
+                $usuario['idioma'] = ProfileLanguagePreference::load(
+                    $conn,
+                    $usuario['tipo'],
+                    (int) $usuario['id']
+                );
+            }
+        } finally {
+            $conn->close();
+        }
 
         // password_verify confere a senha contra o hash sem armazenar a senha original.
         if (!$usuario || !password_verify($senha, $usuario['senha_hash'])) {
@@ -80,10 +92,11 @@ class AuthController
         return [
             'token'   => $token,
             'usuario' => [
-                'id'    => $usuario['id'],
-                'nome'  => $usuario['nome'],
-                'email' => $usuario['email'],
-                'tipo'  => $usuario['tipo'],
+                'id'     => $usuario['id'],
+                'nome'   => $usuario['nome'],
+                'email'  => $usuario['email'],
+                'tipo'   => $usuario['tipo'],
+                'idioma' => $usuario['idioma'],
             ],
         ];
     }

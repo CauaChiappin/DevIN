@@ -8,6 +8,33 @@
     const settingsModal = document.querySelector('#settingsModal');
     const profileModal = document.querySelector('#profileModal');
     const rotatingWord = document.querySelector('[data-rotating-word]');
+    const interfaceLocale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR';
+    const translate = (value) => window.DevINTranslate?.(value) ?? value;
+
+    const messagesLink = document.querySelector('[data-messages-api]');
+    const unreadBadge = messagesLink?.querySelector('[data-message-unread-badge]');
+    const refreshMessageCount = async () => {
+        if (!messagesLink || !unreadBadge) return;
+        const url = new URL(messagesLink.dataset.messagesApi, window.location.href);
+        url.searchParams.set('acao', 'nao_lidas');
+        const response = await fetch(url, { credentials: 'same-origin' });
+        const data = await response.json();
+        if (!response.ok || data.sucesso !== true) {
+            throw new Error(translate(data.mensagem || 'Não foi possível atualizar as mensagens não lidas.'));
+        }
+
+        unreadBadge.hidden = data.nao_lidas === 0;
+        unreadBadge.textContent = String(data.nao_lidas);
+        unreadBadge.setAttribute('aria-label', translate(`${data.nao_lidas} mensagens não lidas`));
+    };
+    if (messagesLink) {
+        refreshMessageCount().catch((error) => console.error(error));
+        window.setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                refreshMessageCount().catch((error) => console.error(error));
+            }
+        }, 15000);
+    }
 
     // Sidebar: preferência fica salva somente no navegador deste usuário.
     if (dashboardShell && menuToggle) {
@@ -68,9 +95,9 @@
             if (timeline) {
                 const [title, description] = item.split('::').map((part) => part.trim());
                 const heading = document.createElement('strong');
-                heading.textContent = title || 'DevIN';
+                heading.textContent = translate(title || 'DevIN');
                 row.appendChild(heading);
-                if (description) row.append(document.createTextNode(description));
+                if (description) row.append(document.createTextNode(translate(description)));
             } else {
                 row.textContent = item;
             }
@@ -84,13 +111,13 @@
         const content = detailPanel?.querySelector('[data-detail-content]');
         if (!detailPanel || !content) return;
 
-        const title = card.querySelector('h2')?.textContent?.trim() || 'Detalhes do registro';
-        const subtitle = card.querySelector('p')?.textContent?.trim() || 'Informacoes da plataforma';
+        const title = card.querySelector('h2')?.textContent?.trim() || translate('Detalhes do registro');
+        const subtitle = card.querySelector('p')?.textContent?.trim() || translate('Informacoes da plataforma');
         const name = card.dataset.detailName || card.dataset.jobTitle || title;
         const role = card.dataset.detailRole || subtitle;
         const summary = card.dataset.detailSummary || card.dataset.detail || subtitle;
-        const tags = splitItems(card.dataset.detailTags, ['DevIN', 'Informacao disponivel']);
-        const experience = splitItems(card.dataset.detailExperience, [`Registro selecionado::${role}`]);
+        const tags = splitItems(card.dataset.detailTags, ['DevIN', translate('Informacao disponivel')]).map(translate);
+        const experience = splitItems(card.dataset.detailExperience, [`${translate('Registro selecionado')}::${role}`]);
 
         detailPanel.querySelector('[data-detail-placeholder]')?.setAttribute('hidden', '');
         content.hidden = false;
@@ -103,7 +130,7 @@
         if (avatar) avatar.textContent = getInitials(name);
         if (nameElement) nameElement.textContent = name;
         if (roleElement) roleElement.textContent = role;
-        if (metaElement) metaElement.textContent = card.dataset.detailMeta || 'Disponivel na plataforma';
+        if (metaElement) metaElement.textContent = card.dataset.detailMeta || translate('Disponivel na plataforma');
         if (summaryElement) summaryElement.textContent = summary;
         renderList(detailPanel.querySelector('[data-detail-tags]'), tags);
         renderList(detailPanel.querySelector('[data-detail-experience]'), experience, true);
@@ -112,11 +139,28 @@
         const action = detailPanel.querySelector('[data-detail-action]');
         if (action) {
             action.hidden = !selectedActionTarget;
-            if (selectedActionTarget) action.textContent = card.dataset.detailActionLabel || selectedActionTarget.textContent.trim();
+            if (selectedActionTarget) action.textContent = translate(card.dataset.detailActionLabel || selectedActionTarget.textContent.trim());
+        }
+
+        const chatAction = detailPanel.querySelector('[data-start-chat]');
+        if (chatAction) {
+            chatAction.hidden = !card.dataset.chatType || !card.dataset.chatId;
+            chatAction.dataset.chatType = card.dataset.chatType || '';
+            chatAction.dataset.chatId = card.dataset.chatId || '';
         }
     };
 
     detailPanel?.querySelector('[data-detail-action]')?.addEventListener('click', () => selectedActionTarget?.click());
+    document.addEventListener('click', (event) => {
+        if (!(event.target instanceof Element)) return;
+        const button = event.target.closest('[data-start-chat]:not([hidden])');
+        if (!button || !button.dataset.chatType || !button.dataset.chatId) return;
+        const destination = new URL(window.location.href);
+        destination.searchParams.set('pagina', 'mensagens');
+        destination.searchParams.set('contato_tipo', button.dataset.chatType);
+        destination.searchParams.set('contato_id', button.dataset.chatId);
+        window.location.assign(destination);
+    });
 
     const clearDetail = () => {
         detailCards.forEach((card) => card.classList.remove('selecionado'));
@@ -127,6 +171,7 @@
         detailPanel.querySelector('[data-detail-content]')?.setAttribute('hidden', '');
         detailPanel.querySelector('[data-detail-placeholder]')?.removeAttribute('hidden');
         detailPanel.querySelector('[data-detail-action]')?.setAttribute('hidden', '');
+        detailPanel.querySelector('[data-start-chat]')?.setAttribute('hidden', '');
     };
 
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {
@@ -154,23 +199,41 @@
 
     document.querySelectorAll('[data-confirm-logout]').forEach((link) => {
         link.addEventListener('click', (event) => {
-            const message = link.dataset.confirmLogout || 'Tem certeza que deseja sair da sua conta?';
+            const message = link.dataset.confirmLogout || translate('Tem certeza que deseja sair da sua conta?');
             if (!window.confirm(message)) event.preventDefault();
         });
     });
 
-    // Confirmação de exclusão da conta.
-    document.querySelectorAll('[data-delete-account]').forEach((button) => {
-        button.addEventListener('click', (event) => {
-            if (!window.confirm('Tem certeza? Esta ação exclui sua conta permanentemente.')) {
+    const deleteForms = new Set([...document.querySelectorAll('[data-delete-account]')]
+        .map((button) => button.closest('form'))
+        .filter(Boolean));
+    deleteForms.forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            if (form.dataset.deleteConfirmed === 'true') return;
+            if (!window.confirm(translate('Tem certeza? Esta ação exclui sua conta permanentemente.'))) {
                 event.preventDefault();
+                return;
             }
+
+            event.preventDefault();
+            form.closest('dialog')?.close();
+            document.body.classList.add('account-deleting');
+            const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 150 : 380;
+            window.setTimeout(() => HTMLFormElement.prototype.submit.call(form), delay);
         });
     });
 
     // Fecha dialogs sem depender de IDs específicos.
     document.querySelectorAll('[data-close-modal]').forEach((button) => {
         button.addEventListener('click', () => button.closest('dialog')?.close());
+    });
+
+    profileModal?.addEventListener('click', (event) => {
+        if (event.target === profileModal) profileModal.close();
+    });
+
+    settingsModal?.addEventListener('click', (event) => {
+        if (event.target === settingsModal) settingsModal.close();
     });
 
     document.querySelectorAll('[data-open-settings]').forEach((button) => {
@@ -187,6 +250,14 @@
         });
     });
 
+    document.querySelectorAll('.perfil-dropdown').forEach((dropdown) => {
+        document.addEventListener('click', (event) => {
+            if (event.target instanceof Node && !dropdown.contains(event.target)) {
+                dropdown.removeAttribute('open');
+            }
+        });
+    });
+
     // Pré-visualização segura da foto.
     document.querySelectorAll(".profile-photo input[type='file']").forEach((input) => {
         input.addEventListener('change', (event) => {
@@ -196,7 +267,7 @@
             const allowed = ['image/jpeg', 'image/png', 'image/webp'];
             if (!allowed.includes(photo.type) || photo.size > 5 * 1024 * 1024) {
                 event.currentTarget.value = '';
-                window.alert('Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.');
+                window.alert(translate('Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.'));
                 return;
             }
 
@@ -205,7 +276,7 @@
                 preview.replaceChildren();
                 const image = document.createElement('img');
                 image.src = previewUrl;
-                image.alt = 'Prévia da foto de perfil';
+                image.alt = translate('Prévia da foto de perfil');
                 preview.appendChild(image);
             });
         });
@@ -214,12 +285,13 @@
     // Loading para qualquer formulário que realmente será enviado.
     document.querySelectorAll('form').forEach((form) => {
         form.addEventListener('submit', () => {
+            if (form.matches('[data-chat-form]')) return;
             const submitter = form.querySelector('button[type="submit"]:focus, button[type="submit"]:last-of-type');
             if (!submitter || submitter.dataset.loading === 'true') return;
             submitter.dataset.loading = 'true';
             submitter.disabled = true;
             submitter.dataset.originalText = submitter.textContent;
-            submitter.textContent = 'Processando...';
+            submitter.textContent = translate('Processando...');
         });
     });
 
@@ -228,7 +300,18 @@
     const filterButton = document.querySelector('[data-toggle-filters]');
     const filterMenu = document.querySelector('[data-filter-menu]');
     const filterSelect = document.querySelector('[data-card-filter]');
-    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase('pt-BR');
+    const searchEmptyState = detailCards.length
+        ? document.createElement('p')
+        : null;
+    if (searchEmptyState) {
+        searchEmptyState.className = 'empty-state search-empty-state';
+        searchEmptyState.setAttribute('role', 'status');
+        searchEmptyState.setAttribute('aria-live', 'polite');
+        searchEmptyState.textContent = translate('Nenhum resultado encontrado.');
+        searchEmptyState.hidden = true;
+        detailCards[0].before(searchEmptyState);
+    }
+    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale);
     const cardTags = (card) => String(card.dataset.detailTags || '')
         .split('|').map((tag) => tag.trim()).filter(Boolean);
     const updateCardVisibility = () => {
@@ -245,11 +328,15 @@
                 card.dataset.detailRole,
                 card.dataset.detailTags,
                 card.dataset.detailExperience,
-            ].join(' ').toLocaleLowerCase('pt-BR');
+            ].join(' ').toLocaleLowerCase(interfaceLocale);
             const matchesSearch = term === '' || searchableContent.includes(term);
             const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter);
             card.hidden = !matchesSearch || !matchesFilter;
         });
+
+        const hasActiveSearch = term !== '' || activeFilter !== '';
+        const hasVisibleCards = detailCards.some((card) => !card.hidden);
+        if (searchEmptyState) searchEmptyState.hidden = !hasActiveSearch || hasVisibleCards;
     };
 
     if (filterSelect) {
@@ -259,7 +346,7 @@
         const options = ['', ...tags].map((tag) => {
             const option = document.createElement('option');
             option.value = tag;
-            option.textContent = tag || 'Todos';
+            option.textContent = translate(tag || 'Todos');
             return option;
         });
         filterSelect.replaceChildren(...options);
@@ -273,12 +360,17 @@
     });
 
     searchInput?.addEventListener('input', updateCardVisibility);
+    updateCardVisibility();
 
     document.querySelector('.busca')?.addEventListener('submit', (event) => event.preventDefault());
 
     // Palavra animada da página institucional.
     if (rotatingWord) {
-        const words = ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'];
+        const words = document.documentElement.lang === 'en'
+            ? ['future', 'world', 'universe', 'progress', 'market', 'tomorrow']
+            : document.documentElement.lang === 'es'
+                ? ['futuro', 'mundo', 'universo', 'progreso', 'mercado', 'mañana']
+                : ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'];
         let currentWord = 0;
         let changing = false;
 
@@ -315,6 +407,13 @@
                 changing = false;
             }, 800);
         }, 3000);
+    }
+
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('configuracoes') === '1' && settingsModal?.showModal) {
+        settingsModal.showModal();
+        url.searchParams.delete('configuracoes');
+        window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
     }
 
     if (new URLSearchParams(window.location.search).get('perfil') === 'meu' && profileModal?.showModal) {

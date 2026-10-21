@@ -80,19 +80,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'update_settings') {
             updateLanguage($tipo, (int) $_SESSION['usuario_id'], requestString($_POST, 'idioma') ?: 'pt-BR');
-            header('Location: adm.php?configuracoes=1');
+            $_SESSION['settings_success'] = 'Idioma salvo com sucesso.';
+            header('Location: adm.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1');
             exit;
         }
 
         if ($action === 'delete_account') {
             deleteProfile($tipo, (int) $_SESSION['usuario_id']);
-            header('Location: logout.php');
+            header('Location: logout.php?destino=index');
             exit;
         }
     } catch (Throwable $exception) {
         error_log('Erro no dashboard ADM: ' . $exception->getMessage());
 
-        if (str_starts_with($action, 'admin_delete_')) {
+        if ($action === 'update_settings') {
+            $_SESSION['settings_error'] = 'Não foi possível salvar o idioma. Tente novamente.';
+            header('Location: adm.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1');
+        } elseif (str_starts_with($action, 'admin_delete_')) {
             $_SESSION['admin_error'] = 'Não foi possível excluir o registro. Ele pode possuir dados vinculados no sistema.';
             header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : 'candidatos'));
         } else {
@@ -116,6 +120,7 @@ if (!$perfilAtual) {
     header('Location: logout.php');
     exit;
 }
+$idiomaAtual = getProfileLanguage($tipo, $admId);
 
 $empresasAdmin = [];
 $usuariosAdmin = [];
@@ -160,7 +165,7 @@ try {
 
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="<?= h($idiomaAtual) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -192,6 +197,7 @@ try {
                     <summary class="perfil-link"><?= profileAvatar($perfilAtual, 'avatar-mini') ?><span class="menu-text">Perfil</span></summary>
                     <div class="perfil-menu">
                         <button type="button" data-open-profile><?= profileAvatar($perfilAtual, 'avatar-foto') ?><span class="menu-text">Meu perfil</span></button>
+                        <button type="button" data-open-settings><?= dashboardIcon('settings') ?><span class="menu-text">Configurações</span></button>
                     </div>
                 </details>
                 <a class="sair" href="logout.php" data-confirm-logout="Tem certeza que deseja sair da sua conta?"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>
@@ -360,7 +366,44 @@ try {
         </form>
     </dialog>
 
+    <dialog class="settings-modal" id="settingsModal" aria-labelledby="settingsModalTitle">
+        <form method="post" class="modal-form settings-form">
+            <button class="modal-close" type="button" data-close-modal aria-label="Fechar">×</button>
+            <h2 id="settingsModalTitle">Configurações</h2>
+            <p class="settings-description">Personalize o idioma da interface da sua conta.</p>
+            <?php if (!empty($_SESSION['settings_error'])): ?>
+                <p class="form-error" role="alert"><?= h($_SESSION['settings_error']); unset($_SESSION['settings_error']); ?></p>
+            <?php endif; ?>
+            <?php if (!empty($_SESSION['settings_success'])): ?>
+                <p class="form-success" role="status"><?= h($_SESSION['settings_success']); unset($_SESSION['settings_success']); ?></p>
+            <?php endif; ?>
+            <label for="settingsLanguage">Idioma
+                <select id="settingsLanguage" name="idioma">
+                    <option value="pt-BR" <?= $idiomaAtual === 'pt-BR' ? 'selected' : '' ?>>Português</option>
+                    <option value="en" <?= $idiomaAtual === 'en' ? 'selected' : '' ?>>Inglês</option>
+                    <option value="es" <?= $idiomaAtual === 'es' ? 'selected' : '' ?>>Espanhol</option>
+                </select>
+            </label>
+            <input type="hidden" name="action" value="update_settings">
+            <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+            <button class="btn primary settings-save" type="submit">Salvar alterações</button>
+        </form>
+        <section class="settings-danger-zone">
+            <div>
+                <h3>Excluir conta</h3>
+                <p>Essa ação é permanente e não pode ser desfeita.</p>
+            </div>
+            <form method="post" class="account-delete-form">
+                <input type="hidden" name="action" value="delete_account">
+                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                <button class="btn danger" type="submit" data-delete-account>Excluir conta</button>
+            </form>
+        </section>
+    </dialog>
+
     <script src="../js/site-navigation.js"></script>
-    <script src="../js/dashboard.js"></script>
+    <script src="../js/dashboard-menu.js"></script>
+    <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
+    <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
 </body>
 </html>

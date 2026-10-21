@@ -45,7 +45,7 @@ setcookie(
     ]
 );
 
-// 5. Redireciona para a página de login
-$loginUrl = defined('APP_BASE_URL') ? APP_BASE_URL . '/php/login.php' : 'login.php';
-header('Location: ' . $loginUrl);
+// 5. Redireciona dentro da pasta atual, sem aceitar URLs externas.
+$redirectPath = ($_GET['destino'] ?? '') === 'index' ? 'index.php' : 'login.php';
+header('Location: ' . $redirectPath);
 exit;

@@ -111,16 +111,50 @@ HTML;
 }
 
 /**
+ * Resolve fotos armazenadas no diretório de uploads, inclusive nomes legados.
+ */
+function profilePhotoFilePath(string $foto, ?string $tipo = null, ?int $id = null): ?string
+{
+    if (str_starts_with($foto, 'uploads/')) {
+        $caminhoRelativo = substr($foto, strlen('uploads/'));
+    } elseif (preg_match('/^(pessoa|empresa)-(\d+)-[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$/D', $foto, $matches) === 1) {
+        if (($tipo !== null && $matches[1] !== $tipo) || ($id !== null && (int) $matches[2] !== $id)) {
+            return null;
+        }
+        $caminhoRelativo = $foto;
+    } else {
+        return null;
+    }
+
+    $diretorioUploads = realpath(__DIR__ . DIRECTORY_SEPARATOR . 'uploads');
+    if ($diretorioUploads === false) {
+        return null;
+    }
+
+    $caminhoArquivo = realpath(
+        $diretorioUploads . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $caminhoRelativo)
+    );
+    $prefixoUploads = rtrim($diretorioUploads, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+    return $caminhoArquivo !== false
+        && is_file($caminhoArquivo)
+        && str_starts_with(strtolower($caminhoArquivo), strtolower($prefixoUploads))
+        ? $caminhoArquivo
+        : null;
+}
+
+/**
  * Monta o avatar reutilizado no menu, no modal e no perfil.
- * Se não houver foto válida, retorna somente o span com o fundo padrão do CSS.
+ * Se não houver foto válida, exibe as iniciais do nome como avatar padrão.
  */
 function profileAvatar(array $perfil, string $classes): string
 {
     static $finfo = null;
     $foto = $perfil['foto'] ?? '';
+    $caminhoArquivo = is_string($foto) ? profilePhotoFilePath($foto) : null;
 
     // Trata imagens armazenadas em BLOB (Bytes brutos no banco)
-    if (is_string($foto) && $foto !== '' && !str_starts_with($foto, 'uploads/')) {
+    if (is_string($foto) && $foto !== '' && $caminhoArquivo === null) {
         if ($finfo === null) {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
         }
@@ -133,16 +167,23 @@ function profileAvatar(array $perfil, string $classes): string
         }
     }
 
-    // Trata arquivos salvos em disco (na pasta uploads/)
-    // Garante a verificação correta do caminho independente se helpers.php está no /php ou na raiz
-    $baseDir = dirname(__DIR__);
-    $caminhoArquivo = $baseDir . '/' . ltrim($foto, '/');
-
-    $imagem = is_string($foto) && str_starts_with($foto, 'uploads/') && is_file($caminhoArquivo)
-        ? '<img src="' . h($foto) . '" alt="Foto de perfil">'
+    $caminhoPublico = $caminhoArquivo === null
+        ? ''
+        : (str_starts_with($foto, 'uploads/') ? $foto : 'uploads/' . basename($caminhoArquivo));
+    $imagem = $caminhoPublico !== ''
+        ? '<img src="' . h($caminhoPublico) . '" alt="Foto de perfil">'
         : '';
 
-    return '<span class="' . h($classes) . ' current-user-avatar' . ($imagem !== '' ? ' has-photo' : '') . '">' . $imagem . '</span>';
+    $partesNome = preg_split('/\s+/u', trim((string) ($perfil['nome'] ?? '')), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    $iniciais = '';
+    foreach (array_slice($partesNome, 0, 2) as $parte) {
+        if (preg_match('/^./u', $parte, $matches) === 1) {
+            $iniciais .= $matches[0];
+        }
+    }
+    $conteudo = $imagem !== '' ? $imagem : h($iniciais !== '' ? $iniciais : 'DI');
+
+    return '<span class="' . h($classes) . ' current-user-avatar' . ($imagem !== '' ? ' has-photo' : '') . '">' . $conteudo . '</span>';
 }
 
 /** 
@@ -166,6 +207,7 @@ function dashboardDetailPanel(): string
                 <p class="detail-meta" data-detail-meta>DevIN</p>
             </div>
             <button class="detail-action" type="button" data-detail-action hidden></button>
+            <button class="detail-chat-action" type="button" data-start-chat hidden>Conversar</button>
         </header>
         <section class="detail-section">
             <h3>Sobre</h3>
@@ -197,7 +239,7 @@ function dashboardIcon(string $name): string
         'building' => '<path d="M3 21h18M5 21V5h10v16M15 9h4v12M8 9h4M8 13h4M8 17h4"/>',
         'briefcase'=> '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>',
         'info'     => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
-        'settings' => '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-3v-.08A1.7 1.7 0 0 0 10.68 18.36a1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7.02 14.7 1.7 1.7 0 0 0 5.46 13.7H5v-3h.08a1.7 1.7 0 0 0 1.56-1.03A1.7 1.7 0 0 0 6.3 7.8l-.06-.06 2.12-2.12.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 11.3 4.46V4h3v.08a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.12 2.12-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03H20v3h-.08A1.7 1.7 0 0 0 18.36 14.36z"/>',
+        'settings' => '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33h-.08A1.65 1.65 0 0 0 14 20.91V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82v-.08A1.65 1.65 0 0 0 3.09 14H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.08A1.65 1.65 0 0 0 10 3.09V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1.08 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.08A1.65 1.65 0 0 0 20.91 10H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1.08z"/>',
         'logout'   => '<path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6"/>',
         'edit'     => '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>',
         'trash'    => '<path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6"/>',

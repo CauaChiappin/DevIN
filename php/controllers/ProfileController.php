@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/security.php';
 require_once __DIR__ . '/../MailerHelper.php';
+require_once __DIR__ . '/ProfileLanguagePreference.php';
 
 function profileTable(string $tipo): array
 {
@@ -38,12 +39,12 @@ function findProfile(string $tipo, int $id): ?array
     }
 }
 
-function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $currentPhoto): ?string
+function saveProfilePhoto(string $tipo, int $id, ?array $upload): ?string
 {
     /* Mantém a foto atual quando não há novo envio; quando há, verifica erro, tamanho e conteúdo
      * antes de retornar os bytes que serão gravados no perfil. */
     if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-        return $currentPhoto;
+        return null;
     }
 
     if (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK || !is_uploaded_file($upload['tmp_name'])) {
@@ -67,12 +68,18 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload, ?string $curren
         throw new InvalidArgumentException('Envie uma imagem JPG, PNG ou WEBP válida.');
     }
 
-    $contents = file_get_contents($upload['tmp_name']);
-    if ($contents === false) {
-        throw new RuntimeException('Não foi possível ler a foto enviada.');
+    $uploadDirectory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads';
+    if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0750, true) && !is_dir($uploadDirectory)) {
+        throw new RuntimeException('Não foi possível preparar o armazenamento da foto.');
     }
 
-    return $contents;
+    $fileName = 'profile-' . $tipo . '-' . $id . '-' . bin2hex(random_bytes(8)) . '.' . $extensions[$mime];
+    $filePath = $uploadDirectory . DIRECTORY_SEPARATOR . $fileName;
+    if (!move_uploaded_file($upload['tmp_name'], $filePath)) {
+        throw new RuntimeException('Não foi possível salvar a foto enviada.');
+    }
+
+    return 'uploads/' . $fileName;
 }
 
 function ensureUniqueEmail(string $tipo, int $id, string $email): void
@@ -127,11 +134,10 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     // Verifica duplicidade antes de salvar e valida foto/contato conforme o perfil.
     ensureUniqueEmail($tipo, $id, $email);
 
-    $foto = $tipo === 'adm'
-        ? null
-        : saveProfilePhoto($tipo, $id, $upload, $currentProfile['foto'] ?? null);
+    $foto = $tipo === 'adm' ? null : saveProfilePhoto($tipo, $id, $upload);
 
     $conn = getDatabaseConnection();
+    $perfilAtualizado = false;
 
     try {
         // Administradores têm apenas nome/e-mail; os demais perfis também atualizam contato e foto.
@@ -149,11 +155,17 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
                 throw new InvalidArgumentException('Informe CEP (8 dígitos) e Telefone (10 ou 11 dígitos) válidos.');
             }
 
-            $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?");
+            $stmt = $foto === null
+                ? $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ? WHERE {$idColumn} = ?")
+                : $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?");
             if (!$stmt) {
                 throw new RuntimeException('Falha ao preparar atualização do perfil.');
             }
-            $stmt->bind_param('sssssi', $nome, $email, $cep, $telefone, $foto, $id);
+            if ($foto === null) {
+                $stmt->bind_param('ssssi', $nome, $email, $cep, $telefone, $id);
+            } else {
+                $stmt->bind_param('sssssi', $nome, $email, $cep, $telefone, $foto, $id);
+            }
         }
 
         if (!$stmt->execute()) {
@@ -161,9 +173,61 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
         }
 
         $stmt->close();
+        $perfilAtualizado = true;
     } catch (mysqli_sql_exception $e) {
         error_log('Erro ao atualizar perfil: ' . $e->getMessage());
         throw new RuntimeException('Não foi possível salvar as alterações.');
+    } finally {
+        $conn->close();
+        if (!$perfilAtualizado && is_string($foto)) {
+            $uploadDirectory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads';
+            $filePath = $uploadDirectory . DIRECTORY_SEPARATOR . basename($foto);
+            if (str_starts_with($foto, 'uploads/profile-' . $tipo . '-' . $id . '-')) {
+                @unlink($filePath);
+            }
+        }
+    }
+}
+
+function ensureLanguagePreferencesTable(mysqli $conn): void
+{
+    static $tableEnsured = false;
+    if ($tableEnsured) {
+        return;
+    }
+
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS preferencias_dashboard (
+            perfil_tipo VARCHAR(16) NOT NULL,
+            perfil_id INT UNSIGNED NOT NULL,
+            idioma VARCHAR(5) NOT NULL DEFAULT 'pt-BR',
+            atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (perfil_tipo, perfil_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+    $tableEnsured = true;
+}
+
+function getProfileLanguage(string $tipo, int $id): string
+{
+    profileTable($tipo);
+    $conn = getDatabaseConnection();
+
+    try {
+        ensureLanguagePreferencesTable($conn);
+        $stmt = $conn->prepare('SELECT idioma FROM preferencias_dashboard WHERE perfil_tipo = ? AND perfil_id = ? LIMIT 1');
+        $stmt->bind_param('si', $tipo, $id);
+        $stmt->execute();
+        $preference = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        $idioma = (string) ($preference['idioma'] ?? 'pt-BR');
+        if (!in_array($idioma, ['pt-BR', 'en', 'es'], true)) {
+            throw new RuntimeException('O idioma salvo para o perfil é inválido.');
+        }
+
+        $_SESSION['idioma'] = $idioma;
+        return $idioma;
     } finally {
         $conn->close();
     }
@@ -171,9 +235,24 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
 
 function updateLanguage(string $tipo, int $id, string $idioma): void
 {
-    // Aceita somente idiomas suportados e guarda a preferência na sessão do navegador.
+    profileTable($tipo);
     if (!in_array($idioma, ['pt-BR', 'en', 'es'], true)) {
         throw new InvalidArgumentException('Idioma inválido.');
+    }
+
+    $conn = getDatabaseConnection();
+    try {
+        ensureLanguagePreferencesTable($conn);
+        $stmt = $conn->prepare("
+            INSERT INTO preferencias_dashboard (perfil_tipo, perfil_id, idioma)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE idioma = VALUES(idioma)
+        ");
+        $stmt->bind_param('sis', $tipo, $id, $idioma);
+        $stmt->execute();
+        $stmt->close();
+    } finally {
+        $conn->close();
     }
 
     startSecureSession();

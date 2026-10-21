@@ -16,10 +16,19 @@ $mensagemSenhaAlterada = (string) ($_SESSION['sucesso_login'] ?? '');
 $mensagemEmailSenha = (string) ($_SESSION['erro_email_senha'] ?? '');
 $mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
 $mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
-unset($_SESSION['sucesso_login'], $_SESSION['erro_email_senha'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro']);
+$mensagemCurriculoSalvo = (string) ($_SESSION['sucesso_curriculo'] ?? '');
+$mensagemEmailCurriculo = (string) ($_SESSION['erro_curriculo'] ?? '');
+unset(
+    $_SESSION['sucesso_login'],
+    $_SESSION['erro_email_senha'],
+    $_SESSION['sucesso_cadastro'],
+    $_SESSION['erro_email_cadastro'],
+    $_SESSION['sucesso_curriculo'],
+    $_SESSION['erro_curriculo']
+);
 $pagina        = requestString($_GET, 'pagina');
 
-$paginasPermitidas = ['inicio', 'vagas', 'sobre', 'perfil'];
+$paginasPermitidas = ['inicio', 'vagas', 'sobre', 'perfil', 'mensagens'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
     // Aceita apenas as seções válidas do painel do candidato.
     $pagina = 'inicio';
@@ -81,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $_SESSION['job_success'] = 'Candidatura enviada com sucesso.';
-            header('Location: pessoa.php?pagina=vagas');
+            header('Location: pessoa.php?pagina=inicio');
             exit;
         }
 
@@ -96,13 +105,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'update_settings') {
             updateLanguage($tipo, $idPessoaAtual, requestString($_POST, 'idioma') ?: 'pt-BR');
-            header('Location: pessoa.php?configuracoes=1');
+            $_SESSION['settings_success'] = 'Idioma salvo com sucesso.';
+            header('Location: pessoa.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1');
             exit;
         }
 
         if ($action === 'delete_account') {
             deleteProfile($tipo, $idPessoaAtual);
-            header('Location: logout.php');
+            header('Location: logout.php?destino=index');
             exit;
         }
     } catch (Throwable $exception) {
@@ -112,6 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? $exception->getMessage()
                 : 'Não foi possível enviar a candidatura. Tente novamente.';
             header('Location: pessoa.php?pagina=inicio');
+        } elseif ($action === 'update_settings') {
+            $_SESSION['settings_error'] = 'Não foi possível salvar o idioma. Tente novamente.';
+            header('Location: pessoa.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1');
         } else {
             $_SESSION['profile_error'] = 'Não foi possível concluir a operação. Tente novamente.';
             header('Location: pessoa.php?pagina=perfil');
@@ -131,10 +144,11 @@ if (!$perfilAtual) {
     header('Location: logout.php');
     exit;
 }
-$idiomaAtual = $_SESSION['idioma'] ?? 'pt-BR';
+$idiomaAtual = getProfileLanguage($tipo, $idPessoaAtual);
 
 $vagasDisponiveis  = [];
 $minhasCandidaturas = [];
+$vagasCandidatadas = [];
 
 try {
     $conn = getDatabaseConnection();
@@ -142,7 +156,8 @@ try {
         // Relaciona cada vaga à empresa e restringe candidaturas ao usuário autenticado.
         // Carrega vagas com seus dados de empresa para a lista de oportunidades disponíveis.
         $stmt = $conn->prepare("
-            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga, e.nome AS empresa
+            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga,
+                   e.id_empresa, e.nome AS empresa
             FROM vagas v
             INNER JOIN empresa e ON e.id_empresa = v.id_empresa
             ORDER BY v.id_vaga DESC
@@ -164,6 +179,10 @@ try {
         $stmt->execute();
         $minhasCandidaturas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
+
+        foreach ($minhasCandidaturas as $candidatura) {
+            $vagasCandidatadas[(int) $candidatura['id_vaga']] = true;
+        }
     } finally {
         $conn->close();
     }
@@ -179,7 +198,7 @@ unset($vaga);
 
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="<?= h($idiomaAtual) ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -187,21 +206,34 @@ unset($vaga);
     <title>DevIN | Dashboard Candidato</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
+    <?php if ($pagina === 'mensagens'): ?>
+        <link rel="stylesheet" href="../css/chat.css?v=<?= filemtime(__DIR__ . '/../css/chat.css') ?>">
+    <?php endif; ?>
 </head>
 
 <body>
     <main class="dashboard-shell page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
-        <?php if ($mensagemSenhaAlterada !== ''): ?>
-            <p class="form-success" role="status"><?= h($mensagemSenhaAlterada) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemCadastro !== ''): ?>
-            <p class="form-success" role="status"><?= h($mensagemCadastro) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemEmailSenha !== ''): ?>
-            <p class="form-error" role="alert"><?= h($mensagemEmailSenha) ?></p>
-        <?php endif; ?>
-        <?php if ($mensagemEmailCadastro !== ''): ?>
-            <p class="form-error" role="alert"><?= h($mensagemEmailCadastro) ?></p>
+        <?php if ($mensagemSenhaAlterada !== '' || $mensagemCadastro !== '' || $mensagemEmailSenha !== '' || $mensagemEmailCadastro !== '' || $mensagemCurriculoSalvo !== '' || $mensagemEmailCurriculo !== ''): ?>
+            <div class="dashboard-toast" role="status" aria-live="polite">
+                <?php if ($mensagemSenhaAlterada !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemSenhaAlterada) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemCadastro !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemCadastro) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemEmailSenha !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemEmailSenha) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemEmailCadastro !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemEmailCadastro) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemCurriculoSalvo !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemCurriculoSalvo) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemEmailCurriculo !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemEmailCurriculo) ?></p>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
         <aside class="sidebar">
             <div class="sidebar-topo">
@@ -219,6 +251,9 @@ unset($vaga);
                 </a>
                 <a class="<?= ativo($pagina, 'vagas') ?>" href="pessoa.php?pagina=vagas">
                     <?= dashboardIcon('briefcase') ?><span class="menu-text">Minhas Vagas</span>
+                </a>
+                <a class="<?= ativo($pagina, 'mensagens') ?>" href="pessoa.php?pagina=mensagens" data-messages-api="../php/mensagens_api.php">
+                    <?= dashboardIcon('users') ?><span class="menu-text">Mensagens</span><span class="message-unread-badge" data-message-unread-badge hidden></span>
                 </a>
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="pessoa.php?pagina=sobre">
                     <?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span>
@@ -249,7 +284,7 @@ unset($vaga);
         </aside>
 
         <section class="lista-area">
-            <?php if ($pagina !== 'sobre'): ?>
+            <?php if (!in_array($pagina, ['sobre', 'mensagens'], true)): ?>
                 <?= dashboardListHeader(
                     $pagina,
                     $pagina === 'vagas' ? 'Minhas candidaturas' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas'),
@@ -261,7 +296,50 @@ unset($vaga);
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php if ($pagina === 'sobre'): ?>
+            <?php if ($pagina === 'mensagens'): ?>
+                <section class="chat-app" data-chat-app data-api="../php/mensagens_api.php" data-csrf="<?= h(csrfToken()) ?>">
+                    <aside class="chat-contacts">
+                        <div class="chat-contacts-heading">
+                            <h1>Mensagens</h1>
+                            <span class="chat-unread-total" data-chat-unread-total hidden></span>
+                        </div>
+                        <p class="chat-notification" data-chat-notification role="status" aria-live="polite"></p>
+                        <label class="chat-search">
+                            <span class="sr-only">Buscar pessoas e empresas</span>
+                            <input type="search" data-chat-search placeholder="Buscar pessoas e empresas">
+                        </label>
+                        <p class="chat-status" data-chat-contacts-status role="status">Carregando contatos...</p>
+                        <nav class="chat-contact-list" data-chat-contacts aria-label="Contatos"></nav>
+                    </aside>
+                    <section class="chat-conversation" aria-label="Conversa">
+                        <header class="chat-conversation-header" data-chat-header>
+                            <button class="chat-back-to-contacts" type="button" data-chat-back aria-label="Voltar para contatos">←</button>
+                            <div class="chat-header-contact">
+                                <span class="chat-header-avatar" data-chat-avatar aria-hidden="true"></span>
+                                <span class="chat-header-copy">
+                                    <strong data-chat-title>Escolha alguém para conversar</strong>
+                                    <span data-chat-subtitle>Mensagens privadas entre usuários da DevIN</span>
+                                </span>
+                            </div>
+                            <details class="chat-conversation-menu">
+                                <summary data-chat-menu-toggle aria-label="Opções da conversa" aria-expanded="false">⋮</summary>
+                                <div class="chat-conversation-menu-items">
+                                    <button class="chat-delete-conversation" type="button" data-chat-delete-conversation disabled>Excluir conversa</button>
+                                </div>
+                            </details>
+                        </header>
+                        <div class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-relevant="additions text">
+                            <p class="chat-empty">Selecione um contato para iniciar ou continuar uma conversa.</p>
+                        </div>
+                        <form class="chat-composer" data-chat-form>
+                            <label class="sr-only" for="chat-message">Sua mensagem</label>
+                            <textarea id="chat-message" name="message" maxlength="2000" placeholder="Escreva uma mensagem..." required disabled data-chat-input></textarea>
+                            <button type="submit" disabled data-chat-send>Enviar</button>
+                        </form>
+                        <p class="chat-status chat-send-status" data-chat-send-status role="status"></p>
+                    </section>
+                </section>
+            <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
             <?php elseif ($pagina === 'perfil'): ?>
                 <section class="perfil-card">
@@ -307,27 +385,36 @@ unset($vaga);
                     <p class="empty-state">Ainda não há vagas publicadas.</p>
                 <?php endif; ?>
                 <?php foreach ($vagasDisponiveis as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="Vaga disponível|<?= h($vaga['empresa']) ?>" data-detail-experience="Vaga publicada::Confira os requisitos e envie sua candidatura" data-detail-action-label="Candidatar-se">
+                    <?php $jaSeCandidatou = isset($vagasCandidatadas[(int) $vaga['id_vaga']]); ?>
+                    <?php $statusVaga = $jaSeCandidatou ? 'Candidatura enviada' : 'Vaga disponível'; ?>
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
-                            <?= dashboardCardTags('Vaga disponível|' . $vaga['empresa']) ?>
+                            <?= dashboardCardTags($statusVaga . '|' . $vaga['empresa']) ?>
                         </div>
-                        <form method="post">
-                            <input type="hidden" name="action" value="apply_job">
-                            <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                            <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
-                            <button class="btn primary" type="submit" data-detail-action-target>Candidatar-se</button>
-                        </form>
+                        <div class="card-actions">
+                            <form method="post">
+                                <input type="hidden" name="action" value="apply_job">
+                                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
+                                <?php if ($jaSeCandidatou): ?>
+                                    <button class="btn applied" type="button" disabled>Candidatou-se</button>
+                                <?php else: ?>
+                                    <button class="btn primary" type="submit" data-detail-action-target>Candidatar-se</button>
+                                <?php endif; ?>
+                            </form>
+                            <button class="btn primary" type="button" data-start-chat data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">Conversar</button>
+                        </div>
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>
         </section>
 
-        <?php if ($pagina !== 'sobre' && $pagina !== 'perfil'): ?>
+        <?php if (!in_array($pagina, ['sobre', 'perfil', 'mensagens'], true)): ?>
             <?= dashboardDetailPanel() ?>
-        <?php else: ?>
+        <?php elseif ($pagina !== 'mensagens'): ?>
             <aside class="detalhe-area">
                 <?php if ($pagina === 'sobre'): ?>
                     <h2>Contato</h2>
@@ -376,31 +463,60 @@ unset($vaga);
     </dialog>
 
     <!-- Modal Configurações -->
-    <dialog class="settings-modal" id="settingsModal">
-        <form method="post" class="modal-form">
-            <button class="modal-close" value="close" aria-label="Fechar">×</button>
-            <h2>Configurações</h2>
-            <label>Idioma
-                <select name="idioma">
+    <dialog class="settings-modal" id="settingsModal" aria-labelledby="settingsModalTitle">
+        <form method="post" class="modal-form settings-form">
+            <button class="modal-close" type="button" data-close-modal aria-label="Fechar">×</button>
+            <h2 id="settingsModalTitle">Configurações</h2>
+            <p class="settings-description">Personalize o idioma da interface da sua conta.</p>
+            <?php if (!empty($_SESSION['settings_error'])): ?>
+                <p class="form-error" role="alert"><?= h($_SESSION['settings_error']); unset($_SESSION['settings_error']); ?></p>
+            <?php endif; ?>
+            <?php if (!empty($_SESSION['settings_success'])): ?>
+                <p class="form-success" role="status"><?= h($_SESSION['settings_success']); unset($_SESSION['settings_success']); ?></p>
+            <?php endif; ?>
+            <label for="settingsLanguage">Idioma
+                <select id="settingsLanguage" name="idioma">
                     <option value="pt-BR" <?= $idiomaAtual === 'pt-BR' ? 'selected' : '' ?>>Português</option>
                     <option value="en" <?= $idiomaAtual === 'en' ? 'selected' : '' ?>>Inglês</option>
                     <option value="es" <?= $idiomaAtual === 'es' ? 'selected' : '' ?>>Espanhol</option>
                 </select>
+                <small>Escolha o idioma usado na sua experiência na DevIN.</small>
             </label>
             <input type="hidden" name="action" value="update_settings">
             <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-            <button class="btn primary" type="submit">Salvar idioma</button>
+            <button class="btn primary settings-save" type="submit">Salvar alterações</button>
         </form>
-        <form method="post" class="modal-form account-delete-form">
-            <input type="hidden" name="action" value="delete_account">
-            <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-            <button class="btn danger" type="submit" data-delete-account>Excluir conta</button>
-        </form>
+        <section class="settings-danger-zone">
+            <div>
+                <h3>Excluir conta</h3>
+                <p>Essa ação é permanente e não pode ser desfeita.</p>
+            </div>
+            <form method="post" class="account-delete-form">
+                <input type="hidden" name="action" value="delete_account">
+                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                <button class="btn danger" type="submit" data-delete-account>Excluir conta</button>
+            </form>
+        </section>
     </dialog>
 
     <script src="../js/site-navigation.js"></script>
     <script src="../js/dashboard-menu.js"></script>
-    <script src="../js/dashboard.js"></script>
+    <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
+    <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
+    <?php if ($pagina === 'mensagens'): ?>
+        <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>
+    <?php endif; ?>
+    <script>
+        (function () {
+            var toast = document.querySelector('.dashboard-toast');
+            if (!toast) return;
+            setTimeout(function () {
+                toast.style.transition = 'opacity .4s ease';
+                toast.style.opacity = '0';
+                setTimeout(function () { toast.remove(); }, 420);
+            }, 4000);
+        })();
+    </script>
 </body>
 
 </html>

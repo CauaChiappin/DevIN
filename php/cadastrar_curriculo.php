@@ -36,6 +36,11 @@ $avisoSenha = implode(' ', array_filter([$mensagemSenhaAlterada, $mensagemEmailS
 // Estas mensagens são flash: a página as mostra uma vez e remove-as antes do próximo carregamento.
 unset($_SESSION['sucesso_curriculo'], $_SESSION['erro_curriculo'], $_SESSION['sucesso_cadastro'], $_SESSION['erro_email_cadastro'], $_SESSION['sucesso_login'], $_SESSION['erro_email_senha']);
 
+// Se o currículo acabou de ser salvo com sucesso, agenda o redirecionamento para pessoa.php em 2 segundos
+if ($mensagemSucesso !== '') {
+    header('Refresh: 2; url=pessoa.php');
+}
+
 /*
 |--------------------------------------------------------------------------
 | BUSCA DADOS ATUAIS DO CURRÍCULO (GET)
@@ -115,6 +120,11 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
             <div class="php-toast success-toast" role="status">
                 <?= htmlspecialchars($mensagemSucesso, ENT_QUOTES, 'UTF-8') ?>
             </div>
+            <script>
+                setTimeout(function () {
+                    window.location.href = 'pessoa.php';
+                }, 2000);
+            </script>
         <?php endif; ?>
 
         <?php if ($mensagemErro): ?>

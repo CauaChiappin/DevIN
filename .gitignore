@@ -36,5 +36,6 @@ composer.phar
 
 # XAMPP / local database exports
 *.sql
+    !sql/mensagens.sql
 *.sqlite
 *.sqlite3
