@@ -119,6 +119,34 @@
     overflow-y: auto;
 }
 
+.chat-contact-list,
+.chat-messages {
+    scrollbar-color: #b8cde0 #f7f5f0;
+    scrollbar-width: thin;
+}
+
+.chat-contact-list::-webkit-scrollbar,
+.chat-messages::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chat-contact-list::-webkit-scrollbar-track,
+.chat-messages::-webkit-scrollbar-track {
+    background: #f7f5f0;
+}
+
+.chat-contact-list::-webkit-scrollbar-thumb,
+.chat-messages::-webkit-scrollbar-thumb {
+    border: 2px solid #f7f5f0;
+    border-radius: 999px;
+    background: #b8cde0;
+}
+
+.chat-contact-list::-webkit-scrollbar-thumb:hover,
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: var(--blue);
+}
+
 .chat-contact {
     display: flex;
     min-width: 0;
