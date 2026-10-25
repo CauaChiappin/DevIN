@@ -2419,6 +2419,40 @@ body.account-deleting .dashboard-shell {
     font: inherit;
 }
 
+.dashboard-shell .compact-list-header .candidate-global-filters {
+    display: grid;
+    width: min(460px, calc(100vw - 32px));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    gap: 10px;
+}
+
+.candidate-global-filters label {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+    color: #536476;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.candidate-global-filters select,
+.candidate-global-filters input {
+    width: 100%;
+    min-width: 0;
+    max-width: none !important;
+    min-height: 36px !important;
+    padding: 0 9px;
+    border: 1px solid #d9e1e8;
+    border-radius: 6px;
+    background: #fafaf9;
+    color: #536476;
+    font: inherit;
+    font-size: 12px;
+}
+
+.candidate-global-filters .candidate-global-curriculum { grid-column: 1 / -1; }
+
 .dashboard-shell .compact-list-header .result-count {
     flex: 0 0 auto;
     padding: 5px 10px;
@@ -2591,6 +2625,13 @@ body.account-deleting .dashboard-shell {
         max-width: 100%;
         flex-wrap: wrap;
     }
+
+    .dashboard-shell .compact-list-header .candidate-global-filters {
+        width: min(420px, calc(100vw - 32px));
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .candidate-global-filters .candidate-global-curriculum { grid-column: auto; }
 
     .dashboard-shell .compact-list-header .filter-menu select {
         min-height: 40px;

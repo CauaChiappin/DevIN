@@ -21,22 +21,28 @@ function h(?string $valor): string
 /** 
  * Cabeçalho compacto compartilhado pelas listas dos dashboards.
  */
-function dashboardListHeader(string $pagina, string $titulo, string $placeholder, string $contador = ''): string
+function dashboardListHeader(string $pagina, string $titulo, string $placeholder, string $contador = '', bool $filtrosCandidatos = false): string
 {
     // Escapa textos dinâmicos antes de compor o HTML compartilhado do cabeçalho.
     $countMarkup = $contador === ''
         ? ''
         : '<span class="result-count">' . h($contador) . '</span>';
+    $candidateFilters = $filtrosCandidatos
+        ? '<label><span>Status</span><select data-card-filter aria-label="Filtrar candidatos por status"></select></label>'
+            . '<label><span>Escolaridade</span><select data-candidate-global-education aria-label="Filtrar por escolaridade"><option value="">Todos os níveis</option></select></label>'
+            . '<label class="candidate-global-curriculum"><span>Currículo</span><input type="search" data-candidate-global-curriculum placeholder="Cursos, habilidades, experiência ou idiomas"></label>'
+        : '<label><span>Filtrar por</span><select data-card-filter aria-label="Filtrar cards"></select></label>';
 
     return '<header class="dashboard-header compact-list-header">'
         . '<h1>' . h($titulo) . '</h1>'
         . '<form class="busca" method="get">'
         . '<input type="hidden" name="pagina" value="' . h($pagina) . '">'
         . '<label class="compact-search-field"><span class="sr-only">Pesquisar</span>'
-        . '<input type="search" name="q" placeholder="' . h($placeholder) . '"></label>'
+        . '<input type="search" name="q" placeholder="' . h($placeholder) . '"' . ($filtrosCandidatos ? ' data-candidate-list-search' : '') . '></label>'
         . '<button class="filter-button" type="button" data-toggle-filters aria-expanded="false">Filtros</button>'
-        . '<label class="filter-menu" data-filter-menu hidden><span>Filtrar por</span>'
-        . '<select data-card-filter aria-label="Filtrar cards"></select></label>'
+        . '<div class="filter-menu' . ($filtrosCandidatos ? ' candidate-global-filters' : '') . '" data-filter-menu hidden>'
+        . $candidateFilters
+        . '</div>'
         . '</form>'
         . $countMarkup
         . '</header>';

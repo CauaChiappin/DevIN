@@ -470,8 +470,9 @@ $talentos = [
                 <?= dashboardListHeader(
                     $pagina,
                     $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas publicadas'),
-                    'Pesquisar por nome ou habilidade...',
-                    $pagina === 'candidatos' ? count($candidatos) . ' candidatos' : ($pagina === 'inicio' ? count($empresaPosts) . ' vagas' : '')
+                    $pagina === 'candidatos' ? 'Pesquisar por nome ou e-mail...' : 'Pesquisar por nome ou habilidade...',
+                    $pagina === 'candidatos' ? count($candidatos) . ' candidatos' : ($pagina === 'inicio' ? count($empresaPosts) . ' vagas' : ''),
+                    $pagina === 'candidatos'
                 ) ?>
                 <?php if (in_array($pagina, ['inicio', 'candidatos'], true)): ?>
                     <p class="list-section-label">Disponíveis</p>
