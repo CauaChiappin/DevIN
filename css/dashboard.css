@@ -2429,13 +2429,64 @@ body.account-deleting .dashboard-shell {
 @media (max-width: 720px) {
     .dashboard-shell .compact-list-header {
         flex-wrap: wrap;
-        min-height: 76px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        align-items: center;
+        min-height: 0;
+        gap: 10px 8px;
+        padding-top: 12px;
+        padding-bottom: 12px;
     }
 
-    .dashboard-shell .compact-list-header .busca { order: 3; flex-basis: 100%; }
-    .dashboard-shell .compact-list-header .compact-search-field { max-width: none; }
+    .dashboard-shell .compact-list-header h1 {
+        min-width: 0;
+        flex: 1 1 auto;
+        font-size: clamp(17px, 5vw, 20px);
+        line-height: 1.2;
+    }
+
+    .dashboard-shell .compact-list-header .busca {
+        order: 3;
+        flex: 0 0 100%;
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .dashboard-shell .compact-list-header .compact-search-field {
+        width: 0;
+        min-width: 0;
+        max-width: none;
+        height: 44px;
+        flex: 1 1 auto;
+        padding-right: 10px;
+        padding-left: 36px;
+        border-radius: 10px;
+    }
+
+    .dashboard-shell .compact-list-header .busca input {
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        font-size: 16px;
+    }
+
+    .dashboard-shell .compact-list-header .filter-button {
+        min-width: 84px;
+        height: 44px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .dashboard-shell .compact-list-header .filter-menu {
+        top: 50px;
+        right: 0;
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-shell .compact-list-header .filter-menu select {
+        min-height: 40px;
+        max-width: min(190px, 55vw);
+    }
+
     .dashboard-shell .compact-list-header .result-count { margin-left: auto; }
     .dashboard-shell .item-card { grid-template-columns: 36px minmax(0, 1fr); }
     .dashboard-shell .item-card > .card-actions,

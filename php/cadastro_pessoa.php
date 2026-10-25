@@ -207,11 +207,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Criar Conta Pessoal</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-    <link rel="stylesheet" href="../css/cadastrostyle.css">
+    <link rel="stylesheet" href="../css/cadastrostyle.css?v=<?= filemtime(__DIR__ . '/../css/cadastrostyle.css') ?>">
     <link rel="stylesheet" href="../css/site-navigation.css">
 </head>
 
-<body>
+<body class="cadastro-page">
 
 <div class="main-container">
 
@@ -257,22 +257,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-column">
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-1">
                         <label for="nome">Nome:*</label>
                         <input type="text" id="nome" name="nome" required value="<?= htmlspecialchars(requestString($_POST, 'nome'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-3">
                         <label for="cpf">CPF:*</label>
                         <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required value="<?= htmlspecialchars(requestString($_POST, 'cpf'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-5">
                         <label for="cep">CEP:*</label>
                         <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required value="<?= htmlspecialchars(requestString($_POST, 'cep'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group password-wrapper">
+                    <div class="input-group password-wrapper mobile-order-8">
                         <label for="confirme_senha">Confirme a sua senha:*</label>
                         <div class="input-icon-container">
                             <input type="password" id="confirme_senha" name="confirme_senha" required minlength="8" autocomplete="new-password">
@@ -285,17 +285,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-column">
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-2">
                         <label for="email">E-mail:*</label>
                         <input type="email" id="email" name="email" required autocomplete="email" value="<?= htmlspecialchars(requestString($_POST, 'email'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-4">
                         <label for="telefone">Telefone:*</label>
                         <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required value="<?= htmlspecialchars(requestString($_POST, 'telefone'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group password-wrapper">
+                    <div class="input-group password-wrapper mobile-order-6">
                         <label for="senha">Senha:*</label>
                         <div class="input-icon-container">
                             <input type="password" id="senha" name="senha" required minlength="8" autocomplete="new-password">
@@ -303,7 +303,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <div class="password-requirements">
+                    <div class="password-requirements mobile-order-7">
                         <div class="requirement-item req-invalid" id="req-length">
                             <span class="req-icon">⚠️</span> No mínimo 8 caracteres
                         </div>

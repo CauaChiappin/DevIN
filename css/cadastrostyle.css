@@ -411,6 +411,54 @@ body {
     cursor: default !important;
 }
 
+/* Mantém os formulários de cadastro em duas metades sem rolagem interna no desktop. */
+@media (min-width: 951px) {
+    body.cadastro-page {
+        align-items: stretch;
+        justify-content: flex-start;
+        overflow: hidden;
+    }
+
+    .cadastro-page .main-container {
+        width: 100%;
+        min-height: 0;
+    }
+
+    .cadastro-page .left-side {
+        flex: 0 0 56%;
+        max-width: 56%;
+        border-radius: 0 40px 40px 0;
+        padding: clamp(16px, 3.2vh, 28px) clamp(24px, 3vw, 48px);
+        overflow: hidden;
+    }
+
+    .cadastro-page .right-side {
+        flex: 0 0 44%;
+        min-width: 0;
+    }
+
+    .cadastro-page .toggle-container {
+        margin-block: 12px;
+    }
+
+    .cadastro-page .form-columns {
+        gap: 24px;
+    }
+
+    .cadastro-page .form-column {
+        gap: 12px;
+    }
+
+    .cadastro-page .form-footer-action {
+        margin-top: 16px;
+        gap: 10px;
+    }
+
+    .cadastro-page .page-footer {
+        margin-top: 12px;
+    }
+}
+
 /* ==========================================
    RESPONSIVIDADE (MEDIA QUERIES)
    ========================================== */
@@ -418,14 +466,46 @@ body {
     .main-container { flex-direction: column; height: auto; overflow: visible; }
     .right-side { display: none; }
     .left-side { border-radius: 0; padding: 32px 20px; min-height: 100vh; max-height: none; }
-    .form-columns { flex-direction: column; gap: 18px; }
+    .form-columns { flex-direction: column; gap: 14px; }
+    .form-column { display: contents; }
+    .register-form { flex: initial; }
+    .mobile-order-1 { order: 1; }
+    .mobile-order-2 { order: 2; }
+    .mobile-order-3 { order: 3; }
+    .mobile-order-4 { order: 4; }
+    .mobile-order-5 { order: 5; }
+    .mobile-order-6 { order: 6; }
+    .mobile-order-7 { order: 7; }
+    .mobile-order-8 { order: 8; }
     .toggle-container { gap: 8px; }
     .toggle-btn { padding: 10px 18px; }
     .btn-submit { width: 100%; padding-inline: 20px; }
 }
 
 @media (max-width: 720px) {
-    .left-side { min-height: 100vh; padding: 22px 16px 28px; }
+    .left-side {
+        min-height: 100vh;
+        min-height: 100svh;
+        padding: 22px 16px 28px;
+        justify-content: flex-start;
+        gap: 16px;
+    }
+    .toggle-container { margin: 0; }
+    .page-title { margin-bottom: 0; }
+    .form-columns { gap: 14px; }
+    .input-group input,
+    .input-group select { min-height: 48px; font-size: 16px; }
+    .toggle-btn { min-height: 44px; display: inline-flex; align-items: center; }
+    .form-footer-action { margin-top: 18px; gap: 12px; }
+    .btn-submit { min-height: 48px; }
+    .toggle-password-eye {
+        width: 44px;
+        height: 44px;
+        padding: 10px;
+        right: 4px;
+        object-fit: contain;
+    }
+    .input-icon-container input { padding-right: 56px; }
     .cadastro-header { position: relative; }
     .cadastro-header .site-menu-toggle { display: inline-flex; }
     .cadastro-header .site-menu {

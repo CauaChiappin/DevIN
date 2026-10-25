@@ -3,7 +3,19 @@ TCC - Alcina Dantas Feijão 2026. Site com o propósito de ajudar as pessoas que
 
 ## E-mails e lembrete de currículo
 
-Configure `DEVIN_SMTP_HOST`, `DEVIN_SMTP_PORT`, `DEVIN_SMTP_ENCRYPTION`, `DEVIN_SMTP_USERNAME`, `DEVIN_SMTP_PASSWORD` e `DEVIN_SMTP_FROM_EMAIL` no `.env` local. O arquivo `.env` não deve ser publicado.
+Preencha o `.env` na raiz do projeto com os dados do seu provedor SMTP. Um modelo também está disponível em `.env.example`. As variáveis usadas são:
+
+- `DEVIN_SMTP_HOST`: servidor SMTP (Gmail: `smtp.gmail.com`; Outlook/Microsoft 365: `smtp.office365.com`).
+- `DEVIN_SMTP_PORT`: porta SMTP; normalmente `587` para TLS ou `465` para SSL.
+- `DEVIN_SMTP_ENCRYPTION`: `tls` para porta `587` ou `ssl` para porta `465`.
+- `DEVIN_SMTP_USERNAME`: usuário SMTP, geralmente o e-mail completo.
+- `DEVIN_SMTP_PASSWORD`: senha SMTP. No Gmail, use uma senha de app criada na Conta Google com a verificação em duas etapas ativada; não use sua senha normal.
+- `DEVIN_SMTP_FROM_EMAIL`: endereço de remetente autorizado pelo provedor, normalmente igual ao usuário SMTP.
+- `DEVIN_SMTP_FROM_NAME`: nome exibido como remetente (opcional; o padrão é `Plataforma DevIN`).
+
+O endereço de remetente precisa ser permitido pelo serviço SMTP. O `.env` real é ignorado pelo Git e não deve ser publicado nem compartilhado; mantenha credenciais apenas nele.
+
+O `.env` também contém a URL local (`APP_URL`) e as credenciais do MySQL (`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`). Os valores iniciais correspondem à configuração comum do XAMPP; ajuste-os se o banco ou a porta forem diferentes. `APP_ENV=development` ativa o modo local. Em produção, altere para `APP_ENV=production` e configure `DEVIN_JWT_SECRET` com uma chave aleatória forte e privada; não reutilize a chave de desenvolvimento.
 
 Os e-mails de confirmação e recuperação são enviados durante a solicitação HTTP, com timeout SMTP de 8 segundos. A tela bloqueia reenvios do mesmo formulário enquanto a solicitação está em andamento.
 
