@@ -2660,8 +2660,6 @@ body.account-deleting .dashboard-shell {
         overflow: visible;
     }
 
-    /* A página institucional ocupa toda a largura em telas estreitas. */
-    .page-sobre .sidebar { display: none; }
     .dashboard-shell.page-sobre .lista-area { grid-column: 1; padding: 22px 16px 30px !important; }
     .page-sobre .sobre-bottom-section {
         grid-template-columns: 1fr;
@@ -2711,6 +2709,12 @@ body.account-deleting .dashboard-shell {
 
     .dashboard-shell {
         grid-template-columns: minmax(0, 1fr);
+        min-height: 100vh;
+        height: auto;
+        overflow: visible;
+    }
+
+    .dashboard-shell.page-sobre {
         min-height: 100vh;
         height: auto;
         overflow: visible;
@@ -2774,6 +2778,18 @@ body.account-deleting .dashboard-shell {
     .lista-area { min-height: auto; padding: 22px 16px 30px; }
     .detalhe-area { min-height: 240px; padding: 24px 16px; }
     .item-card, .post-card, .sobre-cards, .fundadores { min-width: 0; }
+
+    .dashboard-shell.page-sobre .lista-area {
+        height: auto;
+        min-height: 0;
+        padding: 22px 16px 30px !important;
+    }
+
+    .page-sobre .sobre-container { height: auto; }
+    .page-sobre .sobre-top-section { flex: 0 0 auto; }
+    .page-sobre .sobre-cards { flex-direction: column; }
+    .page-sobre .sobre-bottom-section { flex: 0 0 auto; }
+    .page-sobre .sobre-subtitle br { display: none; }
 }
 
 /* =========================================================
