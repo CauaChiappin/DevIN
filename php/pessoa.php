@@ -157,9 +157,20 @@ try {
         // Carrega vagas com seus dados de empresa para a lista de oportunidades disponíveis.
         $stmt = $conn->prepare("
             SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga,
-                   e.id_empresa, e.nome AS empresa
+                   e.id_empresa, e.nome AS empresa,
+                   COALESCE(contagens.aprovadas, 0) AS candidaturas_aprovadas,
+                   COALESCE(contagens.recusadas, 0) AS candidaturas_recusadas,
+                   COALESCE(contagens.em_analise, 0) AS candidaturas_em_analise
             FROM vagas v
             INNER JOIN empresa e ON e.id_empresa = v.id_empresa
+            LEFT JOIN (
+                SELECT id_vaga,
+                       COUNT(CASE WHEN status = 'aprovado' THEN 1 END) AS aprovadas,
+                       COUNT(CASE WHEN status = 'recusado' THEN 1 END) AS recusadas,
+                       COUNT(CASE WHEN status NOT IN ('aprovado', 'recusado') THEN 1 END) AS em_analise
+                FROM candidatura
+                GROUP BY id_vaga
+            ) contagens ON contagens.id_vaga = v.id_vaga
             ORDER BY v.id_vaga DESC
         ");
         $stmt->execute();
@@ -387,7 +398,7 @@ unset($vaga);
                 <?php foreach ($vagasDisponiveis as $vaga): ?>
                     <?php $jaSeCandidatou = isset($vagasCandidatadas[(int) $vaga['id_vaga']]); ?>
                     <?php $statusVaga = $jaSeCandidatou ? 'Candidatura enviada' : 'Vaga disponível'; ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h(($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') . '|Aprovadas::' . (int) $vaga['candidaturas_aprovadas'] . '|Recusadas::' . (int) $vaga['candidaturas_recusadas'] . '|Em análise::' . (int) $vaga['candidaturas_em_analise']) ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>

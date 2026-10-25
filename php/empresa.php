@@ -347,13 +347,17 @@ try {
             SELECT
                 c.id_candidatura,
                 p.id_pessoa,
+                v.id_vaga,
                 c.status,
                 c.data_candidatura,
                 p.nome,
                 p.email,
                 v.titulo AS vaga,
+                COALESCE(cu.nome_social, "") AS nome_social,
+                COALESCE(cu.grau_de_escolaridade, "") AS grau_de_escolaridade,
                 COALESCE(cu.cursos, "") AS cursos,
-                COALESCE(cu.experiencia, "") AS experiencia
+                COALESCE(cu.experiencia, "") AS experiencia,
+                COALESCE(cu.idiomas, "") AS idiomas
             FROM candidatura c
             INNER JOIN vagas v ON v.id_vaga = c.id_vaga
             INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
@@ -389,6 +393,11 @@ foreach ($candidatos as &$candidato) {
         . '. Experiência: ' . ($candidato['experiencia'] !== '' ? $candidato['experiencia'] : 'não informada');
 }
 unset($candidato);
+
+$candidatosPorVaga = [];
+foreach ($candidatos as $candidato) {
+    $candidatosPorVaga[(int) $candidato['id_vaga']][] = $candidato;
+}
 
 $talentos = [
     ['nome' => 'Marina Santos', 'resumo' => 'React, CSS e comunicação clara.', 'detalhe' => 'Marina tem interesse em vagas de front-end júnior e disponibilidade para conversar esta semana.'],
@@ -536,9 +545,6 @@ $talentos = [
                     <p class="form-success"><?= h($_SESSION['candidate_success']); unset($_SESSION['candidate_success']); ?></p>
                 <?php endif; ?>
 
-                <?php if (!$candidatos): ?>
-                    <p class="empty-state">Ainda não há candidaturas para as suas vagas.</p>
-                <?php endif; ?>
                 <?php if (APP_ENV === 'development'): ?>
                 <form method="post" class="test-candidates-form">
                     <input type="hidden" name="action" value="create_test_candidates">
@@ -547,40 +553,88 @@ $talentos = [
                     <small>Cria ou reinicia dois candidatos pendentes na primeira vaga da empresa.</small>
                 </form>
                 <?php endif; ?>
-                <?php foreach ($candidatos as $candidato): ?>
-                    <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-detail-action-label="Aprovar candidato" data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">
-                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
-                        <div>
-                            <h2><?= h($candidato['nome']) ?></h2>
-                            <p><?= h($candidato['resumo']) ?></p>
-                            <?= dashboardCardTags('Candidatura|' . ucfirst($candidato['status'])) ?>
-                        </div>
-                        <div class="acoes-card">
-                            <button class="btn primary" type="button" data-start-chat data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">Conversar</button>
-                            <?php if ($candidato['status'] === 'pendente'): ?>
-                                <div class="candidate-actions">
-                                    <form method="post">
-                                        <input type="hidden" name="action" value="update_application_status">
-                                        <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                                        <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
-                                        <input type="hidden" name="status" value="recusado">
-                                        <button class="btn danger" type="submit">Não se encaixa</button>
-                                    </form>
-                                    <form method="post">
-                                        <input type="hidden" name="action" value="update_application_status">
-                                        <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                                        <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
-                                        <input type="hidden" name="status" value="aprovado">
-                                        <button class="btn success" type="submit" data-detail-action-target>Aprovar</button>
-                                    </form>
+                <?php if (!$empresaPosts): ?>
+                    <p class="empty-state">Você ainda não publicou nenhuma vaga.</p>
+                <?php endif; ?>
+                <?php foreach ($empresaPosts as $post): ?>
+                    <?php $candidatosDaVaga = $candidatosPorVaga[(int) $post['id_vaga']] ?? []; ?>
+                    <?php
+                    $escolaridades = array_values(array_unique(array_filter(array_column($candidatosDaVaga, 'grau_de_escolaridade'))));
+                    sort($escolaridades, SORT_NATURAL | SORT_FLAG_CASE);
+                    ?>
+                    <details class="candidate-vacancy-panel">
+                        <summary>
+                            <span class="candidate-vacancy-info">
+                                <strong><?= h($post['titulo']) ?></strong>
+                                <small><?= h($post['resumo']) ?></small>
+                            </span>
+                            <span class="candidate-vacancy-count">
+                                <?= count($candidatosDaVaga) ?> <?= count($candidatosDaVaga) === 1 ? 'candidato' : 'candidatos' ?>
+                            </span>
+                        </summary>
+                        <div class="candidate-vacancy-list">
+                            <?php if ($candidatosDaVaga): ?>
+                                <div class="candidate-filters">
+                                    <label>
+                                        <span>Pesquisar por nome ou e-mail</span>
+                                        <input type="search" data-candidate-search placeholder="Nome ou e-mail">
+                                    </label>
+                                    <label>
+                                        <span>Escolaridade</span>
+                                        <select data-candidate-education>
+                                            <option value="">Todos os níveis</option>
+                                            <?php foreach ($escolaridades as $escolaridade): ?>
+                                                <option value="<?= h($escolaridade) ?>"><?= h($escolaridade) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </label>
+                                    <label class="candidate-curriculum-filter">
+                                        <span>Filtrar pelo currículo</span>
+                                        <input type="search" data-candidate-curriculum placeholder="Cursos, habilidades, experiência ou idiomas">
+                                    </label>
                                 </div>
-                            <?php else: ?>
-                                <span class="status <?= $candidato['status'] === 'aprovado' ? 'aprovado' : 'reprovado' ?>">
-                                    <?= h(ucfirst($candidato['status'])) ?>
-                                </span>
+                                <p class="candidate-filter-empty" data-candidate-filter-empty role="status" hidden>Nenhum candidato corresponde aos filtros.</p>
                             <?php endif; ?>
+                            <?php if (!$candidatosDaVaga): ?>
+                                <p class="empty-state">Ainda não há candidatos para esta vaga.</p>
+                            <?php endif; ?>
+                            <?php foreach ($candidatosDaVaga as $candidato): ?>
+                                <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-candidate-name-email="<?= h($candidato['nome'] . ' ' . $candidato['email'] . ' ' . $candidato['nome_social']) ?>" data-candidate-education="<?= h($candidato['grau_de_escolaridade']) ?>" data-candidate-curriculum="<?= h(implode(' ', [$candidato['grau_de_escolaridade'], $candidato['cursos'], $candidato['experiencia'], $candidato['idiomas']])) ?>" data-detail-action-label="Aprovar candidato" data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">
+                                    <span class="card-avatar"><?= dashboardIcon('user') ?></span>
+                                    <div>
+                                        <h2><?= h($candidato['nome']) ?></h2>
+                                        <p><?= h($candidato['resumo']) ?></p>
+                                        <?= dashboardCardTags('Candidatura|' . ucfirst($candidato['status'])) ?>
+                                    </div>
+                                    <div class="acoes-card">
+                                        <button class="btn primary" type="button" data-start-chat data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">Conversar</button>
+                                        <?php if ($candidato['status'] === 'pendente'): ?>
+                                            <div class="candidate-actions">
+                                                <form method="post">
+                                                    <input type="hidden" name="action" value="update_application_status">
+                                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                                    <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
+                                                    <input type="hidden" name="status" value="recusado">
+                                                    <button class="btn danger" type="submit">Não se encaixa</button>
+                                                </form>
+                                                <form method="post">
+                                                    <input type="hidden" name="action" value="update_application_status">
+                                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                                    <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
+                                                    <input type="hidden" name="status" value="aprovado">
+                                                    <button class="btn success" type="submit" data-detail-action-target>Aprovar</button>
+                                                </form>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="status <?= $candidato['status'] === 'aprovado' ? 'aprovado' : 'reprovado' ?>">
+                                                <?= h(ucfirst($candidato['status'])) ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
                         </div>
-                    </article>
+                    </details>
                 <?php endforeach; ?>
 
             <?php else: ?>

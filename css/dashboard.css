@@ -1027,6 +1027,114 @@ a {
     gap: 12px;
 }
 
+.candidate-vacancy-panel {
+    width: 100%;
+    margin: 0 0 12px;
+    overflow: hidden;
+    border: 1px solid #d8e3ed;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.candidate-vacancy-panel > summary {
+    display: flex;
+    min-height: 72px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    color: #24394b;
+    cursor: pointer;
+    list-style: none;
+}
+
+.candidate-vacancy-panel > summary::-webkit-details-marker { display: none; }
+
+.candidate-vacancy-panel > summary::after {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 auto;
+    border-right: 2px solid #62778a;
+    border-bottom: 2px solid #62778a;
+    content: "";
+    transform: rotate(45deg) translateY(-2px);
+    transition: transform .18s ease;
+}
+
+.candidate-vacancy-panel[open] > summary::after {
+    transform: rotate(225deg) translate(-2px, -1px);
+}
+
+.candidate-vacancy-panel > summary:hover { background: #f7faff; }
+
+.candidate-vacancy-info { display: grid; min-width: 0; gap: 4px; }
+.candidate-vacancy-info strong { overflow-wrap: anywhere; font-size: 15px; }
+.candidate-vacancy-info small { color: #778595; font-size: 12px; }
+
+.candidate-vacancy-count {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eaf3ff;
+    color: #0b67b2;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.candidate-vacancy-list {
+    padding: 0 14px 14px;
+    border-top: 1px solid #e5edf4;
+}
+
+.candidate-filters {
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) minmax(150px, .8fr) minmax(220px, 1.4fr);
+    gap: 10px;
+    padding: 14px 0 2px;
+}
+
+.candidate-filters label {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+    color: #536476;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.candidate-filters input,
+.candidate-filters select {
+    width: 100%;
+    min-width: 0;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #d5e0ea;
+    border-radius: 7px;
+    background: #fff;
+    color: #24394b;
+    font: inherit;
+    font-size: 12px;
+}
+
+.candidate-filters input:focus,
+.candidate-filters select:focus {
+    border-color: #1976d2;
+    outline: 2px solid rgba(25, 118, 210, .15);
+}
+
+.candidate-filter-empty {
+    margin: 12px 0 0;
+    color: #778595;
+    font-size: 13px;
+    text-align: center;
+}
+
+.candidate-vacancy-list .item-card {
+    width: 100%;
+    margin: 12px 0 0;
+    background: #fbfdff;
+}
+
 /* Aviso exibido quando a empresa ainda nao recebeu candidaturas. */
 .empty-state {
     margin: 28px auto;
@@ -2838,6 +2946,12 @@ body.account-deleting .dashboard-shell {
         gap: 14px;
         padding: 16px 20px 20px;
     }
+
+    .candidate-vacancy-panel > summary { gap: 10px; padding: 12px; }
+    .candidate-vacancy-list { padding: 0 8px 8px; }
+    .candidate-filters { grid-template-columns: minmax(0, 1fr); }
+    .candidate-vacancy-list .item-card { grid-template-columns: 30px minmax(0, 1fr); }
+    .candidate-vacancy-list .item-card > .acoes-card { grid-column: 2; justify-self: start; flex-wrap: wrap; }
 }
 
 .form-error,

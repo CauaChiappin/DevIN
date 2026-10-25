@@ -311,7 +311,9 @@
         searchEmptyState.hidden = true;
         detailCards[0].before(searchEmptyState);
     }
-    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale);
+    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale)
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const candidatePanels = [...document.querySelectorAll('.candidate-vacancy-panel')];
     const cardTags = (card) => String(card.dataset.detailTags || '')
         .split('|').map((tag) => tag.trim()).filter(Boolean);
     const updateCardVisibility = () => {
@@ -328,16 +330,45 @@
                 card.dataset.detailRole,
                 card.dataset.detailTags,
                 card.dataset.detailExperience,
-            ].join(' ').toLocaleLowerCase(interfaceLocale);
-            const matchesSearch = term === '' || searchableContent.includes(term);
+                card.dataset.candidateNameEmail,
+                card.dataset.candidateCurriculum,
+            ].join(' ');
+            const matchesSearch = term === '' || normalizeSearch(searchableContent).includes(term);
             const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter);
-            card.hidden = !matchesSearch || !matchesFilter;
+            const panel = card.closest('.candidate-vacancy-panel');
+            const candidateTerm = normalizeSearch(panel?.querySelector('[data-candidate-search]')?.value);
+            const curriculumTerm = normalizeSearch(panel?.querySelector('[data-candidate-curriculum]')?.value);
+            const education = normalizeSearch(panel?.querySelector('[data-candidate-education]')?.value);
+            const matchesCandidateSearch = candidateTerm === ''
+                || normalizeSearch(card.dataset.candidateNameEmail).includes(candidateTerm);
+            const matchesCurriculum = curriculumTerm === ''
+                || normalizeSearch(card.dataset.candidateCurriculum).includes(curriculumTerm);
+            const matchesEducation = education === ''
+                || normalizeSearch(card.dataset.candidateEducation) === education;
+            card.hidden = !matchesSearch || !matchesFilter
+                || !matchesCandidateSearch || !matchesCurriculum || !matchesEducation;
         });
 
         const hasActiveSearch = term !== '' || activeFilter !== '';
         const hasVisibleCards = detailCards.some((card) => !card.hidden);
         if (searchEmptyState) searchEmptyState.hidden = !hasActiveSearch || hasVisibleCards;
+        candidatePanels.forEach((panel) => {
+            const candidateCards = [...panel.querySelectorAll('.item-card[data-candidate-name-email]')];
+            const localSearch = normalizeSearch(panel.querySelector('[data-candidate-search]')?.value);
+            const curriculumSearch = normalizeSearch(panel.querySelector('[data-candidate-curriculum]')?.value);
+            const education = normalizeSearch(panel.querySelector('[data-candidate-education]')?.value);
+            const hasLocalFilter = localSearch !== '' || curriculumSearch !== '' || education !== '';
+            const hasVisibleCandidates = candidateCards.some((card) => !card.hidden);
+            const emptyState = panel.querySelector('[data-candidate-filter-empty]');
+            if (emptyState) emptyState.hidden = !hasLocalFilter || hasVisibleCandidates;
+        });
     };
+
+    candidatePanels.forEach((panel) => {
+        panel.querySelectorAll('input[data-candidate-search], input[data-candidate-curriculum]')
+            .forEach((input) => input.addEventListener('input', updateCardVisibility));
+        panel.querySelector('[data-candidate-education]')?.addEventListener('change', updateCardVisibility);
+    });
 
     if (filterSelect) {
         // Monta as opções de filtro com as tags existentes nos cartões renderizados.
