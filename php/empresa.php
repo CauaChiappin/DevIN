@@ -558,13 +558,22 @@ $talentos = [
                         <div class="acoes-card">
                             <button class="btn primary" type="button" data-start-chat data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">Conversar</button>
                             <?php if ($candidato['status'] === 'pendente'): ?>
-                                <form method="post" class="candidate-actions">
-                                    <input type="hidden" name="action" value="update_application_status">
-                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                                    <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
-                                    <button class="btn danger" name="status" value="recusado" type="submit">Não se encaixa</button>
-                                    <button class="btn success" name="status" value="aprovado" type="submit" data-detail-action-target>Aprovar</button>
-                                </form>
+                                <div class="candidate-actions">
+                                    <form method="post">
+                                        <input type="hidden" name="action" value="update_application_status">
+                                        <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                        <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
+                                        <input type="hidden" name="status" value="recusado">
+                                        <button class="btn danger" type="submit">Não se encaixa</button>
+                                    </form>
+                                    <form method="post">
+                                        <input type="hidden" name="action" value="update_application_status">
+                                        <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                        <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
+                                        <input type="hidden" name="status" value="aprovado">
+                                        <button class="btn success" type="submit" data-detail-action-target>Aprovar</button>
+                                    </form>
+                                </div>
                             <?php else: ?>
                                 <span class="status <?= $candidato['status'] === 'aprovado' ? 'aprovado' : 'reprovado' ?>">
                                     <?= h(ucfirst($candidato['status'])) ?>
