@@ -229,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_email']   = trim(requestString($_POST, 'email'));
             $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.';
-            header('Location: empresa.php?pagina=perfil');
+            header('Location: empresa.php?pagina=' . rawurlencode($pagina));
             exit;
         }
 
@@ -247,6 +247,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (Throwable $exception) {
         error_log('Erro no dashboard empresa: ' . $exception->getMessage());
+
+        if ($action === 'update_profile') {
+            $_SESSION['profile_error'] = 'Não foi possível atualizar o perfil. Tente novamente.';
+            header('Location: empresa.php?pagina=' . rawurlencode($pagina));
+            exit;
+        }
 
         if ($action === 'update_settings') {
             $_SESSION['settings_error'] = 'Não foi possível salvar o idioma. Tente novamente.';
