@@ -517,7 +517,7 @@
 
     messageInput.addEventListener('input', resizeMessageInput);
     messageInput.addEventListener('keydown', (event) => {
-        if (event.key !== 'Enter' || !event.ctrlKey || event.isComposing) return;
+        if (event.key !== 'Enter' || event.shiftKey || event.isComposing || event.keyCode === 229) return;
         event.preventDefault();
         if (activeContact && !sendButton.disabled) form.requestSubmit();
     });

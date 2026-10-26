@@ -3345,22 +3345,80 @@ body.account-deleting .dashboard-shell {
     width: 18px;
     height: 18px;
     margin: 1px 0 0;
-    accent-color: #07539a;
+    accent-color: var(--blue);
 }
 
 .dashboard-resume__actions {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    gap: 10px;
 }
 
 .dashboard-resume__button {
+    display: inline-flex;
+    width: 100%;
+    min-width: 0;
     min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    box-sizing: border-box;
+    color: #fff;
     font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.dashboard-resume__button--primary {
+    background: linear-gradient(180deg, #176bb2 0%, #00549f 100%);
+    box-shadow: 0 4px 10px rgba(0, 74, 148, .18);
+}
+
+.dashboard-resume__button--primary:hover:not(:disabled) {
+    background: linear-gradient(180deg, #0d5b9f 0%, #063f7c 100%);
+    transform: translateY(-1px);
+}
+
+.dashboard-resume__button--secondary {
+    border-color: #cfe0f2;
+    background: #eef5ff;
+    color: var(--blue);
+}
+
+.dashboard-resume__button--secondary:hover {
+    border-color: #9ec4e8;
+    background: #e3efff;
+}
+
+.dashboard-resume__button:focus-visible {
+    outline: 3px solid rgba(0, 84, 159, .3);
+    outline-offset: 2px;
 }
 
 .dashboard-resume__button--primary:disabled {
     opacity: .55;
     cursor: not-allowed;
+    box-shadow: none;
+}
+
+.job-closed-label {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.job-deadline {
+    margin: 7px 0;
+    color: #526579;
+    font-size: 12px;
 }
 
 .dashboard-resume__status {
@@ -3609,5 +3667,15 @@ body.account-deleting .dashboard-shell {
     .dashboard-shell.page-curriculo .dashboard-resume__paper {
         min-height: 480px;
         padding: 32px 24px;
+    }
+
+    .dashboard-resume__actions {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 9px;
+    }
+
+    .dashboard-resume__button {
+        min-height: 46px;
+        padding: 10px 14px;
     }
 }

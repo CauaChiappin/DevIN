@@ -18,6 +18,24 @@
     const interfaceLocale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR';
     const translate = (value) => window.DevINTranslate?.(value) ?? value;
 
+    document.querySelectorAll('[data-job-closure-mode]').forEach((modeSelect) => {
+        const form = modeSelect.closest('form');
+        const dateInput = form?.querySelector('[data-job-closure-date]');
+        const approvedLimit = form?.querySelector('[data-job-approved-limit]');
+        if (!form || !dateInput || !approvedLimit) return;
+
+        const updateClosureFields = () => {
+            const requiresDate = ['prazo', 'qualquer'].includes(modeSelect.value);
+            dateInput.required = requiresDate;
+            const dateLabel = dateInput.closest('label');
+            if (dateLabel) dateLabel.hidden = !requiresDate;
+            approvedLimit.min = ['limite', 'qualquer'].includes(modeSelect.value) ? '1' : '0';
+        };
+
+        modeSelect.addEventListener('change', updateClosureFields);
+        updateClosureFields();
+    });
+
     const messagesLink = document.querySelector('[data-messages-api]');
     const unreadBadge = messagesLink?.querySelector('[data-message-unread-badge]');
     const refreshMessageCount = async () => {

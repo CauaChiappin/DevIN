@@ -68,39 +68,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                ensureJobCompensationSchema($conn);
                 if (!ResumeDocument::hasResume($conn, $idPessoaAtual)) {
                     throw new InvalidArgumentException('Você precisa adicionar um currículo para se candidatar. Envie um arquivo ou crie um currículo com IA em “Meu currículo”.');
                 }
 
-                // Confirma que a vaga ainda existe antes de registrar a candidatura.
-                $check = $conn->prepare('SELECT id_vaga FROM vagas WHERE id_vaga = ? LIMIT 1');
-                $check->bind_param('i', $vagaId);
-                $check->execute();
-                $exists = $check->get_result()->num_rows === 1;
-                $check->close();
+                $conn->begin_transaction();
+                try {
+                    // Bloqueia a vaga enquanto valida o encerramento e registra a candidatura.
+                    $check = $conn->prepare("
+                        SELECT id_vaga
+                        FROM vagas
+                        WHERE id_vaga = ?
+                          AND encerrada_em IS NULL
+                          AND (
+                              criterio_encerramento NOT IN ('prazo', 'qualquer')
+                              OR data_encerramento > CURRENT_TIMESTAMP
+                          )
+                        LIMIT 1
+                        FOR UPDATE
+                    ");
+                    $check->bind_param('i', $vagaId);
+                    $check->execute();
+                    $exists = $check->get_result()->num_rows === 1;
+                    $check->close();
 
-                if (!$exists) {
-                    throw new InvalidArgumentException('A vaga não está mais disponível.');
+                    if (!$exists) {
+                        throw new InvalidArgumentException('A vaga não está mais disponível.');
+                    }
+
+                    /* A consulta evita uma candidatura repetida antes do INSERT; ambos os IDs vêm
+                     * da sessão e do formulário validado, e são enviados como parâmetros inteiros. */
+                    $duplicate = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_pessoa = ? AND id_vaga = ? LIMIT 1');
+                    $duplicate->bind_param('ii', $idPessoaAtual, $vagaId);
+                    $duplicate->execute();
+                    $alreadyApplied = $duplicate->get_result()->num_rows > 0;
+                    $duplicate->close();
+
+                    if ($alreadyApplied) {
+                        throw new InvalidArgumentException('Você já se candidatou a esta vaga.');
+                    }
+
+                    // Cria o registro inicial como pendente para análise da empresa responsável.
+                    $stmt = $conn->prepare('INSERT INTO candidatura (data_candidatura, status, id_pessoa, id_vaga) VALUES (CURDATE(), ?, ?, ?)');
+                    $status = 'pendente';
+                    $stmt->bind_param('sii', $status, $idPessoaAtual, $vagaId);
+                    $stmt->execute();
+                    $stmt->close();
+                    $conn->commit();
+                } catch (Throwable $exception) {
+                    $conn->rollback();
+                    throw $exception;
                 }
-
-                /* A consulta evita uma candidatura repetida antes do INSERT; ambos os IDs vêm
-                 * da sessão e do formulário validado, e são enviados como parâmetros inteiros. */
-                $duplicate = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_pessoa = ? AND id_vaga = ? LIMIT 1');
-                $duplicate->bind_param('ii', $idPessoaAtual, $vagaId);
-                $duplicate->execute();
-                $alreadyApplied = $duplicate->get_result()->num_rows > 0;
-                $duplicate->close();
-
-                if ($alreadyApplied) {
-                    throw new InvalidArgumentException('Você já se candidatou a esta vaga.');
-                }
-
-                // Cria o registro inicial como pendente para análise da empresa responsável.
-                $stmt = $conn->prepare('INSERT INTO candidatura (data_candidatura, status, id_pessoa, id_vaga) VALUES (CURDATE(), ?, ?, ?)');
-                $status = 'pendente';
-                $stmt->bind_param('sii', $status, $idPessoaAtual, $vagaId);
-                $stmt->execute();
-                $stmt->close();
             } finally {
                 $conn->close();
             }
@@ -236,6 +255,7 @@ try {
         $stmt = $conn->prepare("
             SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao,
                    v.salario_mensal, v.limite_aprovados, v.tempo_vaga,
+                   v.criterio_encerramento, v.data_encerramento, v.encerrada_em,
                    e.id_empresa, e.nome AS empresa,
                    COALESCE(contagens.aprovadas, 0) AS candidaturas_aprovadas,
                    COALESCE(contagens.recusadas, 0) AS candidaturas_recusadas,
@@ -608,15 +628,18 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                 <?php endif; ?>
                 <?php foreach ($vagasDisponiveis as $vaga): ?>
                     <?php $jaSeCandidatou = isset($vagasCandidatadas[(int) $vaga['id_vaga']]); ?>
-                    <?php $statusVaga = $jaSeCandidatou ? 'Candidatura enviada' : 'Vaga disponível'; ?>
+                    <?php $vagaEncerrada = !empty($vaga['encerrada_em']); ?>
+                    <?php $statusVaga = $vagaEncerrada ? 'Vaga encerrada' : ($jaSeCandidatou ? 'Candidatura enviada' : 'Vaga disponível'); ?>
                     <?php $salarioExibido = (float) $vaga['salario_mensal'] > 0 ? 'R$ ' . number_format((float) $vaga['salario_mensal'], 2, ',', '.') : 'A combinar'; ?>
                     <?php $limiteExibido = (int) $vaga['limite_aprovados'] > 0 ? (string) $vaga['limite_aprovados'] : 'Sem limite'; ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h(($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') . '|Salário mensal::' . $salarioExibido . '|Limite de aprovados::' . $limiteExibido . '|Aprovadas::' . (int) $vaga['candidaturas_aprovadas'] . '|Recusadas::' . (int) $vaga['candidaturas_recusadas'] . '|Em análise::' . (int) $vaga['candidaturas_em_analise']) ?>" data-application-summary="true" data-report-job-id="<?= (int) $vaga['id_vaga'] ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
+                    <?php $prazoVagaExibido = !empty($vaga['data_encerramento']) ? date('d/m/Y H:i', strtotime($vaga['data_encerramento'])) : ''; ?>
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h(($vagaEncerrada ? 'Vaga encerrada' : ($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura')) . '|Salário mensal::' . $salarioExibido . '|Limite de aprovados::' . $limiteExibido . '|Aprovadas::' . (int) $vaga['candidaturas_aprovadas'] . '|Recusadas::' . (int) $vaga['candidaturas_recusadas'] . '|Em análise::' . (int) $vaga['candidaturas_em_analise'] . ($prazoVagaExibido !== '' ? '|Data de encerramento::' . $prazoVagaExibido : '')) ?>" data-application-summary="true" data-report-job-id="<?= (int) $vaga['id_vaga'] ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
                             <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Máximo de aprovados:</span> <strong><?= h($limiteExibido) ?></strong></p>
+                            <?php if ($prazoVagaExibido !== ''): ?><p class="job-deadline">Candidaturas até: <?= h($prazoVagaExibido) ?></p><?php endif; ?>
                             <?= dashboardCardTags($statusVaga . '|' . $vaga['empresa']) ?>
                         </div>
                         <div class="card-actions">
@@ -624,7 +647,9 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                                 <input type="hidden" name="action" value="apply_job">
                                 <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
                                 <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
-                                <?php if ($jaSeCandidatou): ?>
+                                <?php if ($vagaEncerrada): ?>
+                                    <button class="btn applied" type="button" disabled>Vaga encerrada</button>
+                                <?php elseif ($jaSeCandidatou): ?>
                                     <button class="btn applied" type="button" disabled>Candidatou-se</button>
                                 <?php elseif (!$possuiCurriculo): ?>
                                     <button class="btn applied" type="button" disabled>Adicione um currículo</button>

@@ -47,6 +47,9 @@ function ensureJobCompensationSchema(mysqli $conn): void
     $columns = [
         'salario_mensal' => 'ALTER TABLE vagas ADD COLUMN salario_mensal DECIMAL(10,2) NOT NULL DEFAULT 0.00',
         'limite_aprovados' => 'ALTER TABLE vagas ADD COLUMN limite_aprovados INT UNSIGNED NOT NULL DEFAULT 0',
+        'criterio_encerramento' => "ALTER TABLE vagas ADD COLUMN criterio_encerramento VARCHAR(16) NOT NULL DEFAULT 'nenhum'",
+        'data_encerramento' => 'ALTER TABLE vagas ADD COLUMN data_encerramento DATETIME NULL',
+        'encerrada_em' => 'ALTER TABLE vagas ADD COLUMN encerrada_em DATETIME NULL',
     ];
 
     $stmt = $conn->prepare('
@@ -54,7 +57,7 @@ function ensureJobCompensationSchema(mysqli $conn): void
         FROM INFORMATION_SCHEMA.COLUMNS
         WHERE TABLE_SCHEMA = DATABASE()
           AND TABLE_NAME = "vagas"
-          AND COLUMN_NAME IN ("salario_mensal", "limite_aprovados")
+          AND COLUMN_NAME IN ("salario_mensal", "limite_aprovados", "criterio_encerramento", "data_encerramento", "encerrada_em")
     ');
     $stmt->execute();
     $existingColumns = array_column($stmt->get_result()->fetch_all(MYSQLI_ASSOC), 'COLUMN_NAME');
@@ -71,6 +74,50 @@ function ensureJobCompensationSchema(mysqli $conn): void
             }
         }
     }
+
+    atualizarVagasEncerradas($conn);
+}
+
+function atualizarVagasEncerradas(mysqli $conn): void
+{
+    $conn->query("
+        UPDATE vagas v
+        SET encerrada_em = CURRENT_TIMESTAMP
+        WHERE v.encerrada_em IS NULL
+          AND (
+              (
+                  v.criterio_encerramento = 'limite'
+                  AND v.limite_aprovados > 0
+                  AND (
+                      SELECT COUNT(*)
+                      FROM candidatura c
+                      WHERE c.id_vaga = v.id_vaga AND c.status = 'aprovado'
+                  ) >= v.limite_aprovados
+              )
+              OR (
+                  v.criterio_encerramento = 'prazo'
+                  AND v.data_encerramento IS NOT NULL
+                  AND v.data_encerramento <= CURRENT_TIMESTAMP
+              )
+              OR (
+                  v.criterio_encerramento = 'qualquer'
+                  AND (
+                      (
+                          v.limite_aprovados > 0
+                          AND (
+                              SELECT COUNT(*)
+                              FROM candidatura c
+                              WHERE c.id_vaga = v.id_vaga AND c.status = 'aprovado'
+                          ) >= v.limite_aprovados
+                      )
+                      OR (
+                          v.data_encerramento IS NOT NULL
+                          AND v.data_encerramento <= CURRENT_TIMESTAMP
+                      )
+                  )
+              )
+          )
+    ");
 }
 
 function validarSalarioMensal(string $valor): string
@@ -91,4 +138,35 @@ function validarLimiteAprovados(string $valor, bool $permitirSemLimite = false):
     }
 
     return $limite;
+}
+
+function validarConfiguracaoEncerramento(string $criterio, string $dataEncerramento, int $limiteAprovados): ?string
+{
+    if (!in_array($criterio, ['limite', 'prazo', 'qualquer', 'nenhum'], true)) {
+        throw new InvalidArgumentException('Selecione uma situação válida para encerrar a vaga.');
+    }
+
+    if (in_array($criterio, ['limite', 'qualquer'], true) && $limiteAprovados < 1) {
+        throw new InvalidArgumentException('Informe um limite de candidatos aprovados para usar esse critério.');
+    }
+
+    if (!in_array($criterio, ['prazo', 'qualquer'], true)) {
+        return null;
+    }
+
+    $data = DateTimeImmutable::createFromFormat('!Y-m-d\TH:i', $dataEncerramento);
+    $erros = DateTimeImmutable::getLastErrors();
+    if (
+        $data === false
+        || ($erros !== false && ($erros['warning_count'] > 0 || $erros['error_count'] > 0))
+        || $data->format('Y-m-d\TH:i') !== $dataEncerramento
+    ) {
+        throw new InvalidArgumentException('Informe uma data e hora válidas para encerrar a vaga.');
+    }
+
+    if ($data <= new DateTimeImmutable()) {
+        throw new InvalidArgumentException('A data e hora de encerramento devem estar no futuro.');
+    }
+
+    return $data->format('Y-m-d H:i:s');
 }

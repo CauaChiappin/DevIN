@@ -53,34 +53,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 ensureJobCompensationSchema($conn);
                 $conn->begin_transaction();
-                /* Atualiza apenas se a vaga associada pertence à empresa autenticada.
-                 * Isso aplica autorização no próprio SQL, além de validar o status permitido acima. */
+                /* Obtém primeiro a vaga autorizada para serializar aprovações pelo limite. */
                 $empresaId = (int) $_SESSION['usuario_id'];
                 $stmt = $conn->prepare('
-                    SELECT c.status, v.id_vaga, v.limite_aprovados
+                    SELECT c.id_vaga
                     FROM candidatura c
                     INNER JOIN vagas v ON v.id_vaga = c.id_vaga
                     WHERE c.id_candidatura = ? AND v.id_empresa = ?
-                    FOR UPDATE
                 ');
                 $stmt->bind_param('ii', $idCandidatura, $empresaId);
                 $stmt->execute();
-                $candidatura = $stmt->get_result()->fetch_assoc();
+                $candidaturaVaga = $stmt->get_result()->fetch_assoc();
                 $stmt->close();
 
-                if (!$candidatura) {
+                if (!$candidaturaVaga) {
                     throw new RuntimeException('Candidatura não encontrada ou sem permissão para alterá-la.');
                 }
 
+                $vagaId = (int) $candidaturaVaga['id_vaga'];
+                $stmt = $conn->prepare('SELECT limite_aprovados FROM vagas WHERE id_vaga = ? AND id_empresa = ? FOR UPDATE');
+                $stmt->bind_param('ii', $vagaId, $empresaId);
+                $stmt->execute();
+                $vaga = $stmt->get_result()->fetch_assoc();
+                $stmt->close();
+                if (!$vaga) {
+                    throw new RuntimeException('Vaga não encontrada ou sem permissão para alterá-la.');
+                }
+
+                $stmt = $conn->prepare('SELECT status FROM candidatura WHERE id_candidatura = ? AND id_vaga = ? FOR UPDATE');
+                $stmt->bind_param('ii', $idCandidatura, $vagaId);
+                $stmt->execute();
+                $candidatura = $stmt->get_result()->fetch_assoc();
+                $stmt->close();
+                if (!$candidatura) {
+                    throw new RuntimeException('Candidatura não encontrada.');
+                }
+
                 if ($status === 'aprovado' && $candidatura['status'] !== 'aprovado') {
-                    $vagaId = (int) $candidatura['id_vaga'];
-                    $stmt = $conn->prepare('SELECT COUNT(*) AS total FROM candidatura WHERE id_vaga = ? AND status = "aprovado"');
+                    $stmt = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_vaga = ? AND status = "aprovado" FOR UPDATE');
                     $stmt->bind_param('i', $vagaId);
                     $stmt->execute();
-                    $aprovados = (int) $stmt->get_result()->fetch_assoc()['total'];
+                    $aprovados = $stmt->get_result()->num_rows;
                     $stmt->close();
 
-                    $limiteAprovados = (int) $candidatura['limite_aprovados'];
+                    $limiteAprovados = (int) $vaga['limite_aprovados'];
                     if ($limiteAprovados > 0 && $aprovados >= $limiteAprovados) {
                         throw new RuntimeException('O limite de candidatos aprovados para esta vaga já foi atingido.');
                     }
@@ -93,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new RuntimeException('Não foi possível atualizar a candidatura.');
                 }
                 $stmt->close();
+                atualizarVagasEncerradas($conn);
                 $conn->commit();
             } catch (Throwable $exception) {
                 $conn->rollback();
@@ -110,7 +127,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $titulo    = trim(requestString($_POST, 'titulo'));
             $descricao = trim(requestString($_POST, 'descricao'));
             $salarioMensal = validarSalarioMensal(requestString($_POST, 'salario_mensal'));
-            $limiteAprovados = validarLimiteAprovados(requestString($_POST, 'limite_aprovados'));
+            $limiteAprovados = validarLimiteAprovados(requestString($_POST, 'limite_aprovados'), true);
+            $criterioEncerramento = requestString($_POST, 'criterio_encerramento') ?: 'nenhum';
+            $dataEncerramento = validarConfiguracaoEncerramento(
+                $criterioEncerramento,
+                requestString($_POST, 'data_encerramento'),
+                $limiteAprovados
+            );
 
             if ($titulo === '' || $descricao === '' || mb_strlen($titulo) > 50 || mb_strlen($descricao) > 1000) {
                 throw new InvalidArgumentException('Informe título (até 50 caracteres) e descrição (até 1000 caracteres).');
@@ -120,13 +143,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 ensureJobCompensationSchema($conn);
                 // O ID da empresa vem da sessão autenticada, não de um campo do formulário.
-                $stmt = $conn->prepare('INSERT INTO vagas (titulo, descricao, salario_mensal, limite_aprovados, tempo_vaga, id_empresa) VALUES (?, ?, ?, ?, CURDATE(), ?)');
+                $stmt = $conn->prepare('INSERT INTO vagas (titulo, descricao, salario_mensal, limite_aprovados, criterio_encerramento, data_encerramento, tempo_vaga, id_empresa) VALUES (?, ?, ?, ?, ?, ?, CURDATE(), ?)');
                 if (!$stmt) {
                     throw new RuntimeException('Não foi possível criar a vaga.');
                 }
 
                 $empresaId = (int) $_SESSION['usuario_id'];
-                $stmt->bind_param('sssii', $titulo, $descricao, $salarioMensal, $limiteAprovados, $empresaId);
+                $stmt->bind_param('sssissi', $titulo, $descricao, $salarioMensal, $limiteAprovados, $criterioEncerramento, $dataEncerramento, $empresaId);
                 $stmt->execute();
                 $stmt->close();
             } finally {
@@ -144,6 +167,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $descricao = trim(requestString($_POST, 'descricao'));
             $salarioMensal = validarSalarioMensal(requestString($_POST, 'salario_mensal'));
             $limiteAprovados = validarLimiteAprovados(requestString($_POST, 'limite_aprovados'), true);
+            $criterioEncerramento = requestString($_POST, 'criterio_encerramento') ?: 'nenhum';
+            $dataEncerramento = validarConfiguracaoEncerramento(
+                $criterioEncerramento,
+                requestString($_POST, 'data_encerramento'),
+                $limiteAprovados
+            );
 
             if ($vagaId <= 0 || $titulo === '' || $descricao === '' || mb_strlen($titulo) > 50 || mb_strlen($descricao) > 1000) {
                 throw new InvalidArgumentException('Dados da vaga inválidos.');
@@ -173,14 +202,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 // Inclui o proprietário no WHERE para impedir edição de vaga de outra empresa.
-                $stmt = $conn->prepare('UPDATE vagas SET titulo = ?, descricao = ?, salario_mensal = ?, limite_aprovados = ? WHERE id_vaga = ? AND id_empresa = ?');
+                $stmt = $conn->prepare('UPDATE vagas
+                    SET titulo = ?, descricao = ?, salario_mensal = ?, limite_aprovados = ?,
+                        criterio_encerramento = ?, data_encerramento = ?, encerrada_em = NULL
+                    WHERE id_vaga = ? AND id_empresa = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Não foi possível editar a vaga.');
                 }
 
-                $stmt->bind_param('sssiii', $titulo, $descricao, $salarioMensal, $limiteAprovados, $vagaId, $empresaId);
+                $stmt->bind_param('sssissii', $titulo, $descricao, $salarioMensal, $limiteAprovados, $criterioEncerramento, $dataEncerramento, $vagaId, $empresaId);
                 $stmt->execute();
                 $stmt->close();
+                atualizarVagasEncerradas($conn);
                 $conn->commit();
             } catch (Throwable $exception) {
                 $conn->rollback();
@@ -307,6 +340,7 @@ try {
         $stmtVagas = $conn->prepare("
             SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao,
                    v.salario_mensal, v.limite_aprovados, v.tempo_vaga,
+                   v.criterio_encerramento, v.data_encerramento, v.encerrada_em,
                    COALESCE(contagens.aprovadas, 0) AS candidaturas_aprovadas
             FROM vagas v
             LEFT JOIN (
@@ -645,8 +679,20 @@ foreach ($candidatos as $candidato) {
                                             <input name="salario_mensal" type="number" min="0" max="99999999.99" step="0.01" value="0.00" required>
                                         </label>
                                         <label>Máximo de candidatos aprovados
-                                            <input name="limite_aprovados" type="number" min="1" max="2147483647" step="1" required>
+                                                            <input name="limite_aprovados" type="number" min="0" max="2147483647" step="1" value="0" required data-job-approved-limit>
                                         </label>
+                                                        <label>Encerrar a vaga quando
+                                                            <select name="criterio_encerramento" data-job-closure-mode>
+                                                                <option value="nenhum" selected>Não encerrar automaticamente</option>
+                                                                <option value="limite">Atingir o limite de aprovados</option>
+                                                                <option value="prazo">Chegar à data e hora de encerramento</option>
+                                                                <option value="qualquer">Atingir o limite ou a data, o que vier primeiro</option>
+                                                            </select>
+                                                        </label>
+                                                        <label>Data e hora de encerramento
+                                                            <input name="data_encerramento" type="datetime-local" data-job-closure-date>
+                                                        </label>
+                                                        <p class="job-form-hint">No modo “qualquer”, a vaga encerra quando atingir o limite de aprovados ou o prazo.</p>
                                         <p class="job-form-hint">Informe 0 no salário para exibir "A combinar".</p>
                                         <button class="btn primary" type="submit">Publicar vaga</button>
                     </form>
@@ -659,13 +705,16 @@ foreach ($candidatos as $candidato) {
                 <?php foreach ($empresaPosts as $post): ?>
                     <?php $salarioExibido = (float) $post['salario_mensal'] > 0 ? 'R$ ' . number_format((float) $post['salario_mensal'], 2, ',', '.') : 'A combinar'; ?>
                     <?php $limiteExibido = (int) $post['limite_aprovados'] > 0 ? (string) $post['limite_aprovados'] : 'Sem limite'; ?>
-                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($post['titulo']) ?>" data-detail-role="Vaga publicada" data-detail-tags="Vaga|Publicada" data-detail-experience="<?= h('Publicação::' . date('d/m/Y', strtotime($post['tempo_vaga'])) . '|Salário mensal::' . $salarioExibido . '|Máximo de aprovados::' . $limiteExibido) ?>">
+                    <?php $vagaEncerrada = !empty($post['encerrada_em']); ?>
+                    <?php $encerramentoExibido = !empty($post['data_encerramento']) ? date('d/m/Y H:i', strtotime($post['data_encerramento'])) : 'Sem prazo'; ?>
+                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($post['titulo']) ?>" data-detail-role="Vaga publicada" data-detail-tags="<?= $vagaEncerrada ? 'Vaga|Encerrada' : 'Vaga|Publicada' ?>" data-detail-experience="<?= h('Publicação::' . date('d/m/Y', strtotime($post['tempo_vaga'])) . '|Salário mensal::' . $salarioExibido . '|Máximo de aprovados::' . $limiteExibido . '|Encerramento::' . $encerramentoExibido) ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($post['titulo']) ?></h2>
                             <p><?= h($post['descricao'] ?: 'Sem descrição informada.') ?></p>
                             <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Máximo de aprovados:</span> <strong><?= h($limiteExibido) ?></strong></p>
-                            <?= dashboardCardTags('Vaga|Publicada') ?>
+                            <?= dashboardCardTags($vagaEncerrada ? 'Vaga|Encerrada' : 'Vaga|Publicada') ?>
+                            <?php if ($vagaEncerrada): ?><p class="job-closed-label">Vaga encerrada</p><?php endif; ?>
                         </div>
                         <div class="post-tools">
                             <details class="job-editor">
@@ -686,7 +735,18 @@ foreach ($candidatos as $candidato) {
                                         <input name="salario_mensal" type="number" min="0" max="99999999.99" step="0.01" value="<?= h(number_format((float) $post['salario_mensal'], 2, '.', '')) ?>" required>
                                     </label>
                                     <label>Máximo de candidatos aprovados
-                                        <input name="limite_aprovados" type="number" min="0" max="2147483647" step="1" value="<?= (int) $post['limite_aprovados'] > 0 ? max((int) $post['candidaturas_aprovadas'], (int) $post['limite_aprovados']) : 0 ?>" required>
+                                        <input name="limite_aprovados" type="number" min="0" max="2147483647" step="1" value="<?= (int) $post['limite_aprovados'] > 0 ? max((int) $post['candidaturas_aprovadas'], (int) $post['limite_aprovados']) : 0 ?>" required data-job-approved-limit>
+                                    </label>
+                                    <label>Encerrar a vaga quando
+                                        <select name="criterio_encerramento" data-job-closure-mode>
+                                            <option value="nenhum" <?= $post['criterio_encerramento'] === 'nenhum' ? 'selected' : '' ?>>Não encerrar automaticamente</option>
+                                            <option value="limite" <?= $post['criterio_encerramento'] === 'limite' ? 'selected' : '' ?>>Atingir o limite de aprovados</option>
+                                            <option value="prazo" <?= $post['criterio_encerramento'] === 'prazo' ? 'selected' : '' ?>>Chegar à data e hora de encerramento</option>
+                                            <option value="qualquer" <?= $post['criterio_encerramento'] === 'qualquer' ? 'selected' : '' ?>>Atingir o limite ou a data, o que vier primeiro</option>
+                                        </select>
+                                    </label>
+                                    <label>Data e hora de encerramento
+                                        <input name="data_encerramento" type="datetime-local" data-job-closure-date value="<?= !empty($post['data_encerramento']) ? h(date('Y-m-d\TH:i', strtotime($post['data_encerramento']))) : '' ?>">
                                     </label>
                                     <p class="job-form-hint">0 deixa a vaga sem limite de aprovados.</p>
                                     <button class="btn primary" type="submit">Salvar</button>
