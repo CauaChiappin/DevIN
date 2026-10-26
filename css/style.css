@@ -332,10 +332,11 @@ summary:focus-visible {
 }
 
 .arte-principal {
-    width: 40%;
+    width: 48%;
+    max-width: 760px;
     position: absolute;
-    left: min(calc(50% + 115px), calc(100% - 555px));
-    top: 18%;
+    right: max(4%, calc((100% - 1500px) / 2));
+    top: 16%;
 }
 
 .texto-principal {
@@ -1166,6 +1167,233 @@ summary:focus-visible {
     }
 }
 
+@media (max-width: 900px) {
+    .principal {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: center;
+        gap: 28px;
+        height: auto;
+        min-height: calc(100svh - 83px);
+        padding: 56px 24px;
+    }
+
+    .texto-principal {
+        position: static;
+        width: min(100%, 700px);
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .texto-principal h1 {
+        font-size: 46px;
+    }
+
+    .texto-principal p {
+        position: static;
+        width: auto;
+        margin: 16px auto 0;
+        font-size: 24px;
+        line-height: 1.35;
+    }
+
+    .arte-principal {
+        position: static;
+        display: block;
+        width: min(100%, 560px);
+        max-height: 380px;
+        margin: 0 auto;
+        object-fit: contain;
+    }
+
+    .sobre {
+        display: grid;
+        height: auto;
+        gap: 42px;
+        padding: 64px 24px;
+        overflow: visible;
+    }
+
+    .titulo-sobre,
+    .linha-sobre {
+        position: static;
+        width: min(100%, 760px);
+        margin: 0 auto;
+    }
+
+    .titulo-sobre h2 {
+        font-size: 30px;
+    }
+
+    .titulo-sobre p {
+        max-width: 680px;
+        font-size: 18px;
+    }
+
+    .linha-sobre {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        gap: 28px;
+    }
+
+    .linha-sobre img {
+        width: 100%;
+        max-width: 360px;
+        max-height: 260px;
+        justify-self: center;
+        object-fit: contain;
+    }
+
+    .linha-sobre h3 {
+        font-size: 28px;
+    }
+
+    .linha-sobre p {
+        font-size: 18px;
+    }
+
+    .linha-sobre br,
+    .cabecalho-etapas br,
+    .formato br,
+    .info-suporte br {
+        display: none;
+    }
+
+    .bloco-etapas {
+        display: grid;
+        height: auto;
+        gap: 32px;
+        padding: 56px 24px;
+        overflow: visible;
+    }
+
+    .cabecalho-etapas,
+    .lista-etapas,
+    .formato {
+        position: static;
+        width: min(100%, 620px);
+        margin: 0 auto;
+    }
+
+    .lista-etapas {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        transform: none;
+    }
+
+    .etapa {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 48px minmax(0, 1fr);
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+    }
+
+    .etapa span {
+        width: 44px;
+        height: 44px;
+        margin: 0;
+    }
+
+    .etapa p {
+        margin: 0;
+        white-space: normal;
+        font-size: 17px;
+    }
+
+    .seta {
+        width: 2px;
+        height: 22px;
+        margin: 0 0 0 21px;
+    }
+
+    .seta::after,
+    .etapa.ativo i {
+        display: none;
+    }
+
+    .formato {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 22px;
+        text-align: center;
+    }
+
+    .formato img {
+        width: min(100%, 420px);
+        height: auto;
+        max-height: 320px;
+        justify-self: center;
+        object-fit: contain;
+    }
+
+    .formato p {
+        font-size: 18px;
+    }
+
+    .contato {
+        display: grid;
+        height: auto;
+        gap: 54px;
+        padding: 56px 24px;
+        overflow: visible;
+    }
+
+    .suporte,
+    .perguntas {
+        position: static;
+        width: min(100%, 760px);
+        margin: 0 auto;
+    }
+
+    .suporte {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 260px);
+        gap: 28px;
+    }
+
+    .imagem-suporte {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        justify-self: center;
+        object-fit: cover;
+    }
+
+    .perguntas summary {
+        min-height: 52px;
+        height: auto;
+        gap: 12px;
+        padding: 12px 18px;
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    .perguntas summary::after {
+        flex: 0 0 14px;
+    }
+
+    .principal .texto-principal,
+    .principal .titulo-principal,
+    .principal .arte-principal,
+    .titulo-sobre,
+    .linha-curriculo > *,
+    .linha-feed > *,
+    .cabecalho-etapas,
+    .lista-etapas,
+    .formato > *,
+    .empresas h2,
+    .texto-empresas,
+    .marquee-empresas,
+    .acao-empresas,
+    .info-suporte,
+    .imagem-suporte,
+    .perguntas > * {
+        transform: none !important;
+        opacity: 1 !important;
+    }
+}
+
 @media (max-width: 720px) {
     /* Reorganiza o cabeçalho e os blocos da landing page para a largura de celular. */
 
@@ -1233,8 +1461,119 @@ summary:focus-visible {
         padding: 38px 16px;
     }
 
+    .principal {
+        min-height: calc(100svh - 72px);
+        gap: 20px;
+        padding: 42px 18px;
+    }
+
     .texto-principal h1 {
-        font-size: clamp(38px, 11vw, 62px);
+        max-width: 100%;
+        font-size: 36px;
+        overflow-wrap: anywhere;
+    }
+
+    .texto-principal p {
+        font-size: 20px;
+    }
+
+    .arte-principal {
+        width: min(100%, 500px);
+        max-height: 300px;
+    }
+
+    .sobre {
+        gap: 34px;
+        padding: 48px 18px;
+    }
+
+    .titulo-sobre h2 {
+        font-size: 26px;
+    }
+
+    .titulo-sobre p {
+        max-width: 100%;
+        margin-top: 16px;
+        font-size: 16px;
+    }
+
+    .linha-sobre {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        margin-top: 0;
+    }
+
+    .linha-sobre img {
+        width: min(100%, 320px);
+        max-height: 220px;
+    }
+
+    .linha-sobre h3 {
+        margin-bottom: 8px;
+        font-size: 24px;
+    }
+
+    .linha-sobre p {
+        font-size: 16px;
+    }
+
+    .linha-feed div {
+        order: 2;
+    }
+
+    .linha-feed img {
+        order: 1;
+    }
+
+    .bloco-etapas {
+        gap: 26px;
+        padding: 48px 18px;
+    }
+
+    .cabecalho-etapas h2 {
+        font-size: 27px;
+    }
+
+    .cabecalho-etapas p {
+        margin-top: 12px;
+        font-size: 17px;
+    }
+
+    .formato p {
+        font-size: 16px;
+    }
+
+    .contato {
+        gap: 42px;
+        padding: 48px 18px;
+    }
+
+    .suporte {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 22px;
+    }
+
+    .info-suporte h2 {
+        font-size: 27px;
+    }
+
+    .sac {
+        width: min(100%, 314px);
+    }
+
+    .perguntas h2 {
+        margin-bottom: 20px;
+        font-size: 25px;
+    }
+
+    .perguntas summary {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .perguntas details p {
+        padding: 0 14px 16px;
+        font-size: 14px;
     }
 
     .lista-etapas {
@@ -1251,4 +1590,4 @@ summary:focus-visible {
     .marca-rodape {
         text-align: center;
     }
-};
+}

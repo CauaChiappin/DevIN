@@ -3058,6 +3058,118 @@ body.account-deleting .dashboard-shell {
     .page-sobre .sobre-subtitle br { display: none; }
 }
 
+@media (max-width: 720px) {
+    .dashboard-shell.page-sobre {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-shell.page-sobre .lista-area {
+        grid-column: 1 / -1;
+    }
+
+    .dashboard-shell.page-sobre .lista-area {
+        padding: 20px 14px 28px !important;
+    }
+
+    .page-sobre .sobre-container {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .page-sobre .sobre-top-section {
+        align-items: stretch;
+        padding: 4px 0 20px;
+    }
+
+    .page-sobre .badge-historia {
+        align-self: center;
+        margin-bottom: 12px;
+    }
+
+    .page-sobre .sobre-title {
+        max-width: 100%;
+        margin-bottom: 10px;
+        font-size: 30px;
+        line-height: 1.18;
+        overflow-wrap: anywhere;
+    }
+
+    .page-sobre .sobre-subtitle {
+        width: 100%;
+        max-width: 520px;
+        margin: 0 auto 20px;
+        font-size: 14px;
+        line-height: 1.55;
+        text-wrap: pretty;
+    }
+
+    .page-sobre .sobre-cards {
+        display: grid;
+        width: 100%;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .page-sobre .sobre-card {
+        min-height: 0;
+        padding: 18px;
+        border-radius: 8px;
+    }
+
+    .page-sobre .sobre-card h3 {
+        font-size: 17px;
+    }
+
+    .page-sobre .sobre-card p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .page-sobre .sobre-bottom-section {
+        display: grid;
+        width: 100%;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .page-sobre .sobre-about-text,
+    .page-sobre .sobre-team-card {
+        min-width: 0;
+        padding: 18px;
+        border-radius: 8px;
+    }
+
+    .page-sobre .sobre-about-text h2 {
+        font-size: 22px;
+    }
+
+    .page-sobre .sobre-about-text p {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .page-sobre .team-list li {
+        min-width: 0;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .page-sobre .team-info {
+        min-width: 0;
+    }
+
+    .page-sobre .team-info strong,
+    .page-sobre .team-info a {
+        overflow-wrap: anywhere;
+    }
+
+    .page-sobre .team-info a {
+        font-size: 11px;
+        line-height: 1.45;
+    }
+}
+
 /* =========================================================
    CAMADA DE UX / ACESSIBILIDADE / MODAIS
    ========================================================= */
