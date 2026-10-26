@@ -5,9 +5,10 @@ declare(strict_types=1);
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/controllers/JobSchema.php';
+require_once __DIR__ . '/controllers/ResumeDocument.php';
 require_once __DIR__ . '/helpers.php';
 
-$usuarioAtual = requirePessoaComCurriculo();
+$usuarioAtual = requireWebAuth('pessoa');
 
 $tipo          = 'pessoa';
 $idPessoaAtual = (int) $usuarioAtual['id'];
@@ -19,13 +20,17 @@ $mensagemCadastro = (string) ($_SESSION['sucesso_cadastro'] ?? '');
 $mensagemEmailCadastro = (string) ($_SESSION['erro_email_cadastro'] ?? '');
 $mensagemCurriculoSalvo = (string) ($_SESSION['sucesso_curriculo'] ?? '');
 $mensagemEmailCurriculo = (string) ($_SESSION['erro_curriculo'] ?? '');
+$mensagemCurriculoEditado = (string) ($_SESSION['resume_content_success'] ?? '');
+$mensagemCurriculoErro = (string) ($_SESSION['resume_content_error'] ?? '');
 unset(
     $_SESSION['sucesso_login'],
     $_SESSION['erro_email_senha'],
     $_SESSION['sucesso_cadastro'],
     $_SESSION['erro_email_cadastro'],
     $_SESSION['sucesso_curriculo'],
-    $_SESSION['erro_curriculo']
+    $_SESSION['erro_curriculo'],
+    $_SESSION['resume_content_success'],
+    $_SESSION['resume_content_error']
 );
 $pagina        = requestString($_GET, 'pagina');
 
@@ -33,6 +38,12 @@ $paginasPermitidas = ['inicio', 'vagas', 'curriculo', 'sobre', 'perfil', 'mensag
 if (!in_array($pagina, $paginasPermitidas, true)) {
     // Aceita apenas as seções válidas do painel do candidato.
     $pagina = 'inicio';
+}
+$gerarCurriculoAutomaticamente = $pagina === 'curriculo'
+    && requestString($_GET, 'gerar') === '1'
+    && ($_SESSION['resume_generate_on_dashboard'] ?? false) === true;
+if ($gerarCurriculoAutomaticamente) {
+    unset($_SESSION['resume_generate_on_dashboard']);
 }
 
 /*
@@ -57,6 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                if (!ResumeDocument::hasResume($conn, $idPessoaAtual)) {
+                    throw new InvalidArgumentException('Você precisa adicionar um currículo para se candidatar. Envie um arquivo ou crie um currículo com IA em “Meu currículo”.');
+                }
+
                 // Confirma que a vaga ainda existe antes de registrar a candidatura.
                 $check = $conn->prepare('SELECT id_vaga FROM vagas WHERE id_vaga = ? LIMIT 1');
                 $check->bind_param('i', $vagaId);
@@ -95,6 +110,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        if ($action === 'update_resume_content') {
+            $submittedResume = is_array($_POST['resume'] ?? null) ? $_POST['resume'] : [];
+            $resumeContentToSave = ['nome' => $nome];
+            foreach (['resumo', 'formacao', 'experiencia', 'cursos', 'idiomas'] as $field) {
+                $value = requestString($submittedResume, $field);
+                if (strlen($value) > 6000) {
+                    throw new InvalidArgumentException('Uma seção do currículo excede o limite de 6.000 caracteres.');
+                }
+                $resumeContentToSave[$field] = $value;
+            }
+            if (count(array_filter($resumeContentToSave, static fn ($value): bool => is_string($value) && trim($value) !== '')) < 2) {
+                throw new InvalidArgumentException('Preencha ao menos uma seção antes de salvar.');
+            }
+
+            $conn = getDatabaseConnection();
+            try {
+                ResumeDocument::saveGenerated($conn, $idPessoaAtual, $resumeContentToSave);
+            } finally {
+                $conn->close();
+            }
+            $_SESSION['resume_content_success'] = 'Currículo atualizado.';
+            header('Location: pessoa.php?pagina=curriculo');
+            exit;
+        }
+
+        if ($action === 'update_resume_content') {
+            $submittedResume = is_array($_POST['resume'] ?? null) ? $_POST['resume'] : [];
+            $resumeContentToSave = ['nome' => $nome];
+            foreach (['resumo', 'formacao', 'experiencia', 'cursos', 'idiomas'] as $field) {
+                $value = requestString($submittedResume, $field);
+                if (strlen($value) > 6000) {
+                    throw new InvalidArgumentException('Uma seção do currículo excede o limite de 6.000 caracteres.');
+                }
+                $resumeContentToSave[$field] = $value;
+            }
+            if (count(array_filter($resumeContentToSave, static fn ($value): bool => is_string($value) && trim($value) !== '')) < 2) {
+                throw new InvalidArgumentException('Preencha ao menos uma seção antes de salvar.');
+            }
+
+            $conn = getDatabaseConnection();
+            try {
+                ResumeDocument::saveGenerated($conn, $idPessoaAtual, $resumeContentToSave);
+            } finally {
+                $conn->close();
+            }
+            $_SESSION['resume_content_success'] = 'Currículo atualizado.';
+            header('Location: pessoa.php?pagina=curriculo');
+            exit;
+        }
+
         if ($action === 'update_profile') {
             updateProfile($tipo, $idPessoaAtual, $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_nome']  = trim(requestString($_POST, 'nome'));
@@ -122,7 +187,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['job_error'] = $exception instanceof InvalidArgumentException
                 ? $exception->getMessage()
                 : 'Não foi possível enviar a candidatura. Tente novamente.';
-            header('Location: pessoa.php?pagina=inicio');
+            header('Location: pessoa.php?pagina=vagas');
+        } elseif ($action === 'update_resume_content') {
+            $_SESSION['resume_content_error'] = $exception instanceof InvalidArgumentException
+                ? $exception->getMessage()
+                : 'Não foi possível salvar o currículo agora.';
+            header('Location: pessoa.php?pagina=curriculo');
         } elseif ($action === 'update_settings') {
             $_SESSION['settings_error'] = 'Não foi possível salvar o idioma. Tente novamente.';
             header('Location: pessoa.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1');
@@ -151,6 +221,8 @@ $vagasDisponiveis  = [];
 $minhasCandidaturas = [];
 $vagasCandidatadas = [];
 $curriculoAtual = [];
+$resumeDocument = [];
+$resumeDocument = [];
 
 try {
     $conn = getDatabaseConnection();
@@ -198,6 +270,20 @@ try {
         foreach ($minhasCandidaturas as $candidatura) {
             $vagasCandidatadas[(int) $candidatura['id_vaga']] = true;
         }
+
+        $stmt = $conn->prepare('SELECT id_curriculo, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas FROM curriculo WHERE id_pessoa = ? LIMIT 1');
+        $stmt->bind_param('i', $idPessoaAtual);
+        $stmt->execute();
+        $curriculoAtual = $stmt->get_result()->fetch_assoc() ?? [];
+        $stmt->close();
+        $resumeDocument = ResumeDocument::find($conn, $idPessoaAtual);
+
+        $stmt = $conn->prepare('SELECT id_curriculo, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas FROM curriculo WHERE id_pessoa = ? LIMIT 1');
+        $stmt->bind_param('i', $idPessoaAtual);
+        $stmt->execute();
+        $curriculoAtual = $stmt->get_result()->fetch_assoc() ?? [];
+        $stmt->close();
+        $resumeDocument = ResumeDocument::find($conn, $idPessoaAtual);
     } finally {
         $conn->close();
     }
@@ -210,6 +296,31 @@ foreach ($vagasDisponiveis as &$vaga) {
     $vaga['detalhe'] = $vaga['descricao'] !== '' ? $vaga['descricao'] : 'Esta vaga ainda não possui uma descrição detalhada.';
 }
 unset($vaga);
+$resumeContent = json_decode((string) ($resumeDocument['conteudo_json'] ?? ''), true);
+$resumeContent = is_array($resumeContent) ? $resumeContent : [];
+$possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
+    || !empty($resumeDocument['arquivo_caminho'])
+    || !empty($resumeDocument['conteudo_json']);
+if ($resumeContent === [] && !empty($curriculoAtual['id_curriculo'])) {
+    $resumeContent = [
+        'nome' => (string) ($curriculoAtual['nome_social'] ?? $nome),
+        'resumo' => '',
+        'formacao' => (string) ($curriculoAtual['grau_de_escolaridade'] ?? ''),
+        'experiencia' => (string) ($curriculoAtual['experiencia'] ?? ''),
+        'cursos' => (string) ($curriculoAtual['cursos'] ?? ''),
+        'idiomas' => (string) ($curriculoAtual['idiomas'] ?? ''),
+    ];
+}
+$resumeContent['nome'] = (string) ($resumeContent['nome'] ?? $nome);
+$hasResumeText = count(array_filter(
+    ['resumo', 'formacao', 'experiencia', 'cursos', 'idiomas'],
+    static fn (string $field): bool => trim((string) ($resumeContent[$field] ?? '')) !== ''
+)) > 0;
+$resumeContent = json_decode((string) ($resumeDocument['conteudo_json'] ?? ''), true);
+$resumeContent = is_array($resumeContent) ? $resumeContent : [];
+$possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
+    || !empty($resumeDocument['arquivo_caminho'])
+    || !empty($resumeDocument['conteudo_json']);
 
 ?>
 <!DOCTYPE html>
@@ -228,7 +339,7 @@ unset($vaga);
 
 <body>
     <main class="dashboard-shell page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
-        <?php if ($mensagemSenhaAlterada !== '' || $mensagemCadastro !== '' || $mensagemEmailSenha !== '' || $mensagemEmailCadastro !== '' || $mensagemCurriculoSalvo !== '' || $mensagemEmailCurriculo !== ''): ?>
+        <?php if ($mensagemSenhaAlterada !== '' || $mensagemCadastro !== '' || $mensagemEmailSenha !== '' || $mensagemEmailCadastro !== '' || $mensagemCurriculoSalvo !== '' || $mensagemEmailCurriculo !== '' || $mensagemCurriculoEditado !== '' || $mensagemCurriculoErro !== ''): ?>
             <div class="dashboard-toast" role="status" aria-live="polite">
                 <?php if ($mensagemSenhaAlterada !== ''): ?>
                     <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemSenhaAlterada) ?></p>
@@ -244,6 +355,12 @@ unset($vaga);
                 <?php endif; ?>
                 <?php if ($mensagemCurriculoSalvo !== ''): ?>
                     <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemCurriculoSalvo) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemCurriculoEditado !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemCurriculoEditado) ?></p>
+                <?php endif; ?>
+                <?php if ($mensagemCurriculoErro !== ''): ?>
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemCurriculoErro) ?></p>
                 <?php endif; ?>
                 <?php if ($mensagemEmailCurriculo !== ''): ?>
                     <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemEmailCurriculo) ?></p>
@@ -361,39 +478,85 @@ unset($vaga);
                 <section class="dashboard-resume">
                     <header class="dashboard-resume__header">
                         <div>
-                            <p class="dashboard-resume__eyebrow">CRIADOR DE CURRÍCULO COM IA</p>
-                            <h1>Seu currículo, pronto para sua próxima oportunidade</h1>
-                            <p>A IA organiza e melhora a apresentação das informações que você cadastrou. Você revisa o resultado antes de imprimir ou salvar.</p>
+                            <p class="dashboard-resume__eyebrow">MEU CURRÍCULO</p>
+                            <h1><?= $possuiCurriculo ? 'Seu currículo' : 'Adicione um currículo para se candidatar' ?></h1>
+                            <p><?= $possuiCurriculo ? 'Revise, edite e baixe seu documento. Você pode substituir o arquivo enviado quando quiser.' : 'Você pode enviar um arquivo pronto ou criar um currículo com ajuda da IA.' ?></p>
                         </div>
                     </header>
 
+                    <?php if (!$possuiCurriculo): ?>
+                        <section class="dashboard-resume__missing" aria-labelledby="resume-missing-title">
+                            <h2 id="resume-missing-title">Ainda não há currículo nesta conta</h2>
+                            <p>Para se candidatar às vagas, envie um PDF/Word ou preencha seus dados para criar um currículo.</p>
+                            <a class="dashboard-resume__button dashboard-resume__button--primary" href="curriculo_onboarding.php">Escolher como continuar</a>
+                        </section>
+                    <?php else: ?>
                     <div class="dashboard-resume__content">
-                        <section class="dashboard-resume__generator" aria-labelledby="resume-generator-title" data-resume-csrf="<?= h(csrfToken()) ?>">
+                        <section class="dashboard-resume__generator" aria-labelledby="resume-generator-title" data-resume-csrf="<?= h(csrfToken()) ?>" data-resume-auto-generate="<?= $gerarCurriculoAutomaticamente ? 'true' : 'false' ?>">
                             <div class="dashboard-resume__generator-icon" aria-hidden="true">✦</div>
-                            <h2 id="resume-generator-title">Gerar meu currículo</h2>
+                            <h2 id="resume-generator-title">Editar ou melhorar</h2>
                             <p>Usaremos seu nome social, escolaridade, cursos, experiência e idiomas para criar um currículo claro e profissional. A IA não deve inventar dados; confira o texto antes de usar.</p>
                             <label class="dashboard-resume__consent">
                                 <input type="checkbox" data-resume-consent>
                                 <span>Entendo que, ao gerar, os dados do meu currículo serão enviados ao Google Gemini para criar o texto. A chave da API fica protegida no servidor.</span>
                             </label>
                             <div class="dashboard-resume__actions">
-                                <button class="dashboard-resume__button dashboard-resume__button--primary" type="button" data-generate-resume disabled>✦ Gerar currículo com IA</button>
-                                <button class="dashboard-resume__button dashboard-resume__button--secondary" type="button" data-print-resume hidden>Imprimir / Salvar PDF</button>
-                                <a class="dashboard-resume__button dashboard-resume__button--secondary" href="cadastrar_curriculo.php">Editar meus dados</a>
+                                <?php if (!empty($curriculoAtual['id_curriculo'])): ?>
+                                    <button class="dashboard-resume__button dashboard-resume__button--primary" type="button" data-generate-resume disabled>✦ Gerar com IA</button>
+                                <?php endif; ?>
+                                <?php if ($hasResumeText): ?>
+                                    <button class="dashboard-resume__button dashboard-resume__button--secondary" type="button" data-print-resume>Baixar / Imprimir PDF</button>
+                                    <a class="dashboard-resume__button dashboard-resume__button--secondary" href="curriculo_exportar.php?formato=docx">Baixar DOCX</a>
+                                <?php endif; ?>
+                                <?php if (!empty($resumeDocument['arquivo_caminho'])): ?>
+                                    <a class="dashboard-resume__button dashboard-resume__button--secondary" href="curriculo_baixar.php">Baixar arquivo original</a>
+                                <?php endif; ?>
+                                <a class="dashboard-resume__button dashboard-resume__button--secondary" href="curriculo_upload.php">Substituir currículo</a>
+                                <a class="dashboard-resume__button dashboard-resume__button--secondary" href="cadastrar_curriculo.php">Editar nome e dados</a>
                             </div>
                             <p class="dashboard-resume__status" data-resume-status role="status" aria-live="polite">Seus dados só serão enviados quando você confirmar e solicitar a geração.</p>
-                            <p class="dashboard-resume__privacy">A geração usa uma API externa e pode consumir cota da chave configurada pelo DevIN.</p>
+                            <details class="dashboard-resume__editor">
+                                <summary>Editar conteúdo do currículo</summary>
+                                <form method="post">
+                                    <input type="hidden" name="action" value="update_resume_content">
+                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                    <?php foreach (['resumo' => 'Resumo profissional', 'formacao' => 'Formação', 'experiencia' => 'Experiência profissional', 'cursos' => 'Cursos e certificações', 'idiomas' => 'Idiomas'] as $field => $label): ?>
+                                        <label><?= h($label) ?><textarea name="resume[<?= h($field) ?>]" maxlength="6000"><?= h((string) ($resumeContent[$field] ?? '')) ?></textarea></label>
+                                    <?php endforeach; ?>
+                                    <button class="dashboard-resume__button dashboard-resume__button--primary" type="submit">Salvar alterações</button>
+                                </form>
+                            </details>
+                            <p class="dashboard-resume__privacy">A geração envia os dados ao Google Gemini somente após consentimento e pode consumir cota da chave configurada pelo DevIN.</p>
                         </section>
 
                         <article class="dashboard-resume__paper dashboard-resume__paper--empty" data-resume-output aria-label="Currículo gerado" aria-live="polite">
-                            <div class="dashboard-resume__empty-state" data-resume-empty>
+                            <div class="dashboard-resume__empty-state" data-resume-empty hidden>
                                 <span aria-hidden="true">▤</span>
                                 <h2>Seu currículo aparecerá aqui</h2>
                                 <p>Confirme o envio dos dados e clique em <strong>Gerar currículo com IA</strong>.</p>
                             </div>
-                            <div data-resume-content hidden></div>
+                            <div data-resume-content>
+                                <h2><?= h($resumeContent['nome']) ?></h2>
+                                <?php foreach (['resumo' => 'Resumo profissional', 'formacao' => 'Formação', 'experiencia' => 'Experiência profissional', 'cursos' => 'Cursos e certificações', 'idiomas' => 'Idiomas'] as $field => $label): ?>
+                                    <?php if (trim((string) ($resumeContent[$field] ?? '')) !== ''): ?>
+                                        <section class="dashboard-resume__section">
+                                            <h3><?= h($label) ?></h3>
+                                            <p><?= h((string) $resumeContent[$field]) ?></p>
+                                        </section>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                                <?php if (!empty($resumeDocument['arquivo_nome'])): ?>
+                                    <section class="dashboard-resume__section dashboard-resume__file">
+                                        <h3>Arquivo enviado</h3>
+                                        <p><?= h((string) $resumeDocument['arquivo_nome']) ?></p>
+                                        <a href="curriculo_baixar.php">Abrir ou baixar arquivo original</a>
+                                        <iframe class="dashboard-resume__uploaded-preview" src="curriculo_visualizar.php" title="Prévia do currículo enviado" loading="lazy"></iframe>
+                                    </section>
+                                <?php endif; ?>
+                            </div>
                         </article>
                     </div>
+                    <?php endif; ?>
                 </section>
             <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
@@ -411,7 +574,7 @@ unset($vaga);
                 </section>
             <?php elseif ($pagina === 'vagas'): ?>
                 <?php if (!empty($_SESSION['job_error'])): ?>
-                    <p class="form-error"><?= h($_SESSION['job_error']); unset($_SESSION['job_error']); ?></p>
+                    <p class="form-error"><?= h($_SESSION['job_error']); unset($_SESSION['job_error']); ?> <a href="pessoa.php?pagina=curriculo">Abrir Meu currículo</a></p>
                 <?php endif; ?>
                 <?php if (!empty($_SESSION['job_success'])): ?>
                     <p class="form-success"><?= h($_SESSION['job_success']); unset($_SESSION['job_success']); ?></p>
@@ -460,6 +623,8 @@ unset($vaga);
                                 <input type="hidden" name="id_vaga" value="<?= (int) $vaga['id_vaga'] ?>">
                                 <?php if ($jaSeCandidatou): ?>
                                     <button class="btn applied" type="button" disabled>Candidatou-se</button>
+                                <?php elseif (!$possuiCurriculo): ?>
+                                    <button class="btn applied" type="button" disabled>Adicione um currículo</button>
                                 <?php else: ?>
                                     <button class="btn primary" type="submit" data-detail-action-target>Candidatar-se</button>
                                 <?php endif; ?>

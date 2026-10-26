@@ -8,15 +8,19 @@
     const output = document.querySelector('[data-resume-output]');
     const emptyState = document.querySelector('[data-resume-empty]');
     const content = document.querySelector('[data-resume-content]');
+    if (printButton instanceof HTMLButtonElement) {
+        printButton.addEventListener('click', () => window.print());
+    }
+
     if (!(consent instanceof HTMLInputElement)
-        || !(generateButton instanceof HTMLButtonElement)
-        || !(printButton instanceof HTMLButtonElement)
         || !(status instanceof HTMLElement)
         || !(output instanceof HTMLElement)
         || !(emptyState instanceof HTMLElement)
         || !(content instanceof HTMLElement)) {
         return;
     }
+
+    if (!(generateButton instanceof HTMLButtonElement)) return;
 
     const sections = [
         ['resumo', 'Resumo profissional'],
@@ -29,8 +33,6 @@
     consent.addEventListener('change', () => {
         generateButton.disabled = !consent.checked;
     });
-    printButton.addEventListener('click', () => window.print());
-
     generateButton.addEventListener('click', async () => {
         if (!consent.checked || generateButton.disabled) return;
 
@@ -70,6 +72,8 @@
 
             sections.forEach(([key, title]) => {
                 const value = result.curriculo[key];
+                const editorField = document.querySelector(`[name="resume[${key}]"]`);
+                if (editorField instanceof HTMLTextAreaElement) editorField.value = value;
                 if (typeof value !== 'string' || value.trim() === '') return;
                 const section = document.createElement('section');
                 section.className = 'dashboard-resume__section';
@@ -98,4 +102,11 @@
             generateButton.disabled = !consent.checked;
         }
     });
+
+    const generatorPanel = generateButton.closest('[data-resume-auto-generate]');
+    if (generatorPanel?.getAttribute('data-resume-auto-generate') === 'true') {
+        consent.checked = true;
+        generateButton.disabled = false;
+        generateButton.click();
+    }
 })();

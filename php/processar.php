@@ -373,6 +373,11 @@ switch ($acao) {
             $cursos = requestString($_POST, 'cursos');
             $experiencia = requestString($_POST, 'experiencia');
             $idiomas = requestString($_POST, 'idiomas');
+            $gerarComIa = requestString($_POST, 'gerar_com_ia') === '1';
+
+            if ($gerarComIa && requestString($_POST, 'consentimento_ia') !== 'yes') {
+                throw new InvalidArgumentException('Autorize o envio dos dados para iniciar a geração com IA.');
+            }
 
             if ($nomeSocial === '' || $grauEscolaridade === '') {
                 throw new InvalidArgumentException('Informe o nome social e o grau de escolaridade.');
@@ -407,13 +412,18 @@ switch ($acao) {
             } else {
                 $_SESSION['erro_curriculo'] = 'Currículo salvo, mas não foi possível enviar o e-mail de confirmação.';
             }
-            header('Location: pessoa.php?pagina=inicio');
+            if ($gerarComIa) {
+                $_SESSION['resume_generate_on_dashboard'] = true;
+                header('Location: pessoa.php?pagina=curriculo&gerar=1');
+            } else {
+                header('Location: pessoa.php?pagina=inicio');
+            }
         } catch (Throwable $e) {
             error_log($e->getMessage());
             $_SESSION['erro_curriculo'] = $e instanceof InvalidArgumentException
                 ? $e->getMessage()
                 : 'Não foi possível salvar o currículo agora. Tente novamente.';
-            header('Location: cadastrar_curriculo.php');
+            header('Location: cadastrar_curriculo.php' . (requestString($_POST, 'gerar_com_ia') === '1' ? '?ia=1' : ''));
         } finally {
             if ($conn instanceof mysqli) {
                 $conn->close();

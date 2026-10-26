@@ -40,29 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         RateLimiter::clear($identityKey);
         AuthController::establishSession($auth);
 
-        // Redirecionamento especial para candidato sem currículo cadastrado
         if ($auth['usuario']['tipo'] === 'pessoa') {
-            $conn = getDatabaseConnection();
-            $idPessoa = (int) $auth['usuario']['id'];
-
-            // Direciona candidatos sem currículo ao formulário que libera o acesso ao dashboard.
-            $stmt = $conn->prepare('SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1');
-            if ($stmt) {
-                $stmt->bind_param('i', $idPessoa);
-                $stmt->execute();
-                $resultado = $stmt->get_result();
-                $temCurriculo = $resultado && $resultado->num_rows > 0;
-                $stmt->close();
-                $conn->close();
-
-                if ($temCurriculo) {
-                    header('Location: pessoa.php');
-                } else {
-                    header('Location: cadastrar_curriculo.php');
-                }
-                exit;
-            }
-            $conn->close();
+            header('Location: pessoa.php');
+            exit;
         }
 
         header('Location: ' . AuthController::redirectByUserType($auth['usuario']['tipo']));

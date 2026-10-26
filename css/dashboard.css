@@ -3316,6 +3316,10 @@ body.account-deleting .dashboard-shell {
     text-align: center;
 }
 
+.dashboard-shell.page-curriculo .dashboard-resume [hidden] {
+    display: none !important;
+}
+
 .dashboard-resume__empty-state > span {
     display: inline-grid;
     width: 64px;
@@ -3361,6 +3365,93 @@ body.account-deleting .dashboard-shell {
     font-size: 15px;
     line-height: 1.8;
     white-space: pre-line;
+}
+
+.dashboard-resume__missing {
+    max-width: 720px;
+    padding: 28px;
+    border: 1px solid #d6e2ef;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.dashboard-resume__missing h2 {
+    margin: 0 0 10px;
+    color: #12345b;
+    font-size: 21px;
+}
+
+.dashboard-resume__missing p {
+    margin: 0 0 20px;
+    color: #586779;
+    line-height: 1.6;
+}
+
+.dashboard-resume__editor {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #dce6f0;
+}
+
+.dashboard-resume__editor summary {
+    color: #12345b;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.dashboard-resume__editor form {
+    display: grid;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.dashboard-resume__editor label {
+    display: grid;
+    gap: 6px;
+    color: #43556a;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.dashboard-resume__editor textarea {
+    width: 100%;
+    min-height: 78px;
+    padding: 10px;
+    border: 1px solid #cad6e2;
+    border-radius: 6px;
+    color: #24394b;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.dashboard-resume__editor textarea:focus-visible {
+    outline: 2px solid rgba(25, 118, 210, .25);
+    border-color: #1976d2;
+}
+
+.dashboard-resume__file a {
+    color: #07539a;
+    font-weight: 700;
+}
+
+.dashboard-resume__uploaded-preview {
+    display: block;
+    width: 100%;
+    min-height: 560px;
+    margin-top: 16px;
+    border: 1px solid #d6e2ef;
+    background: #fff;
+}
+
+@media print {
+    .dashboard-resume__editor,
+    .dashboard-resume__file a,
+    .dashboard-resume__uploaded-preview {
+        display: none !important;
+    }
 }
 
 @media print {

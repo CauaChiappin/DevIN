@@ -6,6 +6,7 @@ require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/RateLimiter.php';
+require_once __DIR__ . '/controllers/ResumeDocument.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -215,4 +216,15 @@ foreach ($camposGerados as $campo) {
 }
 
 $generatedResume['nome'] = $dadosCurriculo['Nome social'];
+try {
+    $conn = getDatabaseConnection();
+    try {
+        ResumeDocument::saveGenerated($conn, (int) $usuario['id'], $generatedResume);
+    } finally {
+        $conn->close();
+    }
+} catch (Throwable $exception) {
+    error_log('Erro ao salvar currículo gerado: ' . $exception->getMessage());
+    responderGeracaoCurriculo(['sucesso' => false, 'mensagem' => 'O currículo foi gerado, mas não pôde ser salvo. Tente novamente.'], 500);
+}
 responderGeracaoCurriculo(['sucesso' => true, 'curriculo' => $generatedResume]);
