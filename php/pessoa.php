@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_nome']  = trim(requestString($_POST, 'nome'));
             $_SESSION['usuario_email'] = trim(requestString($_POST, 'email'));
             $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.';
-            header('Location: pessoa.php?pagina=perfil');
+            header('Location: pessoa.php?pagina=' . rawurlencode($pagina));
             exit;
         }
 
@@ -193,6 +193,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? $exception->getMessage()
                 : 'Não foi possível salvar o currículo agora.';
             header('Location: pessoa.php?pagina=curriculo');
+        } elseif ($action === 'update_profile') {
+            $_SESSION['profile_error'] = 'Não foi possível atualizar o perfil. Tente novamente.';
+            header('Location: pessoa.php?pagina=' . rawurlencode($pagina));
         } elseif ($action === 'update_settings') {
             $_SESSION['settings_error'] = 'Não foi possível salvar o idioma. Tente novamente.';
             header('Location: pessoa.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1');

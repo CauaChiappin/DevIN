@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_nome']    = trim(requestString($_POST, 'nome'));
             $_SESSION['usuario_email']   = trim(requestString($_POST, 'email'));
             $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.';
-            header('Location: adm.php?pagina=perfil');
+            header('Location: adm.php?pagina=' . rawurlencode($pagina));
             exit;
         }
 
@@ -127,6 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? $exception->getMessage()
                 : 'Não foi possível registrar a decisão da denúncia.';
             header('Location: adm.php?pagina=reports');
+        } elseif ($action === 'update_profile') {
+            $_SESSION['profile_error'] = 'Não foi possível atualizar o perfil. Tente novamente.';
+            header('Location: adm.php?pagina=' . rawurlencode($pagina));
         } else {
             $_SESSION['profile_error'] = 'Não foi possível concluir a operação. Tente novamente.';
             header('Location: adm.php?pagina=perfil');
