@@ -25,6 +25,7 @@ $usuario = requireWebAuth('pessoa');
 $idPessoa    = (int) $usuario['id'];
 $nomePessoa  = $_SESSION['nome_pessoa']  ?? $usuario['nome']  ?? 'Candidato';
 $emailPessoa = $_SESSION['email_pessoa'] ?? $usuario['email'] ?? '';
+$gerarComIa = requestString($_GET, 'ia') === '1';
 
 $mensagemSucesso = (string) ($_SESSION['sucesso_curriculo'] ?? '');
 $mensagemErro = (string) ($_SESSION['erro_curriculo'] ?? '');
@@ -159,6 +160,14 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
 
             <h2 class="title-curriculo">Preenchimento de Currículo</h2>
 
+            <?php if ($gerarComIa): ?>
+                <div class="resume-ai-consent">
+                    <p>Ao continuar, seus dados serão enviados ao Google Gemini para preparar o texto do currículo. Revise todo o resultado antes de usá-lo.</p>
+                    <label><input type="checkbox" name="consentimento_ia" value="yes" required> Autorizo o envio dos dados para a geração com IA.</label>
+                    <input type="hidden" name="gerar_com_ia" value="1">
+                </div>
+            <?php endif; ?>
+
             <div class="form-columns">
 
                 <div class="form-column">
@@ -204,7 +213,7 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
             </div>
 
             <div class="form-footer-action">
-                <button type="submit" class="btn-submit">Finalizar e Salvar Currículo<a href="../php/pessoa.php"></a></button>
+                <button type="submit" class="btn-submit"><?= $gerarComIa ? 'Salvar e criar currículo com IA' : 'Finalizar e Salvar Currículo' ?></button>
                 <div class="login-redirect">
                     Deseja sair do sistema? <a href="logout.php">Clique aqui</a>
                 </div>

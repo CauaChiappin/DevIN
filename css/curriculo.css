@@ -90,6 +90,36 @@
     margin-top: 30px;
 }
 
+.resume-ai-consent {
+    display: grid;
+    gap: 12px;
+    margin: 0 0 22px;
+    padding: 16px;
+    border-left: 3px solid #187b72;
+    background: #edf6f4;
+    color: #213840;
+    line-height: 1.5;
+}
+
+.resume-ai-consent p {
+    margin: 0;
+}
+
+.resume-ai-consent label {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 14px;
+}
+
+.resume-ai-consent input {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    margin-top: 2px;
+    accent-color: #12645d;
+}
+
 .curriculo-page .btn-submit {
     min-height: 48px;
     padding: 12px clamp(28px, 4vw, 60px);
@@ -117,6 +147,270 @@
 .curriculo-page .mascot-img {
     max-width: 82%;
     max-height: 76vh;
+}
+
+.resume-onboarding-page {
+    min-height: 100vh;
+    background: #f2f6f8;
+}
+
+.resume-onboarding-page [hidden] {
+    display: none !important;
+}
+
+.resume-onboarding {
+    width: min(100% - 40px, 900px);
+    min-height: 100vh;
+    margin: 0 auto;
+}
+
+.resume-onboarding .cadastro-header {
+    min-height: 82px;
+    padding: 16px 0;
+}
+
+.resume-onboarding__panel {
+    width: min(100%, 680px);
+    margin: clamp(48px, 12vh, 120px) auto 48px;
+    padding: clamp(24px, 5vw, 48px);
+    border: 1px solid #d5e0e4;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 18px 50px rgba(24, 53, 66, .08);
+}
+
+.resume-onboarding__eyebrow {
+    margin: 0 0 12px;
+    color: #187b72;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.resume-onboarding__panel h1,
+.resume-onboarding__panel h2 {
+    margin: 0;
+    color: #172d36;
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.resume-onboarding__panel h2 {
+    font-size: 24px;
+}
+
+.resume-onboarding__panel > p:not(.resume-onboarding__eyebrow) {
+    margin: 12px 0 28px;
+    color: #53666d;
+    line-height: 1.55;
+}
+
+.resume-onboarding__choices,
+.resume-onboarding__actions {
+    display: grid;
+    gap: 12px;
+}
+
+.resume-onboarding__choice {
+    display: flex;
+    width: 100%;
+    min-height: 76px;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    border: 1px solid #cad8dc;
+    border-radius: 6px;
+    background: #fff;
+    color: #172d36;
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.resume-onboarding__choice:hover,
+.resume-onboarding__choice:focus-visible {
+    border-color: #187b72;
+    outline: 2px solid rgba(24, 123, 114, .15);
+}
+
+.resume-onboarding__choice > span:first-child {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    place-items: center;
+    border-radius: 50%;
+    background: #e6f3f1;
+    color: #12645d;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.resume-onboarding__choice strong,
+.resume-onboarding__choice small {
+    display: block;
+}
+
+.resume-onboarding__choice small {
+    margin-top: 4px;
+    color: #61737a;
+    font-size: 13px;
+}
+
+.resume-onboarding__followup h2 {
+    margin-bottom: 20px;
+}
+
+.resume-onboarding__button {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 1px solid #cad8dc;
+    border-radius: 6px;
+    color: #213840;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+}
+
+.resume-onboarding__button--primary {
+    border-color: #12645d;
+    background: #12645d;
+    color: #fff;
+}
+
+.resume-onboarding__back {
+    justify-self: start;
+    padding: 8px 0;
+    border: 0;
+    background: none;
+    color: #12645d;
+    font: inherit;
+    cursor: pointer;
+}
+
+.resume-upload-form {
+    display: grid;
+    gap: 12px;
+    margin: 22px 0;
+}
+
+.resume-upload-form label {
+    color: #213840;
+    font-weight: 700;
+}
+
+.resume-upload-form input[type="file"] {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px;
+    border: 1px solid #cad8dc;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.resume-upload-form button,
+.resume-onboarding__actions button {
+    font: inherit;
+    cursor: pointer;
+}
+
+.resume-upload-message {
+    margin: 0 0 18px;
+    color: #a32929;
+    line-height: 1.5;
+}
+
+.resume-upload-message--success {
+    color: #12645d;
+}
+
+.resume-upload-current {
+    padding: 12px;
+    border-left: 3px solid #187b72;
+    background: #edf6f4;
+    color: #213840;
+    overflow-wrap: anywhere;
+}
+
+.resume-onboarding__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #425860;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.resume-onboarding__consent input {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    margin-top: 2px;
+    accent-color: #12645d;
+}
+
+.resume-review__status {
+    min-height: 24px;
+    margin: 16px 0;
+    color: #53666d;
+}
+
+.resume-review__status[data-state="error"] {
+    color: #a32929;
+}
+
+.resume-review__status[data-state="success"] {
+    color: #12645d;
+}
+
+.resume-review__result {
+    margin: 24px 0;
+    padding-top: 20px;
+    border-top: 1px solid #d5e0e4;
+    color: #213840;
+    line-height: 1.6;
+}
+
+.resume-review__result h2 {
+    margin: 20px 0 10px;
+    font-size: 20px;
+}
+
+.resume-review__result ul {
+    display: grid;
+    gap: 14px;
+    padding-left: 22px;
+}
+
+.resume-review__result li p {
+    margin: 4px 0 0;
+    color: #53666d;
+}
+
+.resume-review__conclusion {
+    padding: 12px;
+    background: #edf6f4;
+}
+
+@media (max-width: 640px) {
+    .resume-onboarding {
+        width: min(100% - 28px, 900px);
+    }
+
+    .resume-onboarding .cadastro-header {
+        min-height: 68px;
+    }
+
+    .resume-onboarding__panel h1 {
+        font-size: 26px;
+    }
+
+    .resume-onboarding__panel h2 {
+        font-size: 22px;
+    }
 }
 
 @media (max-width: 1150px) {

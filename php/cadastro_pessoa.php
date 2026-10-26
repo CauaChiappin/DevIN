@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['nome_pessoa']  = $nome;
         $_SESSION['email_pessoa'] = $email;
 
-        header('Location: cadastrar_curriculo.php');
+        header('Location: curriculo_onboarding.php');
         exit;
 
     } catch (mysqli_sql_exception $e) {

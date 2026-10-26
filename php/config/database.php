@@ -20,9 +20,9 @@ function getDatabaseConnection(): mysqli
     };
 
     $host   = $environmentValue('DB_HOST', 'DEVIN_DB_HOST', 'localhost');
-    $user   = $environmentValue('DB_USER', 'DEVIN_DB_USER', 'u413309708_devin');
-    $pass   = $environmentValue('DB_PASS', 'DEVIN_DB_PASS', 'Caje031019');
-    $dbname = $environmentValue('DB_NAME', 'DEVIN_DB_NAME', 'u413309708_devin');
+    $user   = $environmentValue('DB_USER', 'DEVIN_DB_USER', 'root');
+    $pass   = $environmentValue('DB_PASS', 'DEVIN_DB_PASS', '');
+    $dbname = $environmentValue('DB_NAME', 'DEVIN_DB_NAME', 'devin');
     $port   = (int) $environmentValue('DB_PORT', 'DEVIN_DB_PORT', '3306');
 
     // Faz erros do MySQL virarem exceções, permitindo tratamento uniforme pelo chamador.
