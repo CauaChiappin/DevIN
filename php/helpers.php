@@ -212,21 +212,40 @@ function dashboardDetailPanel(): string
                 <p data-detail-role></p>
                 <p class="detail-meta" data-detail-meta>DevIN</p>
             </div>
-            <button class="detail-action" type="button" data-detail-action hidden></button>
-            <button class="detail-chat-action" type="button" data-start-chat hidden>Conversar</button>
+            <div class="detail-profile-actions">
+                <button class="detail-action" type="button" data-detail-action hidden></button>
+                <button class="detail-chat-action" type="button" data-start-chat hidden>Conversar</button>
+            </div>
         </header>
         <section class="detail-section">
             <h3 data-detail-summary-label>Sobre</h3>
             <p data-detail-summary></p>
+            <div class="detail-job-facts" data-report-job-facts hidden>
+                <div>
+                    <span>Salário mensal</span>
+                    <strong data-report-job-salary></strong>
+                </div>
+                <div>
+                    <span>Máximo de aprovados</span>
+                    <strong data-report-job-limit></strong>
+                </div>
+            </div>
         </section>
         <section class="detail-section" data-detail-tags-section>
             <h3>Habilidades</h3>
             <ul class="detail-tags" data-detail-tags></ul>
         </section>
         <section class="detail-section">
+            <h3 data-detail-experience-heading>Experiência</h3>
             <ul class="detail-timeline" data-detail-experience></ul>
         </section>
-        <button class="detail-report-action" type="button" data-report-job hidden>Denunciar esta vaga</button>
+        <section class="detail-report-section" data-report-job-section hidden>
+            <div class="detail-report-copy">
+                <h3>Encontrou algo errado?</h3>
+                <p>Ajude a manter as vagas confiáveis. Nossa equipe vai analisar seu relato.</p>
+            </div>
+            <button class="detail-report-action" type="button" data-report-job>Denunciar esta vaga</button>
+        </section>
     </article>
 </aside>
 <dialog class="settings-modal job-report-modal" data-job-report-dialog aria-labelledby="jobReportTitle">

@@ -339,6 +339,7 @@ $hasResumeText = count(array_filter(
     ['resumo', 'formacao', 'experiencia', 'cursos', 'idiomas'],
     static fn (string $field): bool => trim((string) ($resumeContent[$field] ?? '')) !== ''
 )) > 0;
+$hasResumePreview = $hasResumeText || !empty($resumeDocument['arquivo_nome']);
 $resumeContent = json_decode((string) ($resumeDocument['conteudo_json'] ?? ''), true);
 $resumeContent = is_array($resumeContent) ? $resumeContent : [];
 $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
@@ -552,13 +553,13 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                             <p class="dashboard-resume__privacy">A geração envia os dados ao Google Gemini somente após consentimento e pode consumir cota da chave configurada pelo DevIN.</p>
                         </section>
 
-                        <article class="dashboard-resume__paper dashboard-resume__paper--empty" data-resume-output aria-label="Currículo gerado" aria-live="polite">
-                            <div class="dashboard-resume__empty-state" data-resume-empty hidden>
+                        <article class="dashboard-resume__paper<?= $hasResumePreview ? '' : ' dashboard-resume__paper--empty' ?>" data-resume-output aria-label="Prévia do currículo" aria-live="polite">
+                            <div class="dashboard-resume__empty-state" data-resume-empty <?= $hasResumePreview ? 'hidden' : '' ?>>
                                 <span aria-hidden="true">▤</span>
                                 <h2>Seu currículo aparecerá aqui</h2>
                                 <p>Confirme o envio dos dados e clique em <strong>Gerar currículo com IA</strong>.</p>
                             </div>
-                            <div data-resume-content>
+                            <div data-resume-content <?= $hasResumePreview ? '' : 'hidden' ?>>
                                 <h2><?= h($resumeContent['nome']) ?></h2>
                                 <?php foreach (['resumo' => 'Resumo profissional', 'formacao' => 'Formação', 'experiencia' => 'Experiência profissional', 'cursos' => 'Cursos e certificações', 'idiomas' => 'Idiomas'] as $field => $label): ?>
                                     <?php if (trim((string) ($resumeContent[$field] ?? '')) !== ''): ?>

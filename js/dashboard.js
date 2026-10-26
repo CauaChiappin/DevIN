@@ -149,11 +149,7 @@
 
     const jobReportSummary = (card) => {
         if (!card.hasAttribute('data-job-report-card')) return '';
-        return [
-            `${translate('Descrição')}: ${card.dataset.reportJobDescription || translate('Sem descrição informada.')}`,
-            `${translate('Salário mensal')}: ${card.dataset.reportJobSalary || translate('A combinar')}`,
-            `${translate('Máximo de aprovados')}: ${card.dataset.reportJobLimit || translate('Sem limite')}`
-        ].join('\n');
+        return card.dataset.reportJobDescription || translate('Sem descrição informada.');
     };
 
     const renderList = (element, items, timeline = false) => {
@@ -203,8 +199,10 @@
         const metaElement = detailPanel.querySelector('[data-detail-meta]');
         const summaryElement = detailPanel.querySelector('[data-detail-summary]');
         const experienceList = detailPanel.querySelector('[data-detail-experience]');
+        const reportJobFacts = detailPanel.querySelector('[data-report-job-facts]');
         const applicationSummary = card.dataset.applicationSummary === 'true';
         const reporterPrefix = translate('Denúncia enviada por');
+        const experienceHeading = detailPanel.querySelector('[data-detail-experience-heading]');
 
         if (avatar) avatar.textContent = getInitials(name);
         if (nameElement) nameElement.textContent = name;
@@ -215,8 +213,20 @@
                 : card.dataset.detailMeta || translate('Disponivel na plataforma');
         }
         if (summaryElement) summaryElement.textContent = summary;
+        if (reportJobFacts) {
+            reportJobFacts.hidden = !jobReport;
+            reportJobFacts.querySelector('[data-report-job-salary]').textContent =
+                card.dataset.reportJobSalary || translate('A combinar');
+            reportJobFacts.querySelector('[data-report-job-limit]').textContent =
+                card.dataset.reportJobLimit || translate('Sem limite');
+        }
         const summaryLabel = detailPanel.querySelector('[data-detail-summary-label]');
         if (summaryLabel) summaryLabel.textContent = translate(jobReport ? 'Detalhes da vaga denunciada' : 'Sobre');
+        if (experienceHeading) {
+            experienceHeading.textContent = translate(jobReport
+                ? 'Detalhes da denúncia'
+                : applicationSummary ? 'Informações da vaga' : 'Experiência');
+        }
         detailPanel.querySelector('[data-detail-tags-section]')?.toggleAttribute('hidden', jobReport);
         renderList(detailPanel.querySelector('[data-detail-tags]'), tags);
         renderList(experienceList, jobReport
@@ -246,7 +256,8 @@
             chatAction.dataset.chatId = card.dataset.chatId || '';
         }
         if (jobReportButton) {
-            jobReportButton.hidden = !card.dataset.reportJobId;
+            const canReportJob = Boolean(card.dataset.reportJobId);
+            detailPanel.querySelector('[data-report-job-section]')?.toggleAttribute('hidden', !canReportJob);
             jobReportButton.disabled = card.dataset.reportSubmitted === 'true';
             jobReportButton.dataset.jobId = card.dataset.reportJobId || '';
             jobReportButton.textContent = translate(card.dataset.reportSubmitted === 'true'

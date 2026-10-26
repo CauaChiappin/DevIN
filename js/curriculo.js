@@ -1,6 +1,9 @@
 (() => {
     'use strict';
 
+    const translate = (value) => typeof window.DevINTranslate === 'function'
+        ? window.DevINTranslate(value)
+        : value;
     const consent = document.querySelector('[data-resume-consent]');
     const generateButton = document.querySelector('[data-generate-resume]');
     const printButton = document.querySelector('[data-print-resume]');
@@ -23,11 +26,11 @@
     if (!(generateButton instanceof HTMLButtonElement)) return;
 
     const sections = [
-        ['resumo', 'Resumo profissional'],
-        ['formacao', 'Formação'],
-        ['experiencia', 'Experiência profissional'],
-        ['cursos', 'Cursos e certificações'],
-        ['idiomas', 'Idiomas'],
+        ['resumo', translate('Resumo profissional')],
+        ['formacao', translate('Formação')],
+        ['experiencia', translate('Experiência profissional')],
+        ['cursos', translate('Cursos e certificações')],
+        ['idiomas', translate('Idiomas')],
     ];
 
     consent.addEventListener('change', () => {
@@ -38,8 +41,8 @@
 
         generateButton.disabled = true;
         consent.disabled = true;
-        generateButton.textContent = 'Gerando seu currículo...';
-        status.textContent = 'A IA está organizando seus dados. Isso pode levar alguns segundos.';
+        generateButton.textContent = translate('Gerando seu currículo...');
+        status.textContent = translate('A IA está organizando seus dados. Isso pode levar alguns segundos.');
         status.dataset.state = 'loading';
 
         try {
@@ -58,11 +61,11 @@
                 result = await response.json();
             } catch {
                 throw new Error(response.redirected
-                    ? 'Sua sessão expirou. Entre novamente e tente gerar o currículo.'
-                    : 'O serviço de geração retornou uma resposta inválida. Tente novamente.');
+                    ? translate('Sua sessão expirou. Entre novamente e tente gerar o currículo.')
+                    : translate('O serviço de geração retornou uma resposta inválida. Tente novamente.'));
             }
             if (!response.ok || result.sucesso !== true || !result.curriculo) {
-                throw new Error(result.mensagem || 'Não foi possível gerar o currículo.');
+                throw new Error(translate(result.mensagem || 'Não foi possível gerar o currículo.'));
             }
 
             content.replaceChildren();
@@ -89,16 +92,18 @@
             content.hidden = false;
             output.classList.remove('dashboard-resume__paper--empty');
             printButton.hidden = false;
-            status.textContent = 'Currículo gerado. Revise todas as informações antes de imprimir ou salvar em PDF.';
+            status.textContent = translate('Currículo gerado. Revise todas as informações antes de imprimir ou salvar em PDF.');
             status.dataset.state = 'success';
         } catch (error) {
             status.textContent = error instanceof Error
-                ? error.message
-                : 'Não foi possível gerar o currículo. Tente novamente.';
+                ? translate(error.message)
+                : translate('Não foi possível gerar o currículo. Tente novamente.');
             status.dataset.state = 'error';
         } finally {
             consent.disabled = false;
-            generateButton.textContent = content.hidden ? '✦ Tentar gerar novamente' : '✦ Gerar novamente';
+            generateButton.textContent = translate(content.hidden
+                ? '✦ Tentar gerar novamente'
+                : '✦ Gerar novamente');
             generateButton.disabled = !consent.checked;
         }
     });
