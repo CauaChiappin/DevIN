@@ -289,7 +289,8 @@ try {
                 $stmt = $conn->prepare("SELECT foto FROM {$tabela} WHERE {$colunaId} = ? LIMIT 1");
                 $stmt->bind_param('i', $id);
                 $stmt->execute();
-                $foto = $stmt->get_result()->fetch_column();
+                $resultadoFoto = $stmt->get_result()->fetch_assoc();
+                $foto = $resultadoFoto['foto'] ?? null;
                 $stmt->close();
                 $conn->close();
 

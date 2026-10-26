@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 function mensagemConclusaoReportExpirada(array $mensagem, ?int $agora = null): bool
 {
-    if (!str_starts_with((string) ($mensagem['chave_evento'] ?? ''), 'job-report:')) {
+    if (strpos((string) ($mensagem['chave_evento'] ?? ''), 'job-report:') !== 0) {
         return false;
     }
 
@@ -29,7 +29,8 @@ function mensagemConclusaoReportExpirada(array $mensagem, ?int $agora = null): b
     return $instanteExpiracao <= ($agora ?? time());
 }
 
-function acessarArmazenamentoMensagens(callable $operacao, string $recurso = 'mensagens'): mixed
+/** @return mixed Retorna o resultado produzido pela operação sobre o armazenamento. */
+function acessarArmazenamentoMensagens(callable $operacao, string $recurso = 'mensagens')
 {
     if (!in_array($recurso, ['mensagens', 'conversas'], true)) {
         throw new InvalidArgumentException('Armazenamento de mensagens inválido.');
@@ -131,7 +132,7 @@ function appendPlatformChatNotification(string $eventKey, string $recipientType,
             'lida_em' => null,
             'ocultada_para' => [],
             'chave_evento' => $eventKey,
-            'expira_em' => str_starts_with($eventKey, 'job-report:')
+            'expira_em' => strpos($eventKey, 'job-report:') === 0
                 ? date(DATE_ATOM, time() + 86400)
                 : null,
         ];
