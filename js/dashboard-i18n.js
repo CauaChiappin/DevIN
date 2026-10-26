@@ -389,11 +389,343 @@
         }
     };
 
+    const additionalTranslations = {
+        en: {
+            'Candidatos': 'Candidates',
+            'Vagas': 'Jobs',
+            'Minhas candidaturas': 'My applications',
+            'Empresas': 'Companies',
+            'Posts das empresas': 'Company posts',
+            'Reports de vagas': 'Job reports',
+            'Denúncias recebidas': 'Received reports',
+            'Disponíveis': 'Available',
+            'Nenhum registro disponível.': 'No records available.',
+            'Nenhum candidato cadastrado.': 'No candidates registered.',
+            'Nenhuma vaga publicada.': 'No jobs posted.',
+            'Nenhuma vaga foi denunciada.': 'No jobs have been reported.',
+            'Editar perfil': 'Edit profile',
+            'Adicionar currículo': 'Add a resume',
+            'Seu currículo': 'Your resume',
+            'Adicione um currículo para se candidatar': 'Add a resume to apply',
+            'MEU CURRÍCULO': 'MY RESUME',
+            'Revise, edite e baixe seu documento. Você pode substituir o arquivo enviado quando quiser.': 'Review, edit, and download your document. You can replace the uploaded file at any time.',
+            'Você pode enviar um arquivo pronto ou criar um currículo com ajuda da IA.': 'You can upload an existing file or create a resume with AI assistance.',
+            'Ainda não há currículo nesta conta': 'There is no resume on this account yet',
+            'Para se candidatar às vagas, envie um PDF/Word ou preencha seus dados para criar um currículo.': 'To apply for jobs, upload a PDF/Word file or fill in your details to create a resume.',
+            'Escolher como continuar': 'Choose how to continue',
+            'Editar ou melhorar': 'Edit or improve',
+            'Usaremos seu nome social, escolaridade, cursos, experiência e idiomas para criar um currículo claro e profissional. A IA não deve inventar dados; confira o texto antes de usar.': 'We will use your preferred name, education, courses, experience, and languages to create a clear, professional resume. AI should not invent details; review the text before using it.',
+            'Entendo que, ao gerar, os dados do meu currículo serão enviados ao Google Gemini para criar o texto. A chave da API fica protegida no servidor.': 'I understand that generating a resume sends my resume data to Google Gemini. The API key is protected on the server.',
+            'Gerar com IA': 'Generate with AI',
+            'Baixar / Imprimir PDF': 'Download / Print PDF',
+            'Baixar DOCX': 'Download DOCX',
+            'Baixar arquivo original': 'Download original file',
+            'Substituir currículo': 'Replace resume',
+            'Editar nome e dados': 'Edit name and details',
+            'Seus dados só serão enviados quando você confirmar e solicitar a geração.': 'Your data will only be sent after you confirm and request generation.',
+            'Editar conteúdo do currículo': 'Edit resume content',
+            'Resumo profissional': 'Professional summary',
+            'Formação': 'Education',
+            'Experiência profissional': 'Work experience',
+            'Cursos e certificações': 'Courses and certifications',
+            'Idiomas': 'Languages',
+            'A geração envia os dados ao Google Gemini somente após consentimento e pode consumir cota da chave configurada pelo DevIN.': 'Data is sent to Google Gemini only after consent, and generation may use the quota of the API key configured by DevIN.',
+            'Seu currículo aparecerá aqui': 'Your resume will appear here',
+            'Confirme o envio dos dados e clique em': 'Confirm sending your data and click',
+            'Gerar currículo com IA': 'Generate resume with AI',
+            'Arquivo enviado': 'Uploaded file',
+            'Abrir ou baixar arquivo original': 'Open or download original file',
+            'Prévia do currículo enviado': 'Uploaded resume preview',
+            'Publicar nova vaga': 'Post a new job',
+            'Título da vaga': 'Job title',
+            'Ex.: Desenvolvedor PHP': 'E.g., PHP Developer',
+            'Descreva as atividades e requisitos da vaga.': 'Describe the job duties and requirements.',
+            'Informe 0 no salário para exibir "A combinar".': 'Enter 0 for salary to display "Negotiable".',
+            'Publicar vaga': 'Post job',
+            'Você ainda não publicou nenhuma vaga.': 'You have not posted any jobs yet.',
+            'Salvar': 'Save',
+            'Excluir esta vaga e as candidaturas dela?': 'Delete this job and its applications?',
+            'Título': 'Title',
+            'Editar': 'Edit',
+            'Pesquisar por nome ou e-mail': 'Search by name or email',
+            'Nome ou e-mail': 'Name or email',
+            'Escolaridade': 'Education',
+            'Todos os níveis': 'All education levels',
+            'Cursos': 'Courses',
+            'Filtrar por curso': 'Filter by course',
+            'Todos os cursos': 'All courses',
+            'Habilidades': 'Skills',
+            'Filtrar por habilidade': 'Filter by skill',
+            'Todas as habilidades': 'All skills',
+            'Experiência': 'Experience',
+            'Filtrar por experiência': 'Filter by experience',
+            'Todas as experiências': 'All experience levels',
+            'Nenhum candidato corresponde aos filtros.': 'No candidates match these filters.',
+            'Ainda não há candidatos para esta vaga.': 'There are no candidates for this job yet.',
+            'Aprovar candidato': 'Approve candidate',
+            'Candidato': 'Candidate',
+            'Candidatura': 'Application',
+            'Candidatura recebida': 'Application received',
+            'Aprovar': 'Approve',
+            'Recusar': 'Reject',
+            'Recusado': 'Rejected',
+            'Aprovado': 'Approved',
+            'Pendente': 'Pending',
+            'Vaga publicada': 'Job posted',
+            'Publicação': 'Posting',
+            'Contato': 'Contact',
+            'Fale com a equipe DevIN para conhecer melhor o projeto, enviar sugestões ou pedir suporte.': 'Contact the DevIN team to learn more about the project, share suggestions, or request support.',
+            'Explicando tudo sobre a vaga selecionada': 'Details about the selected job',
+            'Use este espaço para visualizar detalhes da vaga, pessoa ou post escolhido no painel.': 'Use this space to view details about the selected job, person, or post.',
+            'Vaga em que o candidato se inscreveu': 'Job the candidate applied for',
+            'Selecione uma vaga para ver sua descrição completa aqui.': 'Select a job to see its full description here.',
+            'Alterar foto de perfil': 'Change profile photo',
+            'Foto de perfil': 'Profile photo',
+            'Nome da empresa': 'Company name',
+            'E-mail da conta': 'Account email',
+            'Personalize o idioma da interface da sua conta.': 'Customize your account interface language.',
+            'Escolha o idioma usado na sua experiência na DevIN.': 'Choose the language for your DevIN experience.',
+            'Essa ação é permanente e não pode ser desfeita.': 'This action is permanent and cannot be undone.',
+            'Selecione um arquivo PDF, DOC ou DOCX.': 'Select a PDF, DOC, or DOCX file.',
+            'A geração por IA ainda não está configurada. Adicione a chave Gemini no ambiente do servidor.': 'AI generation is not configured yet. Add the Gemini key to the server environment.',
+            'Solicitação inválida. Atualize a página e tente novamente.': 'Invalid request. Refresh the page and try again.',
+            'Confirme o envio dos dados para gerar o currículo.': 'Confirm sending your data to generate the resume.',
+            'Você atingiu o limite de 4 gerações por hora. Tente novamente mais tarde.': 'You have reached the limit of 4 generations per hour. Please try again later.',
+            'Idioma salvo com sucesso.': 'Language saved successfully.',
+            'Não foi possível salvar o idioma. Tente novamente.': 'Could not save the language. Please try again.',
+            'DevIN | Dashboard Administrativo': 'DevIN | Admin Dashboard',
+            'DevIN | Dashboard Empresa': 'DevIN | Company Dashboard',
+            'DevIN | Dashboard Candidato': 'DevIN | Candidate Dashboard',
+            'Sua mensagem': 'Your message',
+            'Mensagens privadas entre usuários da DevIN': 'Private messages between DevIN users',
+            'Voltar para contatos': 'Back to contacts',
+            'Carregando contatos...': 'Loading contacts...',
+            'Vaga mantida': 'Job kept',
+            'Vaga excluída': 'Job deleted',
+            'Denunciante': 'Reporter',
+            'Detalhes do registro': 'Record details',
+            'Informacoes da plataforma': 'Platform information',
+            'Informacao disponivel': 'Information available',
+            'Registro selecionado': 'Selected record',
+            'Disponivel na plataforma': 'Available on the platform',
+            'Sem detalhes disponíveis.': 'No details available.',
+            'Prévia da foto de perfil': 'Profile photo preview',
+            'Candidato DevIN': 'DevIN candidate',
+            'Excluir registro': 'Delete record',
+            'Excluir Registro': 'Delete record',
+            'Excluir perfil': 'Delete profile',
+            'Excluir empresa': 'Delete company',
+            'Excluir este candidato permanentemente?': 'Permanently delete this candidate?',
+            'Excluir esta empresa permanentemente?': 'Permanently delete this company?',
+            'Excluir esta vaga?': 'Delete this job?',
+            'Publicação::Registro da vaga na plataforma': 'Posting::Job record on the platform',
+            'Não se encaixa': 'Not a match',
+            'Candidatura para': 'Application for',
+            'Candidato para': 'Candidate for',
+            'Confira os requisitos e envie sua candidatura': 'Review the requirements and submit your application',
+            'Aprovadas': 'Approved',
+            'Recusadas': 'Rejected',
+            'Em análise': 'Under review',
+            'Empresa cadastrada': 'Registered company',
+            'Perfil ativo': 'Active profile',
+            'Cadastro na plataforma': 'Platform registration',
+            'CNPJ': 'Company tax ID',
+            'Denunciante:': 'Reporter:',
+            'Todos': 'All',
+            'Detalhes da vaga': 'Job details',
+            'Sobre': 'About',
+            'Tem certeza que deseja sair da sua conta?': 'Are you sure you want to log out?',
+            'Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.': 'Choose a JPG, PNG, or WEBP image up to 5 MB.'
+        },
+        es: {
+            'Candidatos': 'Candidatos',
+            'Vagas': 'Empleos',
+            'Minhas candidaturas': 'Mis postulaciones',
+            'Empresas': 'Empresas',
+            'Posts das empresas': 'Publicaciones de empresas',
+            'Reports de vagas': 'Denuncias de empleos',
+            'Denúncias recebidas': 'Denuncias recibidas',
+            'Disponíveis': 'Disponibles',
+            'Nenhum registro disponível.': 'No hay registros disponibles.',
+            'Nenhum candidato cadastrado.': 'No hay candidatos registrados.',
+            'Nenhuma vaga publicada.': 'No hay empleos publicados.',
+            'Nenhuma vaga foi denunciada.': 'No se han denunciado empleos.',
+            'Editar perfil': 'Editar perfil',
+            'Adicionar currículo': 'Agregar currículum',
+            'Seu currículo': 'Tu currículum',
+            'Adicione um currículo para se candidatar': 'Agrega un currículum para postularte',
+            'MEU CURRÍCULO': 'MI CURRÍCULUM',
+            'Revise, edite e baixe seu documento. Você pode substituir o arquivo enviado quando quiser.': 'Revisa, edita y descarga tu documento. Puedes reemplazar el archivo enviado cuando quieras.',
+            'Você pode enviar um arquivo pronto ou criar um currículo com ajuda da IA.': 'Puedes subir un archivo existente o crear un currículum con ayuda de IA.',
+            'Ainda não há currículo nesta conta': 'Aún no hay un currículum en esta cuenta',
+            'Para se candidatar às vagas, envie um PDF/Word ou preencha seus dados para criar um currículo.': 'Para postularte a empleos, sube un archivo PDF/Word o completa tus datos para crear un currículum.',
+            'Escolher como continuar': 'Elegir cómo continuar',
+            'Editar ou melhorar': 'Editar o mejorar',
+            'Usaremos seu nome social, escolaridade, cursos, experiência e idiomas para criar um currículo claro e profissional. A IA não deve inventar dados; confira o texto antes de usar.': 'Usaremos tu nombre preferido, estudios, cursos, experiencia e idiomas para crear un currículum claro y profesional. La IA no debe inventar datos; revisa el texto antes de usarlo.',
+            'Entendo que, ao gerar, os dados do meu currículo serão enviados ao Google Gemini para criar o texto. A chave da API fica protegida no servidor.': 'Entiendo que, al generar, los datos de mi currículum se enviarán a Google Gemini. La clave de API está protegida en el servidor.',
+            'Gerar com IA': 'Generar con IA',
+            'Baixar / Imprimir PDF': 'Descargar / Imprimir PDF',
+            'Baixar DOCX': 'Descargar DOCX',
+            'Baixar arquivo original': 'Descargar archivo original',
+            'Substituir currículo': 'Reemplazar currículum',
+            'Editar nome e dados': 'Editar nombre y datos',
+            'Seus dados só serão enviados quando você confirmar e solicitar a geração.': 'Tus datos solo se enviarán cuando confirmes y solicites la generación.',
+            'Editar conteúdo do currículo': 'Editar contenido del currículum',
+            'Resumo profissional': 'Resumen profesional',
+            'Formação': 'Formación',
+            'Experiência profissional': 'Experiencia profesional',
+            'Cursos e certificações': 'Cursos y certificaciones',
+            'Idiomas': 'Idiomas',
+            'A geração envia os dados ao Google Gemini somente após consentimento e pode consumir cota da chave configurada pelo DevIN.': 'Los datos se envían a Google Gemini solo después de tu consentimiento. La generación puede consumir la cuota de la clave configurada por DevIN.',
+            'Seu currículo aparecerá aqui': 'Tu currículum aparecerá aquí',
+            'Confirme o envio dos dados e clique em': 'Confirma el envío de los datos y haz clic en',
+            'Gerar currículo com IA': 'Generar currículum con IA',
+            'Arquivo enviado': 'Archivo enviado',
+            'Abrir ou baixar arquivo original': 'Abrir o descargar el archivo original',
+            'Prévia do currículo enviado': 'Vista previa del currículum enviado',
+            'Publicar nova vaga': 'Publicar un nuevo empleo',
+            'Título da vaga': 'Título del empleo',
+            'Ex.: Desenvolvedor PHP': 'Ej.: Desarrollador PHP',
+            'Descreva as atividades e requisitos da vaga.': 'Describe las tareas y los requisitos del empleo.',
+            'Informe 0 no salário para exibir "A combinar".': 'Indica 0 para mostrar "A convenir".',
+            'Publicar vaga': 'Publicar empleo',
+            'Você ainda não publicou nenhuma vaga.': 'Aún no has publicado ningún empleo.',
+            'Salvar': 'Guardar',
+            'Excluir esta vaga e as candidaturas dela?': '¿Eliminar este empleo y sus postulaciones?',
+            'Título': 'Título',
+            'Editar': 'Editar',
+            'Pesquisar por nome ou e-mail': 'Buscar por nombre o correo electrónico',
+            'Nome ou e-mail': 'Nombre o correo electrónico',
+            'Escolaridade': 'Estudios',
+            'Todos os níveis': 'Todos los niveles',
+            'Cursos': 'Cursos',
+            'Filtrar por curso': 'Filtrar por curso',
+            'Todos os cursos': 'Todos los cursos',
+            'Habilidades': 'Habilidades',
+            'Filtrar por habilidade': 'Filtrar por habilidad',
+            'Todas as habilidades': 'Todas las habilidades',
+            'Experiência': 'Experiencia',
+            'Filtrar por experiência': 'Filtrar por experiencia',
+            'Todas as experiências': 'Todos los niveles de experiencia',
+            'Nenhum candidato corresponde aos filtros.': 'Ningún candidato coincide con los filtros.',
+            'Ainda não há candidatos para esta vaga.': 'Aún no hay candidatos para este empleo.',
+            'Aprovar candidato': 'Aprobar candidato',
+            'Candidato': 'Candidato',
+            'Candidatura': 'Postulación',
+            'Candidatura recebida': 'Postulación recibida',
+            'Aprovar': 'Aprobar',
+            'Recusar': 'Rechazar',
+            'Recusado': 'Rechazado',
+            'Aprovado': 'Aprobado',
+            'Pendente': 'Pendiente',
+            'Vaga publicada': 'Empleo publicado',
+            'Publicação': 'Publicación',
+            'Contato': 'Contacto',
+            'Fale com a equipe DevIN para conhecer melhor o projeto, enviar sugestões ou pedir suporte.': 'Contacta al equipo de DevIN para conocer el proyecto, enviar sugerencias o solicitar ayuda.',
+            'Explicando tudo sobre a vaga selecionada': 'Detalles del empleo seleccionado',
+            'Use este espaço para visualizar detalhes da vaga, pessoa ou post escolhido no painel.': 'Usa este espacio para ver los detalles del empleo, persona o publicación seleccionados.',
+            'Vaga em que o candidato se inscreveu': 'Empleo al que se postuló el candidato',
+            'Selecione uma vaga para ver sua descrição completa aqui.': 'Selecciona un empleo para ver aquí su descripción completa.',
+            'Alterar foto de perfil': 'Cambiar foto de perfil',
+            'Foto de perfil': 'Foto de perfil',
+            'Nome da empresa': 'Nombre de la empresa',
+            'E-mail da conta': 'Correo electrónico de la cuenta',
+            'Personalize o idioma da interface da sua conta.': 'Personaliza el idioma de la interfaz de tu cuenta.',
+            'Escolha o idioma usado na sua experiência na DevIN.': 'Elige el idioma para tu experiencia en DevIN.',
+            'Essa ação é permanente e não pode ser desfeita.': 'Esta acción es permanente y no se puede deshacer.',
+            'A geração por IA ainda não está configurada. Adicione a chave Gemini no ambiente do servidor.': 'La generación con IA aún no está configurada. Agrega la clave de Gemini al entorno del servidor.',
+            'Solicitação inválida. Atualize a página e tente novamente.': 'Solicitud no válida. Actualiza la página e inténtalo de nuevo.',
+            'Confirme o envio dos dados para gerar o currículo.': 'Confirma el envío de los datos para generar el currículum.',
+            'Você atingiu o limite de 4 gerações por hora. Tente novamente mais tarde.': 'Has alcanzado el límite de 4 generaciones por hora. Inténtalo más tarde.',
+            'Idioma salvo com sucesso.': 'Idioma guardado correctamente.',
+            'Não foi possível salvar o idioma. Tente novamente.': 'No se pudo guardar el idioma. Inténtalo de nuevo.',
+            'DevIN | Dashboard Administrativo': 'DevIN | Panel de administración',
+            'DevIN | Dashboard Empresa': 'DevIN | Panel de empresa',
+            'DevIN | Dashboard Candidato': 'DevIN | Panel de candidato',
+            'Sua mensagem': 'Tu mensaje',
+            'Mensagens privadas entre usuários da DevIN': 'Mensajes privados entre usuarios de DevIN',
+            'Voltar para contatos': 'Volver a los contactos',
+            'Carregando contatos...': 'Cargando contactos...',
+            'Vaga mantida': 'Empleo mantenido',
+            'Vaga excluída': 'Empleo eliminado',
+            'Denunciante': 'Denunciante',
+            'Detalhes do registro': 'Detalles del registro',
+            'Informacoes da plataforma': 'Información de la plataforma',
+            'Informacao disponivel': 'Información disponible',
+            'Registro selecionado': 'Registro seleccionado',
+            'Disponivel na plataforma': 'Disponible en la plataforma',
+            'Sem detalhes disponíveis.': 'No hay detalles disponibles.',
+            'Prévia da foto de perfil': 'Vista previa de la foto de perfil',
+            'Candidato DevIN': 'Candidato de DevIN',
+            'Excluir registro': 'Eliminar registro',
+            'Excluir Registro': 'Eliminar registro',
+            'Excluir perfil': 'Eliminar perfil',
+            'Excluir empresa': 'Eliminar empresa',
+            'Excluir este candidato permanentemente?': '¿Eliminar permanentemente a este candidato?',
+            'Excluir esta empresa permanentemente?': '¿Eliminar permanentemente esta empresa?',
+            'Excluir esta vaga?': '¿Eliminar este empleo?',
+            'Publicação::Registro da vaga na plataforma': 'Publicación::Registro del empleo en la plataforma',
+            'Não se encaixa': 'No cumple con el perfil',
+            'Candidatura para': 'Postulación para',
+            'Candidato para': 'Candidato para',
+            'Confira os requisitos e envie sua candidatura': 'Revisa los requisitos y envía tu postulación',
+            'Aprovadas': 'Aprobadas',
+            'Recusadas': 'Rechazadas',
+            'Em análise': 'En revisión',
+            'Empresa cadastrada': 'Empresa registrada',
+            'Perfil ativo': 'Perfil activo',
+            'Cadastro na plataforma': 'Registro en la plataforma',
+            'CNPJ': 'Identificación fiscal',
+            'Denunciante:': 'Denunciante:',
+            'Todos': 'Todos',
+            'Detalhes da vaga': 'Detalles del empleo',
+            'Sobre': 'Acerca de',
+            'Tem certeza que deseja sair da sua conta?': '¿Seguro que quieres cerrar sesión?',
+            'Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.': 'Elige una imagen JPG, PNG o WEBP de hasta 5 MB.'
+        }
+    };
+
+    const dictionary = {
+        ...(translations[language] ?? translations['pt-BR']),
+        ...(additionalTranslations[language] ?? {})
+    };
+
     const translate = (value) => {
         const raw = String(value ?? '');
-        const dictionary = translations[language] ?? translations['pt-BR'];
         const trimmed = raw.trim();
-        const translated = dictionary[trimmed];
+        let translated = dictionary[trimmed];
+        const count = trimmed.match(/^(\d+)\s+(candidatos?|vagas?|posts?|reports?|registros?|mensagens não lidas)$/);
+        if (translated === undefined && count && language !== 'pt-BR') {
+            const amount = Number(count[1]);
+            const item = count[2];
+            const countTranslations = {
+                en: {
+                    candidato: amount === 1 ? 'candidate' : 'candidates',
+                    candidatos: amount === 1 ? 'candidate' : 'candidates',
+                    vaga: amount === 1 ? 'job' : 'jobs',
+                    vagas: amount === 1 ? 'job' : 'jobs',
+                    post: amount === 1 ? 'post' : 'posts',
+                    posts: amount === 1 ? 'post' : 'posts',
+                    report: amount === 1 ? 'report' : 'reports',
+                    reports: amount === 1 ? 'report' : 'reports',
+                    registros: amount === 1 ? 'record' : 'records',
+                    'mensagens não lidas': amount === 1 ? 'unread message' : 'unread messages'
+                },
+                es: {
+                    candidato: amount === 1 ? 'candidato' : 'candidatos',
+                    candidatos: amount === 1 ? 'candidato' : 'candidatos',
+                    vaga: amount === 1 ? 'empleo' : 'empleos',
+                    vagas: amount === 1 ? 'empleo' : 'empleos',
+                    post: amount === 1 ? 'publicación' : 'publicaciones',
+                    posts: amount === 1 ? 'publicación' : 'publicaciones',
+                    report: amount === 1 ? 'denuncia' : 'denuncias',
+                    reports: amount === 1 ? 'denuncia' : 'denuncias',
+                    registros: amount === 1 ? 'registro' : 'registros',
+                    'mensagens não lidas': amount === 1 ? 'mensaje sin leer' : 'mensajes sin leer'
+                }
+            };
+            translated = `${count[1]} ${countTranslations[language][item]}`;
+        }
         if (translated !== undefined) {
             return raw.replace(trimmed, translated);
         }
@@ -402,20 +734,60 @@
 
     window.DevINTranslate = translate;
 
+    const translatedTitle = translate(document.title);
+    if (translatedTitle !== document.title) document.title = translatedTitle;
+
     if (language === 'pt-BR') return;
 
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    let node;
-    while ((node = walker.nextNode())) {
-        if (node.parentElement && node.parentElement.closest('script, style, textarea, input')) continue;
-        node.nodeValue = translate(node.nodeValue);
-    }
-
-    document.querySelectorAll('*').forEach((element) => {
-        for (const attribute of ['placeholder', 'aria-label', 'title', 'alt', 'data-confirm-logout']) {
+    const translatedAttributes = ['placeholder', 'aria-label', 'title', 'alt', 'data-confirm-logout'];
+    const translateTextNode = (node) => {
+        if (node.parentElement && node.parentElement.closest('script, style, textarea, input')) return;
+        const translated = translate(node.nodeValue);
+        if (translated !== node.nodeValue) node.nodeValue = translated;
+    };
+    const translateElement = (element) => {
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+        let node;
+        while ((node = walker.nextNode())) translateTextNode(node);
+        for (const attribute of translatedAttributes) {
             if (element.hasAttribute(attribute)) {
-                element.setAttribute(attribute, translate(element.getAttribute(attribute)));
+                const value = element.getAttribute(attribute);
+                const translated = translate(value);
+                if (translated !== value) element.setAttribute(attribute, translated);
             }
         }
+    };
+
+    translateElement(document.body);
+
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.type === 'characterData') {
+                translateTextNode(mutation.target);
+                continue;
+            }
+
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    translateTextNode(node);
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    translateElement(node);
+                }
+            });
+
+            if (mutation.type === 'attributes' && translatedAttributes.includes(mutation.attributeName)) {
+                const element = mutation.target;
+                const value = element.getAttribute(mutation.attributeName);
+                const translated = translate(value);
+                if (translated !== value) element.setAttribute(mutation.attributeName, translated);
+            }
+        }
+    });
+    observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: translatedAttributes
     });
 })();
