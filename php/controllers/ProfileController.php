@@ -10,12 +10,16 @@ require_once __DIR__ . '/ProfileLanguagePreference.php';
 function profileTable(string $tipo): array
 {
     // Mapa fechado evita que o tipo recebido controle diretamente nomes de tabela SQL.
-    return match ($tipo) {
-        'empresa' => ['empresa', 'id_empresa'],
-        'adm'     => ['administrador', 'id_administrador'],
-        'pessoa'  => ['pessoa', 'id_pessoa'],
-        default   => throw new InvalidArgumentException('Tipo de perfil inválido.'),
-    };
+    switch ($tipo) {
+        case 'empresa':
+            return ['empresa', 'id_empresa'];
+        case 'adm':
+            return ['administrador', 'id_administrador'];
+        case 'pessoa':
+            return ['pessoa', 'id_pessoa'];
+        default:
+            throw new InvalidArgumentException('Tipo de perfil inválido.');
+    }
 }
 
 function findProfile(string $tipo, int $id): ?array

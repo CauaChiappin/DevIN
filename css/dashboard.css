@@ -1207,25 +1207,6 @@ a {
     justify-self: start;
 }
 
-/* Area exclusiva para popular a lista com dados locais de teste. */
-.test-candidates-form {
-    width: min(500px, 100%);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 auto 14px;
-    padding: 10px 12px;
-    border: 1px dashed #9ec4e8;
-    border-radius: 8px;
-    background: #f4f9ff;
-}
-
-.test-candidates-form small {
-    color: #52677a;
-    font-size: 11px;
-    line-height: 1.35;
-}
-
 .post-tools button {
     /* grid + place-items deixam o ícone exatamente no centro do botão. */
     display: grid;

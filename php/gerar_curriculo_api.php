@@ -35,7 +35,7 @@ if (is_int($contentLength) && $contentLength > 1024) {
 $body = file_get_contents('php://input', false, null, 0, 1024);
 try {
     $request = json_decode(is_string($body) ? $body : '', true, 512, JSON_THROW_ON_ERROR);
-} catch (JsonException) {
+} catch (JsonException $exception) {
     responderGeracaoCurriculo(['sucesso' => false, 'mensagem' => 'Solicitação inválida. Atualize a página e tente novamente.'], 400);
 }
 
