@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
+require_once __DIR__ . '/controllers/ChatStorage.php';
 require_once __DIR__ . '/helpers.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -172,11 +173,14 @@ function resumirConversasChat(array $mensagens, array $ator, array $conversas = 
             static fn ($participante): bool => is_string($participante) && $participante !== $atorChave
         ))[0] ?? '';
         [$tipoContato, $idContato] = array_pad(explode(':', $outroParticipante, 2), 2, '');
-        if (!in_array($tipoContato, ['pessoa', 'empresa'], true) || (int) $idContato < 1) {
+        $idContatoNumerico = (int) $idContato;
+        $contatoSistema = $tipoContato === 'sistema' && $idContatoNumerico === 0;
+        $contatoUsuario = in_array($tipoContato, ['pessoa', 'empresa'], true) && $idContatoNumerico > 0;
+        if (!$contatoSistema && !$contatoUsuario) {
             continue;
         }
 
-        $chave = $tipoContato . ':' . (int) $idContato;
+        $chave = $tipoContato . ':' . $idContatoNumerico;
         $contatos[$chave] = ['ultima_mensagem_id' => 0, 'nao_lidas' => 0];
     }
 
@@ -224,70 +228,12 @@ function resumirArmazenamentoChat(array $ator): array
     return resumirConversasChat($mensagens, $ator, $conversas);
 }
 
-function acessarArmazenamentoMensagens(callable $operacao, string $recurso = 'mensagens'): mixed
-{
-    if (!in_array($recurso, ['mensagens', 'conversas'], true)) {
-        throw new InvalidArgumentException('Armazenamento de mensagens inválido.');
-    }
-
-    $caminho = sys_get_temp_dir() . DIRECTORY_SEPARATOR
-        . 'devin-' . $recurso . '-' . hash('sha256', dirname(__DIR__)) . '.json';
-    $arquivo = fopen($caminho, 'c+');
-    if ($arquivo === false) {
-        throw new RuntimeException('Não foi possível abrir o armazenamento temporário de mensagens.');
-    }
-
-    try {
-        if (!chmod($caminho, 0600)) {
-            throw new RuntimeException('Não foi possível proteger o armazenamento temporário de mensagens.');
-        }
-        if (!flock($arquivo, LOCK_EX)) {
-            throw new RuntimeException('Não foi possível bloquear o armazenamento temporário de mensagens.');
-        }
-
-        rewind($arquivo);
-        $conteudo = stream_get_contents($arquivo);
-        if ($conteudo === false) {
-            throw new RuntimeException('Não foi possível ler o armazenamento temporário de mensagens.');
-        }
-
-        $mensagens = $conteudo === ''
-            ? []
-            : json_decode($conteudo, true, 512, JSON_THROW_ON_ERROR);
-        if (!is_array($mensagens)) {
-            throw new RuntimeException('O armazenamento temporário de mensagens está inválido.');
-        }
-
-        $resultado = $operacao($mensagens);
-        $novoConteudo = json_encode($mensagens, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
-        if ($novoConteudo !== $conteudo) {
-            rewind($arquivo);
-            if (!ftruncate($arquivo, 0)) {
-                throw new RuntimeException('Não foi possível salvar a mensagem.');
-            }
-
-            $offset = 0;
-            while ($offset < strlen($novoConteudo)) {
-                $escritos = fwrite($arquivo, substr($novoConteudo, $offset));
-                if ($escritos === false || $escritos === 0) {
-                    throw new RuntimeException('Não foi possível salvar a mensagem.');
-                }
-                $offset += $escritos;
-            }
-            if (!fflush($arquivo)) {
-                throw new RuntimeException('Não foi possível salvar a mensagem.');
-            }
-        }
-
-        flock($arquivo, LOCK_UN);
-        return $resultado;
-    } finally {
-        fclose($arquivo);
-    }
-}
-
 function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array
 {
+    if ($tipo === 'sistema' && $id === 0) {
+        return ['id' => 0, 'nome' => 'Plataforma DevIN', 'email' => ''];
+    }
+
     if (!validarTipoChat($tipo) || $id < 1) {
         return null;
     }
@@ -440,7 +386,12 @@ try {
                         'tipo' => $tipoContato,
                         'nome' => (string) $usuario['nome'],
                         'email' => (string) $usuario['email'],
-                        'rotulo' => $tipoContato === 'pessoa' ? 'Pessoa' : 'Empresa',
+                        'rotulo' => match ($tipoContato) {
+                            'pessoa' => 'Pessoa',
+                            'empresa' => 'Empresa',
+                            'sistema' => 'Notificação da plataforma',
+                            default => 'Contato',
+                        },
                         'ultima_mensagem_id' => $infoContato['ultima_mensagem_id'],
                         'nao_lidas' => $infoContato['nao_lidas'],
                     ];
@@ -469,7 +420,9 @@ try {
                 if ($id === false || $depoisDe === false || $depoisDe < 0) {
                     throw new InvalidArgumentException('Parâmetros da conversa inválidos.');
                 }
-                destinatarioValido($conn, $ator, $tipo, $id);
+                if (!($tipo === 'sistema' && $id === 0)) {
+                    destinatarioValido($conn, $ator, $tipo, $id);
+                }
 
                 $resultado = acessarArmazenamentoMensagens(static function (array &$armazenadas) use ($ator, $tipo, $id, $depoisDe): array {
                     $conversa = array_values(array_filter($armazenadas, static function (array $mensagem) use ($ator, $tipo, $id): bool {
@@ -682,7 +635,9 @@ try {
             if ($id === false) {
                 throw new InvalidArgumentException('Parâmetros da conversa inválidos.');
             }
-            destinatarioValido($conn, $ator, $tipo, $id);
+            if (!($tipo === 'sistema' && $id === 0)) {
+                destinatarioValido($conn, $ator, $tipo, $id);
+            }
 
             acessarArmazenamentoMensagens(static function (array &$armazenadas) use ($ator, $tipo, $id): void {
                 $chaveAtor = chaveAtorChat($ator);

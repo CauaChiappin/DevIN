@@ -66,6 +66,7 @@ summary:focus-visible {
     height: 83px;
     margin: 0 auto;
     padding: 0;
+    /* Reserva colunas para marca, links centrais e ações da conta no cabeçalho. */
     display: grid;
     grid-template-columns: 170px 1fr 285px;
     align-items: center;
@@ -1166,6 +1167,7 @@ summary:focus-visible {
 }
 
 @media (max-width: 720px) {
+    /* Reorganiza o cabeçalho e os blocos da landing page para a largura de celular. */
 
     html,
     body {

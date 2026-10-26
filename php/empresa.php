@@ -7,6 +7,7 @@ require_once __DIR__ . '/config/security.php';
 startSecureSession();
 
 require_once __DIR__ . '/controllers/ProfileController.php';
+require_once __DIR__ . '/controllers/JobSchema.php';
 require_once __DIR__ . '/helpers.php';
 
 $usuarioAtual = requireWebAuth('empresa');
@@ -23,6 +24,7 @@ $pagina = requestString($_GET, 'pagina');
 
 $paginasPermitidas = ['inicio', 'candidatos', 'sobre', 'perfil', 'mensagens'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
+    // Limita a navegação a seções implementadas no painel da empresa.
     $pagina = 'inicio';
 }
 
@@ -33,6 +35,7 @@ if (!in_array($pagina, $paginasPermitidas, true)) {
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Toda ação que altera vaga, candidatura ou perfil exige token CSRF válido.
     requireValidCsrf();
 
     $action = requestString($_POST, 'action');
@@ -48,26 +51,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
-                $stmt = $conn->prepare('
-                    UPDATE candidatura c
-                    INNER JOIN vagas v ON v.id_vaga = c.id_vaga
-                    SET c.status = ?
-                    WHERE c.id_candidatura = ? AND v.id_empresa = ?
-                ');
-
-                if (!$stmt) {
-                    throw new RuntimeException('Não foi possível atualizar a candidatura.');
-                }
-
+                ensureJobCompensationSchema($conn);
+                $conn->begin_transaction();
+                /* Atualiza apenas se a vaga associada pertence à empresa autenticada.
+                 * Isso aplica autorização no próprio SQL, além de validar o status permitido acima. */
                 $empresaId = (int) $_SESSION['usuario_id'];
-                $stmt->bind_param('sii', $status, $idCandidatura, $empresaId);
+                $stmt = $conn->prepare('
+                    SELECT c.status, v.id_vaga, v.limite_aprovados
+                    FROM candidatura c
+                    INNER JOIN vagas v ON v.id_vaga = c.id_vaga
+                    WHERE c.id_candidatura = ? AND v.id_empresa = ?
+                    FOR UPDATE
+                ');
+                $stmt->bind_param('ii', $idCandidatura, $empresaId);
                 $stmt->execute();
+                $candidatura = $stmt->get_result()->fetch_assoc();
+                $stmt->close();
 
-                if ($stmt->affected_rows !== 1) {
+                if (!$candidatura) {
                     throw new RuntimeException('Candidatura não encontrada ou sem permissão para alterá-la.');
                 }
 
+                if ($status === 'aprovado' && $candidatura['status'] !== 'aprovado') {
+                    $vagaId = (int) $candidatura['id_vaga'];
+                    $stmt = $conn->prepare('SELECT COUNT(*) AS total FROM candidatura WHERE id_vaga = ? AND status = "aprovado"');
+                    $stmt->bind_param('i', $vagaId);
+                    $stmt->execute();
+                    $aprovados = (int) $stmt->get_result()->fetch_assoc()['total'];
+                    $stmt->close();
+
+                    $limiteAprovados = (int) $candidatura['limite_aprovados'];
+                    if ($limiteAprovados > 0 && $aprovados >= $limiteAprovados) {
+                        throw new RuntimeException('O limite de candidatos aprovados para esta vaga já foi atingido.');
+                    }
+                }
+
+                $stmt = $conn->prepare('UPDATE candidatura SET status = ? WHERE id_candidatura = ?');
+                $stmt->bind_param('si', $status, $idCandidatura);
+                $stmt->execute();
+                if ($stmt->affected_rows !== 1) {
+                    throw new RuntimeException('Não foi possível atualizar a candidatura.');
+                }
                 $stmt->close();
+                $conn->commit();
+            } catch (Throwable $exception) {
+                $conn->rollback();
+                throw $exception;
             } finally {
                 $conn->close();
             }
@@ -80,6 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'create_job') {
             $titulo    = trim(requestString($_POST, 'titulo'));
             $descricao = trim(requestString($_POST, 'descricao'));
+            $salarioMensal = validarSalarioMensal(requestString($_POST, 'salario_mensal'));
+            $limiteAprovados = validarLimiteAprovados(requestString($_POST, 'limite_aprovados'));
 
             if ($titulo === '' || $descricao === '' || mb_strlen($titulo) > 25 || mb_strlen($descricao) > 255) {
                 throw new InvalidArgumentException('Informe título (até 25 caracteres) e descrição (até 255 caracteres).');
@@ -87,13 +118,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
-                $stmt = $conn->prepare('INSERT INTO vagas (titulo, descricao, tempo_vaga, id_empresa) VALUES (?, ?, CURDATE(), ?)');
+                ensureJobCompensationSchema($conn);
+                // O ID da empresa vem da sessão autenticada, não de um campo do formulário.
+                $stmt = $conn->prepare('INSERT INTO vagas (titulo, descricao, salario_mensal, limite_aprovados, tempo_vaga, id_empresa) VALUES (?, ?, ?, ?, CURDATE(), ?)');
                 if (!$stmt) {
                     throw new RuntimeException('Não foi possível criar a vaga.');
                 }
 
                 $empresaId = (int) $_SESSION['usuario_id'];
-                $stmt->bind_param('ssi', $titulo, $descricao, $empresaId);
+                $stmt->bind_param('sssii', $titulo, $descricao, $salarioMensal, $limiteAprovados, $empresaId);
                 $stmt->execute();
                 $stmt->close();
             } finally {
@@ -109,6 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $vagaId    = (int) requestString($_POST, 'id_vaga');
             $titulo    = trim(requestString($_POST, 'titulo'));
             $descricao = trim(requestString($_POST, 'descricao'));
+            $salarioMensal = validarSalarioMensal(requestString($_POST, 'salario_mensal'));
+            $limiteAprovados = validarLimiteAprovados(requestString($_POST, 'limite_aprovados'), true);
 
             if ($vagaId <= 0 || $titulo === '' || $descricao === '' || mb_strlen($titulo) > 25 || mb_strlen($descricao) > 255) {
                 throw new InvalidArgumentException('Dados da vaga inválidos.');
@@ -116,15 +151,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
-                $stmt = $conn->prepare('UPDATE vagas SET titulo = ?, descricao = ? WHERE id_vaga = ? AND id_empresa = ?');
+                ensureJobCompensationSchema($conn);
+                $conn->begin_transaction();
+                $stmt = $conn->prepare('SELECT id_vaga FROM vagas WHERE id_vaga = ? AND id_empresa = ? FOR UPDATE');
+                $empresaId = (int) $_SESSION['usuario_id'];
+                $stmt->bind_param('ii', $vagaId, $empresaId);
+                $stmt->execute();
+                $vagaEncontrada = $stmt->get_result()->fetch_assoc();
+                $stmt->close();
+                if (!$vagaEncontrada) {
+                    throw new RuntimeException('Vaga não encontrada ou sem permissão para editá-la.');
+                }
+
+                $stmt = $conn->prepare('SELECT COUNT(*) AS total FROM candidatura WHERE id_vaga = ? AND status = "aprovado"');
+                $stmt->bind_param('i', $vagaId);
+                $stmt->execute();
+                $aprovados = (int) $stmt->get_result()->fetch_assoc()['total'];
+                $stmt->close();
+                if ($limiteAprovados > 0 && $limiteAprovados < $aprovados) {
+                    throw new InvalidArgumentException('O limite não pode ser menor que a quantidade de candidatos já aprovados (' . $aprovados . ').');
+                }
+
+                // Inclui o proprietário no WHERE para impedir edição de vaga de outra empresa.
+                $stmt = $conn->prepare('UPDATE vagas SET titulo = ?, descricao = ?, salario_mensal = ?, limite_aprovados = ? WHERE id_vaga = ? AND id_empresa = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Não foi possível editar a vaga.');
                 }
 
-                $empresaId = (int) $_SESSION['usuario_id'];
-                $stmt->bind_param('ssii', $titulo, $descricao, $vagaId, $empresaId);
+                $stmt->bind_param('sssiii', $titulo, $descricao, $salarioMensal, $limiteAprovados, $vagaId, $empresaId);
                 $stmt->execute();
                 $stmt->close();
+                $conn->commit();
+            } catch (Throwable $exception) {
+                $conn->rollback();
+                throw $exception;
             } finally {
                 $conn->close();
             }
@@ -142,6 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                // A condição de proprietário impede que uma empresa exclua vagas de outra.
                 $stmt = $conn->prepare('DELETE FROM vagas WHERE id_vaga = ? AND id_empresa = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Não foi possível excluir a vaga.');
@@ -164,6 +225,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($action === 'create_test_candidates') {
+            /* Ferramenta de demonstração restrita ao ambiente local. A transação mantém pessoa e candidatura
+             * consistentes: qualquer falha pode desfazer o conjunto sem deixar registros pela metade. */
             if (APP_ENV !== 'development') {
                 throw new RuntimeException('A criação de candidatos de teste está disponível apenas no ambiente local.');
             }
@@ -247,6 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        // Operações de perfil reutilizam validações comuns e mantêm os dados da sessão atualizados.
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_email']   = trim(requestString($_POST, 'email'));
@@ -317,12 +381,22 @@ $candidatos   = [];
 try {
     $conn = getDatabaseConnection();
     try {
+        ensureJobCompensationSchema($conn);
         // 1. Busca Vagas Criadas pela Empresa
+        // Carrega somente vagas da empresa autenticada para a área de gerenciamento.
         $stmtVagas = $conn->prepare("
-            SELECT id_vaga, titulo, COALESCE(descricao, '') AS descricao, tempo_vaga
-            FROM vagas
-            WHERE id_empresa = ?
-            ORDER BY id_vaga DESC
+            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao,
+                   v.salario_mensal, v.limite_aprovados, v.tempo_vaga,
+                   COALESCE(contagens.aprovadas, 0) AS candidaturas_aprovadas
+            FROM vagas v
+            LEFT JOIN (
+                SELECT id_vaga, COUNT(*) AS aprovadas
+                FROM candidatura
+                WHERE status = 'aprovado'
+                GROUP BY id_vaga
+            ) contagens ON contagens.id_vaga = v.id_vaga
+            WHERE v.id_empresa = ?
+            ORDER BY v.id_vaga DESC
         ");
         if ($stmtVagas) {
             $stmtVagas->bind_param('i', $empresaId);
@@ -336,13 +410,17 @@ try {
             SELECT
                 c.id_candidatura,
                 p.id_pessoa,
+                v.id_vaga,
                 c.status,
                 c.data_candidatura,
                 p.nome,
                 p.email,
                 v.titulo AS vaga,
+                COALESCE(cu.nome_social, "") AS nome_social,
+                COALESCE(cu.grau_de_escolaridade, "") AS grau_de_escolaridade,
                 COALESCE(cu.cursos, "") AS cursos,
-                COALESCE(cu.experiencia, "") AS experiencia
+                COALESCE(cu.experiencia, "") AS experiencia,
+                COALESCE(cu.idiomas, "") AS idiomas
             FROM candidatura c
             INNER JOIN vagas v ON v.id_vaga = c.id_vaga
             INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
@@ -350,6 +428,7 @@ try {
             WHERE v.id_empresa = ?
             ORDER BY c.data_candidatura DESC, c.id_candidatura DESC
         ';
+        // Monta candidatos relacionados às vagas da empresa usando consultas preparadas.
         $stmtCandidatos = $conn->prepare($sqlCandidatos);
         if ($stmtCandidatos) {
             $stmtCandidatos->bind_param('i', $empresaId);
@@ -377,6 +456,11 @@ foreach ($candidatos as &$candidato) {
         . '. Experiência: ' . ($candidato['experiencia'] !== '' ? $candidato['experiencia'] : 'não informada');
 }
 unset($candidato);
+
+$candidatosPorVaga = [];
+foreach ($candidatos as $candidato) {
+    $candidatosPorVaga[(int) $candidato['id_vaga']][] = $candidato;
+}
 
 $talentos = [
     ['nome' => 'Marina Santos', 'resumo' => 'React, CSS e comunicação clara.', 'detalhe' => 'Marina tem interesse em vagas de front-end júnior e disponibilidade para conversar esta semana.'],
@@ -449,8 +533,9 @@ $talentos = [
                 <?= dashboardListHeader(
                     $pagina,
                     $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas publicadas'),
-                    'Pesquisar por nome ou habilidade...',
-                    $pagina === 'candidatos' ? count($candidatos) . ' candidatos' : ($pagina === 'inicio' ? count($empresaPosts) . ' vagas' : '')
+                    $pagina === 'candidatos' ? 'Pesquisar por nome ou e-mail...' : 'Pesquisar por nome ou habilidade...',
+                    $pagina === 'candidatos' ? count($candidatos) . ' candidatos' : ($pagina === 'inicio' ? count($empresaPosts) . ' vagas' : ''),
+                    $pagina === 'candidatos'
                 ) ?>
                 <?php if (in_array($pagina, ['inicio', 'candidatos'], true)): ?>
                     <p class="list-section-label">Disponíveis</p>
@@ -524,9 +609,6 @@ $talentos = [
                     <p class="form-success"><?= h($_SESSION['candidate_success']); unset($_SESSION['candidate_success']); ?></p>
                 <?php endif; ?>
 
-                <?php if (!$candidatos): ?>
-                    <p class="empty-state">Ainda não há candidaturas para as suas vagas.</p>
-                <?php endif; ?>
                 <?php if (APP_ENV === 'development'): ?>
                 <form method="post" class="test-candidates-form">
                     <input type="hidden" name="action" value="create_test_candidates">
@@ -535,31 +617,102 @@ $talentos = [
                     <small>Cria ou reinicia dois candidatos pendentes na primeira vaga da empresa.</small>
                 </form>
                 <?php endif; ?>
-                <?php foreach ($candidatos as $candidato): ?>
-                    <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-detail-action-label="Aprovar candidato" data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">
-                        <span class="card-avatar"><?= dashboardIcon('user') ?></span>
-                        <div>
-                            <h2><?= h($candidato['nome']) ?></h2>
-                            <p><?= h($candidato['resumo']) ?></p>
-                            <?= dashboardCardTags('Candidatura|' . ucfirst($candidato['status'])) ?>
-                        </div>
-                        <div class="acoes-card">
-                            <button class="btn primary" type="button" data-start-chat data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">Conversar</button>
-                            <?php if ($candidato['status'] === 'pendente'): ?>
-                                <form method="post" class="candidate-actions">
-                                    <input type="hidden" name="action" value="update_application_status">
-                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                                    <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
-                                    <button class="btn danger" name="status" value="recusado" type="submit">Não se encaixa</button>
-                                    <button class="btn success" name="status" value="aprovado" type="submit" data-detail-action-target>Aprovar</button>
-                                </form>
-                            <?php else: ?>
-                                <span class="status <?= $candidato['status'] === 'aprovado' ? 'aprovado' : 'reprovado' ?>">
-                                    <?= h(ucfirst($candidato['status'])) ?>
-                                </span>
+                <?php if (!$empresaPosts): ?>
+                    <p class="empty-state">Você ainda não publicou nenhuma vaga.</p>
+                <?php endif; ?>
+                <?php foreach ($empresaPosts as $post): ?>
+                    <?php $candidatosDaVaga = $candidatosPorVaga[(int) $post['id_vaga']] ?? []; ?>
+                    <?php
+                    $escolaridades = array_values(array_unique(array_filter(array_column($candidatosDaVaga, 'grau_de_escolaridade'))));
+                    sort($escolaridades, SORT_NATURAL | SORT_FLAG_CASE);
+                    ?>
+                    <details class="candidate-vacancy-panel">
+                        <summary>
+                            <span class="candidate-vacancy-info">
+                                <strong><?= h($post['titulo']) ?></strong>
+                                <small><?= h($post['resumo']) ?></small>
+                            </span>
+                            <span class="candidate-vacancy-count">
+                                <?= count($candidatosDaVaga) ?> <?= count($candidatosDaVaga) === 1 ? 'candidato' : 'candidatos' ?>
+                            </span>
+                        </summary>
+                        <div class="candidate-vacancy-list">
+                            <?php if ($candidatosDaVaga): ?>
+                                <div class="candidate-filters">
+                                    <label>
+                                        <span>Pesquisar por nome ou e-mail</span>
+                                        <input type="search" data-candidate-search placeholder="Nome ou e-mail">
+                                    </label>
+                                    <label>
+                                        <span>Escolaridade</span>
+                                        <select data-candidate-education>
+                                            <option value="">Todos os níveis</option>
+                                            <?php foreach ($escolaridades as $escolaridade): ?>
+                                                <option value="<?= h($escolaridade) ?>"><?= h($escolaridade) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Cursos</span>
+                                        <select data-candidate-course aria-label="Filtrar por curso">
+                                            <option value="">Todos os cursos</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Habilidades</span>
+                                        <select data-candidate-skill aria-label="Filtrar por habilidade">
+                                            <option value="">Todas as habilidades</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Experiência</span>
+                                        <select data-candidate-experience aria-label="Filtrar por experiência">
+                                            <option value="">Todas as experiências</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <p class="candidate-filter-empty" data-candidate-filter-empty role="status" hidden>Nenhum candidato corresponde aos filtros.</p>
                             <?php endif; ?>
+                            <?php if (!$candidatosDaVaga): ?>
+                                <p class="empty-state">Ainda não há candidatos para esta vaga.</p>
+                            <?php endif; ?>
+                            <?php foreach ($candidatosDaVaga as $candidato): ?>
+                                <article class="item-card" data-detail="<?= h($candidato['detalhe']) ?>" data-detail-role="<?= h('Candidato para ' . $candidato['vaga']) ?>" data-detail-tags="Candidatura|<?= h(ucfirst($candidato['status'])) ?>" data-detail-experience="<?= h('Candidatura recebida::' . date('d/m/Y', strtotime($candidato['data_candidatura']))) ?>" data-candidate-name-email="<?= h($candidato['nome'] . ' ' . $candidato['email'] . ' ' . $candidato['nome_social']) ?>" data-candidate-education="<?= h($candidato['grau_de_escolaridade']) ?>" data-candidate-courses="<?= h($candidato['cursos']) ?>" data-candidate-skills="<?= h(implode('|', array_filter([$candidato['cursos'], $candidato['idiomas']]))) ?>" data-candidate-experiences="<?= h($candidato['experiencia']) ?>" data-candidate-curriculum="<?= h(implode(' ', [$candidato['grau_de_escolaridade'], $candidato['cursos'], $candidato['experiencia'], $candidato['idiomas']])) ?>" data-detail-action-label="Aprovar candidato" data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">
+                                    <span class="card-avatar"><?= dashboardIcon('user') ?></span>
+                                    <div>
+                                        <h2><?= h($candidato['nome']) ?></h2>
+                                        <p><?= h($candidato['resumo']) ?></p>
+                                        <?= dashboardCardTags('Candidatura|' . ucfirst($candidato['status'])) ?>
+                                    </div>
+                                    <div class="acoes-card">
+                                        <button class="btn primary" type="button" data-start-chat data-chat-type="pessoa" data-chat-id="<?= (int) $candidato['id_pessoa'] ?>">Conversar</button>
+                                        <?php if ($candidato['status'] === 'pendente'): ?>
+                                            <div class="candidate-actions">
+                                                <form method="post">
+                                                    <input type="hidden" name="action" value="update_application_status">
+                                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                                    <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
+                                                    <input type="hidden" name="status" value="recusado">
+                                                    <button class="btn danger" type="submit">Não se encaixa</button>
+                                                </form>
+                                                <form method="post">
+                                                    <input type="hidden" name="action" value="update_application_status">
+                                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                                    <input type="hidden" name="id_candidatura" value="<?= (int) $candidato['id_candidatura'] ?>">
+                                                    <input type="hidden" name="status" value="aprovado">
+                                                    <button class="btn success" type="submit" data-detail-action-target>Aprovar</button>
+                                                </form>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="status <?= $candidato['status'] === 'aprovado' ? 'aprovado' : 'reprovado' ?>">
+                                                <?= h(ucfirst($candidato['status'])) ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
                         </div>
-                    </article>
+                    </details>
                 <?php endforeach; ?>
 
             <?php else: ?>
@@ -581,7 +734,14 @@ $talentos = [
                         <label>Descrição
                             <textarea name="descricao" maxlength="255" placeholder="Descreva as atividades e requisitos da vaga." required></textarea>
                         </label>
-                        <button class="btn primary" type="submit">Publicar vaga</button>
+                                        <label>Salário mensal (R$)
+                                            <input name="salario_mensal" type="number" min="0" max="99999999.99" step="0.01" value="0.00" required>
+                                        </label>
+                                        <label>Máximo de candidatos aprovados
+                                            <input name="limite_aprovados" type="number" min="1" max="2147483647" step="1" required>
+                                        </label>
+                                        <p class="job-form-hint">Informe 0 no salário para exibir "A combinar".</p>
+                                        <button class="btn primary" type="submit">Publicar vaga</button>
                     </form>
                 </details>
 
@@ -590,11 +750,14 @@ $talentos = [
                 <?php endif; ?>
 
                 <?php foreach ($empresaPosts as $post): ?>
-                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($post['titulo']) ?>" data-detail-role="Vaga publicada" data-detail-tags="Vaga|Publicada" data-detail-experience="<?= h('Publicação::' . date('d/m/Y', strtotime($post['tempo_vaga']))) ?>">
+                    <?php $salarioExibido = (float) $post['salario_mensal'] > 0 ? 'R$ ' . number_format((float) $post['salario_mensal'], 2, ',', '.') : 'A combinar'; ?>
+                    <?php $limiteExibido = (int) $post['limite_aprovados'] > 0 ? (string) $post['limite_aprovados'] : 'Sem limite'; ?>
+                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($post['titulo']) ?>" data-detail-role="Vaga publicada" data-detail-tags="Vaga|Publicada" data-detail-experience="<?= h('Publicação::' . date('d/m/Y', strtotime($post['tempo_vaga'])) . '|Salário mensal::' . $salarioExibido . '|Máximo de aprovados::' . $limiteExibido) ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($post['titulo']) ?></h2>
                             <p><?= h($post['descricao'] ?: 'Sem descrição informada.') ?></p>
+                            <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Máximo de aprovados:</span> <strong><?= h($limiteExibido) ?></strong></p>
                             <?= dashboardCardTags('Vaga|Publicada') ?>
                         </div>
                         <div class="post-tools">
@@ -612,6 +775,13 @@ $talentos = [
                                     <label>Descrição
                                         <textarea name="descricao" maxlength="255" required><?= h($post['descricao']) ?></textarea>
                                     </label>
+                                    <label>Salário mensal (R$)
+                                        <input name="salario_mensal" type="number" min="0" max="99999999.99" step="0.01" value="<?= h(number_format((float) $post['salario_mensal'], 2, '.', '')) ?>" required>
+                                    </label>
+                                    <label>Máximo de candidatos aprovados
+                                        <input name="limite_aprovados" type="number" min="0" max="2147483647" step="1" value="<?= (int) $post['limite_aprovados'] > 0 ? max((int) $post['candidaturas_aprovadas'], (int) $post['limite_aprovados']) : 0 ?>" required>
+                                    </label>
+                                    <p class="job-form-hint">0 deixa a vaga sem limite de aprovados.</p>
                                     <button class="btn primary" type="submit">Salvar</button>
                                 </form>
                             </details>
@@ -740,6 +910,7 @@ $talentos = [
     <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
+    <script src="../js/konami-arcade.js?v=<?= filemtime(__DIR__ . '/../js/konami-arcade.js') ?>"></script>
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>
     <?php endif; ?>

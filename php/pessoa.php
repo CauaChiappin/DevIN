@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
+require_once __DIR__ . '/controllers/JobSchema.php';
 require_once __DIR__ . '/helpers.php';
 
 $usuarioAtual = requirePessoaComCurriculo();
@@ -30,6 +31,7 @@ $pagina        = requestString($_GET, 'pagina');
 
 $paginasPermitidas = ['inicio', 'vagas', 'curriculo', 'sobre', 'perfil', 'mensagens'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
+    // Aceita apenas as seções válidas do painel do candidato.
     $pagina = 'inicio';
 }
 
@@ -40,12 +42,14 @@ if (!in_array($pagina, $paginasPermitidas, true)) {
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Valida CSRF antes de aceitar candidatura ou alteração de perfil.
     requireValidCsrf();
 
     try {
         $action = requestString($_POST, 'action');
 
         if ($action === 'apply_job') {
+            // A candidatura pertence ao ID da sessão; o cliente envia apenas qual vaga deseja solicitar.
             $vagaId = (int) requestString($_POST, 'id_vaga');
             if ($vagaId <= 0) {
                 throw new InvalidArgumentException('Vaga inválida.');
@@ -53,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn = getDatabaseConnection();
             try {
+                // Confirma que a vaga ainda existe antes de registrar a candidatura.
                 $check = $conn->prepare('SELECT id_vaga FROM vagas WHERE id_vaga = ? LIMIT 1');
                 $check->bind_param('i', $vagaId);
                 $check->execute();
@@ -63,6 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new InvalidArgumentException('A vaga não está mais disponível.');
                 }
 
+                /* A consulta evita uma candidatura repetida antes do INSERT; ambos os IDs vêm
+                 * da sessão e do formulário validado, e são enviados como parâmetros inteiros. */
                 $duplicate = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_pessoa = ? AND id_vaga = ? LIMIT 1');
                 $duplicate->bind_param('ii', $idPessoaAtual, $vagaId);
                 $duplicate->execute();
@@ -73,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new InvalidArgumentException('Você já se candidatou a esta vaga.');
                 }
 
+                // Cria o registro inicial como pendente para análise da empresa responsável.
                 $stmt = $conn->prepare('INSERT INTO candidatura (data_candidatura, status, id_pessoa, id_vaga) VALUES (CURDATE(), ?, ?, ?)');
                 $status = 'pendente';
                 $stmt->bind_param('sii', $status, $idPessoaAtual, $vagaId);
@@ -147,28 +155,33 @@ $curriculoAtual = [];
 try {
     $conn = getDatabaseConnection();
     try {
-        $stmt = $conn->prepare(
-            'SELECT nome_social, grau_de_escolaridade, cursos, experiencia, idiomas
-             FROM curriculo
-             WHERE id_pessoa = ?
-             LIMIT 1'
-        );
-        $stmt->bind_param('i', $idPessoaAtual);
-        $stmt->execute();
-        $curriculoAtual = $stmt->get_result()->fetch_assoc() ?? [];
-        $stmt->close();
-
+        ensureJobCompensationSchema($conn);
+        // Relaciona cada vaga à empresa e restringe candidaturas ao usuário autenticado.
+        // Carrega vagas com seus dados de empresa para a lista de oportunidades disponíveis.
         $stmt = $conn->prepare("
-            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga,
-                   e.id_empresa, e.nome AS empresa
+            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao,
+                   v.salario_mensal, v.limite_aprovados, v.tempo_vaga,
+                   e.id_empresa, e.nome AS empresa,
+                   COALESCE(contagens.aprovadas, 0) AS candidaturas_aprovadas,
+                   COALESCE(contagens.recusadas, 0) AS candidaturas_recusadas,
+                   COALESCE(contagens.em_analise, 0) AS candidaturas_em_analise
             FROM vagas v
             INNER JOIN empresa e ON e.id_empresa = v.id_empresa
+            LEFT JOIN (
+                SELECT id_vaga,
+                       COUNT(CASE WHEN status = 'aprovado' THEN 1 END) AS aprovadas,
+                       COUNT(CASE WHEN status = 'recusado' THEN 1 END) AS recusadas,
+                       COUNT(CASE WHEN status NOT IN ('aprovado', 'recusado') THEN 1 END) AS em_analise
+                FROM candidatura
+                GROUP BY id_vaga
+            ) contagens ON contagens.id_vaga = v.id_vaga
             ORDER BY v.id_vaga DESC
         ");
         $stmt->execute();
         $vagasDisponiveis = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
 
+        // Busca apenas candidaturas deste usuário, junto ao status e aos dados da vaga.
         $stmt = $conn->prepare("
             SELECT c.id_candidatura, c.status, c.data_candidatura, v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa
             FROM candidatura c
@@ -430,11 +443,14 @@ unset($vaga);
                 <?php foreach ($vagasDisponiveis as $vaga): ?>
                     <?php $jaSeCandidatou = isset($vagasCandidatadas[(int) $vaga['id_vaga']]); ?>
                     <?php $statusVaga = $jaSeCandidatou ? 'Candidatura enviada' : 'Vaga disponível'; ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
+                    <?php $salarioExibido = (float) $vaga['salario_mensal'] > 0 ? 'R$ ' . number_format((float) $vaga['salario_mensal'], 2, ',', '.') : 'A combinar'; ?>
+                    <?php $limiteExibido = (int) $vaga['limite_aprovados'] > 0 ? (string) $vaga['limite_aprovados'] : 'Sem limite'; ?>
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h(($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') . '|Salário mensal::' . $salarioExibido . '|Limite de aprovados::' . $limiteExibido . '|Aprovadas::' . (int) $vaga['candidaturas_aprovadas'] . '|Recusadas::' . (int) $vaga['candidaturas_recusadas'] . '|Em análise::' . (int) $vaga['candidaturas_em_analise']) ?>" data-application-summary="true" data-report-job-id="<?= (int) $vaga['id_vaga'] ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
+                            <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Máximo de aprovados:</span> <strong><?= h($limiteExibido) ?></strong></p>
                             <?= dashboardCardTags($statusVaga . '|' . $vaga['empresa']) ?>
                         </div>
                         <div class="card-actions">
@@ -546,6 +562,7 @@ unset($vaga);
     <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
+    <script src="../js/konami-arcade.js?v=<?= filemtime(__DIR__ . '/../js/konami-arcade.js') ?>"></script>
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>
     <?php endif; ?>

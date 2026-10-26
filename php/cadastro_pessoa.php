@@ -21,6 +21,8 @@ $erro = '';
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /* O POST é tratado só depois de confirmar o token vinculado à sessão. Em seguida,
+     * os valores numéricos são normalizados sem pontuação para validar e salvar um formato único. */
     requireValidCsrf();
 
     $nome          = trim(requestString($_POST, 'nome'));
@@ -32,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmeSenha = requestString($_POST, 'confirme_senha');
 
     try {
+        // Limita criações repetidas de conta feitas a partir do mesmo IP.
         if (RateLimiter::consume('registration:ip:' . RateLimiter::clientIp(), 8, 3600) > 0) {
             throw new RuntimeException('Muitas tentativas de cadastro. Aguarde e tente novamente.');
         }
@@ -41,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         | VALIDAÇÕES DOS CAMPOS
         |--------------------------------------------------------------------------
         */
+
+        // Essas verificações no servidor continuam obrigatórias mesmo que o navegador valide os campos do formulário.
 
         if ($nome === '') {
             throw new Exception('Informe seu nome.');
@@ -98,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             // 1. E-mail único entre todos os tipos de conta
+            // Procura e-mail duplicado em todos os tipos de conta usando consultas preparadas.
             foreach (['pessoa', 'empresa', 'administrador'] as $tabelaEmail) {
                 $stmtEmail = $conn->prepare("SELECT email FROM {$tabelaEmail} WHERE email = ? LIMIT 1");
 
@@ -116,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            // 2. CPF único na tabela pessoa
+            // CPF também precisa ser único; o parâmetro evita concatenar o valor recebido ao SQL.
             $stmtCpf = $conn->prepare('SELECT id_pessoa FROM pessoa WHERE cpf = ? LIMIT 1');
             if ($stmtCpf) {
                 $stmtCpf->bind_param('s', $cpf);
@@ -136,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             |--------------------------------------------------------------------------
             */
 
+            // Salva um hash irreversível da senha, nunca a senha digitada em texto puro.
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
             if ($senhaHash === false) {
                 throw new RuntimeException('Não foi possível proteger a senha.');
@@ -168,6 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         |--------------------------------------------------------------------------
         */
 
+        // Cria a sessão imediatamente e leva a pessoa à próxima etapa do onboarding, sem pedir novo login.
         $auth = AuthController::login($email, $senha);
         AuthController::establishSession($auth);
 
@@ -207,11 +215,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Criar Conta Pessoal</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-    <link rel="stylesheet" href="../css/cadastrostyle.css">
+    <link rel="stylesheet" href="../css/cadastrostyle.css?v=<?= filemtime(__DIR__ . '/../css/cadastrostyle.css') ?>">
     <link rel="stylesheet" href="../css/site-navigation.css">
 </head>
 
-<body>
+<body class="cadastro-page">
 
 <div class="main-container">
 
@@ -251,28 +259,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form action="cadastro_pessoa.php" method="POST" class="register-form" id="formCadastro">
+            <!-- Token oculto necessário para que o backend aceite o POST do cadastro. -->
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
             <div class="form-columns">
 
                 <div class="form-column">
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-1">
                         <label for="nome">Nome:*</label>
                         <input type="text" id="nome" name="nome" required value="<?= htmlspecialchars(requestString($_POST, 'nome'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-3">
                         <label for="cpf">CPF:*</label>
                         <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required value="<?= htmlspecialchars(requestString($_POST, 'cpf'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-5">
                         <label for="cep">CEP:*</label>
                         <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required value="<?= htmlspecialchars(requestString($_POST, 'cep'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group password-wrapper">
+                    <div class="input-group password-wrapper mobile-order-8">
                         <label for="confirme_senha">Confirme a sua senha:*</label>
                         <div class="input-icon-container">
                             <input type="password" id="confirme_senha" name="confirme_senha" required minlength="8" autocomplete="new-password">
@@ -285,17 +294,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-column">
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-2">
                         <label for="email">E-mail:*</label>
                         <input type="email" id="email" name="email" required autocomplete="email" value="<?= htmlspecialchars(requestString($_POST, 'email'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group mobile-order-4">
                         <label for="telefone">Telefone:*</label>
                         <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required value="<?= htmlspecialchars(requestString($_POST, 'telefone'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
 
-                    <div class="input-group password-wrapper">
+                    <div class="input-group password-wrapper mobile-order-6">
                         <label for="senha">Senha:*</label>
                         <div class="input-icon-container">
                             <input type="password" id="senha" name="senha" required minlength="8" autocomplete="new-password">
@@ -303,7 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <div class="password-requirements">
+                    <div class="password-requirements mobile-order-7">
                         <div class="requirement-item req-invalid" id="req-length">
                             <span class="req-icon">⚠️</span> No mínimo 8 caracteres
                         </div>

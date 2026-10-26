@@ -7,6 +7,7 @@ startSecureSession();
 
 $erro = $_SESSION['erro_recuperacao'] ?? '';
 $sucesso = $_SESSION['sucesso_recuperacao'] ?? '';
+// Exibe mensagens da etapa anterior uma única vez; ao removê-las, uma atualização não repete avisos antigos.
 unset($_SESSION['erro_recuperacao'], $_SESSION['sucesso_recuperacao']);
 ?>
 <!DOCTYPE html>
@@ -32,6 +33,7 @@ unset($_SESSION['erro_recuperacao'], $_SESSION['sucesso_recuperacao']);
             <?php endif; ?>
 
             <form action="processar.php" method="POST" id="formRecuperacao">
+                <!-- Define a ação do endpoint e associa a solicitação ao token da sessão. -->
                 <input type="hidden" name="acao" value="solicitar_recuperacao">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 

@@ -20,6 +20,7 @@ $emailDigitado = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        // Rejeita envio forjado e limita tentativas por endereço de rede e identidade informada.
         requireValidCsrf();
 
         $emailDigitado = requestString($_POST, 'email');
@@ -33,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new RuntimeException('Muitas tentativas. Aguarde e tente novamente.');
         }
 
+        // Remove bloqueios após autenticação correta e inicia uma sessão nova para o usuário.
         $auth = AuthController::login($emailDigitado, $senhaDigitada);
         RateLimiter::clear($ipKey);
         RateLimiter::clear($identityKey);
@@ -43,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn = getDatabaseConnection();
             $idPessoa = (int) $auth['usuario']['id'];
 
+            // Direciona candidatos sem currículo ao formulário que libera o acesso ao dashboard.
             $stmt = $conn->prepare('SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1');
             if ($stmt) {
                 $stmt->bind_param('i', $idPessoa);
@@ -121,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form action="login.php" method="POST">
+                <!-- Token de sessão validado pelo servidor antes da tentativa de login. -->
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
                 <div class="grupo-campo">

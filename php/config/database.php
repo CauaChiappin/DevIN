@@ -7,6 +7,9 @@ require_once __DIR__ . '/auth.php';
 
 function getDatabaseConnection(): mysqli
 {
+    /* Resolve credenciais primeiro nas variáveis modernas, depois nos nomes legados e por fim
+     * nos valores padrão. Assim o mesmo código funciona em instalações locais e hospedadas. */
+    // Aceita nomes atuais e legados das variáveis para manter compatibilidade entre ambientes.
     $environmentValue = static function (string $name, string $legacyName, string $default): string {
         $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
         if ($value === false || $value === null || $value === '') {
@@ -17,15 +20,18 @@ function getDatabaseConnection(): mysqli
     };
 
     $host   = $environmentValue('DB_HOST', 'DEVIN_DB_HOST', 'localhost');
-    $user   = $environmentValue('DB_USER', 'DEVIN_DB_USER', 'root');
-    $pass   = $environmentValue('DB_PASS', 'DEVIN_DB_PASS', '');
-    $dbname = $environmentValue('DB_NAME', 'DEVIN_DB_NAME', 'devin');
+    $user   = $environmentValue('DB_USER', 'DEVIN_DB_USER', 'u413309708_devin');
+    $pass   = $environmentValue('DB_PASS', 'DEVIN_DB_PASS', 'Caje031019');
+    $dbname = $environmentValue('DB_NAME', 'DEVIN_DB_NAME', 'u413309708_devin');
     $port   = (int) $environmentValue('DB_PORT', 'DEVIN_DB_PORT', '3306');
 
+    // Faz erros do MySQL virarem exceções, permitindo tratamento uniforme pelo chamador.
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
     try {
+        // Centraliza a criação da conexão para que páginas usem a mesma configuração e charset.
         $conn = new mysqli($host, $user, $pass, $dbname, $port);
+        // Garante suporte a acentos e caracteres Unicode em consultas e resultados.
         $conn->set_charset('utf8mb4');
         return $conn;
     } catch (mysqli_sql_exception $e) {

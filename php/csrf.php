@@ -8,6 +8,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
 try {
+    // Entrega token por JSON para chamadas assíncronas e impede que intermediários o armazenem.
     startSecureSession();
 
     echo json_encode(

@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Espera o HTML existir para conectar validações e eventos aos formulários.
     const formRecuperacao = document.getElementById('formRecuperacao');
     const formRedefinir = document.getElementById('formRedefinir');
 
     formRecuperacao?.addEventListener('submit', (event) => {
+        // Evita dois pedidos de código enquanto a primeira solicitação está sendo processada.
         const button = event.currentTarget.querySelector('button[type="submit"]');
         if (!button || button.disabled) {
             event.preventDefault();
@@ -17,12 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmar = document.getElementById('confirmar_senha');
     const matchError = document.getElementById('match-error');
     const requisitos = [
+        // Cada par associa um indicador visual à regra que deve ser satisfeita pela senha.
         [document.getElementById('req-length'), (value) => value.length >= 8],
         [document.getElementById('req-upper'), (value) => /[A-Z]/.test(value)],
         [document.getElementById('req-special'), (value) => /[^a-zA-Z0-9]/.test(value)],
     ];
 
     function validarSenha() {
+        // Reflete os critérios no checklist e compara a confirmação sem substituir a validação do servidor.
         const value = senha?.value || '';
         requisitos.forEach(([element, validar]) => {
             if (!element) return;
@@ -40,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmar?.addEventListener('input', validarSenha);
 
     formRedefinir?.addEventListener('submit', (event) => {
+        // Feedback no cliente evita envio incompleto; o PHP também valida os requisitos de segurança.
         const value = senha?.value || '';
         const confirmation = confirmar?.value || '';
         const valid = value.length >= 8

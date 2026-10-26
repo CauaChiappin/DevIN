@@ -1,10 +1,12 @@
 (() => {
+  // Usa o cabeçalho simples como alternativa quando alguma biblioteca de animação não carregou.
   const fallbackHeader = document.querySelector('.cabecalho-site');
   const initialAnchor = window.location.hash.length > 1 && window.location.hash !== '#contato'
     ? document.getElementById(window.location.hash.slice(1))
     : null;
 
   if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined' || typeof Lenis === 'undefined') {
+    // Sem as bibliotecas externas, mantém o efeito básico do cabeçalho em vez de falhar toda a página.
     const atualizarHeaderFallback = () => {
       if (fallbackHeader) fallbackHeader.classList.toggle('rolado', window.scrollY > 40);
     };
@@ -21,6 +23,7 @@
     return;
   }
 
+  // Registra o plugin antes de criar os gatilhos que acompanham a rolagem.
   gsap.registerPlugin(ScrollTrigger);
 
 const header = document.querySelector('.cabecalho-site');
@@ -32,7 +35,8 @@ const lenis = new Lenis({
 
 let scrollAnterior = window.scrollY; // Armazena a posição de scroll anterior para determinar a direção do scroll
 
-// Links de âncora (#conheca, #etapas...) param abaixo do cabeçalho fixo
+/* Intercepta links internos para usar a rolagem suave e descontar a altura do cabeçalho fixo.
+ * O link de contato é exceção porque o comportamento padrão já está ajustado para essa seção. */
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener('click', (evento) => {
     const id = link.getAttribute('href');
@@ -49,7 +53,8 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
 function atualizarHeader(scroll, direcao = 0) {
   if (header) {
-    header.classList.toggle('rolado', scroll > 40); // Adiciona a classe 'rolado' quando o scroll é maior que 40px
+    // As classes permitem ao CSS compactar o cabeçalho e diferenciar a direção da rolagem.
+    header.classList.toggle('rolado', scroll > 40); // Ativa o cabeçalho compacto depois dos primeiros 40px.
     header.classList.toggle('subindo', scroll > 40 && direcao < 0); // Adiciona a classe 'subindo' quando o scroll é maior que 40px e a direção é para cima
     header.classList.toggle('descendo', scroll > 40 && direcao > 0);
   }
@@ -60,9 +65,11 @@ lenis.on('scroll', ({ scroll }) => { // Evento de scroll do Lenis
 
   atualizarHeader(scroll, direcao); // Atualiza o cabeçalho com base na posição e direção do scroll
   scrollAnterior = scroll; // Atualiza a posição de scroll anterior para a próxima verificação
+  // Notifica as animações dependentes da posição para que usem o valor atualizado pelo Lenis.
   ScrollTrigger.update();
 });
 
+// Usa o relógio do GSAP para manter a rolagem e as animações sincronizadas no mesmo ciclo de quadros.
 gsap.ticker.add((time) => { // Adiciona uma função ao ticker do GSAP para atualizar o Lenis a cada frame
   lenis.raf(time * 1000); // Converte o tempo de segundos para milissegundos e atualiza o Lenis
 });
@@ -97,6 +104,8 @@ gsap.fromTo('.arte-principal', // Animação de entrada da arte principal
   }
 );
 
+/* Define estado inicial e estados de entrada/saída para cada elemento observado pelo ScrollTrigger.
+ * `entrada` também é reutilizado ao voltar a rolar para cima, mantendo a animação reversível. */
 function revelar(selector, entrada) { // Função para revelar elementos com animação ao entrar na viewport
   gsap.utils.toArray(selector).forEach((elemento) => { // Itera sobre cada elemento selecionado
     gsap.set(elemento, entrada);
@@ -130,6 +139,8 @@ function revelar(selector, entrada) { // Função para revelar elementos com ani
   });
 }
 
+/* Aplica a animação a cada filho do grupo e usa stagger para que os itens apareçam em sequência.
+ * Os quatro callbacks tratam entrada e saída tanto ao rolar para baixo quanto para cima. */
 function revelarGrupo(selector, entrada, saida) { // Função para revelar grupos de elementos com animação ao entrar na viewport
   gsap.utils.toArray(selector).forEach((grupo) => { // Itera sobre cada grupo selecionado
     const itens = gsap.utils.toArray(grupo.children); // Seleciona todos os filhos do grupo para animar em conjunto

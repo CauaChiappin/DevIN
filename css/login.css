@@ -19,6 +19,7 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
    3. CORPO CENTRAL (ROBÔ + CARD LADO A LADO)
    ========================================================================== */
 .conteudo-login {
+    /* Mantém a ilustração e o formulário lado a lado no espaço principal da tela. */
     display: flex;
     justify-content: center; 
     align-items: center;     
@@ -143,7 +144,7 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
 
 #btn-mostrar {
     position: absolute;
-    right: 15px;
+    right: 4px;
     top: 50%;
     /* O calc puxa o olho para baixo compensando a altura do label 'Senha:' */
     transform: translateY(calc(-50% + 12px)); 
@@ -152,7 +153,10 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
     cursor: pointer; 
     display: flex;
     align-items: center;
-    padding: 0;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
     z-index: 5;
 }
 
@@ -180,12 +184,33 @@ img { max-width: 100%; }
 @media (max-width: 720px) {
     .conteudo-login {
         flex-direction: column;
-        gap: 22px;
+        gap: 12px;
         justify-content: flex-start;
-        padding: 28px 16px 42px;
+        padding: 12px 16px 28px;
     }
-    .robo-area { order: 1; }
-    .area-login { order: 2; max-width: 100%; padding: 32px 22px; }
-    .gif-robo { width: min(270px, 78vw); }
+    .robo-area {
+        order: 1;
+        display: flex;
+        justify-content: center;
+        max-height: 132px;
+    }
+    .area-login {
+        order: 2;
+        max-width: 100%;
+        padding: 26px 20px;
+        border-radius: 24px;
+    }
+    .area-login h1 { font-size: 28px; margin-bottom: 22px; }
+    .gif-robo { width: min(132px, 38vw); max-height: 132px; }
+    .grupo-campo { margin-bottom: 16px; }
+    .grupo-campo input { min-height: 48px; }
+    .link-esqueceu { min-height: 44px; margin-bottom: 18px; }
     .botao-entrar { width: 100%; }
+    .botao-entrar { min-height: 48px; margin-bottom: 20px; }
+    .texto-politica { font-size: 13px; }
+}
+
+@media (max-width: 380px) {
+    .conteudo-login { padding-inline: 12px; }
+    .area-login { padding-inline: 16px; }
 }

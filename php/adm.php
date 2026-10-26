@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
+require_once __DIR__ . '/controllers/JobReports.php';
 require_once __DIR__ . '/helpers.php';
 
+// Garante que apenas uma sessão administrativa alcance ações de moderação.
 $usuarioAtual = requireWebAuth('adm');
 
 $tipo    = 'adm';
@@ -13,8 +15,9 @@ $nome    = $_SESSION['usuario_nome']  ?? 'Administrador';
 $email   = $_SESSION['usuario_email'] ?? 'adm@devin.com';
 $pagina  = requestString($_GET, 'pagina');
 
-$paginasPermitidas = ['inicio', 'candidatos', 'posts', 'sobre', 'perfil'];
+$paginasPermitidas = ['inicio', 'candidatos', 'posts', 'reports', 'sobre', 'perfil'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
+    // Usa uma lista permitida para evitar que a URL selecione páginas arbitrárias.
     $pagina = 'inicio';
 }
 
@@ -25,11 +28,13 @@ if (!in_array($pagina, $paginasPermitidas, true)) {
 */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Toda alteração administrativa precisa trazer o token associado à sessão atual.
     requireValidCsrf();
 
     try {
         $action = requestString($_POST, 'action');
 
+        // A mesma ação trata exclusões de três tipos; um mapa fechado escolhe tabela e chave primária.
         if (in_array($action, ['admin_delete_pessoa', 'admin_delete_empresa', 'admin_delete_vaga'], true)) {
             $id = (int) requestString($_POST, 'id');
             if ($id <= 0) {
@@ -42,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'admin_delete_vaga'    => ['vagas', 'id_vaga'],
             ];
 
+            /* A lista fechada limita quais tabelas/colunas podem ser usadas no SQL dinâmico.
+             * O identificador do registro permanece como parâmetro preparado. */
             [$table, $column] = $targets[$action];
             $conn = getDatabaseConnection();
 
@@ -60,6 +67,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $_SESSION['admin_success'] = 'Registro excluído com sucesso.';
             header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : 'candidatos'));
+            exit;
+        }
+
+        if ($action === 'resolve_job_report') {
+            $reportId = filter_var($_POST['id_report'] ?? null, FILTER_VALIDATE_INT);
+            $verdict = requestString($_POST, 'veredito');
+            if ($reportId === false) {
+                throw new InvalidArgumentException('Denúncia inválida.');
+            }
+
+            $conn = getDatabaseConnection();
+            try {
+                ensureJobReportsSchema($conn);
+                $notificationsDelivered = decideJobReport($conn, $reportId, $verdict, (int) $_SESSION['usuario_id']);
+            } finally {
+                $conn->close();
+            }
+
+            $_SESSION['admin_success'] = $notificationsDelivered
+                ? 'Denúncia analisada. As notificações foram encaminhadas para a aba de conversas.'
+                : 'Decisão registrada; algumas notificações estão pendentes e serão reenviadas automaticamente.';
+            header('Location: adm.php?pagina=reports');
             exit;
         }
 
@@ -93,6 +122,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (str_starts_with($action, 'admin_delete_')) {
             $_SESSION['admin_error'] = 'Não foi possível excluir o registro. Ele pode possuir dados vinculados no sistema.';
             header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : 'candidatos'));
+        } elseif ($action === 'resolve_job_report') {
+            $_SESSION['admin_error'] = $exception instanceof InvalidArgumentException
+                ? $exception->getMessage()
+                : 'Não foi possível registrar a decisão da denúncia.';
+            header('Location: adm.php?pagina=reports');
         } else {
             $_SESSION['profile_error'] = 'Não foi possível concluir a operação. Tente novamente.';
             header('Location: adm.php?pagina=perfil');
@@ -119,13 +153,16 @@ $idiomaAtual = getProfileLanguage($tipo, $admId);
 $empresasAdmin = [];
 $usuariosAdmin = [];
 $vagasAdmin    = [];
+$reportsAdmin  = [];
 
 try {
     $conn = getDatabaseConnection();
     try {
+        // A consulta reúne os dados necessários para montar a lista de empresas moderáveis.
         $resultEmpresas = $conn->query('SELECT id_empresa AS id, nome, email, cnpj FROM empresa ORDER BY nome');
         $empresasAdmin  = $resultEmpresas ? $resultEmpresas->fetch_all(MYSQLI_ASSOC) : [];
 
+        // LEFT JOIN mantém candidatos sem currículo na lista e COALESCE evita valores nulos na interface.
         $resultPessoas  = $conn->query('
             SELECT p.id_pessoa AS id, p.nome, p.email, p.cpf,
                 COALESCE(cu.nome_social, "") AS nome_social,
@@ -139,6 +176,7 @@ try {
         ');
         $usuariosAdmin  = $resultPessoas ? $resultPessoas->fetch_all(MYSQLI_ASSOC) : [];
 
+        // INNER JOIN associa cada vaga ao nome da empresa que a publicou.
         $resultVagas    = $conn->query("
             SELECT v.id_vaga AS id, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa
             FROM vagas v
@@ -146,6 +184,26 @@ try {
             ORDER BY v.id_vaga DESC
         ");
         $vagasAdmin     = $resultVagas ? $resultVagas->fetch_all(MYSQLI_ASSOC) : [];
+
+        ensureJobReportsSchema($conn);
+        try {
+            if (!dispatchJobReportNotifications($conn)) {
+                $_SESSION['admin_error'] = 'Algumas notificações de análises anteriores ainda estão pendentes de entrega.';
+            }
+        } catch (Throwable $notificationException) {
+            error_log('Não foi possível reenviar notificações de denúncias: ' . $notificationException->getMessage());
+            $_SESSION['admin_error'] = 'Algumas notificações de análises anteriores ainda estão pendentes de entrega.';
+        }
+        $resultReports = $conn->query('
+            SELECT r.*,
+                   COALESCE(NULLIF(r.descricao_vaga, \'\'), v.descricao, \'\') AS descricao_exibicao,
+                   CASE WHEN r.descricao_vaga IS NULL THEN COALESCE(v.salario_mensal, r.salario_mensal) ELSE r.salario_mensal END AS salario_exibicao,
+                   CASE WHEN r.descricao_vaga IS NULL THEN COALESCE(v.limite_aprovados, r.limite_aprovados) ELSE r.limite_aprovados END AS limite_exibicao
+            FROM reports_vagas r
+            LEFT JOIN vagas v ON v.id_vaga = r.id_vaga
+            ORDER BY FIELD(r.status, "pendente", "mantida", "excluida"), r.criado_em DESC, r.id DESC
+        ');
+        $reportsAdmin = $resultReports->fetch_all(MYSQLI_ASSOC);
     } finally {
         $conn->close();
     }
@@ -180,6 +238,7 @@ try {
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a>
                 <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Posts das empresas</span></a>
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Candidatos</span></a>
+                <a class="<?= ativo($pagina, 'reports') ?>" href="adm.php?pagina=reports"><?= dashboardIcon('info') ?><span class="menu-text">Reports</span></a>
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="adm.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span></a>
             </nav>
 
@@ -206,12 +265,12 @@ try {
             <?php if ($pagina !== 'sobre'): ?>
                 <?= dashboardListHeader(
                     $pagina,
-                    $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'posts' ? 'Posts das empresas' : ($pagina === 'perfil' ? 'Perfil' : 'Empresas')),
+                    $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'posts' ? 'Posts das empresas' : ($pagina === 'reports' ? 'Reports de vagas' : ($pagina === 'perfil' ? 'Perfil' : 'Empresas'))),
                     'Pesquisar por nome ou habilidade...',
-                    $pagina === 'candidatos' ? count($usuariosAdmin) . ' candidatos' : ($pagina === 'posts' ? count($vagasAdmin) . ' posts' : ($pagina === 'inicio' ? (count($empresasAdmin) + count($vagasAdmin)) . ' registros' : ''))
+                    $pagina === 'candidatos' ? count($usuariosAdmin) . ' candidatos' : ($pagina === 'posts' ? count($vagasAdmin) . ' posts' : ($pagina === 'reports' ? count($reportsAdmin) . ' reports' : ($pagina === 'inicio' ? (count($empresasAdmin) + count($vagasAdmin)) . ' registros' : '')))
                 ) ?>
-                <?php if (in_array($pagina, ['inicio', 'candidatos', 'posts'], true)): ?>
-                    <p class="list-section-label">Disponíveis</p>
+                <?php if (in_array($pagina, ['inicio', 'candidatos', 'posts', 'reports'], true)): ?>
+                    <p class="list-section-label"><?= $pagina === 'reports' ? 'Denúncias recebidas' : 'Disponíveis' ?></p>
                 <?php endif; ?>
             <?php endif; ?>
 
@@ -266,6 +325,63 @@ try {
                         </form>
                     </article>
                 <?php endforeach; ?>
+            <?php elseif ($pagina === 'reports'): ?>
+                <?php if (!$reportsAdmin): ?><p class="empty-state">Nenhuma vaga foi denunciada.</p><?php endif; ?>
+                <?php foreach ($reportsAdmin as $report): ?>
+                    <?php
+                    $statusReport = match ($report['status']) {
+                        'mantida' => 'Vaga mantida',
+                        'excluida' => 'Vaga excluída',
+                        default => 'Aguardando análise',
+                    };
+                    $motivosReport = [
+                        'fraude' => 'Fraude ou golpe',
+                        'informacao_falsa' => 'Informações falsas ou enganosas',
+                        'discriminacao' => 'Discriminação',
+                        'conteudo_inadequado' => 'Conteúdo inadequado',
+                        'vaga_expirada' => 'Vaga expirada ou indisponível',
+                        'outro' => 'Outro',
+                    ];
+                    $descricaoVaga = trim((string) ($report['descricao_exibicao'] ?? ''));
+                    $salarioVaga = (float) ($report['salario_exibicao'] ?? 0) > 0
+                        ? 'R$ ' . number_format((float) $report['salario_exibicao'], 2, ',', '.')
+                        : 'A combinar';
+                    $limiteAprovados = (int) ($report['limite_exibicao'] ?? 0) > 0
+                        ? (string) $report['limite_exibicao']
+                        : 'Sem limite';
+                    $analiseReport = $report['status'] === 'pendente'
+                        ? 'Aguardando decisão'
+                        : (string) $report['parecer'];
+                    ?>
+                    <article class="item-card report-card" data-job-report-card data-detail="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-description="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-salary="<?= h($salarioVaga) ?>" data-report-job-limit="<?= h($limiteAprovados) ?>" data-detail-name="<?= h($report['titulo_vaga']) ?>" data-report-company="<?= h($report['nome_empresa']) ?>" data-report-reporter="<?= h($report['nome_denunciante']) ?>" data-report-reason="<?= h($motivosReport[$report['motivo']] ?? $report['motivo']) ?>" data-report-message="<?= h($report['detalhes']) ?>" data-report-analysis="<?= h($analiseReport) ?>">
+                        <span class="card-avatar"><?= dashboardIcon('info') ?></span>
+                        <div class="report-card-content">
+                            <h2><?= h($report['titulo_vaga']) ?></h2>
+                            <p>Empresa: <?= h($report['nome_empresa']) ?> · Denunciante: <?= h($report['nome_denunciante']) ?></p>
+                            <p>Motivo: <?= h($motivosReport[$report['motivo']] ?? $report['motivo']) ?></p>
+                            <p><?= h($report['detalhes']) ?></p>
+                            <?= dashboardCardTags($statusReport) ?>
+                        </div>
+                        <?php if ($report['status'] === 'pendente'): ?>
+                            <div class="report-card-actions">
+                                <form method="post">
+                                    <input type="hidden" name="action" value="resolve_job_report">
+                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                    <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
+                                    <input type="hidden" name="veredito" value="manter">
+                                    <button class="btn primary" type="submit">Manter vaga</button>
+                                </form>
+                                <form method="post" data-report-exclusion-form>
+                                    <input type="hidden" name="action" value="resolve_job_report">
+                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                    <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
+                                    <input type="hidden" name="veredito" value="excluir">
+                                    <button class="btn danger" type="submit">Excluir vaga</button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
             <?php else: ?>
                 <?php if (!$empresasAdmin && !$vagasAdmin): ?><p class="empty-state">Nenhum registro disponível.</p><?php endif; ?>
                 <?php foreach ($empresasAdmin as $empresa): ?>
@@ -302,6 +418,20 @@ try {
                 <?php endforeach; ?>
             <?php endif; ?>
         </section>
+
+        <?php if ($pagina === 'reports'): ?>
+            <dialog class="settings-modal report-confirm-modal" data-report-confirm-dialog aria-labelledby="reportConfirmTitle">
+                <div class="modal-form">
+                    <span class="report-confirm-icon" aria-hidden="true"><?= dashboardIcon('info') ?></span>
+                    <h2 id="reportConfirmTitle">Excluir vaga denunciada?</h2>
+                    <p class="settings-description">A vaga será removida e a empresa e a pessoa denunciante receberão uma mensagem de conclusão.</p>
+                    <div class="report-confirm-actions">
+                        <button class="btn secondary" type="button" data-cancel-report-exclusion>Cancelar</button>
+                        <button class="btn danger" type="button" data-confirm-report-exclusion>Excluir vaga</button>
+                    </div>
+                </div>
+            </dialog>
+        <?php endif; ?>
 
         <?php if ($pagina !== 'sobre' && $pagina !== 'perfil'): ?>
             <?= dashboardDetailPanel() ?>
@@ -396,5 +526,6 @@ try {
     <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
+    <script src="../js/konami-arcade.js?v=<?= filemtime(__DIR__ . '/../js/konami-arcade.js') ?>"></script>
 </body>
 </html>

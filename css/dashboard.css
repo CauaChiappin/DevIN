@@ -268,6 +268,7 @@ a {
     width: 100%;
     height: 100vh;
     display: grid;
+    /* Divide a tela entre navegação, lista de registros e detalhes do item selecionado. */
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr) minmax(320px, 42vw);
     margin: 0 auto;
     border-right: 1px solid #eeeeee;
@@ -280,6 +281,7 @@ a {
 }
 
 .dashboard-shell.page-sobre {
+    /* A página institucional não usa o painel de detalhes, então a lista ocupa o espaço restante. */
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
 }
 
@@ -1037,6 +1039,114 @@ a {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.candidate-vacancy-panel {
+    width: 100%;
+    margin: 0 0 12px;
+    overflow: hidden;
+    border: 1px solid #d8e3ed;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.candidate-vacancy-panel > summary {
+    display: flex;
+    min-height: 72px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    color: #24394b;
+    cursor: pointer;
+    list-style: none;
+}
+
+.candidate-vacancy-panel > summary::-webkit-details-marker { display: none; }
+
+.candidate-vacancy-panel > summary::after {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 auto;
+    border-right: 2px solid #62778a;
+    border-bottom: 2px solid #62778a;
+    content: "";
+    transform: rotate(45deg) translateY(-2px);
+    transition: transform .18s ease;
+}
+
+.candidate-vacancy-panel[open] > summary::after {
+    transform: rotate(225deg) translate(-2px, -1px);
+}
+
+.candidate-vacancy-panel > summary:hover { background: #f7faff; }
+
+.candidate-vacancy-info { display: grid; min-width: 0; gap: 4px; }
+.candidate-vacancy-info strong { overflow-wrap: anywhere; font-size: 15px; }
+.candidate-vacancy-info small { color: #778595; font-size: 12px; }
+
+.candidate-vacancy-count {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eaf3ff;
+    color: #0b67b2;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.candidate-vacancy-list {
+    padding: 0 14px 14px;
+    border-top: 1px solid #e5edf4;
+}
+
+.candidate-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 14px 0 2px;
+}
+
+.candidate-filters label {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+    color: #536476;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.candidate-filters input,
+.candidate-filters select {
+    width: 100%;
+    min-width: 0;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #d5e0ea;
+    border-radius: 7px;
+    background: #fff;
+    color: #24394b;
+    font: inherit;
+    font-size: 12px;
+}
+
+.candidate-filters input:focus,
+.candidate-filters select:focus {
+    border-color: #1976d2;
+    outline: 2px solid rgba(25, 118, 210, .15);
+}
+
+.candidate-filter-empty {
+    margin: 12px 0 0;
+    color: #778595;
+    font-size: 13px;
+    text-align: center;
+}
+
+.candidate-vacancy-list .item-card {
+    width: 100%;
+    margin: 12px 0 0;
+    background: #fbfdff;
 }
 
 /* Aviso exibido quando a empresa ainda nao recebeu candidaturas. */
@@ -1973,6 +2083,9 @@ body.account-deleting .dashboard-shell {
 .empresa-dashboard .create-job-form textarea { padding: 10px; font-size: 14px; }
 .empresa-dashboard .create-job-form textarea { min-height: 112px; }
 .empresa-dashboard .create-job-form .btn { width: 100%; min-height: 42px; justify-self: stretch; font-size: 14px; }
+.empresa-dashboard .job-form-hint { margin: -8px 0 0; color: #64748b; font-size: 12px; }
+.dashboard-shell .job-compensation { margin: 6px 0; color: #334155; font-size: 13px; }
+.dashboard-shell .job-compensation strong { color: #075ca8; }
 
 /* Area de vagas da empresa: lista compacta e painel de leitura, como a referencia. */
 .empresa-dashboard .job-card { cursor: pointer; }
@@ -2106,6 +2219,22 @@ body.account-deleting .dashboard-shell {
 .detail-chat-action[hidden] { display: none; }
 .detail-action:hover,
 .detail-chat-action:hover { background: #004a8e; }
+.detail-report-action {
+    margin-top: 18px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #7a8794;
+    font: inherit;
+    font-size: 12px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.detail-report-action:hover { color: #a52a35; }
+.detail-report-action:disabled { color: #6b7280; cursor: default; }
+.detail-report-action[hidden] { display: none; }
 .detail-section { padding-top: 18px; }
 
 .detail-section h3 {
@@ -2183,12 +2312,115 @@ body.account-deleting .dashboard-shell {
 
 .detail-timeline strong { display: block; margin-bottom: 2px; color: #27445c; font-size: 12px; }
 
+.job-report-modal .modal-close {
+    position: absolute;
+    top: -8px;
+    right: 0;
+}
+
+.job-report-modal .modal-form {
+    gap: 14px;
+}
+
+.job-report-modal .settings-description {
+    margin: 0;
+}
+
+.job-report-modal .modal-form label {
+    display: grid;
+    gap: 7px;
+    color: #344256;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.job-report-modal .modal-form select,
+.job-report-modal .modal-form textarea {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    background: #fff;
+    color: #1e293b;
+    font: inherit;
+    font-size: 14px;
+}
+
+.job-report-modal .modal-form select { padding: 0 10px; }
+.job-report-modal .modal-form textarea { min-height: 110px; padding: 10px; resize: vertical; }
+.job-report-modal .modal-form .form-success { color: #187343; }
+.job-report-modal .modal-form button[type="submit"] { min-height: 42px; justify-self: stretch; }
+
+.report-card { align-items: start; }
+.report-card-content { min-width: 0; }
+.report-card-content p { display: block !important; overflow-wrap: anywhere; -webkit-line-clamp: unset !important; }
+.report-card-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-self: center; }
+.report-card-actions form { margin: 0; }
+.page-reports [data-detail-summary] { white-space: pre-line; }
+.page-reports [data-detail-experience] li { white-space: pre-line; }
+.report-confirm-modal { width: min(420px, calc(100% - 32px)); padding: 28px; }
+.report-confirm-modal .modal-form { gap: 12px; }
+.report-confirm-icon { display: grid; width: 44px; height: 44px; place-items: center; color: #075ca8; background: #eaf4ff; border-radius: 50%; }
+.report-confirm-icon .ui-icon { width: 22px; height: 22px; }
+.report-confirm-modal .settings-description { margin: 0; line-height: 1.55; }
+.report-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.report-confirm-actions .btn { min-height: 40px; padding: 0 18px; }
+.report-confirm-actions .btn.secondary { color: #334155; background: #e8eef5; font-style: normal; }
+.report-confirm-actions .btn.secondary:hover { background: #dbe4ee; }
+.report-confirm-modal::backdrop { background: rgba(15, 35, 55, .4); backdrop-filter: blur(2px); }
+
+@media (min-width: 981px) {
+    .dashboard-shell .profile-detail-panel.has-application-summary .detail-profile {
+        display: flex;
+        min-height: calc(100vh - 90px);
+        flex-direction: column;
+    }
+
+    .dashboard-shell .application-summary-section {
+        width: min(100%, 420px);
+        align-self: flex-end;
+        margin-top: auto;
+        text-align: right;
+    }
+}
+
+.dashboard-shell .application-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.dashboard-shell .application-summary li {
+    min-height: 0;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #f1f5f9;
+    font-size: 10px;
+}
+
+.dashboard-shell .application-summary li::before { display: none; }
+.dashboard-shell .application-summary li:first-child {
+    grid-column: 1 / -1;
+    background: #edf5fc;
+}
+.dashboard-shell .application-summary strong { font-size: 11px; }
+
 @media (max-width: 720px) {
     .dashboard-shell .profile-detail-panel { padding: 24px 16px 30px; }
     .detail-profile-header { grid-template-columns: 50px minmax(0, 1fr); }
     .detail-action,
     .detail-chat-action { grid-column: 2; justify-self: start; }
     .detail-placeholder { min-height: 220px; }
+    .report-card-actions {
+        grid-column: 2;
+        justify-content: flex-start;
+    }
+    .report-card-actions .btn { min-height: 38px; }
+    .dashboard-shell .application-summary-section {
+        width: 100%;
+        margin-top: 16px;
+        text-align: left;
+    }
 }
 
 /* Lista com espaço suficiente para leitura e ações sem apertar o conteúdo. */
@@ -2323,6 +2555,40 @@ body.account-deleting .dashboard-shell {
     font: inherit;
 }
 
+.dashboard-shell .compact-list-header .candidate-global-filters {
+    display: grid;
+    width: min(460px, calc(100vw - 32px));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    gap: 10px;
+}
+
+.candidate-global-filters label {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+    color: #536476;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.candidate-global-filters select,
+.candidate-global-filters input {
+    width: 100%;
+    min-width: 0;
+    max-width: none !important;
+    min-height: 36px !important;
+    padding: 0 9px;
+    border: 1px solid #d9e1e8;
+    border-radius: 6px;
+    background: #fafaf9;
+    color: #536476;
+    font: inherit;
+    font-size: 12px;
+}
+
+.candidate-global-filters .candidate-global-curriculum { grid-column: 1 / -1; }
+
 .dashboard-shell .compact-list-header .result-count {
     flex: 0 0 auto;
     padding: 5px 10px;
@@ -2443,13 +2709,71 @@ body.account-deleting .dashboard-shell {
 @media (max-width: 720px) {
     .dashboard-shell .compact-list-header {
         flex-wrap: wrap;
-        min-height: 76px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        align-items: center;
+        min-height: 0;
+        gap: 10px 8px;
+        padding-top: 12px;
+        padding-bottom: 12px;
     }
 
-    .dashboard-shell .compact-list-header .busca { order: 3; flex-basis: 100%; }
-    .dashboard-shell .compact-list-header .compact-search-field { max-width: none; }
+    .dashboard-shell .compact-list-header h1 {
+        min-width: 0;
+        flex: 1 1 auto;
+        font-size: clamp(17px, 5vw, 20px);
+        line-height: 1.2;
+    }
+
+    .dashboard-shell .compact-list-header .busca {
+        order: 3;
+        flex: 0 0 100%;
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .dashboard-shell .compact-list-header .compact-search-field {
+        width: 0;
+        min-width: 0;
+        max-width: none;
+        height: 44px;
+        flex: 1 1 auto;
+        padding-right: 10px;
+        padding-left: 36px;
+        border-radius: 10px;
+    }
+
+    .dashboard-shell .compact-list-header .busca input {
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        font-size: 16px;
+    }
+
+    .dashboard-shell .compact-list-header .filter-button {
+        min-width: 84px;
+        height: 44px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .dashboard-shell .compact-list-header .filter-menu {
+        top: 50px;
+        right: 0;
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-shell .compact-list-header .candidate-global-filters {
+        width: min(420px, calc(100vw - 32px));
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .candidate-global-filters .candidate-global-curriculum { grid-column: auto; }
+
+    .dashboard-shell .compact-list-header .filter-menu select {
+        min-height: 40px;
+        max-width: min(190px, 55vw);
+    }
+
     .dashboard-shell .compact-list-header .result-count { margin-left: auto; }
     .dashboard-shell .item-card { grid-template-columns: 36px minmax(0, 1fr); }
     .dashboard-shell .item-card > .card-actions,
@@ -2621,8 +2945,6 @@ body.account-deleting .dashboard-shell {
         overflow: visible;
     }
 
-    /* A página institucional ocupa toda a largura em telas estreitas. */
-    .page-sobre .sidebar { display: none; }
     .dashboard-shell.page-sobre .lista-area { grid-column: 1; padding: 22px 16px 30px !important; }
     .page-sobre .sobre-bottom-section {
         grid-template-columns: 1fr;
@@ -2672,6 +2994,12 @@ body.account-deleting .dashboard-shell {
 
     .dashboard-shell {
         grid-template-columns: minmax(0, 1fr);
+        min-height: 100vh;
+        height: auto;
+        overflow: visible;
+    }
+
+    .dashboard-shell.page-sobre {
         min-height: 100vh;
         height: auto;
         overflow: visible;
@@ -2735,6 +3063,18 @@ body.account-deleting .dashboard-shell {
     .lista-area { min-height: auto; padding: 22px 16px 30px; }
     .detalhe-area { min-height: 240px; padding: 24px 16px; }
     .item-card, .post-card, .sobre-cards, .fundadores { min-width: 0; }
+
+    .dashboard-shell.page-sobre .lista-area {
+        height: auto;
+        min-height: 0;
+        padding: 22px 16px 30px !important;
+    }
+
+    .page-sobre .sobre-container { height: auto; }
+    .page-sobre .sobre-top-section { flex: 0 0 auto; }
+    .page-sobre .sobre-cards { flex-direction: column; }
+    .page-sobre .sobre-bottom-section { flex: 0 0 auto; }
+    .page-sobre .sobre-subtitle br { display: none; }
 }
 
 /* =========================================================
@@ -2783,6 +3123,12 @@ body.account-deleting .dashboard-shell {
         gap: 14px;
         padding: 16px 20px 20px;
     }
+
+    .candidate-vacancy-panel > summary { gap: 10px; padding: 12px; }
+    .candidate-vacancy-list { padding: 0 8px 8px; }
+    .candidate-filters { grid-template-columns: minmax(0, 1fr); }
+    .candidate-vacancy-list .item-card { grid-template-columns: 30px minmax(0, 1fr); }
+    .candidate-vacancy-list .item-card > .acoes-card { grid-column: 2; justify-self: start; flex-wrap: wrap; }
 }
 
 .form-error,

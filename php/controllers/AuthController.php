@@ -16,9 +16,12 @@ class AuthController
 
     public static function establishSession(array $auth): void
     {
+        // Troca o ID da sessão após login para impedir reutilização de um identificador anterior.
         startSecureSession();
         secureSessionRegenerate();
+        unset($_SESSION['arcade_unlock']);
 
+        // Mantém na sessão os dados usados pelos dashboards e marca os tempos de validade/atividade.
         $_SESSION['usuario_id']    = $auth['usuario']['id'];
         $_SESSION['usuario_nome']  = $auth['usuario']['nome'];
         $_SESSION['usuario_email'] = $auth['usuario']['email'];
@@ -48,6 +51,7 @@ class AuthController
 
     public static function login(string $email, string $senha): array
     {
+        // Valida formato antes de consultar o banco e devolve sempre a mesma falha para credenciais incorretas.
         $emailValidado = filter_var($email, FILTER_VALIDATE_EMAIL);
 
         if (!$emailValidado || trim($senha) === '') {
@@ -68,11 +72,13 @@ class AuthController
             $conn->close();
         }
 
+        // password_verify confere a senha contra o hash sem armazenar a senha original.
         if (!$usuario || !password_verify($senha, $usuario['senha_hash'])) {
             throw new RuntimeException('E-mail ou senha inválidos.');
         }
 
         // Geração do Payload JWT
+        // O JWT contém emissor, início, validade e ID/tipo; o middleware verifica esses campos em cada uso.
         $now = time();
         $payload = [
             'iss'   => JWT_ISSUER,
@@ -108,6 +114,7 @@ class AuthController
             ['table' => 'pessoa',        'type' => 'pessoa'],
         ];
 
+        // As tabelas vêm de uma lista fixa, enquanto o e-mail é vinculado como parâmetro.
         foreach ($sources as $source) {
             $sql = "SELECT * FROM {$source['table']} WHERE email = ? LIMIT 1";
             $stmt = $conn->prepare($sql);
@@ -152,6 +159,7 @@ class AuthController
 
     private static function extractId(array $row): int
     {
+        // Os esquemas usam nomes de chave diferentes, então procura as colunas de ID conhecidas.
         $keys = ['id', 'id_administrador', 'id_empresa', 'id_pessoa'];
 
         foreach ($keys as $key) {
@@ -175,6 +183,7 @@ class AuthController
 
     public static function redirectByUserType(string $tipo): string
     {
+        // Roteia cada perfil para o painel correspondente e usa a página inicial como fallback.
         $baseUrl = defined('APP_BASE_URL') ? APP_BASE_URL : '';
 
         $routes = [

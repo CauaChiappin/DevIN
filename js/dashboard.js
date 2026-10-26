@@ -7,6 +7,13 @@
     const detailTitle = document.querySelector('#detailTitle');
     const settingsModal = document.querySelector('#settingsModal');
     const profileModal = document.querySelector('#profileModal');
+    const jobReportDialog = document.querySelector('[data-job-report-dialog]');
+    const jobReportForm = jobReportDialog?.querySelector('[data-job-report-form]');
+    const jobReportButton = document.querySelector('[data-report-job]');
+    const jobReportStatus = jobReportDialog?.querySelector('[data-job-report-status]');
+    const jobReportSubmit = jobReportDialog?.querySelector('[data-job-report-submit]');
+    const reportConfirmDialog = document.querySelector('[data-report-confirm-dialog]');
+    let pendingReportExclusionForm = null;
     const rotatingWord = document.querySelector('[data-rotating-word]');
     const interfaceLocale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR';
     const translate = (value) => window.DevINTranslate?.(value) ?? value;
@@ -35,6 +42,43 @@
             }
         }, 15000);
     }
+
+    document.querySelectorAll('[data-report-exclusion-form]').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            if (form.dataset.confirmed === 'true') {
+                delete form.dataset.confirmed;
+                return;
+            }
+
+            event.preventDefault();
+            pendingReportExclusionForm = form;
+            reportConfirmDialog?.showModal();
+        });
+    });
+
+    document.querySelector('[data-cancel-report-exclusion]')?.addEventListener('click', () => {
+        reportConfirmDialog?.close();
+        pendingReportExclusionForm = null;
+    });
+
+    document.querySelector('[data-confirm-report-exclusion]')?.addEventListener('click', () => {
+        if (!pendingReportExclusionForm) return;
+        const form = pendingReportExclusionForm;
+        pendingReportExclusionForm = null;
+        form.dataset.confirmed = 'true';
+        reportConfirmDialog?.close();
+        form.requestSubmit();
+    });
+
+    reportConfirmDialog?.addEventListener('click', (event) => {
+        if (event.target === reportConfirmDialog) {
+            reportConfirmDialog.close();
+            pendingReportExclusionForm = null;
+        }
+    });
+    reportConfirmDialog?.addEventListener('close', () => {
+        pendingReportExclusionForm = null;
+    });
 
     // Sidebar: preferência fica salva somente no navegador deste usuário.
     if (dashboardShell && menuToggle) {
@@ -85,13 +129,26 @@
     const getInitials = (value) => value.split(/\s+/).filter(Boolean).slice(0, 2)
         .map((word) => word[0]).join('').toUpperCase() || 'DI';
 
+    const jobReportSummary = (card) => {
+        if (!card.hasAttribute('data-job-report-card')) return '';
+        return [
+            `${translate('Descrição')}: ${card.dataset.reportJobDescription || translate('Sem descrição informada.')}`,
+            `${translate('Salário mensal')}: ${card.dataset.reportJobSalary || translate('A combinar')}`,
+            `${translate('Máximo de aprovados')}: ${card.dataset.reportJobLimit || translate('Sem limite')}`
+        ].join('\n');
+    };
+
     const renderList = (element, items, timeline = false) => {
+        /* Reconstrói listas a partir dos atributos do card. Usa textContent e nós de texto,
+         * não innerHTML, para que nomes e descrições sejam exibidos como texto literal. */
         if (!element) return;
         element.replaceChildren();
         items.forEach((item) => {
             const row = document.createElement('li');
             if (timeline) {
-                const [title, description] = item.split('::').map((part) => part.trim());
+                const [title, description] = typeof item === 'string'
+                    ? item.split('::').map((part) => part.trim())
+                    : [item.title, item.description];
                 const heading = document.createElement('strong');
                 heading.textContent = translate(title || 'DevIN');
                 row.appendChild(heading);
@@ -104,14 +161,19 @@
     };
 
     const renderDetail = (card) => {
+        /* O card concentra resumo, etiquetas e experiência em data-*. Ao selecioná-lo, estes valores
+         * preenchem o painel lateral sem uma nova consulta ao servidor. */
         const content = detailPanel?.querySelector('[data-detail-content]');
         if (!detailPanel || !content) return;
 
         const title = card.querySelector('h2')?.textContent?.trim() || translate('Detalhes do registro');
         const subtitle = card.querySelector('p')?.textContent?.trim() || translate('Informacoes da plataforma');
         const name = card.dataset.detailName || card.dataset.jobTitle || title;
-        const role = card.dataset.detailRole || subtitle;
-        const summary = card.dataset.detailSummary || card.dataset.detail || subtitle;
+        const jobReport = card.hasAttribute('data-job-report-card');
+        const role = jobReport
+            ? `${translate('Empresa:')} ${card.dataset.reportCompany || ''}`
+            : card.dataset.detailRole || subtitle;
+        const summary = jobReportSummary(card) || card.dataset.detailSummary || card.dataset.detail || subtitle;
         const tags = splitItems(card.dataset.detailTags, ['DevIN', translate('Informacao disponivel')]).map(translate);
         const experience = splitItems(card.dataset.detailExperience, [`${translate('Registro selecionado')}::${role}`]);
 
@@ -122,14 +184,35 @@
         const roleElement = detailPanel.querySelector('[data-detail-role]');
         const metaElement = detailPanel.querySelector('[data-detail-meta]');
         const summaryElement = detailPanel.querySelector('[data-detail-summary]');
+        const experienceList = detailPanel.querySelector('[data-detail-experience]');
+        const applicationSummary = card.dataset.applicationSummary === 'true';
+        const reporterPrefix = translate('Denúncia enviada por');
 
         if (avatar) avatar.textContent = getInitials(name);
         if (nameElement) nameElement.textContent = name;
         if (roleElement) roleElement.textContent = role;
-        if (metaElement) metaElement.textContent = card.dataset.detailMeta || translate('Disponivel na plataforma');
+        if (metaElement) {
+            metaElement.textContent = jobReport
+                ? `${reporterPrefix} ${card.dataset.reportReporter || ''}`
+                : card.dataset.detailMeta || translate('Disponivel na plataforma');
+        }
         if (summaryElement) summaryElement.textContent = summary;
+        const summaryLabel = detailPanel.querySelector('[data-detail-summary-label]');
+        if (summaryLabel) summaryLabel.textContent = translate(jobReport ? 'Detalhes da vaga denunciada' : 'Sobre');
+        detailPanel.querySelector('[data-detail-tags-section]')?.toggleAttribute('hidden', jobReport);
         renderList(detailPanel.querySelector('[data-detail-tags]'), tags);
-        renderList(detailPanel.querySelector('[data-detail-experience]'), experience, true);
+        renderList(experienceList, jobReport
+            ? [
+                {
+                    title: 'Mensagem da denúncia',
+                    description: `${translate('Motivo:')} ${translate(card.dataset.reportReason || '')}\n${card.dataset.reportMessage || ''}`
+                },
+                { title: 'Análise', description: translate(card.dataset.reportAnalysis || '') }
+            ]
+            : experience, true);
+        detailPanel.classList.toggle('has-application-summary', applicationSummary);
+        experienceList?.classList.toggle('application-summary', applicationSummary);
+        experienceList?.closest('.detail-section')?.classList.toggle('application-summary-section', applicationSummary);
 
         selectedActionTarget = card.querySelector('[data-detail-action-target]');
         const action = detailPanel.querySelector('[data-detail-action]');
@@ -143,6 +226,14 @@
             chatAction.hidden = !card.dataset.chatType || !card.dataset.chatId;
             chatAction.dataset.chatType = card.dataset.chatType || '';
             chatAction.dataset.chatId = card.dataset.chatId || '';
+        }
+        if (jobReportButton) {
+            jobReportButton.hidden = !card.dataset.reportJobId;
+            jobReportButton.disabled = card.dataset.reportSubmitted === 'true';
+            jobReportButton.dataset.jobId = card.dataset.reportJobId || '';
+            jobReportButton.textContent = translate(card.dataset.reportSubmitted === 'true'
+                ? 'Denúncia enviada'
+                : 'Denunciar esta vaga');
         }
     };
 
@@ -172,6 +263,7 @@
 
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {
         card.addEventListener('click', (event) => {
+            // Cliques em controles internos executam sua ação própria e não trocam a seleção do card.
             if (event.target.closest('button, a, form, summary, input, textarea, select')) return;
 
             document.querySelectorAll('.item-card[data-detail]').forEach((item) => {
@@ -221,6 +313,69 @@
     // Fecha dialogs sem depender de IDs específicos.
     document.querySelectorAll('[data-close-modal]').forEach((button) => {
         button.addEventListener('click', () => button.closest('dialog')?.close());
+    });
+
+    document.querySelector('[data-close-job-report]')?.addEventListener('click', () => jobReportDialog?.close());
+    jobReportDialog?.addEventListener('click', (event) => {
+        if (event.target === jobReportDialog) jobReportDialog.close();
+    });
+    jobReportButton?.addEventListener('click', () => {
+        const reportId = jobReportButton.dataset.jobId;
+        if (!reportId || !jobReportForm || !jobReportDialog) return;
+        jobReportForm.reset();
+        jobReportForm.querySelectorAll('select, textarea').forEach((field) => { field.disabled = false; });
+        jobReportForm.querySelector('[data-job-report-id]').value = reportId;
+        jobReportStatus.hidden = true;
+        jobReportStatus.classList.remove('form-success');
+        jobReportStatus.textContent = '';
+        jobReportSubmit.disabled = false;
+        jobReportSubmit.textContent = translate('Enviar denúncia');
+        jobReportDialog.showModal();
+    });
+
+    jobReportForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!jobReportSubmit || !jobReportStatus) return;
+
+        jobReportSubmit.disabled = true;
+        jobReportSubmit.textContent = translate('Enviando...');
+        jobReportStatus.hidden = true;
+        jobReportStatus.classList.remove('form-success');
+        try {
+            const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
+            const response = await fetch(new URL('../php/denunciar_vaga_api.php', window.location.href), {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                },
+                body: JSON.stringify({
+                    id_vaga: jobReportForm.querySelector('[data-job-report-id]').value,
+                    motivo: jobReportForm.querySelector('[name="motivo"]').value,
+                    detalhes: jobReportForm.querySelector('[name="detalhes"]').value.trim(),
+                }),
+            });
+            const data = await response.json();
+            if (!response.ok || data.sucesso !== true) {
+                throw new Error(translate(data.mensagem || 'Não foi possível enviar a denúncia.'));
+            }
+
+            jobReportStatus.textContent = translate(data.mensagem);
+            jobReportStatus.classList.add('form-success');
+            jobReportStatus.hidden = false;
+            jobReportSubmit.textContent = translate('Denúncia enviada');
+            jobReportForm.querySelectorAll('select, textarea').forEach((field) => { field.disabled = true; });
+            const reportedCard = detailCards.find((card) => card.dataset.reportJobId === jobReportButton.dataset.jobId);
+            if (reportedCard) reportedCard.dataset.reportSubmitted = 'true';
+            jobReportButton.disabled = true;
+            jobReportButton.textContent = translate('Denúncia enviada');
+        } catch (error) {
+            jobReportStatus.textContent = error.message;
+            jobReportStatus.hidden = false;
+            jobReportSubmit.disabled = false;
+            jobReportSubmit.textContent = translate('Enviar denúncia');
+        }
     });
 
     profileModal?.addEventListener('click', (event) => {
@@ -295,6 +450,10 @@
     const filterButton = document.querySelector('[data-toggle-filters]');
     const filterMenu = document.querySelector('[data-filter-menu]');
     const filterSelect = document.querySelector('[data-card-filter]');
+    const candidateListSearch = searchInput?.hasAttribute('data-candidate-list-search') === true;
+    const globalEducationFilter = document.querySelector('[data-candidate-global-education]');
+    const globalCurriculumFilter = document.querySelector('[data-candidate-global-curriculum]');
+    const candidatePanels = [...document.querySelectorAll('.candidate-vacancy-panel')];
     const searchEmptyState = detailCards.length
         ? document.createElement('p')
         : null;
@@ -304,14 +463,23 @@
         searchEmptyState.setAttribute('aria-live', 'polite');
         searchEmptyState.textContent = translate('Nenhum resultado encontrado.');
         searchEmptyState.hidden = true;
-        detailCards[0].before(searchEmptyState);
+        (candidatePanels[0] || detailCards[0]).before(searchEmptyState);
     }
-    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale);
+    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale)
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const splitCandidateFilterItems = (value) => String(value || '')
+        .split(/[\r\n,;|]+/).map((item) => item.trim()).filter(Boolean);
     const cardTags = (card) => String(card.dataset.detailTags || '')
         .split('|').map((tag) => tag.trim()).filter(Boolean);
     const updateCardVisibility = () => {
+        /* Compara o termo com texto visível e metadados do card, além da categoria selecionada.
+         * A busca é local: não faz uma requisição a cada tecla nem altera dados armazenados. */
         const term = normalizeSearch(searchInput?.value);
         const activeFilter = filterSelect?.value || '';
+        const globalCurriculumTerm = normalizeSearch(globalCurriculumFilter?.value);
+        const globalEducation = normalizeSearch(globalEducationFilter?.value);
+        const hasGlobalCandidateFilters = candidateListSearch
+            && (term !== '' || activeFilter !== '' || globalCurriculumTerm !== '' || globalEducation !== '');
 
         detailCards.forEach((card) => {
             const searchableContent = [
@@ -321,19 +489,104 @@
                 card.dataset.detailRole,
                 card.dataset.detailTags,
                 card.dataset.detailExperience,
-            ].join(' ').toLocaleLowerCase(interfaceLocale);
-            const matchesSearch = term === '' || searchableContent.includes(term);
+                card.dataset.candidateNameEmail,
+                card.dataset.candidateCurriculum,
+            ].join(' ');
+            const candidateNameEmail = normalizeSearch(card.dataset.candidateNameEmail);
+            const normalizedSearchableContent = normalizeSearch(searchableContent);
+            const matchesSearch = term === '' || (candidateListSearch
+                ? candidateNameEmail.includes(term)
+                : normalizedSearchableContent.includes(term));
             const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter);
-            card.hidden = !matchesSearch || !matchesFilter;
+            const matchesGlobalCurriculum = globalCurriculumTerm === ''
+                || normalizeSearch(card.dataset.candidateCurriculum).includes(globalCurriculumTerm);
+            const matchesGlobalEducation = globalEducation === ''
+                || normalizeSearch(card.dataset.candidateEducation) === globalEducation;
+            const panel = card.closest('.candidate-vacancy-panel');
+            const candidateTerm = normalizeSearch(panel?.querySelector('[data-candidate-search]')?.value);
+            const education = normalizeSearch(panel?.querySelector('[data-candidate-education]')?.value);
+            const matchesCandidateSearch = candidateTerm === ''
+                || candidateNameEmail.includes(candidateTerm);
+            const matchesEducation = education === ''
+                || normalizeSearch(card.dataset.candidateEducation) === education;
+            const course = normalizeSearch(panel?.querySelector('[data-candidate-course]')?.value);
+            const skill = normalizeSearch(panel?.querySelector('[data-candidate-skill]')?.value);
+            const experience = normalizeSearch(panel?.querySelector('[data-candidate-experience]')?.value);
+            const matchesCourse = course === ''
+                || splitCandidateFilterItems(card.dataset.candidateCourses).some((item) => normalizeSearch(item) === course);
+            const matchesSkill = skill === ''
+                || splitCandidateFilterItems(card.dataset.candidateSkills).some((item) => normalizeSearch(item) === skill);
+            const matchesExperience = experience === ''
+                || splitCandidateFilterItems(card.dataset.candidateExperiences).some((item) => normalizeSearch(item) === experience);
+            card.hidden = !matchesSearch || !matchesFilter
+                || !matchesGlobalCurriculum || !matchesGlobalEducation
+                || !matchesCandidateSearch || !matchesEducation
+                || !matchesCourse || !matchesSkill || !matchesExperience;
         });
 
-        const hasActiveSearch = term !== '' || activeFilter !== '';
+        const hasActiveSearch = hasGlobalCandidateFilters || (!candidateListSearch && (term !== '' || activeFilter !== ''));
         const hasVisibleCards = detailCards.some((card) => !card.hidden);
         if (searchEmptyState) searchEmptyState.hidden = !hasActiveSearch || hasVisibleCards;
+        candidatePanels.forEach((panel) => {
+            const candidateCards = [...panel.querySelectorAll('.item-card[data-candidate-name-email]')];
+            const localSearch = normalizeSearch(panel.querySelector('[data-candidate-search]')?.value);
+            const education = normalizeSearch(panel.querySelector('[data-candidate-education]')?.value);
+            const course = normalizeSearch(panel.querySelector('[data-candidate-course]')?.value);
+            const skill = normalizeSearch(panel.querySelector('[data-candidate-skill]')?.value);
+            const experience = normalizeSearch(panel.querySelector('[data-candidate-experience]')?.value);
+            const hasLocalFilter = localSearch !== '' || education !== ''
+                || course !== '' || skill !== '' || experience !== '';
+            const hasVisibleCandidates = candidateCards.some((card) => !card.hidden);
+            const emptyState = panel.querySelector('[data-candidate-filter-empty]');
+            if (emptyState) emptyState.hidden = !hasLocalFilter || hasVisibleCandidates;
+
+            if (hasGlobalCandidateFilters) {
+                if (!Object.prototype.hasOwnProperty.call(panel.dataset, 'filterPreviousOpen')) {
+                    panel.dataset.filterPreviousOpen = String(panel.open);
+                }
+                panel.open = hasVisibleCandidates;
+            } else if (Object.prototype.hasOwnProperty.call(panel.dataset, 'filterPreviousOpen')) {
+                panel.open = panel.dataset.filterPreviousOpen === 'true';
+                delete panel.dataset.filterPreviousOpen;
+            }
+        });
     };
 
+    candidatePanels.forEach((panel) => {
+        panel.querySelectorAll('input[data-candidate-search]')
+            .forEach((input) => input.addEventListener('input', updateCardVisibility));
+        const candidateCards = [...panel.querySelectorAll('.item-card[data-candidate-name-email]')];
+        const filterDefinitions = [
+            { selector: '[data-candidate-course]', attribute: 'candidateCourses', emptyLabel: 'Todos os cursos' },
+            { selector: '[data-candidate-skill]', attribute: 'candidateSkills', emptyLabel: 'Todas as habilidades' },
+            { selector: '[data-candidate-experience]', attribute: 'candidateExperiences', emptyLabel: 'Todas as experiências' },
+        ];
+
+        filterDefinitions.forEach(({ selector, attribute, emptyLabel }) => {
+            const select = panel.querySelector(selector);
+            if (!select) return;
+
+            const items = [...new Set(candidateCards.flatMap((card) => splitCandidateFilterItems(card.dataset[attribute])))]
+                .sort((first, second) => first.localeCompare(second, interfaceLocale));
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = emptyLabel;
+            select.replaceChildren(defaultOption, ...items.map((item) => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                return option;
+            }));
+            select.addEventListener('change', updateCardVisibility);
+        });
+
+        panel.querySelector('[data-candidate-education]')?.addEventListener('change', updateCardVisibility);
+    });
+
     if (filterSelect) {
+        // Monta as opções de filtro com as tags existentes nos cartões renderizados.
         const tags = [...new Set(detailCards.flatMap(cardTags))]
+            .filter((tag) => !candidateListSearch || tag !== 'Candidatura')
             .sort((first, second) => first.localeCompare(second, 'pt-BR'));
         const options = ['', ...tags].map((tag) => {
             const option = document.createElement('option');
@@ -345,6 +598,22 @@
         filterSelect.addEventListener('change', updateCardVisibility);
     }
 
+    if (globalEducationFilter) {
+        const educationLevels = [...new Set(detailCards
+            .map((card) => card.dataset.candidateEducation?.trim())
+            .filter(Boolean))]
+            .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+        const options = educationLevels.map((education) => {
+            const option = document.createElement('option');
+            option.value = education;
+            option.textContent = education;
+            return option;
+        });
+        globalEducationFilter.append(...options);
+        globalEducationFilter.addEventListener('change', updateCardVisibility);
+    }
+
+    globalCurriculumFilter?.addEventListener('input', updateCardVisibility);
     filterButton?.addEventListener('click', () => {
         const isOpen = filterMenu?.hidden !== false;
         if (filterMenu) filterMenu.hidden = !isOpen;

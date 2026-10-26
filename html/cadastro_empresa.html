@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Criar Conta</title>
-    <link rel="stylesheet" href="../css/cadastrostyle.css" >
+    <link rel="stylesheet" href="../css/cadastrostyle.css?v=20261024-mobile">
     <link rel="stylesheet" href="../css/site-navigation.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 </head>
-<body>
+<body class="cadastro-page">
 
     <div class="main-container">
         
+        <!-- Mantém os campos da empresa na coluna principal e a ilustração na coluna lateral. -->
         <section class="left-side">
             
             <header class="cadastro-header">
@@ -35,26 +36,27 @@
 
             <h1 class="page-title">Criar conta</h1>
 
+            <!-- Envia os dados ao PHP para validar CNPJ, e-mail e senha antes da gravação. -->
             <form action="../php/cadastro_empresa.php" method="POST" class="register-form" id="formCadastro">
                 
                 <div class="form-columns">
                     <div class="form-column">
-                        <div class="input-group">
+                        <div class="input-group mobile-order-1">
                             <label for="nome">Nome:*</label>
                             <input type="text" id="nome" name="nome" required>
                         </div>
 
-                        <div class="input-group">
+                        <div class="input-group mobile-order-3">
                             <label for="cnpj">CNPJ:*</label>
                             <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" required>
                         </div>
 
-                        <div class="input-group">
+                        <div class="input-group mobile-order-5">
                             <label for="cep">CEP:*</label>
                             <input type="text" id="cep" name="cep" placeholder="00000-000" required>
                         </div>
 
-                        <div class="input-group password-wrapper">
+                        <div class="input-group password-wrapper mobile-order-8">
                             <label for="confirme_senha">Confirme a sua senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="confirme_senha" name="confirme_senha" required minlength="12">
@@ -65,17 +67,17 @@
                     </div>
 
                     <div class="form-column">
-                        <div class="input-group">
+                        <div class="input-group mobile-order-2">
                             <label for="email">E-mail:*</label>
                             <input type="email" id="email" name="email" required>
                         </div>
 
-                        <div class="input-group">
+                        <div class="input-group mobile-order-4">
                             <label for="telefone">Telefone:*</label>
                             <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
                         </div>
 
-                        <div class="input-group password-wrapper">
+                        <div class="input-group password-wrapper mobile-order-6">
                             <label for="senha">Senha:*</label>
                             <div class="input-icon-container">
                                 <input type="password" id="senha" name="senha" required minlength="12">
@@ -83,7 +85,7 @@
                             </div>
                         </div>
 
-                        <div class="password-requirements">
+                        <div class="password-requirements mobile-order-7">
                             <div class="requirement-item req-invalid" id="req-length">
                                 <span class="req-icon">⚠️</span> No mínimo 12 caracteres
                             </div>

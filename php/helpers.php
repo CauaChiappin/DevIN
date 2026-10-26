@@ -21,21 +21,28 @@ function h(?string $valor): string
 /** 
  * Cabeçalho compacto compartilhado pelas listas dos dashboards.
  */
-function dashboardListHeader(string $pagina, string $titulo, string $placeholder, string $contador = ''): string
+function dashboardListHeader(string $pagina, string $titulo, string $placeholder, string $contador = '', bool $filtrosCandidatos = false): string
 {
+    // Escapa textos dinâmicos antes de compor o HTML compartilhado do cabeçalho.
     $countMarkup = $contador === ''
         ? ''
         : '<span class="result-count">' . h($contador) . '</span>';
+    $candidateFilters = $filtrosCandidatos
+        ? '<label><span>Status</span><select data-card-filter aria-label="Filtrar candidatos por status"></select></label>'
+            . '<label><span>Escolaridade</span><select data-candidate-global-education aria-label="Filtrar por escolaridade"><option value="">Todos os níveis</option></select></label>'
+            . '<label class="candidate-global-curriculum"><span>Currículo</span><input type="search" data-candidate-global-curriculum placeholder="Cursos, habilidades, experiência ou idiomas"></label>'
+        : '<label><span>Filtrar por</span><select data-card-filter aria-label="Filtrar cards"></select></label>';
 
     return '<header class="dashboard-header compact-list-header">'
         . '<h1>' . h($titulo) . '</h1>'
         . '<form class="busca" method="get">'
         . '<input type="hidden" name="pagina" value="' . h($pagina) . '">'
         . '<label class="compact-search-field"><span class="sr-only">Pesquisar</span>'
-        . '<input type="search" name="q" placeholder="' . h($placeholder) . '"></label>'
+        . '<input type="search" name="q" placeholder="' . h($placeholder) . '"' . ($filtrosCandidatos ? ' data-candidate-list-search' : '') . '></label>'
         . '<button class="filter-button" type="button" data-toggle-filters aria-expanded="false">Filtros</button>'
-        . '<label class="filter-menu" data-filter-menu hidden><span>Filtrar por</span>'
-        . '<select data-card-filter aria-label="Filtrar cards"></select></label>'
+        . '<div class="filter-menu' . ($filtrosCandidatos ? ' candidate-global-filters' : '') . '" data-filter-menu hidden>'
+        . $candidateFilters
+        . '</div>'
         . '</form>'
         . $countMarkup
         . '</header>';
@@ -60,6 +67,7 @@ function dashboardCardTags(string $tags): string
  */
 function dashboardCandidateDetails(array $candidate): array
 {
+    // Divide habilidades escritas em linhas ou separadas por vírgula, ponto e vírgula ou barra.
     $text = static fn(string $key): string => trim((string) ($candidate[$key] ?? ''));
     $splitSkills = static function (string $value): array {
         $items = preg_split('/[\r\n,;|]+/u', $value) ?: [];
@@ -156,6 +164,7 @@ function profileAvatar(array $perfil, string $classes): string
         if ($finfo === null) {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
         }
+        // Só embute conteúdo binário quando o MIME detectado corresponde a uma imagem aceita.
         $mime = $finfo->buffer($foto);
 
         if (in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
@@ -207,19 +216,43 @@ function dashboardDetailPanel(): string
             <button class="detail-chat-action" type="button" data-start-chat hidden>Conversar</button>
         </header>
         <section class="detail-section">
-            <h3>Sobre</h3>
+            <h3 data-detail-summary-label>Sobre</h3>
             <p data-detail-summary></p>
         </section>
-        <section class="detail-section">
+        <section class="detail-section" data-detail-tags-section>
             <h3>Habilidades</h3>
             <ul class="detail-tags" data-detail-tags></ul>
         </section>
         <section class="detail-section">
-            <h3>Experiência</h3>
             <ul class="detail-timeline" data-detail-experience></ul>
         </section>
+        <button class="detail-report-action" type="button" data-report-job hidden>Denunciar esta vaga</button>
     </article>
 </aside>
+<dialog class="settings-modal job-report-modal" data-job-report-dialog aria-labelledby="jobReportTitle">
+    <form class="modal-form" data-job-report-form>
+        <button class="modal-close" type="button" data-close-job-report aria-label="Fechar">×</button>
+        <h2 id="jobReportTitle">Denunciar vaga</h2>
+        <p class="settings-description">A equipe DevIN analisará a denúncia. A empresa responsável e você receberão o resultado na aba de conversas.</p>
+        <input type="hidden" data-job-report-id>
+        <label for="jobReportReason">Motivo
+            <select id="jobReportReason" name="motivo" required>
+                <option value="">Selecione um motivo</option>
+                <option value="fraude">Fraude ou golpe</option>
+                <option value="informacao_falsa">Informações falsas ou enganosas</option>
+                <option value="discriminacao">Discriminação</option>
+                <option value="conteudo_inadequado">Conteúdo inadequado</option>
+                <option value="vaga_expirada">Vaga expirada ou indisponível</option>
+                <option value="outro">Outro</option>
+            </select>
+        </label>
+        <label for="jobReportDetails">Detalhes
+            <textarea id="jobReportDetails" name="detalhes" rows="4" maxlength="1000" required placeholder="Explique por que esta vaga deve ser analisada."></textarea>
+        </label>
+        <p class="form-error" data-job-report-status role="status" hidden></p>
+        <button class="btn primary" type="submit" data-job-report-submit>Enviar denúncia</button>
+    </form>
+</dialog>
 HTML;
 }
 
