@@ -1088,7 +1088,7 @@ a {
 
 .candidate-filters {
     display: grid;
-    grid-template-columns: minmax(160px, 1fr) minmax(150px, .8fr) minmax(220px, 1.4fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
     padding: 14px 0 2px;
 }
@@ -2069,6 +2069,9 @@ body.account-deleting .dashboard-shell {
 .empresa-dashboard .create-job-form textarea { padding: 10px; font-size: 14px; }
 .empresa-dashboard .create-job-form textarea { min-height: 112px; }
 .empresa-dashboard .create-job-form .btn { width: 100%; min-height: 42px; justify-self: stretch; font-size: 14px; }
+.empresa-dashboard .job-form-hint { margin: -8px 0 0; color: #64748b; font-size: 12px; }
+.dashboard-shell .job-compensation { margin: 6px 0; color: #334155; font-size: 13px; }
+.dashboard-shell .job-compensation strong { color: #075ca8; }
 
 /* Area de vagas da empresa: lista compacta e painel de leitura, como a referencia. */
 .empresa-dashboard .job-card { cursor: pointer; }
@@ -2202,6 +2205,22 @@ body.account-deleting .dashboard-shell {
 .detail-chat-action[hidden] { display: none; }
 .detail-action:hover,
 .detail-chat-action:hover { background: #004a8e; }
+.detail-report-action {
+    margin-top: 18px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #7a8794;
+    font: inherit;
+    font-size: 12px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.detail-report-action:hover { color: #a52a35; }
+.detail-report-action:disabled { color: #6b7280; cursor: default; }
+.detail-report-action[hidden] { display: none; }
 .detail-section { padding-top: 18px; }
 
 .detail-section h3 {
@@ -2279,12 +2298,115 @@ body.account-deleting .dashboard-shell {
 
 .detail-timeline strong { display: block; margin-bottom: 2px; color: #27445c; font-size: 12px; }
 
+.job-report-modal .modal-close {
+    position: absolute;
+    top: -8px;
+    right: 0;
+}
+
+.job-report-modal .modal-form {
+    gap: 14px;
+}
+
+.job-report-modal .settings-description {
+    margin: 0;
+}
+
+.job-report-modal .modal-form label {
+    display: grid;
+    gap: 7px;
+    color: #344256;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.job-report-modal .modal-form select,
+.job-report-modal .modal-form textarea {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    background: #fff;
+    color: #1e293b;
+    font: inherit;
+    font-size: 14px;
+}
+
+.job-report-modal .modal-form select { padding: 0 10px; }
+.job-report-modal .modal-form textarea { min-height: 110px; padding: 10px; resize: vertical; }
+.job-report-modal .modal-form .form-success { color: #187343; }
+.job-report-modal .modal-form button[type="submit"] { min-height: 42px; justify-self: stretch; }
+
+.report-card { align-items: start; }
+.report-card-content { min-width: 0; }
+.report-card-content p { display: block !important; overflow-wrap: anywhere; -webkit-line-clamp: unset !important; }
+.report-card-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-self: center; }
+.report-card-actions form { margin: 0; }
+.page-reports [data-detail-summary] { white-space: pre-line; }
+.page-reports [data-detail-experience] li { white-space: pre-line; }
+.report-confirm-modal { width: min(420px, calc(100% - 32px)); padding: 28px; }
+.report-confirm-modal .modal-form { gap: 12px; }
+.report-confirm-icon { display: grid; width: 44px; height: 44px; place-items: center; color: #075ca8; background: #eaf4ff; border-radius: 50%; }
+.report-confirm-icon .ui-icon { width: 22px; height: 22px; }
+.report-confirm-modal .settings-description { margin: 0; line-height: 1.55; }
+.report-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.report-confirm-actions .btn { min-height: 40px; padding: 0 18px; }
+.report-confirm-actions .btn.secondary { color: #334155; background: #e8eef5; font-style: normal; }
+.report-confirm-actions .btn.secondary:hover { background: #dbe4ee; }
+.report-confirm-modal::backdrop { background: rgba(15, 35, 55, .4); backdrop-filter: blur(2px); }
+
+@media (min-width: 981px) {
+    .dashboard-shell .profile-detail-panel.has-application-summary .detail-profile {
+        display: flex;
+        min-height: calc(100vh - 90px);
+        flex-direction: column;
+    }
+
+    .dashboard-shell .application-summary-section {
+        width: min(100%, 420px);
+        align-self: flex-end;
+        margin-top: auto;
+        text-align: right;
+    }
+}
+
+.dashboard-shell .application-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.dashboard-shell .application-summary li {
+    min-height: 0;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #f1f5f9;
+    font-size: 10px;
+}
+
+.dashboard-shell .application-summary li::before { display: none; }
+.dashboard-shell .application-summary li:first-child {
+    grid-column: 1 / -1;
+    background: #edf5fc;
+}
+.dashboard-shell .application-summary strong { font-size: 11px; }
+
 @media (max-width: 720px) {
     .dashboard-shell .profile-detail-panel { padding: 24px 16px 30px; }
     .detail-profile-header { grid-template-columns: 50px minmax(0, 1fr); }
     .detail-action,
     .detail-chat-action { grid-column: 2; justify-self: start; }
     .detail-placeholder { min-height: 220px; }
+    .report-card-actions {
+        grid-column: 2;
+        justify-content: flex-start;
+    }
+    .report-card-actions .btn { min-height: 38px; }
+    .dashboard-shell .application-summary-section {
+        width: 100%;
+        margin-top: 16px;
+        text-align: left;
+    }
 }
 
 /* Lista com espaço suficiente para leitura e ações sem apertar o conteúdo. */

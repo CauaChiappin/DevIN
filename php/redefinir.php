@@ -22,7 +22,7 @@ unset($_SESSION['erro_redefinir']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Redefinir Senha</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-    <link rel="stylesheet" href="../css/recuperacao.css">
+    <link rel="stylesheet" href="../css/recuperacao.css?v=<?= filemtime(__DIR__ . '/../css/recuperacao.css') ?>">
 </head>
 <body>
     <main class="recovery-wrapper">
@@ -43,8 +43,8 @@ unset($_SESSION['erro_redefinir']);
                     <label for="nova_senha">Senha:</label>
                     <div class="password-wrapper">
                         <input type="password" id="nova_senha" name="nova_senha" required minlength="8" autocomplete="new-password">
-                        <button type="button" class="eye-toggle" data-toggle="nova_senha" aria-label="Ver senha">
-                            <span class="eye-icon">👁</span>
+                        <button type="button" class="eye-toggle" data-toggle="nova_senha" aria-label="Mostrar senha">
+                            <img class="toggle-password-eye" src="../img/olho_fechado.png" alt="">
                         </button>
                     </div>
 
@@ -65,8 +65,8 @@ unset($_SESSION['erro_redefinir']);
                     <label for="confirmar_senha">Confirmar Senha:</label>
                     <div class="password-wrapper">
                         <input type="password" id="confirmar_senha" name="confirmar_senha" required minlength="8" autocomplete="new-password">
-                        <button type="button" class="eye-toggle" data-toggle="confirmar_senha" aria-label="Ver senha">
-                            <span class="eye-icon">👁</span>
+                        <button type="button" class="eye-toggle" data-toggle="confirmar_senha" aria-label="Mostrar senha">
+                            <img class="toggle-password-eye" src="../img/olho_fechado.png" alt="">
                         </button>
                     </div>
                 </div>
@@ -82,6 +82,6 @@ unset($_SESSION['erro_redefinir']);
         Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | DevIN 2026. Todos os direitos reservados.
     </footer>
 
-    <script src="../js/redefinir.js"></script>
+    <script src="../js/redefinir.js?v=<?= filemtime(__DIR__ . '/../js/redefinir.js') ?>"></script>
 </body>
 </html>

@@ -36,6 +36,18 @@ As preferências de idioma do dashboard são salvas por conta na tabela `prefere
 
 Para traduzir mensagens recebidas, a opção **Traduzir mensagem** no menu de três pontos usa a API pública MyMemory, sem exigir conta ou chave. O texto só é enviado ao provedor quando a pessoa solicita a tradução; a resposta aparece junto ao original e usa o idioma selecionado no dashboard. O serviço limita o uso anônimo a 5.000 caracteres por dia e cada trecho da solicitação a 500 bytes. A tradução depende da disponibilidade do serviço e as mensagens selecionadas são enviadas a terceiros.
 
+## Denúncias de vagas
+
+Uma pessoa autenticada pode denunciar uma vaga pelo painel de detalhes. Cada conta pode enviar uma denúncia por vaga; é necessário escolher um motivo e explicar o caso. As denúncias ficam na aba **Reports** do dashboard administrativo, onde a equipe pode manter ou excluir a vaga. A decisão e as notificações pendentes são salvas nas tabelas `reports_vagas` e `reports_vagas_notificacoes`, criadas automaticamente. Após a análise, quem denunciou e a empresa responsável recebem o resultado em uma conversa somente leitura com a Plataforma DevIN.
+
+Cada denúncia guarda uma cópia do título, descrição, salário e limite de aprovados da vaga no momento do envio, para que a equipe possa analisar os detalhes mesmo que a vaga seja alterada ou removida depois.
+
+As mensagens de conversa, inclusive as notificações já entregues, continuam no armazenamento temporário local descrito acima; elas não são sincronizadas entre instalações e podem ser removidas pela limpeza dos arquivos temporários. A fila no banco de dados permite tentar novamente a entrega de notificações que ainda estejam pendentes.
+
+As mensagens de conclusão da análise de denúncias de vagas ficam disponíveis no chat por 24 horas após a entrega e são removidas na próxima atualização do armazenamento de mensagens.
+
+As empresas informam o salário mensal em reais e o máximo de candidatos aprovados ao publicar ou editar uma vaga. Salário `0` aparece como **A combinar**. Em uma edição, limite `0` significa sem limite. O sistema impede aprovações acima do limite e não permite reduzi-lo abaixo do total já aprovado. As colunas `salario_mensal` e `limite_aprovados` são adicionadas automaticamente à tabela `vagas`; vagas anteriores ficam sem limite até serem editadas.
+
 ## Jogos
 
 O acesso público em `html/jogos/doom.html` mantém o DOOM incorporado e o Labirinto DevIN. O labirinto tem fases, coleta de cristais, perseguidores e vidas, mas não grava progresso. É um jogo original, sem reproduzir mapas, personagens, arte ou sons de Pac-Man.

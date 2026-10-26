@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
+require_once __DIR__ . '/controllers/JobSchema.php';
 require_once __DIR__ . '/helpers.php';
 
 $usuarioAtual = requirePessoaComCurriculo();
@@ -153,10 +154,12 @@ $vagasCandidatadas = [];
 try {
     $conn = getDatabaseConnection();
     try {
+        ensureJobCompensationSchema($conn);
         // Relaciona cada vaga à empresa e restringe candidaturas ao usuário autenticado.
         // Carrega vagas com seus dados de empresa para a lista de oportunidades disponíveis.
         $stmt = $conn->prepare("
-            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao, v.tempo_vaga,
+            SELECT v.id_vaga, v.titulo, COALESCE(v.descricao, '') AS descricao,
+                   v.salario_mensal, v.limite_aprovados, v.tempo_vaga,
                    e.id_empresa, e.nome AS empresa,
                    COALESCE(contagens.aprovadas, 0) AS candidaturas_aprovadas,
                    COALESCE(contagens.recusadas, 0) AS candidaturas_recusadas,
@@ -398,11 +401,14 @@ unset($vaga);
                 <?php foreach ($vagasDisponiveis as $vaga): ?>
                     <?php $jaSeCandidatou = isset($vagasCandidatadas[(int) $vaga['id_vaga']]); ?>
                     <?php $statusVaga = $jaSeCandidatou ? 'Candidatura enviada' : 'Vaga disponível'; ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h(($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') . '|Aprovadas::' . (int) $vaga['candidaturas_aprovadas'] . '|Recusadas::' . (int) $vaga['candidaturas_recusadas'] . '|Em análise::' . (int) $vaga['candidaturas_em_analise']) ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
+                    <?php $salarioExibido = (float) $vaga['salario_mensal'] > 0 ? 'R$ ' . number_format((float) $vaga['salario_mensal'], 2, ',', '.') : 'A combinar'; ?>
+                    <?php $limiteExibido = (int) $vaga['limite_aprovados'] > 0 ? (string) $vaga['limite_aprovados'] : 'Sem limite'; ?>
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h(($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura') . '|Salário mensal::' . $salarioExibido . '|Limite de aprovados::' . $limiteExibido . '|Aprovadas::' . (int) $vaga['candidaturas_aprovadas'] . '|Recusadas::' . (int) $vaga['candidaturas_recusadas'] . '|Em análise::' . (int) $vaga['candidaturas_em_analise']) ?>" data-application-summary="true" data-report-job-id="<?= (int) $vaga['id_vaga'] ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
+                            <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Máximo de aprovados:</span> <strong><?= h($limiteExibido) ?></strong></p>
                             <?= dashboardCardTags($statusVaga . '|' . $vaga['empresa']) ?>
                         </div>
                         <div class="card-actions">

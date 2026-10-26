@@ -25,6 +25,7 @@
     const messagesElement = app.querySelector('[data-chat-messages]');
     const form = app.querySelector('[data-chat-form]');
     const messageInput = app.querySelector('[data-chat-input]');
+    const defaultMessagePlaceholder = messageInput?.placeholder || '';
     const sendButton = app.querySelector('[data-chat-send]');
     const sendStatus = app.querySelector('[data-chat-send-status]');
 
@@ -67,6 +68,7 @@
 
         const fallback = initials(contact.nome);
         element.textContent = fallback;
+        if (contact.tipo === 'sistema') return;
 
         const url = new URL(apiUrl, window.location.href);
         url.searchParams.set('acao', 'foto');
@@ -408,6 +410,20 @@
         loading.className = 'chat-empty';
         loading.textContent = translate('Carregando conversa...');
         messagesElement.appendChild(loading);
+        if (requestedContact.tipo === 'sistema' && requestedContact.id === 0) {
+            messageInput.disabled = true;
+            sendButton.disabled = true;
+            messageInput.placeholder = translate('Notificações da plataforma não aceitam respostas.');
+            await loadMessages(true);
+            try {
+                await refreshContacts();
+            } catch (error) {
+                contactsStatus.textContent = error.message;
+            }
+            return true;
+        }
+
+        messageInput.placeholder = defaultMessagePlaceholder;
         try {
             const data = await request({}, {
                 method: 'POST',

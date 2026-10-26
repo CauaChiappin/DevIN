@@ -45,6 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isPass = input.type === 'password';
                 input.type = isPass ? 'text' : 'password';
                 btn.classList.toggle('active', isPass);
+                const image = btn.querySelector('img');
+                if (image) {
+                    image.src = isPass ? '../img/olho_aberto.png' : '../img/olho_fechado.png';
+                }
+                btn.setAttribute('aria-label', isPass ? 'Ocultar senha' : 'Mostrar senha');
             }
         });
     });
