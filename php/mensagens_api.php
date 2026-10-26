@@ -381,17 +381,25 @@ try {
                     if ($usuario === null) {
                         continue;
                     }
+                    switch ($tipoContato) {
+                        case 'pessoa':
+                            $rotuloContato = 'Pessoa';
+                            break;
+                        case 'empresa':
+                            $rotuloContato = 'Empresa';
+                            break;
+                        case 'sistema':
+                            $rotuloContato = 'Notificação da plataforma';
+                            break;
+                        default:
+                            $rotuloContato = 'Contato';
+                    }
                     $contatos[] = [
                         'id' => (int) $usuario['id'],
                         'tipo' => $tipoContato,
                         'nome' => (string) $usuario['nome'],
                         'email' => (string) $usuario['email'],
-                        'rotulo' => match ($tipoContato) {
-                            'pessoa' => 'Pessoa',
-                            'empresa' => 'Empresa',
-                            'sistema' => 'Notificação da plataforma',
-                            default => 'Contato',
-                        },
+                        'rotulo' => $rotuloContato,
                         'ultima_mensagem_id' => $infoContato['ultima_mensagem_id'],
                         'nao_lidas' => $infoContato['nao_lidas'],
                     ];

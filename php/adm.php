@@ -329,11 +329,13 @@ try {
                 <?php if (!$reportsAdmin): ?><p class="empty-state">Nenhuma vaga foi denunciada.</p><?php endif; ?>
                 <?php foreach ($reportsAdmin as $report): ?>
                     <?php
-                    $statusReport = match ($report['status']) {
-                        'mantida' => 'Vaga mantida',
-                        'excluida' => 'Vaga excluída',
-                        default => 'Aguardando análise',
-                    };
+                    if ($report['status'] === 'mantida') {
+                        $statusReport = 'Vaga mantida';
+                    } elseif ($report['status'] === 'excluida') {
+                        $statusReport = 'Vaga excluída';
+                    } else {
+                        $statusReport = 'Aguardando análise';
+                    }
                     $motivosReport = [
                         'fraude' => 'Fraude ou golpe',
                         'informacao_falsa' => 'Informações falsas ou enganosas',
