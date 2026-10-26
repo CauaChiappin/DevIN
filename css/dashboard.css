@@ -3284,21 +3284,25 @@ body.account-deleting .dashboard-shell {
 
 .dashboard-shell.page-curriculo .dashboard-resume__header h1 {
     max-width: 900px;
-    font-size: clamp(28px, 3.2vw, 42px);
+    font-size: 36px;
+    line-height: 1.2;
 }
 
 .dashboard-shell.page-curriculo .dashboard-resume__content {
-    grid-template-columns: minmax(320px, .72fr) minmax(0, 1.55fr);
-    gap: clamp(20px, 2.5vw, 36px);
+    display: grid;
+    grid-template-columns: minmax(360px, .82fr) minmax(0, 1.18fr);
+    align-items: start;
+    gap: 24px;
 }
 
 .dashboard-resume__generator {
+    min-width: 0;
     align-self: start;
-    padding: clamp(24px, 3vw, 40px);
+    padding: 28px;
     border: 1px solid #d6e2ef;
-    border-radius: 18px;
-    background: linear-gradient(150deg, #fff 0%, #f4f9ff 100%);
-    box-shadow: 0 12px 32px rgba(14, 72, 125, .08);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(14, 72, 125, .06);
 }
 
 .dashboard-resume__generator-icon {
@@ -3306,23 +3310,24 @@ body.account-deleting .dashboard-shell {
     width: 52px;
     height: 52px;
     place-items: center;
-    margin-bottom: 22px;
-    border-radius: 15px;
+    margin-bottom: 18px;
+    border-radius: 8px;
     background: #e4f1ff;
     color: #07539a;
-    font-size: 28px;
+    font-size: 24px;
 }
 
 .dashboard-resume__generator h2 {
     margin: 0 0 12px;
     color: #12345b;
-    font-size: clamp(20px, 2vw, 26px);
+    font-size: 22px;
 }
 
 .dashboard-resume__generator > p {
+    margin: 0 0 16px;
     color: #586779;
     font-size: 14px;
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
 .dashboard-resume__consent {
@@ -3330,13 +3335,13 @@ body.account-deleting .dashboard-shell {
     grid-template-columns: 20px minmax(0, 1fr);
     align-items: start;
     gap: 11px;
-    margin: 24px 0;
-    padding: 16px;
+    margin: 18px 0;
+    padding: 14px;
     border: 1px solid #d8e4f1;
-    border-radius: 12px;
+    border-radius: 7px;
     background: #fff;
     color: #43556a;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.6;
     cursor: pointer;
 }
@@ -3349,13 +3354,56 @@ body.account-deleting .dashboard-shell {
 }
 
 .dashboard-resume__actions {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
 }
 
 .dashboard-resume__button {
-    min-height: 48px;
+    display: inline-flex;
+    min-width: 0;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 13px;
+    border: 1px solid #c8d6e3;
+    border-radius: 6px;
+    background: #fff;
+    color: #25435e;
+    font: inherit;
     font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.dashboard-resume__button:hover:not(:disabled) {
+    border-color: #07539a;
+    color: #07539a;
+    transform: translateY(-1px);
+}
+
+.dashboard-resume__button:focus-visible {
+    outline: 2px solid rgba(7, 83, 154, .3);
+    outline-offset: 2px;
+}
+
+.dashboard-resume__button--primary {
+    border-color: #07539a;
+    background: #07539a;
+    color: #fff;
+}
+
+.dashboard-resume__button--primary:hover:not(:disabled) {
+    background: #063f7c;
+    color: #fff;
+}
+
+.dashboard-resume__button--secondary {
+    background: #fff;
 }
 
 .dashboard-resume__button--primary:disabled {
@@ -3364,10 +3412,11 @@ body.account-deleting .dashboard-shell {
 }
 
 .dashboard-resume__status {
-    min-height: 42px;
+    min-height: 24px;
     margin: 14px 0 0 !important;
     color: #526579 !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
+    line-height: 1.5;
 }
 
 .dashboard-resume__status[data-state="success"] {
@@ -3383,16 +3432,18 @@ body.account-deleting .dashboard-shell {
     padding-top: 14px;
     border-top: 1px solid #dce6f0;
     color: #68798c !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
+    line-height: 1.5;
 }
 
 .dashboard-shell.page-curriculo .dashboard-resume__paper {
     min-width: 0;
     min-height: min(72vh, 860px);
-    padding: clamp(32px, 5vw, 72px);
+    padding: 40px;
     border: 1px solid #e1e7ee;
-    border-radius: 4px;
-    box-shadow: 0 14px 36px rgba(17, 42, 71, .09);
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(17, 42, 71, .06);
 }
 
 .dashboard-resume__paper--empty {
@@ -3436,12 +3487,13 @@ body.account-deleting .dashboard-shell {
 }
 
 .dashboard-resume__paper [data-resume-content] > h2 {
-    margin: 0 0 34px;
-    padding-bottom: 18px;
-    border-bottom: 3px solid #07539a;
+    margin: 0 0 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #07539a;
     color: #12345b;
     font-family: Georgia, serif;
-    font-size: clamp(30px, 4vw, 44px);
+    font-size: 34px;
+    line-height: 1.2;
     overflow-wrap: anywhere;
 }
 
@@ -3450,13 +3502,17 @@ body.account-deleting .dashboard-shell {
 }
 
 .dashboard-resume__section h3 {
-    margin-bottom: 10px;
-    font-size: 13px;
+    margin-bottom: 8px;
+    color: #25435e;
+    font-size: 14px;
+    text-transform: uppercase;
 }
 
 .dashboard-resume__section p {
-    font-size: 15px;
-    line-height: 1.8;
+    margin: 0;
+    color: #3f5060;
+    font-size: 14px;
+    line-height: 1.7;
     white-space: pre-line;
 }
 
@@ -3591,6 +3647,10 @@ body.account-deleting .dashboard-shell {
     .dashboard-shell.page-curriculo {
         grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
     }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__content {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 @media (max-width: 720px) {
@@ -3607,7 +3667,16 @@ body.account-deleting .dashboard-shell {
     }
 
     .dashboard-shell.page-curriculo .dashboard-resume__paper {
-        min-height: 480px;
-        padding: 32px 24px;
+        min-height: 360px;
+        padding: 26px 20px;
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__paper [data-resume-content] > h2 {
+        margin-bottom: 22px;
+        font-size: 30px;
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__actions > * {
+        width: 100%;
     }
 }
