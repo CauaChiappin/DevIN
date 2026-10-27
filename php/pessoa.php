@@ -444,7 +444,11 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                     $pagina,
                     $pagina === 'vagas' ? 'Minhas candidaturas' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas'),
                     'Pesquisar por nome ou habilidade...',
-                    $pagina === 'vagas' ? count($minhasCandidaturas) . ' vagas' : ($pagina === 'inicio' ? count($vagasDisponiveis) . ' vagas' : '')
+                    $pagina === 'vagas'
+                        ? count($minhasCandidaturas) . (count($minhasCandidaturas) === 1 ? ' candidatura' : ' candidaturas')
+                        : ($pagina === 'inicio'
+                            ? count($vagasDisponiveis) . (count($vagasDisponiveis) === 1 ? ' vaga' : ' vagas')
+                            : '')
                 ) ?>
                 <?php if (in_array($pagina, ['inicio', 'vagas'], true)): ?>
                     <p class="list-section-label">Disponíveis</p>
