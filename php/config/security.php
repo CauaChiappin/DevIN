@@ -6,10 +6,8 @@ require_once __DIR__ . '/auth.php';
 
 function isSecureRequest(): bool
 {
-    // Considera proxy reverso para que cookies Secure funcionem quando HTTPS termina antes do PHP.
     return APP_ENV !== 'development'
-        || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+        || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 }
 
 /**

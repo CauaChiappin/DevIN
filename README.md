@@ -15,7 +15,9 @@ Preencha o `.env` na raiz do projeto com os dados do seu provedor SMTP. Um model
 
 O endereço de remetente precisa ser permitido pelo serviço SMTP. O `.env` real é ignorado pelo Git e não deve ser publicado nem compartilhado; mantenha credenciais apenas nele.
 
-O `.env` também contém a URL local (`APP_URL`) e as credenciais do MySQL (`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`). Os valores iniciais correspondem à configuração comum do XAMPP; ajuste-os se o banco ou a porta forem diferentes. `APP_ENV=development` ativa o modo local. Em produção, altere para `APP_ENV=production` e configure `DEVIN_JWT_SECRET` com uma chave aleatória forte e privada; não reutilize a chave de desenvolvimento.
+O `.env` também contém a URL local (`APP_URL`) e as credenciais do MySQL (`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`). Os valores iniciais correspondem à configuração comum do XAMPP; ajuste-os se o banco ou a porta forem diferentes. `APP_ENV=development` ativa o modo local. Sem `APP_ENV`, a aplicação assume produção e exige `DEVIN_JWT_SECRET`; configure esse segredo com uma chave aleatória forte e privada e não reutilize a chave de desenvolvimento.
+
+O logout encerra a sessão e remove o cookie JWT do navegador, mas tokens já emitidos continuam válidos até expirarem (no máximo uma hora); a aplicação ainda não mantém uma lista de revogação. A pontuação do arcade é limitada por sessão e tempo de partida, mas ainda depende de dados enviados pelo cliente e pode ser falsificada; esse risco é aceito.
 
 Os e-mails de confirmação e recuperação são enviados durante a solicitação HTTP, com timeout SMTP de 8 segundos. A tela bloqueia reenvios do mesmo formulário enquanto a solicitação está em andamento.
 

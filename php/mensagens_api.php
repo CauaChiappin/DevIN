@@ -231,7 +231,7 @@ function resumirArmazenamentoChat(array $ator): array
 function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array
 {
     if ($tipo === 'sistema' && $id === 0) {
-        return ['id' => 0, 'nome' => 'Plataforma DevIN', 'email' => ''];
+        return ['id' => 0, 'nome' => 'Plataforma DevIN'];
     }
 
     if (!validarTipoChat($tipo) || $id < 1) {
@@ -240,7 +240,7 @@ function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array
 
     $tabela = $tipo === 'pessoa' ? 'pessoa' : 'empresa';
     $coluna = $tipo === 'pessoa' ? 'id_pessoa' : 'id_empresa';
-    $stmt = $conn->prepare("SELECT {$coluna} AS id, nome, email FROM {$tabela} WHERE {$coluna} = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT {$coluna} AS id, nome FROM {$tabela} WHERE {$coluna} = ? LIMIT 1");
     $stmt->bind_param('i', $id);
     $stmt->execute();
     $usuario = $stmt->get_result()->fetch_assoc() ?: null;
@@ -263,6 +263,12 @@ function destinatarioValido(mysqli $conn, array $ator, string $tipo, int $id): a
     return $destinatario;
 }
 
+function atorTemConversaChat(array $ator, string $tipo, int $id): bool
+{
+    $resumo = resumirArmazenamentoChat($ator);
+    return isset($resumo['contatos'][$tipo . ':' . $id]);
+}
+
 try {
     $ator = requireWebAuth();
     if (!in_array($ator['tipo'], ['pessoa', 'empresa'], true)) {
@@ -283,6 +289,13 @@ try {
                 ];
                 if (!isset($perfis[$tipo]) || $id === false || $id < 1) {
                     throw new InvalidArgumentException('Perfil inválido.');
+                }
+                if (
+                    ($tipo !== $ator['tipo'] || $id !== $ator['id'])
+                    && !atorTemConversaChat($ator, $tipo, $id)
+                ) {
+                    http_response_code(404);
+                    exit;
                 }
 
                 [$tabela, $colunaId] = $perfis[$tipo];
@@ -346,7 +359,7 @@ try {
                     'empresa' => ['empresa', 'id_empresa', 'Empresa'],
                 ] as $tipo => [$tabela, $colunaId, $rotulo]) {
                     $stmt = $conn->prepare(
-                        "SELECT {$colunaId} AS id, nome, email FROM {$tabela}
+                        "SELECT {$colunaId} AS id, nome FROM {$tabela}
                          WHERE (nome LIKE ? OR email LIKE ?)
                            AND NOT ({$colunaId} = ? AND ? = ?)
                          ORDER BY nome LIMIT 25"
@@ -358,7 +371,6 @@ try {
                             'id' => (int) $usuario['id'],
                             'tipo' => $tipo,
                             'nome' => (string) $usuario['nome'],
-                            'email' => (string) $usuario['email'],
                             'rotulo' => $rotulo,
                             'nao_lidas' => 0,
                             'ultima_mensagem_id' => 0,
@@ -368,7 +380,7 @@ try {
                 }
 
                 usort($contatosEncontrados, static fn (array $a, array $b): int =>
-                    strnatcasecmp($a['nome'], $b['nome']) ?: strnatcasecmp($a['email'], $b['email'])
+                    strnatcasecmp($a['nome'], $b['nome'])
                 );
                 responderMensagens(['sucesso' => true, 'contatos' => array_slice($contatosEncontrados, 0, 30)]);
             }
@@ -399,7 +411,6 @@ try {
                         'id' => (int) $usuario['id'],
                         'tipo' => $tipoContato,
                         'nome' => (string) $usuario['nome'],
-                        'email' => (string) $usuario['email'],
                         'rotulo' => $rotuloContato,
                         'ultima_mensagem_id' => $infoContato['ultima_mensagem_id'],
                         'nao_lidas' => $infoContato['nao_lidas'],
@@ -541,7 +552,6 @@ try {
                     'id' => $id,
                     'tipo' => $tipo,
                     'nome' => (string) $destinatario['nome'],
-                    'email' => (string) $destinatario['email'],
                     'rotulo' => $tipo === 'pessoa' ? 'Pessoa' : 'Empresa',
                     'nao_lidas' => 0,
                     'ultima_mensagem_id' => 0,

@@ -78,7 +78,7 @@ switch ($acao) {
             }
 
             if ($usuario === null) {
-                $_SESSION['erro_recuperacao'] = 'E-mail não encontrado no sistema.';
+                $_SESSION['sucesso_recuperacao'] = 'Se houver uma conta com esse e-mail, enviaremos as instruções de recuperação.';
                 header('Location: recuperacao.php');
                 exit;
             }
