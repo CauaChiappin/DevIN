@@ -205,6 +205,7 @@ function dashboardDetailPanel(): string
         <p>As informações do perfil, vaga ou candidatura aparecerão aqui.</p>
     </div>
     <article class="detail-profile" data-detail-content hidden>
+        <button class="detail-close" type="button" data-close-detail aria-label="Fechar detalhes" title="Fechar detalhes">×</button>
         <header class="detail-profile-header">
             <span class="detail-avatar" data-detail-avatar aria-hidden="true">DI</span>
             <div class="detail-identity">

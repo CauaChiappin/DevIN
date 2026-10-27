@@ -3840,3 +3840,115 @@ body.account-deleting .dashboard-shell {
         padding: 10px 14px;
     }
 }
+
+@media (max-width: 720px) {
+    .dashboard-shell .profile-detail-panel {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: flex-end;
+        padding: 0;
+        overflow: hidden;
+        border: 0;
+        background: transparent;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity .2s ease, visibility .2s ease;
+    }
+
+    .dashboard-shell .profile-detail-panel::before {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 35, 55, .42);
+        content: "";
+    }
+
+    .dashboard-shell .profile-detail-panel.mobile-detail-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .dashboard-shell .profile-detail-panel .detail-placeholder { display: none; }
+
+    .dashboard-shell .profile-detail-panel .detail-profile {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: none;
+        max-height: min(78dvh, 720px);
+        margin: 0;
+        padding: 60px 18px calc(24px + env(safe-area-inset-bottom));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border: 1px solid #dce4eb;
+        border-bottom: 0;
+        border-radius: 20px 20px 0 0;
+        background: #fdfcf9;
+        box-shadow: 0 -16px 48px rgba(8, 48, 88, .18);
+        transform: translateY(24px);
+        transition: transform .24s cubic-bezier(.2, .75, .25, 1);
+    }
+
+    .dashboard-shell .profile-detail-panel.mobile-detail-open .detail-profile {
+        transform: translateY(0);
+    }
+
+    .dashboard-shell .profile-detail-panel .detail-profile::before {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        width: 36px;
+        height: 4px;
+        border-radius: 999px;
+        background: #c5d0da;
+        content: "";
+        transform: translateX(-50%);
+    }
+
+    .dashboard-shell .detail-close {
+        position: absolute;
+        top: 22px;
+        right: 18px;
+        z-index: 2;
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid #dce4eb;
+        border-radius: 50%;
+        background: #fff;
+        color: #40566b;
+        font-size: 23px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .dashboard-shell .detail-close:focus-visible { outline: 2px solid #075ba8; outline-offset: 2px; }
+    .dashboard-shell .detail-profile-header { grid-template-columns: 46px minmax(0, 1fr); gap: 10px; }
+    .dashboard-shell .detail-avatar { width: 44px; height: 44px; }
+    .dashboard-shell .detail-identity h2 { font-size: 19px; line-height: 1.2; }
+    .dashboard-shell .detail-profile-actions { grid-column: 1 / -1; justify-content: stretch; }
+    .dashboard-shell .detail-profile-actions > button { flex: 1 1 0; min-height: 40px; }
+    .dashboard-shell .detail-section { padding-top: 16px; }
+    .dashboard-shell .detail-job-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-shell .profile-detail-panel,
+    .dashboard-shell .profile-detail-panel .detail-profile { transition: none; }
+}
+
+@media (max-width: 720px) {
+    .dashboard-shell {
+        align-content: start;
+        grid-auto-rows: max-content;
+    }
+
+    .dashboard-shell .sidebar {
+        display: block;
+        gap: 0;
+    }
+}
