@@ -95,8 +95,8 @@
     gap: 12px;
     margin: 0 0 22px;
     padding: 16px;
-    border-left: 3px solid #187b72;
-    background: #edf6f4;
+    border-left: 3px solid #004aad;
+    background: #eaf2ff;
     color: #213840;
     line-height: 1.5;
 }
@@ -117,7 +117,7 @@
     height: 18px;
     flex: 0 0 18px;
     margin-top: 2px;
-    accent-color: #12645d;
+    accent-color: #004aad;
 }
 
 .curriculo-page .btn-submit {
@@ -181,7 +181,7 @@
 
 .resume-onboarding__eyebrow {
     margin: 0 0 12px;
-    color: #187b72;
+    color: #004aad;
     font-size: 12px;
     font-weight: 800;
 }
@@ -229,8 +229,8 @@
 
 .resume-onboarding__choice:hover,
 .resume-onboarding__choice:focus-visible {
-    border-color: #187b72;
-    outline: 2px solid rgba(24, 123, 114, .15);
+    border-color: #004aad;
+    outline: 2px solid rgba(0, 74, 173, .15);
 }
 
 .resume-onboarding__choice > span:first-child {
@@ -240,10 +240,29 @@
     flex: 0 0 38px;
     place-items: center;
     border-radius: 50%;
-    background: #e6f3f1;
-    color: #12645d;
+    background: #eaf2ff;
+    color: #003f93;
     font-size: 22px;
     font-weight: 700;
+}
+
+.resume-onboarding__choice[data-onboarding-no] > span:first-child {
+    position: relative;
+    font-size: 0;
+}
+
+.resume-onboarding__choice[data-onboarding-no] > span:first-child::before,
+.resume-onboarding__choice[data-onboarding-no] > span:first-child::after {
+    position: absolute;
+    width: 12px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    content: "";
+}
+
+.resume-onboarding__choice[data-onboarding-no] > span:first-child::after {
+    transform: rotate(90deg);
 }
 
 .resume-onboarding__choice strong,
@@ -276,8 +295,8 @@
 }
 
 .resume-onboarding__button--primary {
-    border-color: #12645d;
-    background: #12645d;
+    border-color: #004aad;
+    background: #004aad;
     color: #fff;
 }
 
@@ -286,7 +305,7 @@
     padding: 8px 0;
     border: 0;
     background: none;
-    color: #12645d;
+    color: #003f93;
     font: inherit;
     cursor: pointer;
 }
@@ -324,13 +343,13 @@
 }
 
 .resume-upload-message--success {
-    color: #12645d;
+    color: #004aad;
 }
 
 .resume-upload-current {
     padding: 12px;
-    border-left: 3px solid #187b72;
-    background: #edf6f4;
+    border-left: 3px solid #004aad;
+    background: #eaf2ff;
     color: #213840;
     overflow-wrap: anywhere;
 }
@@ -349,7 +368,7 @@
     height: 18px;
     flex: 0 0 18px;
     margin-top: 2px;
-    accent-color: #12645d;
+    accent-color: #004aad;
 }
 
 .resume-review__status {
@@ -363,7 +382,7 @@
 }
 
 .resume-review__status[data-state="success"] {
-    color: #12645d;
+    color: #004aad;
 }
 
 .resume-review__result {
@@ -392,24 +411,44 @@
 
 .resume-review__conclusion {
     padding: 12px;
-    background: #edf6f4;
+    background: #eaf2ff;
 }
 
 @media (max-width: 640px) {
     .resume-onboarding {
-        width: min(100% - 28px, 900px);
+        width: min(100% - 24px, 900px);
+        min-height: 100svh;
     }
 
     .resume-onboarding .cadastro-header {
         min-height: 68px;
     }
 
+    .resume-onboarding__panel {
+        margin: 24px auto 28px;
+        padding: 22px 18px;
+    }
+
     .resume-onboarding__panel h1 {
-        font-size: 26px;
+        font-size: 24px;
     }
 
     .resume-onboarding__panel h2 {
-        font-size: 22px;
+        font-size: 21px;
+    }
+
+    .resume-onboarding__choice {
+        min-height: 72px;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .resume-onboarding__choice > span:last-child {
+        min-width: 0;
+    }
+
+    .resume-onboarding__button {
+        width: 100%;
     }
 }
 

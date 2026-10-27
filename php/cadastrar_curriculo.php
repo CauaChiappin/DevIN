@@ -93,7 +93,7 @@ $cIdiomas          = $dadosCurriculo['idiomas']              ?? '';
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/cadastrostyle.css">
     <link rel="stylesheet" href="../css/site-navigation.css">
-    <link rel="stylesheet" href="../css/curriculo.css">
+    <link rel="stylesheet" href="../css/curriculo.css?v=<?= filemtime(__DIR__ . '/../css/curriculo.css') ?>">
 </head>
 
 <body class="curriculo-page">
