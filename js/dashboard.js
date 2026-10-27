@@ -272,6 +272,50 @@
         detailPanel.querySelector('[data-start-chat]')?.setAttribute('hidden', '');
     };
 
+    const mobileDetailMedia = window.matchMedia('(max-width: 720px)');
+    const closeMobileDetail = () => {
+        if (!detailPanel) return;
+        const selectedCard = detailCards.find((card) => card.classList.contains('selecionado'));
+        detailPanel.classList.remove('mobile-detail-open');
+        detailPanel.removeAttribute('role');
+        detailPanel.removeAttribute('aria-modal');
+        clearDetail();
+        if (selectedCard) {
+            selectedCard.setAttribute('tabindex', '-1');
+            selectedCard.focus({ preventScroll: true });
+        }
+    };
+
+    detailPanel?.querySelector('[data-close-detail]')?.addEventListener('click', closeMobileDetail);
+    detailPanel?.addEventListener('click', (event) => {
+        if (event.target === detailPanel) closeMobileDetail();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (!detailPanel?.classList.contains('mobile-detail-open')) return;
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeMobileDetail();
+            return;
+        }
+        if (event.key !== 'Tab') return;
+
+        const focusableElements = [...detailPanel.querySelectorAll('button:not([hidden]):not(:disabled), a[href]')]
+            .filter((element) => element.getClientRects().length > 0);
+        if (!focusableElements.length) return;
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        if (event.shiftKey && document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement.focus();
+        } else if (!event.shiftKey && document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement.focus();
+        }
+    });
+    mobileDetailMedia.addEventListener?.('change', (event) => {
+        if (!event.matches && detailPanel?.classList.contains('mobile-detail-open')) closeMobileDetail();
+    });
+
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {
         card.addEventListener('click', (event) => {
             // Cliques em controles internos executam sua ação própria e não trocam a seleção do card.
@@ -283,6 +327,13 @@
 
             card.classList.add('selecionado');
             renderDetail(card);
+
+            if (detailPanel && mobileDetailMedia.matches) {
+                detailPanel.classList.add('mobile-detail-open');
+                detailPanel.setAttribute('role', 'dialog');
+                detailPanel.setAttribute('aria-modal', 'true');
+                detailPanel.querySelector('[data-close-detail]')?.focus({ preventScroll: true });
+            }
 
             if (detailText) detailText.textContent = card.dataset.detail || 'Sem detalhes disponíveis.';
             if (detailTitle && card.dataset.jobTitle) detailTitle.textContent = card.dataset.jobTitle;
