@@ -257,17 +257,13 @@ try {
                    v.salario_mensal, v.limite_aprovados, v.tempo_vaga,
                    v.criterio_encerramento, v.data_encerramento, v.encerrada_em,
                    e.id_empresa, e.nome AS empresa,
-                   COALESCE(contagens.aprovadas, 0) AS candidaturas_aprovadas,
-                   COALESCE(contagens.recusadas, 0) AS candidaturas_recusadas,
-                   COALESCE(contagens.em_analise, 0) AS candidaturas_em_analise
+                   COALESCE(contagens.aprovadas, 0) AS candidaturas_aprovadas
             FROM vagas v
             INNER JOIN empresa e ON e.id_empresa = v.id_empresa
             LEFT JOIN (
-                SELECT id_vaga,
-                       COUNT(CASE WHEN status = 'aprovado' THEN 1 END) AS aprovadas,
-                       COUNT(CASE WHEN status = 'recusado' THEN 1 END) AS recusadas,
-                       COUNT(CASE WHEN status NOT IN ('aprovado', 'recusado') THEN 1 END) AS em_analise
+                  SELECT id_vaga, COUNT(*) AS aprovadas
                 FROM candidatura
+                  WHERE status = 'aprovado'
                 GROUP BY id_vaga
             ) contagens ON contagens.id_vaga = v.id_vaga
             ORDER BY v.id_vaga DESC
@@ -634,12 +630,26 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                     <?php $salarioExibido = (float) $vaga['salario_mensal'] > 0 ? 'R$ ' . number_format((float) $vaga['salario_mensal'], 2, ',', '.') : 'A combinar'; ?>
                     <?php $limiteExibido = (int) $vaga['limite_aprovados'] > 0 ? (string) $vaga['limite_aprovados'] : 'Sem limite'; ?>
                     <?php $prazoVagaExibido = !empty($vaga['data_encerramento']) ? date('d/m/Y H:i', strtotime($vaga['data_encerramento'])) : ''; ?>
-                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h(($vagaEncerrada ? 'Vaga encerrada' : ($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura')) . '|Salário mensal::' . $salarioExibido . '|Limite de aprovados::' . $limiteExibido . '|Aprovadas::' . (int) $vaga['candidaturas_aprovadas'] . '|Recusadas::' . (int) $vaga['candidaturas_recusadas'] . '|Em análise::' . (int) $vaga['candidaturas_em_analise'] . ($prazoVagaExibido !== '' ? '|Data de encerramento::' . $prazoVagaExibido : '')) ?>" data-application-summary="true" data-report-job-id="<?= (int) $vaga['id_vaga'] ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
+                    <?php $vagasRestantes = (int) $vaga['limite_aprovados'] > 0 ? (string) max((int) $vaga['limite_aprovados'] - (int) $vaga['candidaturas_aprovadas'], 0) : 'Sem limite'; ?>
+                    <?php $detalheExperienciaItens = [
+                        $vagaEncerrada ? 'Vaga encerrada' : ($jaSeCandidatou ? 'Candidatura enviada::Você já se candidatou a esta vaga' : 'Vaga publicada::Confira os requisitos e envie sua candidatura'),
+                        'Salário mensal::' . $salarioExibido,
+                        'Limite de vagas::' . $limiteExibido,
+                        'Aprovadas::' . (int) $vaga['candidaturas_aprovadas'],
+                        'Recusadas::' . (int) $vaga['candidaturas_recusadas'],
+                        'Em análise::' . (int) $vaga['candidaturas_em_analise'],
+                        'Vagas restantes::' . $vagasRestantes,
+                    ]; ?>
+                    <?php if ($prazoVagaExibido !== ''): ?>
+                        <?php $detalheExperienciaItens[] = 'Data de encerramento::' . $prazoVagaExibido; ?>
+                    <?php endif; ?>
+                    <?php $detalheExperiencia = implode('|', $detalheExperienciaItens); ?>
+                    <article class="item-card" data-detail="<?= h($vaga['detalhe']) ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h($vaga['empresa']) ?>" data-detail-tags="<?= h($statusVaga) ?>|<?= h($vaga['empresa']) ?>" data-detail-experience="<?= h($detalheExperiencia) ?>" data-application-summary="true" data-report-job-id="<?= (int) $vaga['id_vaga'] ?>" data-detail-action-label="Candidatar-se" data-chat-type="empresa" data-chat-id="<?= (int) $vaga['id_empresa'] ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($vaga['empresa']) ?></h2>
                             <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p>
-                            <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Máximo de aprovados:</span> <strong><?= h($limiteExibido) ?></strong></p>
+                            <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Limite de vagas:</span> <strong><?= h($limiteExibido) ?></strong> · <span>Vagas restantes:</span> <strong><?= h($vagasRestantes) ?></strong></p>
                             <?php if ($prazoVagaExibido !== ''): ?><p class="job-deadline">Candidaturas até: <?= h($prazoVagaExibido) ?></p><?php endif; ?>
                             <?= dashboardCardTags($statusVaga . '|' . $vaga['empresa']) ?>
                         </div>
