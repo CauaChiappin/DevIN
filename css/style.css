@@ -319,16 +319,39 @@ summary:focus-visible {
 }
 
 .texto-principal p {
-    position: absolute;
-    top: 178px;
-    left: 52px;
-    width: 350px;
-    margin: 0;
-    color: var(--gray);
-    font-size: 34px;
-    line-height: 1.55;
+    width: min(440px, 100%);
+    margin: 20px 0 0;
+    color: #666;
+    font-size: 25px;
+    line-height: 1.4;
     font-weight: 500;
-    text-align: center;
+    text-align: left;
+}
+
+.acoes-principal {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px 22px;
+    margin-top: 28px;
+}
+
+.cta-principal {
+    min-height: 50px;
+    height: auto;
+    padding: 10px 22px;
+}
+
+.link-empresa {
+    color: var(--blue);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.link-empresa:hover {
+    color: #063f7c;
 }
 
 .arte-principal {
@@ -1067,7 +1090,8 @@ summary:focus-visible {
     .texto-principal p {
         position: static;
         width: auto;
-        margin-left: 0;
+        margin: 16px auto 0;
+        text-align: center;
     }
 
     .titulo-sobre p,
@@ -1191,10 +1215,16 @@ summary:focus-visible {
 
     .texto-principal p {
         position: static;
-        width: auto;
+        width: min(100%, 560px);
         margin: 16px auto 0;
         font-size: 24px;
         line-height: 1.35;
+        text-align: center;
+    }
+
+    .acoes-principal {
+        justify-content: center;
+        margin-top: 22px;
     }
 
     .arte-principal {

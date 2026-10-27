@@ -21,7 +21,7 @@ $environmentValue = static function (string $name, ?string $legacyName = null): 
 };
 
 // 2. Configurações de Ambiente e JWT
-$environment = $environmentValue('APP_ENV', 'DEVIN_APP_ENV') ?? 'development';
+$environment = $environmentValue('APP_ENV', 'DEVIN_APP_ENV') ?? 'production';
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 $jwtSecret = $environmentValue('DEVIN_JWT_SECRET') ?? '';

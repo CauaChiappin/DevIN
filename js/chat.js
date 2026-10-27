@@ -92,7 +92,7 @@
         const visibleContacts = searching
             ? source
             : source.filter((contact) =>
-                `${contact.nome} ${contact.email || ''} ${contact.rotulo}`.toLocaleLowerCase(locale).includes(filter));
+                `${contact.nome} ${contact.rotulo}`.toLocaleLowerCase(locale).includes(filter));
 
         if (visibleContacts.length === 0) {
             contactsStatus.textContent = searching
@@ -120,7 +120,7 @@
             const name = document.createElement('strong');
             name.textContent = contact.nome;
             const type = document.createElement('small');
-            type.textContent = searching ? contact.email : translate(contact.rotulo);
+            type.textContent = translate(contact.rotulo);
             copy.append(name, type);
             button.append(avatar, copy);
             if (contact.nao_lidas > 0) {
@@ -569,7 +569,6 @@
                 tipo,
                 id,
                 nome: translate('Carregando conversa...'),
-                email: '',
                 rotulo: tipo === 'pessoa' ? 'Pessoa' : 'Empresa',
                 nao_lidas: 0,
                 ultima_mensagem_id: 0,
