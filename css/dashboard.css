@@ -2208,6 +2208,8 @@ body.account-deleting .dashboard-shell {
 .detail-action:hover,
 .detail-chat-action:hover { background: #004a8e; }
 
+.detail-close { display: none; }
+
 .detail-job-facts {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3404,7 +3406,7 @@ body.account-deleting .dashboard-shell {
 .dashboard-shell.page-curriculo .lista-area {
     width: 100%;
     min-width: 0;
-    padding: clamp(24px, 3vw, 48px);
+    padding: 24px 20px 32px;
 }
 
 .dashboard-shell.page-curriculo .dashboard-resume {
@@ -3414,13 +3416,32 @@ body.account-deleting .dashboard-shell {
 }
 
 .dashboard-shell.page-curriculo .dashboard-resume__header {
-    margin-bottom: 28px;
+    margin-bottom: 18px;
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__eyebrow {
+    margin: 0 0 6px;
+    color: #7b8997;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
 }
 
 .dashboard-shell.page-curriculo .dashboard-resume__header h1 {
     max-width: 900px;
-    font-size: 36px;
+    margin: 0;
+    color: #0b4d89;
+    font-family: Georgia, serif;
+    font-size: 23px;
     line-height: 1.2;
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__header > div > p:last-child {
+    margin: 8px 0 0;
+    color: #677483;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .dashboard-shell.page-curriculo .dashboard-resume__content {

@@ -6,6 +6,8 @@
         'pt-BR': {
             'Início': 'Início',
             'Minhas Vagas': 'Minhas Vagas',
+            'Minhas candidaturas': 'Minhas candidaturas',
+            'Vagas': 'Vagas',
             'Mensagens': 'Mensagens',
             'Sobre nós': 'Sobre nós',
             'Perfil': 'Perfil',
@@ -13,7 +15,11 @@
             'Configurações': 'Configurações',
             'Sair da Conta': 'Sair da Conta',
             'Pesquisar por nome ou habilidade...': 'Pesquisar por nome ou habilidade...',
+            'Filtros': 'Filtros',
             'Disponíveis': 'Disponíveis',
+            'Você ainda não se candidatou a nenhuma vaga.': 'Você ainda não se candidatou a nenhuma vaga.',
+            'Ainda não há vagas publicadas.': 'Ainda não há vagas publicadas.',
+            'Adicione um currículo': 'Adicione um currículo',
             'Nenhum resultado encontrado.': 'Nenhum resultado encontrado.',
             'Vaga disponível': 'Vaga disponível',
             'Candidatura enviada': 'Candidatura enviada',
@@ -81,6 +87,7 @@
             'Fechar': 'Fechar',
             'Nome': 'Nome',
             'E-mail': 'E-mail',
+            'E-mail da conta': 'E-mail da conta',
             'Celular': 'Celular',
             'CEP': 'CEP',
             'Salvar': 'Salvar',
@@ -118,6 +125,8 @@
         en: {
             'Início': 'Home',
             'Minhas Vagas': 'My Jobs',
+            'Minhas candidaturas': 'My applications',
+            'Vagas': 'Jobs',
             'Mensagens': 'Messages',
             'Sobre nós': 'About us',
             'Perfil': 'Profile',
@@ -125,7 +134,11 @@
             'Configurações': 'Settings',
             'Sair da Conta': 'Log out',
             'Pesquisar por nome ou habilidade...': 'Search by name or skill...',
+            'Filtros': 'Filters',
             'Disponíveis': 'Available',
+            'Você ainda não se candidatou a nenhuma vaga.': 'You have not applied to any jobs yet.',
+            'Ainda não há vagas publicadas.': 'There are no jobs posted yet.',
+            'Adicione um currículo': 'Add a resume',
             'Nenhum resultado encontrado.': 'No results found.',
             'Vaga disponível': 'Job available',
             'Candidatura enviada': 'Application sent',
@@ -161,6 +174,11 @@
             'Vagas restantes': 'Vacancies remaining',
             'Vagas restantes:': 'Vacancies remaining:',
             'Informações da vaga': 'Job information',
+            'Detalhes': 'Details',
+            'Detalhes do item selecionado': 'Selected item details',
+            'Selecione um card': 'Select an item',
+            'As informações do perfil, vaga ou candidatura aparecerão aqui.': 'Details about the selected profile, job, or application will appear here.',
+            'Fechar detalhes': 'Close details',
             'Detalhes da denúncia': 'Report details',
             'Experiência': 'Experience',
             'Encontrou algo errado?': 'Something wrong with this job?',
@@ -199,6 +217,7 @@
             'Fechar': 'Close',
             'Nome': 'Name',
             'E-mail': 'Email',
+            'E-mail da conta': 'Account email',
             'Celular': 'Mobile phone',
             'CEP': 'ZIP code',
             'Salvar': 'Save',
@@ -334,6 +353,8 @@
         es: {
             'Início': 'Inicio',
             'Minhas Vagas': 'Mis empleos',
+            'Minhas candidaturas': 'Mis solicitudes',
+            'Vagas': 'Vacantes',
             'Mensagens': 'Mensajes',
             'Sobre nós': 'Sobre nosotros',
             'Perfil': 'Perfil',
@@ -341,8 +362,12 @@
             'Configurações': 'Configuración',
             'Sair da Conta': 'Cerrar sesión',
             'Pesquisar por nome ou habilidade...': 'Buscar por nombre o habilidad...',
+            'Filtros': 'Filtros',
             'Nenhum resultado encontrado.': 'No se encontraron resultados.',
             'Disponíveis': 'Disponibles',
+            'Você ainda não se candidatou a nenhuma vaga.': 'Aún no te has postulado a ninguna vacante.',
+            'Ainda não há vagas publicadas.': 'Todavía no hay vacantes publicadas.',
+            'Adicione um currículo': 'Añade un currículum',
             'Vaga disponível': 'Vacante disponible',
             'Candidatura enviada': 'Solicitud enviada',
             'Denunciar esta vaga': 'Denunciar este empleo',
@@ -377,6 +402,11 @@
             'Vagas restantes': 'Vacantes restantes',
             'Vagas restantes:': 'Vacantes restantes:',
             'Informações da vaga': 'Información de la vacante',
+            'Detalhes': 'Detalles',
+            'Detalhes do item selecionado': 'Detalles del elemento seleccionado',
+            'Selecione um card': 'Selecciona un elemento',
+            'As informações do perfil, vaga ou candidatura aparecerão aqui.': 'Aquí aparecerá la información del perfil, la vacante o la candidatura seleccionada.',
+            'Fechar detalhes': 'Cerrar detalles',
             'Detalhes da denúncia': 'Detalles de la denuncia',
             'Experiência': 'Experiencia',
             'Encontrou algo errado?': '¿Encontraste algo extraño?',
@@ -415,6 +445,7 @@
             'Fechar': 'Cerrar',
             'Nome': 'Nombre',
             'E-mail': 'Correo electrónico',
+            'E-mail da conta': 'Correo electrónico de la cuenta',
             'Celular': 'Teléfono móvil',
             'CEP': 'Código postal',
             'Salvar': 'Guardar',
@@ -553,6 +584,15 @@
         const raw = String(value ?? '');
         const dictionary = translations[language] ?? translations['pt-BR'];
         const trimmed = raw.trim();
+        const countMatch = trimmed.match(/^(\d+)\s+(vagas?|candidaturas?)$/i);
+        if (countMatch && language !== 'pt-BR') {
+            const count = Number(countMatch[1]);
+            const isApplication = countMatch[2].toLowerCase().startsWith('candidatura');
+            const noun = language === 'en'
+                ? (isApplication ? (count === 1 ? 'application' : 'applications') : (count === 1 ? 'job' : 'jobs'))
+                : (isApplication ? (count === 1 ? 'solicitud' : 'solicitudes') : (count === 1 ? 'vacante' : 'vacantes'));
+            return raw.replace(trimmed, `${count} ${noun}`);
+        }
         const translated = dictionary[trimmed];
         if (translated !== undefined) {
             return raw.replace(trimmed, translated);
