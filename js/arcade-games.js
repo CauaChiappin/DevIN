@@ -80,6 +80,7 @@
     const cellRect = (x, y, size, left, top) => ({
         x: left + x * size, y: top + y * size, size
     });
+    const mazeStepMs = 100;
 
     function setStats() {
         if (!engine) return;
@@ -238,8 +239,8 @@
             },
             update(delta) {
                 state.lastMove += delta;
-                if (state.lastMove < 120) return;
-                state.lastMove = 0;
+                if (state.lastMove < mazeStepMs) return;
+                state.lastMove %= mazeStepMs;
                 if (open(state.player.x + state.player.next.x, state.player.y + state.player.next.y)) {
                     state.player.dir = state.player.next;
                 }
