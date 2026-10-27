@@ -87,7 +87,7 @@ function validarLimiteAprovados(string $valor, bool $permitirSemLimite = false):
     $limite = filter_var($valor, FILTER_VALIDATE_INT);
     $menorLimite = $permitirSemLimite ? 0 : 1;
     if ($limite === false || $limite < $menorLimite || $limite > 2147483647) {
-        throw new InvalidArgumentException('Informe um limite válido de candidatos aprovados.');
+        throw new InvalidArgumentException('Informe um limite válido de vagas.');
     }
 
     return $limite;

@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $limiteAprovados = (int) $candidatura['limite_aprovados'];
                     if ($limiteAprovados > 0 && $aprovados >= $limiteAprovados) {
-                        throw new RuntimeException('O limite de candidatos aprovados para esta vaga já foi atingido.');
+                        throw new RuntimeException('O limite de vagas desta oportunidade já foi atingido.');
                     }
                 }
 
@@ -644,7 +644,7 @@ foreach ($candidatos as $candidato) {
                                         <label>Salário mensal (R$)
                                             <input name="salario_mensal" type="number" min="0" max="99999999.99" step="0.01" value="0.00" required>
                                         </label>
-                                        <label>Máximo de candidatos aprovados
+                                        <label>Limite de vagas
                                             <input name="limite_aprovados" type="number" min="1" max="2147483647" step="1" required>
                                         </label>
                                         <p class="job-form-hint">Informe 0 no salário para exibir "A combinar".</p>
@@ -659,12 +659,12 @@ foreach ($candidatos as $candidato) {
                 <?php foreach ($empresaPosts as $post): ?>
                     <?php $salarioExibido = (float) $post['salario_mensal'] > 0 ? 'R$ ' . number_format((float) $post['salario_mensal'], 2, ',', '.') : 'A combinar'; ?>
                     <?php $limiteExibido = (int) $post['limite_aprovados'] > 0 ? (string) $post['limite_aprovados'] : 'Sem limite'; ?>
-                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($post['titulo']) ?>" data-detail-role="Vaga publicada" data-detail-tags="Vaga|Publicada" data-detail-experience="<?= h('Publicação::' . date('d/m/Y', strtotime($post['tempo_vaga'])) . '|Salário mensal::' . $salarioExibido . '|Máximo de aprovados::' . $limiteExibido) ?>">
+                    <article class="item-card job-card" data-detail="<?= h($post['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($post['titulo']) ?>" data-detail-role="Vaga publicada" data-detail-tags="Vaga|Publicada" data-detail-experience="<?= h('Publicação::' . date('d/m/Y', strtotime($post['tempo_vaga'])) . '|Salário mensal::' . $salarioExibido . '|Limite de vagas::' . $limiteExibido) ?>">
                         <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span>
                         <div>
                             <h2><?= h($post['titulo']) ?></h2>
                             <p><?= h($post['descricao'] ?: 'Sem descrição informada.') ?></p>
-                            <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Máximo de aprovados:</span> <strong><?= h($limiteExibido) ?></strong></p>
+                            <p class="job-compensation"><span>Salário mensal:</span> <strong><?= h($salarioExibido) ?></strong> · <span>Limite de vagas:</span> <strong><?= h($limiteExibido) ?></strong></p>
                             <?= dashboardCardTags('Vaga|Publicada') ?>
                         </div>
                         <div class="post-tools">
@@ -685,10 +685,10 @@ foreach ($candidatos as $candidato) {
                                     <label>Salário mensal (R$)
                                         <input name="salario_mensal" type="number" min="0" max="99999999.99" step="0.01" value="<?= h(number_format((float) $post['salario_mensal'], 2, '.', '')) ?>" required>
                                     </label>
-                                    <label>Máximo de candidatos aprovados
+                                    <label>Limite de vagas
                                         <input name="limite_aprovados" type="number" min="0" max="2147483647" step="1" value="<?= (int) $post['limite_aprovados'] > 0 ? max((int) $post['candidaturas_aprovadas'], (int) $post['limite_aprovados']) : 0 ?>" required>
                                     </label>
-                                    <p class="job-form-hint">0 deixa a vaga sem limite de aprovados.</p>
+                                    <p class="job-form-hint">0 deixa a vaga sem limite de vagas.</p>
                                     <button class="btn primary" type="submit">Salvar</button>
                                 </form>
                             </details>

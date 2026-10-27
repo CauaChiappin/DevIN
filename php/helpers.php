@@ -226,7 +226,7 @@ function dashboardDetailPanel(): string
                     <strong data-report-job-salary></strong>
                 </div>
                 <div>
-                    <span>Máximo de aprovados</span>
+                    <span>Limite de vagas</span>
                     <strong data-report-job-limit></strong>
                 </div>
             </div>
