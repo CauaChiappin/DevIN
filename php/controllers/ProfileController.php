@@ -269,6 +269,7 @@ function deleteProfile(string $tipo, int $id): void
     $conn = getDatabaseConnection();
     $email = '';
     $nome = '';
+    $idioma = 'pt-BR';
 
     try {
         if (in_array($tipo, ['pessoa', 'empresa'], true)) {
@@ -284,6 +285,7 @@ function deleteProfile(string $tipo, int $id): void
 
             $email = (string) $profile['email'];
             $nome = (string) $profile['nome'];
+            $idioma = ProfileLanguagePreference::load($conn, $tipo, $id);
         }
 
         // O ID é parâmetro preparado; tabela e coluna foram selecionadas pelo mapa fechado.
@@ -299,7 +301,7 @@ function deleteProfile(string $tipo, int $id): void
         $conn->close();
     }
 
-    if ($deleted && $email !== '' && !MailerHelper::enviarConfirmacaoExclusao($email, $nome, $tipo)) {
+    if ($deleted && $email !== '' && !MailerHelper::enviarConfirmacaoExclusao($email, $nome, $tipo, $idioma)) {
         error_log('Falha ao enviar confirmação de exclusão de conta.');
     }
 }

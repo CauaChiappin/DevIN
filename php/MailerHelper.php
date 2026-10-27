@@ -6,11 +6,23 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/config/auth.php';
+require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
 
 class MailerHelper
 {
     private const CURRICULO_URL = APP_BASE_URL . '/php/cadastrar_curriculo.php';
     private const DASHBOARD_PESSOA_URL = APP_BASE_URL . '/php/pessoa.php';
+
+    private static function mensagem(string $idioma, string $pt, string $en, string $es): string
+    {
+        if ($idioma === 'en') {
+            return $en;
+        }
+        if ($idioma === 'es') {
+            return $es;
+        }
+        return $pt;
+    }
 
     /**
      * Cria e configura a conexão SMTP do PHPMailer utilizando o .env
@@ -119,22 +131,23 @@ class MailerHelper
      */
     public static function enviarConfirmacaoCadastroCurriculo(
         string $emailCandidato,
-        string $nomeCandidato
+        string $nomeCandidato,
+        string $idioma = 'pt-BR'
     ): bool {
         // Escapa dados variáveis antes de inseri-los nos modelos de e-mail HTML.
         $nomeSeguro = htmlspecialchars($nomeCandidato, ENT_QUOTES, 'UTF-8');
-        $assunto    = 'Cadastro e Currículo Concluídos - DevIN';
+        $assunto = self::mensagem($idioma, 'Cadastro e Currículo Concluídos - DevIN', 'Registration and Resume Completed - DevIN', 'Registro y currículum completados - DevIN');
 
         $corpo = "
             <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
                 <div style='max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px;'>
-                    <h2 style='color: #2b56f5;'>Olá, {$nomeSeguro}!</h2>
-                    <p>Parabéns! Seu cadastro e currículo foram concluídos com sucesso no <strong>DevIN</strong>.</p>
-                    <p>Seu perfil agora poderá ser encontrado por empresas cadastradas na plataforma.</p>
-                    <p>Boa sorte na sua busca por oportunidades!</p>
+                    <h2 style='color: #2b56f5;'>" . self::mensagem($idioma, "Olá, {$nomeSeguro}!", "Hello, {$nomeSeguro}!", "¡Hola, {$nomeSeguro}!") . "</h2>
+                    <p>" . self::mensagem($idioma, 'Parabéns! Seu cadastro e currículo foram concluídos com sucesso no <strong>DevIN</strong>.', 'Congratulations! Your registration and resume have been completed successfully on <strong>DevIN</strong>.', '¡Felicidades! Tu registro y currículum se completaron correctamente en <strong>DevIN</strong>.') . "</p>
+                    <p>" . self::mensagem($idioma, 'Seu perfil agora poderá ser encontrado por empresas cadastradas na plataforma.', 'Companies registered on the platform can now find your profile.', 'Las empresas registradas en la plataforma ya pueden encontrar tu perfil.') . "</p>
+                    <p>" . self::mensagem($idioma, 'Boa sorte na sua busca por oportunidades!', 'Good luck with your search for opportunities!', '¡Mucha suerte en tu búsqueda de oportunidades!') . "</p>
                     <p style='text-align:center; margin-top:24px;'>
                         <a href='" . self::DASHBOARD_PESSOA_URL . "' style='background:#00549f;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;'>
-                            Acessar meu perfil
+                            " . self::mensagem($idioma, 'Acessar meu perfil', 'Access my profile', 'Acceder a mi perfil') . "
                         </a>
                     </p>
                 </div>
@@ -144,30 +157,30 @@ class MailerHelper
         return self::enviar($emailCandidato, $nomeCandidato, $assunto, $corpo);
     }
 
-    public static function enviarConfirmacaoCadastroEmpresa(string $email, string $nome): bool
+    public static function enviarConfirmacaoCadastroEmpresa(string $email, string $nome, string $idioma = 'pt-BR'): bool
     {
         $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
         $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
-            . "<h2>Olá, {$nomeSeguro}!</h2>"
-            . '<p>O cadastro da sua empresa foi concluído com sucesso.</p>'
-            . '<p>Agora você pode publicar vagas e acompanhar as candidaturas pela plataforma.</p>'
-            . "<p><a href='" . APP_BASE_URL . "/php/empresa.php'>Acessar minha conta</a></p></div>";
+            . '<h2>' . self::mensagem($idioma, "Olá, {$nomeSeguro}!", "Hello, {$nomeSeguro}!", "¡Hola, {$nomeSeguro}!") . '</h2>'
+            . '<p>' . self::mensagem($idioma, 'O cadastro da sua empresa foi concluído com sucesso.', 'Your company registration was completed successfully.', 'El registro de tu empresa se completó correctamente.') . '</p>'
+            . '<p>' . self::mensagem($idioma, 'Agora você pode publicar vagas e acompanhar as candidaturas pela plataforma.', 'You can now post jobs and manage applications on the platform.', 'Ahora puedes publicar empleos y gestionar las solicitudes en la plataforma.') . '</p>'
+            . "<p><a href='" . APP_BASE_URL . "/php/empresa.php'>" . self::mensagem($idioma, 'Acessar minha conta', 'Access my account', 'Acceder a mi cuenta') . '</a></p></div>';
 
-        return self::enviar($email, $nome, 'Cadastro da empresa concluído - DevIN', $corpo);
+        return self::enviar($email, $nome, self::mensagem($idioma, 'Cadastro da empresa concluído - DevIN', 'Company registration completed - DevIN', 'Registro de empresa completado - DevIN'), $corpo);
     }
 
-    public static function enviarConfirmacaoCadastro(string $email, string $nome): bool
+    public static function enviarConfirmacaoCadastro(string $email, string $nome, string $idioma = 'pt-BR'): bool
     {
         $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
         $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
-            . "<h2>Olá, {$nomeSeguro}!</h2>"
-            . '<p>Sua conta foi criada com sucesso na plataforma DevIN.</p>'
-            . '<p>Conclua seu currículo para que empresas possam encontrar seu perfil.</p></div>';
+            . '<h2>' . self::mensagem($idioma, "Olá, {$nomeSeguro}!", "Hello, {$nomeSeguro}!", "¡Hola, {$nomeSeguro}!") . '</h2>'
+            . '<p>' . self::mensagem($idioma, 'Sua conta foi criada com sucesso na plataforma DevIN.', 'Your account was successfully created on the DevIN platform.', 'Tu cuenta se creó correctamente en la plataforma DevIN.') . '</p>'
+            . '<p>' . self::mensagem($idioma, 'Conclua seu currículo para que empresas possam encontrar seu perfil.', 'Complete your resume so companies can find your profile.', 'Completa tu currículum para que las empresas puedan encontrar tu perfil.') . '</p></div>';
 
-        return self::enviar($email, $nome, 'Cadastro confirmado - DevIN', $corpo);
+        return self::enviar($email, $nome, self::mensagem($idioma, 'Cadastro confirmado - DevIN', 'Registration confirmed - DevIN', 'Registro confirmado - DevIN'), $corpo);
     }
 
-    public static function enviarConfirmacaoExclusao(string $email, string $nome, string $tipo): bool
+    public static function enviarConfirmacaoExclusao(string $email, string $nome, string $tipo, string $idioma = 'pt-BR'): bool
     {
         if (!in_array($tipo, ['pessoa', 'empresa'], true)) {
             return false;
@@ -175,25 +188,25 @@ class MailerHelper
 
         $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
         $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
-            . "<h2>Olá, {$nomeSeguro}.</h2>"
-            . '<p>A exclusão da sua conta no DevIN foi concluída.</p>'
-            . '<p>Se você não solicitou essa ação, entre em contato com a equipe do DevIN.</p></div>';
+            . '<h2>' . self::mensagem($idioma, "Olá, {$nomeSeguro}.", "Hello, {$nomeSeguro}.", "Hola, {$nomeSeguro}.") . '</h2>'
+            . '<p>' . self::mensagem($idioma, 'A exclusão da sua conta no DevIN foi concluída.', 'Your DevIN account has been deleted.', 'La eliminación de tu cuenta de DevIN se completó.') . '</p>'
+            . '<p>' . self::mensagem($idioma, 'Se você não solicitou essa ação, entre em contato com a equipe do DevIN.', 'If you did not request this, contact the DevIN team.', 'Si no solicitaste esta acción, ponte en contacto con el equipo de DevIN.') . '</p></div>';
 
-        return self::enviar($email, $nome, 'Exclusão da conta concluída - DevIN', $corpo);
+        return self::enviar($email, $nome, self::mensagem($idioma, 'Exclusão da conta concluída - DevIN', 'Account deletion completed - DevIN', 'Eliminación de cuenta completada - DevIN'), $corpo);
     }
 
-    public static function enviarAvisoAlteracaoSenha(string $email, string $nome): bool
+    public static function enviarAvisoAlteracaoSenha(string $email, string $nome, string $idioma = 'pt-BR'): bool
     {
         $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
         $corpo = "<div style='font-family:Arial,sans-serif;padding:24px'>"
-            . "<h2>Olá, {$nomeSeguro}.</h2>"
-            . '<p>A senha da sua conta DevIN foi alterada com sucesso.</p>'
-            . '<p>Se você não fez essa alteração, recupere o acesso à sua conta e entre em contato com o suporte.</p></div>';
+            . '<h2>' . self::mensagem($idioma, "Olá, {$nomeSeguro}.", "Hello, {$nomeSeguro}.", "Hola, {$nomeSeguro}.") . '</h2>'
+            . '<p>' . self::mensagem($idioma, 'A senha da sua conta DevIN foi alterada com sucesso.', 'Your DevIN account password has been changed successfully.', 'La contraseña de tu cuenta DevIN se cambió correctamente.') . '</p>'
+            . '<p>' . self::mensagem($idioma, 'Se você não fez essa alteração, recupere o acesso à sua conta e entre em contato com o suporte.', 'If you did not make this change, recover access to your account and contact support.', 'Si no realizaste este cambio, recupera el acceso a tu cuenta y ponte en contacto con soporte.') . '</p></div>';
 
-        return self::enviar($email, $nome, 'Sua senha foi alterada - DevIN', $corpo);
+        return self::enviar($email, $nome, self::mensagem($idioma, 'Sua senha foi alterada - DevIN', 'Your password has been changed - DevIN', 'Tu contraseña fue cambiada - DevIN'), $corpo);
     }
 
-    public static function enviarCodigoRecuperacao6(string $email, string $nome, string $codigo): bool
+    public static function enviarCodigoRecuperacao6(string $email, string $nome, string $codigo, string $idioma = 'pt-BR'): bool
     {
         // Aceita somente seis caracteres alfanuméricos antes de montar a mensagem de recuperação.
         $codigo = strtoupper($codigo);
@@ -208,34 +221,32 @@ class MailerHelper
             <div style='font-family:Arial,sans-serif;background-color:#f4f6f9;padding:32px 16px;'>
                 <div style='max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;padding:36px 32px;box-shadow:0 2px 8px rgba(0,0,0,.08);'>
 
-                    <h2 style='margin:0 0 8px;color:#1a1a2e;font-size:22px;'>Olá, {$nomeSeguro}!</h2>
+                    <h2 style='margin:0 0 8px;color:#1a1a2e;font-size:22px;'>" . self::mensagem($idioma, "Olá, {$nomeSeguro}!", "Hello, {$nomeSeguro}!", "¡Hola, {$nomeSeguro}!") . "</h2>
                     <p style='margin:0 0 28px;color:#555;font-size:15px;line-height:1.5;'>
-                        Recebemos uma solicitação para recuperar o acesso à sua conta no <strong>DevIN</strong>.<br>
-                        Use o código abaixo para continuar:
+                        " . self::mensagem($idioma, 'Recebemos uma solicitação para recuperar o acesso à sua conta no <strong>DevIN</strong>.<br>Use o código abaixo para continuar:', 'We received a request to recover access to your <strong>DevIN</strong> account.<br>Use the code below to continue:', 'Recibimos una solicitud para recuperar el acceso a tu cuenta de <strong>DevIN</strong>.<br>Usa el siguiente código para continuar:') . "
                     </p>
 
                     <p style='text-align:center;margin:0 0 28px;font-size:15px;color:#555;'>
-                        Seu código de verificação:
+                        " . self::mensagem($idioma, 'Seu código de verificação:', 'Your verification code:', 'Tu código de verificación:') . "
                         <span style='font-size:32px;font-weight:700;color:#1a1a2e;letter-spacing:8px;font-family:\"Courier New\",Courier,monospace;background:#eef2ff;padding:4px 16px;border-radius:6px;vertical-align:middle;'>
                             {$codigoSeguro}
                         </span>
                     </p>
 
                     <p style='margin:0 0 24px;color:#888;font-size:13px;text-align:center;'>
-                        &#9200; Este código expira em <strong>15 minutos</strong> e é válido para uso único.
+                        &#9200; " . self::mensagem($idioma, 'Este código expira em <strong>15 minutos</strong> e é válido para uso único.', 'This code expires in <strong>15 minutes</strong> and can only be used once.', 'Este código vence en <strong>15 minutos</strong> y solo se puede usar una vez.') . "
                     </p>
 
                     <hr style='border:none;border-top:1px solid #ebebeb;margin:0 0 20px;'>
 
                     <p style='margin:0;color:#aaa;font-size:12px;text-align:center;'>
-                        Se você não solicitou essa recuperação, ignore este e-mail.<br>
-                        Sua senha permanece inalterada.
+                        " . self::mensagem($idioma, 'Se você não solicitou essa recuperação, ignore este e-mail.<br>Sua senha permanece inalterada.', 'If you did not request this recovery, ignore this email.<br>Your password remains unchanged.', 'Si no solicitaste esta recuperación, ignora este correo.<br>Tu contraseña permanece sin cambios.') . "
                     </p>
                 </div>
             </div>
         ";
 
-        return self::enviar($email, $nome, 'Código de recuperação de senha - DevIN', $corpo);
+        return self::enviar($email, $nome, self::mensagem($idioma, 'Código de recuperação de senha - DevIN', 'Password recovery code - DevIN', 'Código de recuperación de contraseña - DevIN'), $corpo);
     }
 
 
@@ -244,22 +255,23 @@ class MailerHelper
      */
     public static function enviarLembreteCurriculoPendente(
         string $emailCandidato,
-        string $nomeCandidato
+        string $nomeCandidato,
+        string $idioma = 'pt-BR'
     ): bool {
         $nomeSeguro = htmlspecialchars($nomeCandidato, ENT_QUOTES, 'UTF-8');
-        $assunto    = 'Falta pouco! Complete seu currículo no DevIN';
+        $assunto = self::mensagem($idioma, 'Falta pouco! Complete seu currículo no DevIN', 'Almost there! Complete your resume on DevIN', '¡Ya casi! Completa tu currículum en DevIN');
 
         $corpo = "
             <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
                 <div style='max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px;'>
-                    <h2 style='color: #e67e22;'>Olá, {$nomeSeguro}!</h2>
-                    <p>Você iniciou seu cadastro há mais de 1 hora.</p>
-                    <p>Seu currículo ainda não foi cadastrado na plataforma.</p>
-                    <p>Finalize seu currículo para liberar seu perfil para as empresas.</p>
-                    <p>Complete suas informações e aumente suas chances de encontrar uma oportunidade no <strong>DevIN</strong>.</p>
+                    <h2 style='color: #e67e22;'>" . self::mensagem($idioma, "Olá, {$nomeSeguro}!", "Hello, {$nomeSeguro}!", "¡Hola, {$nomeSeguro}!") . "</h2>
+                    <p>" . self::mensagem($idioma, 'Você iniciou seu cadastro há mais de 1 hora.', 'You started your registration more than an hour ago.', 'Iniciaste tu registro hace más de una hora.') . "</p>
+                    <p>" . self::mensagem($idioma, 'Seu currículo ainda não foi cadastrado na plataforma.', 'You have not added a resume to the platform yet.', 'Aún no has añadido tu currículum a la plataforma.') . "</p>
+                    <p>" . self::mensagem($idioma, 'Finalize seu currículo para liberar seu perfil para as empresas.', 'Complete your resume to make your profile available to companies.', 'Completa tu currículum para que las empresas puedan ver tu perfil.') . "</p>
+                    <p>" . self::mensagem($idioma, 'Complete suas informações e aumente suas chances de encontrar uma oportunidade no <strong>DevIN</strong>.', 'Complete your information to improve your chances of finding an opportunity on <strong>DevIN</strong>.', 'Completa tu información para aumentar tus posibilidades de encontrar una oportunidad en <strong>DevIN</strong>.') . "</p>
                     <p style='text-align:center; margin-top:24px;'>
                         <a href='" . self::CURRICULO_URL . "' style='background:#00549f;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;'>
-                            Finalizar currículo
+                            " . self::mensagem($idioma, 'Finalizar currículo', 'Complete your resume', 'Completar currículum') . "
                         </a>
                     </p>
                 </div>
@@ -278,9 +290,9 @@ class MailerHelper
     ): void {
         // Busca destinos cadastrados uma vez; cada endereço é validado antes do envio individual.
         $query = "
-            SELECT nome, email 
-            FROM empresa 
-            WHERE email IS NOT NULL AND email <> ''
+            SELECT e.id_empresa, e.nome, e.email
+            FROM empresa e
+            WHERE e.email IS NOT NULL AND e.email <> ''
         ";
 
         $result = $conn->query($query);
@@ -300,20 +312,21 @@ class MailerHelper
             $nomeEmpresaOriginal = $empresa['nome'] ?? 'Empresa';
             $nomeEmpresa         = htmlspecialchars($nomeEmpresaOriginal, ENT_QUOTES, 'UTF-8');
             $emailEmpresa        = trim($empresa['email'] ?? '');
+            $idioma = ProfileLanguagePreference::load($conn, 'empresa', (int) $empresa['id_empresa']);
 
             if ($emailEmpresa === '' || !filter_var($emailEmpresa, FILTER_VALIDATE_EMAIL)) {
                 continue;
             }
 
-            $assunto = 'Novo Candidato Disponível - DevIN';
+            $assunto = self::mensagem($idioma, 'Novo Candidato Disponível - DevIN', 'New Candidate Available - DevIN', 'Nuevo candidato disponible - DevIN');
 
             $corpo = "
                 <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9;'>
                     <div style='max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px;'>
-                        <h2 style='color: #2b56f5;'>Olá, {$nomeEmpresa}!</h2>
-                        <p>Um novo candidato está disponível na plataforma <strong>DevIN</strong>.</p>
-                        <p>O candidato <strong>{$nomeSeguro}</strong> acabou de concluir o currículo na plataforma.</p>
-                        <p>Acesse a plataforma para consultar os candidatos disponíveis.</p>
+                        <h2 style='color: #2b56f5;'>" . self::mensagem($idioma, "Olá, {$nomeEmpresa}!", "Hello, {$nomeEmpresa}!", "¡Hola, {$nomeEmpresa}!") . "</h2>
+                        <p>" . self::mensagem($idioma, 'Um novo candidato está disponível na plataforma <strong>DevIN</strong>.', 'A new candidate is available on the <strong>DevIN</strong> platform.', 'Hay un nuevo candidato disponible en la plataforma <strong>DevIN</strong>.') . "</p>
+                        <p>" . self::mensagem($idioma, "O candidato <strong>{$nomeSeguro}</strong> acabou de concluir o currículo na plataforma.", "Candidate <strong>{$nomeSeguro}</strong> has just completed their resume on the platform.", "El candidato <strong>{$nomeSeguro}</strong> acaba de completar su currículum en la plataforma.") . "</p>
+                        <p>" . self::mensagem($idioma, 'Acesse a plataforma para consultar os candidatos disponíveis.', 'Visit the platform to view available candidates.', 'Accede a la plataforma para consultar los candidatos disponibles.') . "</p>
                     </div>
                 </div>
             ";

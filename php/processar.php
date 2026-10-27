@@ -13,6 +13,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/MailerHelper.php';
 require_once __DIR__ . '/config/RateLimiter.php';
+require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
 
 startSecureSession();
 
@@ -82,6 +83,7 @@ switch ($acao) {
                 header('Location: recuperacao.php');
                 exit;
             }
+            $idiomaEmail = ProfileLanguagePreference::load($conn, $usuario['tipo'], (int) $usuario['id']);
 
             $codigo = '';
             $alfabeto = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -96,7 +98,7 @@ switch ($acao) {
             $stmt->execute();
             $stmt->close();
 
-            if (!MailerHelper::enviarCodigoRecuperacao6($email, (string) $usuario['nome'], $codigo)) {
+            if (!MailerHelper::enviarCodigoRecuperacao6($email, (string) $usuario['nome'], $codigo, $idiomaEmail)) {
                 $stmt = $conn->prepare("UPDATE {$usuario['tabela']} SET token_recuperacao = NULL, token_expiracao = NULL WHERE {$usuario['id_coluna']} = ?");
                 $stmt->bind_param('i', $idUsuario);
                 $stmt->execute();
@@ -249,12 +251,13 @@ switch ($acao) {
         $conn = null;
         try {
             $conn = getDatabaseConnection();
+            $idiomaEmail = ProfileLanguagePreference::load($conn, $tipo, $idUsuario);
             $stmt = $conn->prepare("UPDATE {$tabela} SET token_recuperacao = ?, token_expiracao = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE {$idColuna} = ?");
             $stmt->bind_param('si', $codigoHash, $idUsuario);
             $stmt->execute();
             $stmt->close();
 
-            if (!MailerHelper::enviarCodigoRecuperacao6($email, $nome, $codigo)) {
+            if (!MailerHelper::enviarCodigoRecuperacao6($email, $nome, $codigo, $idiomaEmail)) {
                 $stmt = $conn->prepare("UPDATE {$tabela} SET token_recuperacao = NULL, token_expiracao = NULL WHERE {$idColuna} = ?");
                 $stmt->bind_param('i', $idUsuario);
                 $stmt->execute();
@@ -333,8 +336,9 @@ switch ($acao) {
 
             $nomeUsuario = (string) ($_SESSION['recuperacao_nome'] ?? 'Usuário');
             $emailUsuario = (string) ($_SESSION['recuperacao_email'] ?? '');
+            $idiomaEmail = ProfileLanguagePreference::load($conn, $tipo, $idUsuario);
             $emailAvisoEnviado = filter_var($emailUsuario, FILTER_VALIDATE_EMAIL)
-                && MailerHelper::enviarAvisoAlteracaoSenha($emailUsuario, $nomeUsuario);
+                && MailerHelper::enviarAvisoAlteracaoSenha($emailUsuario, $nomeUsuario, $idiomaEmail);
 
             secureSessionRegenerate();
             $_SESSION['logado'] = true;
@@ -342,6 +346,7 @@ switch ($acao) {
             $_SESSION['usuario_tipo'] = $tipo;
             $_SESSION['usuario_nome'] = $nomeUsuario;
             $_SESSION['usuario_email'] = $emailUsuario;
+            $_SESSION['idioma'] = $idiomaEmail;
             unset($_SESSION['recuperacao_verificada'], $_SESSION['recuperacao_id'], $_SESSION['recuperacao_tipo'], $_SESSION['recuperacao_email'], $_SESSION['recuperacao_nome']);
             $_SESSION['sucesso_login'] = 'Senha alterada com sucesso.';
             if (!$emailAvisoEnviado) {
@@ -407,7 +412,7 @@ switch ($acao) {
             $stmtLembrete->close();
 
             if ($emailPessoa !== '' && filter_var($emailPessoa, FILTER_VALIDATE_EMAIL)
-                && MailerHelper::enviarConfirmacaoCadastroCurriculo($emailPessoa, $nomePessoa)) {
+                && MailerHelper::enviarConfirmacaoCadastroCurriculo($emailPessoa, $nomePessoa, $_SESSION['idioma'] ?? 'pt-BR')) {
                 $_SESSION['sucesso_curriculo'] = 'Currículo salvo. Enviamos uma confirmação para seu e-mail.';
             } else {
                 $_SESSION['erro_curriculo'] = 'Currículo salvo, mas não foi possível enviar o e-mail de confirmação.';

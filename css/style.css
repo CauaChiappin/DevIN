@@ -4,6 +4,7 @@
     --blue: #004a94;
     --gray: #b4b4b4;
     --white: #ffffff;
+    --text-muted: #4b5563;
 }
 
 
@@ -68,7 +69,7 @@ summary:focus-visible {
     padding: 0;
     /* Reserva colunas para marca, links centrais e ações da conta no cabeçalho. */
     display: grid;
-    grid-template-columns: 170px 1fr 285px;
+    grid-template-columns: 140px minmax(0, 1fr) 390px;
     align-items: center;
     transition: width .35s ease, height .35s ease, margin-top .35s ease, padding .35s ease, background-color .35s ease, border-radius .35s ease, box-shadow .35s ease, backdrop-filter .35s ease, transform .35s ease;
 }
@@ -108,12 +109,12 @@ summary:focus-visible {
 }
 
 .cabecalho-site.rolado .menu {
-    gap: 38px;
+    gap: 24px;
     font-size: 14px;
 }
 
 .cabecalho-site.rolado .botao {
-    height: 34px;
+    height: 40px;
     padding: 0 16px;
     font-size: 14px;
 }
@@ -136,7 +137,7 @@ summary:focus-visible {
 .menu {
     display: flex;
     justify-content: center;
-    gap: 65px;
+    gap: clamp(18px, 3vw, 40px);
     font-size: 16px;
     font-weight: 500;
     transition: gap .35s ease, font-size .35s ease;
@@ -172,17 +173,38 @@ summary:focus-visible {
 .acoes {
     display: flex;
     justify-content: flex-end;
-    gap: 20px;
+    gap: 12px;
+}
+
+.language-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.language-picker select {
+    min-height: 44px;
+    max-width: 118px;
+    padding: 0 9px;
+    border: 1px solid rgba(0, 74, 148, .35);
+    border-radius: 12px;
+    background: var(--white);
+    color: var(--blue);
+    font: inherit;
+    font-size: 13px;
 }
 
 .botao {
-    height: 40px;
+    height: 44px;
     border: 2px solid var(--blue);
-    border-radius: 11px;
+    border-radius: 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 20px;
+    padding: 0 18px;
     font-size: 16px;
     font-weight: 600;
     white-space: nowrap;
@@ -200,13 +222,13 @@ summary:focus-visible {
 }
 
 .botao-azul {
-    min-width: 101px;
+    min-width: 124px;
     background: var(--blue);
     color: var(--white);
 }
 
 .botao-branco {
-    min-width: 145px;
+    min-width: 124px;
     color: var(--blue);
 }
 
@@ -239,9 +261,12 @@ summary:focus-visible {
 }
 
 .principal {
-    height: calc(100vh - 83px);
-    min-height: 593px;
-    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 80px);
+    min-height: max(640px, calc(100svh - 83px));
+    padding: clamp(56px, 8vw, 120px) clamp(24px, 8vw, 128px);
     border-bottom: 1px solid rgba(180, 180, 180, .18);
     overflow: hidden;
 }
@@ -319,10 +344,10 @@ summary:focus-visible {
 }
 
 .texto-principal p {
-    width: min(440px, 100%);
-    margin: 20px 0 0;
-    color: #666;
-    font-size: 25px;
+    width: min(500px, 100%);
+    margin: 22px 0 0;
+    color: var(--text-muted);
+    font-size: clamp(18px, 1.8vw, 24px);
     line-height: 1.4;
     font-weight: 500;
     text-align: left;
@@ -332,17 +357,20 @@ summary:focus-visible {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 18px 22px;
-    margin-top: 28px;
+    gap: 16px 20px;
+    margin-top: 26px;
 }
 
 .cta-principal {
-    min-height: 50px;
+    min-height: 48px;
     height: auto;
     padding: 10px 22px;
 }
 
 .link-empresa {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
     color: var(--blue);
     font-size: 15px;
     font-weight: 600;
@@ -355,17 +383,17 @@ summary:focus-visible {
 }
 
 .arte-principal {
-    width: 48%;
-    max-width: 760px;
-    position: absolute;
-    right: max(4%, calc((100% - 1500px) / 2));
-    top: 16%;
+    display: block;
+    width: min(100%, 700px);
+    max-height: 540px;
+    justify-self: center;
+    object-fit: contain;
 }
 
 .texto-principal {
-    position: absolute;
-    left: max(88px, calc(40% - 440px));
-    top: 30%;
+    position: static;
+    width: min(100%, 620px);
+    margin: 0;
 }
 
 .sobre {
@@ -1196,17 +1224,18 @@ summary:focus-visible {
         display: grid;
         grid-template-columns: minmax(0, 1fr);
         align-content: center;
+        align-items: center;
         gap: 28px;
-        height: auto;
-        min-height: calc(100svh - 83px);
-        padding: 56px 24px;
+        min-height: 0;
+        padding: clamp(48px, 8vw, 72px) 24px;
+        text-align: left;
     }
 
     .texto-principal {
         position: static;
         width: min(100%, 700px);
-        margin: 0 auto;
-        text-align: center;
+        margin: 0;
+        text-align: left;
     }
 
     .texto-principal h1 {
@@ -1216,14 +1245,14 @@ summary:focus-visible {
     .texto-principal p {
         position: static;
         width: min(100%, 560px);
-        margin: 16px auto 0;
+        margin: 16px 0 0;
         font-size: 24px;
         line-height: 1.35;
-        text-align: center;
+        text-align: left;
     }
 
     .acoes-principal {
-        justify-content: center;
+        justify-content: flex-start;
         margin-top: 22px;
     }
 
@@ -1232,7 +1261,7 @@ summary:focus-visible {
         display: block;
         width: min(100%, 560px);
         max-height: 380px;
-        margin: 0 auto;
+        margin: 0;
         object-fit: contain;
     }
 
@@ -1505,6 +1534,19 @@ summary:focus-visible {
 
     .texto-principal p {
         font-size: 20px;
+    }
+
+    .acoes-principal {
+        align-items: flex-start;
+        gap: 12px 16px;
+    }
+
+    .cta-principal {
+        min-height: 48px;
+    }
+
+    .link-empresa {
+        min-height: 48px;
     }
 
     .arte-principal {

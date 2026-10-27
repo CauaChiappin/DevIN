@@ -4,8 +4,17 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/security.php';
+require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
 
 $usuario = requireWebAuth();
+$conn = getDatabaseConnection();
+try {
+    $idiomaAtual = ProfileLanguagePreference::load($conn, $usuario['tipo'], (int) $usuario['id']);
+} finally {
+    $conn->close();
+}
+$_SESSION['idioma'] = $idiomaAtual;
+
 $liberacao = $_SESSION['arcade_unlock'] ?? [];
 $acessoValido = is_array($liberacao)
     && (int) ($liberacao['id'] ?? 0) === $usuario['id']
@@ -27,7 +36,7 @@ $csrfToken = csrfToken();
 $isAdmin = $usuario['tipo'] === 'adm';
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="<?= htmlspecialchars($idiomaAtual, ENT_QUOTES, 'UTF-8') ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,6 +139,7 @@ $isAdmin = $usuario['tipo'] === 'adm';
         <footer class="arcade-footer"><span>DevIN | Área de jogos</span><span>Conectado como <?= htmlspecialchars($usuario['nome'], ENT_QUOTES, 'UTF-8') ?></span></footer>
     </div>
     <script>window.DevINArcadeCsrf = <?= json_encode($csrfToken, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+    <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
     <script src="../js/arcade-games.js?v=<?= filemtime(__DIR__ . '/../js/arcade-games.js') ?>"></script>
 </body>
 </html>

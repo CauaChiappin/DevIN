@@ -12,6 +12,10 @@ require_once __DIR__ . '/MailerHelper.php';
 
 startSecureSession();
 
+if (isset($_GET['idioma']) && in_array($_GET['idioma'], ['pt-BR', 'en', 'es'], true)) {
+    $_SESSION['idioma_cadastro'] = $_GET['idioma'];
+}
+
 $erro = '';
 
 /*
@@ -179,11 +183,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $auth = AuthController::login($email, $senha);
         AuthController::establishSession($auth);
 
-        if (MailerHelper::enviarConfirmacaoCadastro($email, $nome)) {
+        $idiomaEmailCadastro = $_SESSION['idioma_cadastro'] ?? ($auth['usuario']['idioma'] ?? 'pt-BR');
+        if (MailerHelper::enviarConfirmacaoCadastro($email, $nome, $idiomaEmailCadastro)) {
             $_SESSION['sucesso_cadastro'] = 'Cadastro confirmado. Enviamos uma confirmação para seu e-mail.';
         } else {
             $_SESSION['erro_email_cadastro'] = 'Seu cadastro foi criado, mas não foi possível enviar o e-mail de confirmação.';
         }
+        unset($_SESSION['idioma_cadastro']);
 
         $_SESSION['id_pessoa']    = $idPessoa;
         $_SESSION['pessoa_nome']  = $nome;

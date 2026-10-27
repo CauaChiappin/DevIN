@@ -3,7 +3,7 @@ const rotatingIndexPoint = document.querySelector('[data-rotating-point-index]')
 
 if (rotatingIndexWord) {
   // Alterna palavras e move o ponto decorativo para acompanhar a largura do texto.
-  const words = ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'];
+  const words = ['universo', 'futuro', 'mundo', 'avanço', 'mercado', 'amanhã'];
   let currentWord = 0;
   let changingWord = false;
 

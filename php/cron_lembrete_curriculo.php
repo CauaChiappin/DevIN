@@ -61,7 +61,8 @@ try {
         $email    = (string) $pessoa['email'];
 
         // Envia o lembrete por e-mail
-        $enviado = MailerHelper::enviarLembreteCurriculoPendente($email, $nome);
+        $idioma = ProfileLanguagePreference::load($conn, 'pessoa', $idPessoa);
+        $enviado = MailerHelper::enviarLembreteCurriculoPendente($email, $nome, $idioma);
 
         if ($enviado) {
             $stmtUpdate->bind_param('i', $idPessoa);
