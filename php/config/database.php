@@ -11,7 +11,7 @@ function getDatabaseConnection(): mysqli
      * nos valores padrão. Assim o mesmo código funciona em instalações locais e hospedadas. */
     // Aceita nomes atuais e legados das variáveis para manter compatibilidade entre ambientes.
     $environmentValue = static function (string $name, string $legacyName, string $default): string {
-        $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);  
+        $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);      
         if ($value === false || $value === null || $value === '') {
             $value = $_ENV[$legacyName] ?? $_SERVER[$legacyName] ?? getenv($legacyName);
         }
