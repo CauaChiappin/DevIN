@@ -73,6 +73,13 @@ function ensureJobReportsSchema(mysqli $conn): void
             INDEX idx_reports_vagas_notificacoes_pendentes (entregue_em)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
+
+    $conn->query("
+        DELETE FROM reports_vagas
+        WHERE status <> 'pendente'
+          AND analisado_em IS NOT NULL
+          AND analisado_em <= DATE_SUB(NOW(), INTERVAL 1 DAY)
+    ");
 }
 
 function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reason, string $details): void

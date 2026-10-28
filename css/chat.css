@@ -267,12 +267,35 @@
     gap: 3px;
 }
 
-.chat-header-copy strong {
+.chat-header-copy strong,
+.chat-header-copy .chat-profile-trigger {
     overflow: hidden;
     color: #111b21;
     font-size: 15px;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.chat-profile-trigger {
+    display: block;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+
+.chat-profile-trigger:not(:disabled):hover {
+    color: var(--blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.chat-profile-trigger:disabled {
+    cursor: default;
 }
 
 .chat-header-copy > span {
@@ -706,7 +729,8 @@
         display: block;
     }
 
-    .chat-header-copy strong {
+    .chat-header-copy strong,
+    .chat-header-copy .chat-profile-trigger {
         display: block;
         font-size: 14px;
     }
@@ -763,4 +787,165 @@
     .chat-send-status {
         padding: 0 8px 6px;
     }
+}
+
+.chat-profile-dialog {
+    width: min(440px, calc(100% - 32px));
+    max-width: 440px;
+    padding: 0;
+    border: 1px solid #dce5ec;
+    border-radius: 16px;
+    color: #24394b;
+    box-shadow: 0 18px 56px rgba(11, 20, 26, .24);
+}
+
+.chat-profile-dialog::backdrop {
+    background: rgba(15, 31, 44, .48);
+    backdrop-filter: blur(2px);
+}
+
+.chat-profile-dialog__content {
+    position: relative;
+    display: grid;
+    gap: 18px;
+    padding: 28px;
+}
+
+.chat-profile-dialog__close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #667781;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.chat-profile-dialog__close:hover {
+    background: #f0f3f5;
+}
+
+.chat-profile-dialog__identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-right: 28px;
+}
+
+.chat-profile-dialog__avatar {
+    display: grid;
+    width: 54px;
+    height: 54px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--blue-soft);
+    color: var(--blue);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.chat-profile-dialog__identity h2 {
+    margin: 0 0 4px;
+    color: #173d5b;
+    font-size: 18px;
+    overflow-wrap: anywhere;
+}
+
+.chat-profile-dialog__identity p,
+.chat-profile-dialog__privacy {
+    margin: 0;
+    color: #667781;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.chat-profile-dialog__report-button,
+.chat-profile-report-form__actions button {
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid #e8cfd2;
+    border-radius: 9px;
+    background: #fff;
+    color: #9f3540;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.chat-profile-dialog__report-button:hover,
+.chat-profile-report-form__actions button:hover {
+    background: #fff0f1;
+}
+
+.chat-profile-report-form {
+    display: grid;
+    gap: 8px;
+}
+
+.chat-profile-report-form[hidden],
+.chat-profile-dialog__report-button[hidden] {
+    display: none;
+}
+
+.chat-profile-report-form label {
+    margin-top: 5px;
+    color: #40596c;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.chat-profile-report-form select,
+.chat-profile-report-form textarea {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #d5dfe6;
+    border-radius: 9px;
+    background: #fff;
+    color: #24394b;
+    font: inherit;
+    font-size: 13px;
+}
+
+.chat-profile-report-form textarea {
+    min-height: 96px;
+    resize: vertical;
+}
+
+.chat-profile-dialog__status {
+    min-height: 0;
+    margin: 0;
+    color: #a12e38;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.chat-profile-dialog__status:empty {
+    display: none;
+}
+
+.chat-profile-report-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.chat-profile-report-form__actions button[type="submit"],
+.chat-profile-report-form__actions button:last-child {
+    border-color: var(--blue);
+    background: var(--blue);
+    color: #fff;
+}
+
+.chat-profile-report-form__actions button:disabled {
+    opacity: .65;
+    cursor: wait;
 }

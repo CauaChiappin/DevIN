@@ -512,7 +512,7 @@ foreach ($candidatos as $candidato) {
                             <div class="chat-header-contact">
                                 <span class="chat-header-avatar" data-chat-avatar aria-hidden="true"></span>
                                 <span class="chat-header-copy">
-                                    <strong data-chat-title>Escolha alguém para conversar</strong>
+                                    <button class="chat-profile-trigger" type="button" data-chat-profile-open disabled data-chat-title aria-label="Ver perfil">Escolha alguém para conversar</button>
                                     <span data-chat-subtitle>Mensagens privadas entre usuários da DevIN</span>
                                 </span>
                             </div>
@@ -534,6 +534,38 @@ foreach ($candidatos as $candidato) {
                         <p class="chat-status chat-send-status" data-chat-send-status role="status"></p>
                     </section>
                 </section>
+                <dialog class="chat-profile-dialog" data-chat-profile-dialog aria-labelledby="chatProfileName">
+                    <div class="chat-profile-dialog__content">
+                        <button class="chat-profile-dialog__close" type="button" data-chat-profile-close aria-label="Fechar">×</button>
+                        <div class="chat-profile-dialog__identity">
+                            <span class="chat-profile-dialog__avatar" data-chat-profile-avatar aria-hidden="true"></span>
+                            <div>
+                                <h2 id="chatProfileName" data-chat-profile-name></h2>
+                                <p data-chat-profile-type></p>
+                            </div>
+                        </div>
+                        <p class="chat-profile-dialog__privacy">Este perfil simplificado mostra apenas o nome e o tipo de conta.</p>
+                        <button class="chat-profile-dialog__report-button" type="button" data-chat-profile-report-open>Denunciar perfil</button>
+                        <form class="chat-profile-report-form" data-chat-profile-report-form hidden>
+                            <label for="chat-profile-report-reason">Motivo</label>
+                            <select id="chat-profile-report-reason" required data-chat-profile-reason>
+                                <option value="">Selecione um motivo</option>
+                                <option value="assedio">Assédio ou comportamento abusivo</option>
+                                <option value="fraude">Fraude ou golpe</option>
+                                <option value="falsidade">Informações falsas</option>
+                                <option value="conteudo_inadequado">Conteúdo inadequado</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                            <label for="chat-profile-report-details">Detalhes</label>
+                            <textarea id="chat-profile-report-details" maxlength="1000" required data-chat-profile-details placeholder="Explique por que este perfil deve ser analisado."></textarea>
+                            <p class="chat-profile-dialog__status" data-chat-profile-status role="status" aria-live="polite"></p>
+                            <div class="chat-profile-report-form__actions">
+                                <button type="button" data-chat-profile-report-cancel>Cancelar</button>
+                                <button type="submit" data-chat-profile-submit>Enviar denúncia</button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
             <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
 

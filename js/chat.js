@@ -18,7 +18,18 @@
     const titleElement = app.querySelector('[data-chat-title]');
     const subtitleElement = app.querySelector('[data-chat-subtitle]');
     const conversationAvatar = app.querySelector('[data-chat-avatar]');
+    const profileDialog = document.querySelector('[data-chat-profile-dialog]');
+    const profileNameElement = profileDialog?.querySelector('[data-chat-profile-name]');
+    const profileTypeElement = profileDialog?.querySelector('[data-chat-profile-type]');
+    const profileAvatarElement = profileDialog?.querySelector('[data-chat-profile-avatar]');
+    const profileReportButton = profileDialog?.querySelector('[data-chat-profile-report-open]');
+    const profileReportForm = profileDialog?.querySelector('[data-chat-profile-report-form]');
+    const profileReportReason = profileDialog?.querySelector('[data-chat-profile-reason]');
+    const profileReportDetails = profileDialog?.querySelector('[data-chat-profile-details]');
+    const profileStatus = profileDialog?.querySelector('[data-chat-profile-status]');
+    const profileSubmitButton = profileDialog?.querySelector('[data-chat-profile-submit]');
     const backToContactsButton = app.querySelector('[data-chat-back]');
+    const profileTrigger = app.querySelector('[data-chat-profile-open]');
     const conversationMenu = app.querySelector('.chat-conversation-menu');
     const conversationMenuToggle = app.querySelector('[data-chat-menu-toggle]');
     const deleteConversationButton = app.querySelector('[data-chat-delete-conversation]');
@@ -41,6 +52,7 @@
     let unreadTotal = 0;
     let notificationTimeout = 0;
     let searchTimeout = 0;
+    let profileReportTarget = null;
 
     const request = async (query, options = {}) => {
         const url = new URL(apiUrl, window.location.href);
@@ -390,6 +402,89 @@
         }
     };
 
+    profileTrigger?.addEventListener('click', async () => {
+        if (!activeContact || activeContact.tipo === 'sistema' || !profileDialog) return;
+
+        const requestedContact = { ...activeContact };
+        const requestedVersion = messageViewVersion;
+        profileTrigger.disabled = true;
+        sendStatus.textContent = '';
+        try {
+            const data = await request({
+                acao: 'perfil',
+                tipo: requestedContact.tipo,
+                id: requestedContact.id,
+            });
+            if (
+                activeContact?.tipo !== requestedContact.tipo
+                || activeContact?.id !== requestedContact.id
+            ) {
+                return;
+            }
+
+            profileReportTarget = data.perfil;
+            profileNameElement.textContent = data.perfil.nome;
+            profileTypeElement.textContent = translate(data.perfil.rotulo);
+            profileAvatarElement.textContent = initials(data.perfil.nome);
+            profileStatus.textContent = '';
+            profileReportForm.reset();
+            profileReportForm.hidden = true;
+            profileReportButton.hidden = false;
+            profileSubmitButton.disabled = false;
+            profileDialog.showModal();
+        } catch (error) {
+            sendStatus.textContent = error.message;
+        } finally {
+            if (messageViewVersion === requestedVersion) {
+                profileTrigger.disabled = !activeContact || activeContact.tipo === 'sistema';
+            }
+        }
+    });
+
+    profileReportButton?.addEventListener('click', () => {
+        profileReportButton.hidden = true;
+        profileReportForm.hidden = false;
+        profileReportReason.focus();
+    });
+
+    profileDialog?.querySelector('[data-chat-profile-report-cancel]')?.addEventListener('click', () => {
+        profileReportForm.hidden = true;
+        profileReportButton.hidden = false;
+        profileStatus.textContent = '';
+    });
+
+    profileDialog?.querySelector('[data-chat-profile-close]')?.addEventListener('click', () => {
+        profileDialog.close();
+    });
+
+    profileReportForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!profileReportTarget) return;
+
+        profileSubmitButton.disabled = true;
+        profileStatus.textContent = '';
+        try {
+            const data = await request({}, {
+                method: 'POST',
+                headers: { 'X-CSRF-Token': csrfToken },
+                body: JSON.stringify({
+                    acao: 'denunciar_perfil',
+                    tipo: profileReportTarget.tipo,
+                    id: profileReportTarget.id,
+                    motivo: profileReportReason.value,
+                    detalhes: profileReportDetails.value,
+                }),
+            });
+            profileStatus.textContent = translate(data.mensagem || 'Denúncia enviada para análise da equipe DevIN.');
+            profileReportForm.hidden = true;
+            profileReportButton.hidden = true;
+        } catch (error) {
+            profileStatus.textContent = error.message;
+        } finally {
+            profileSubmitButton.disabled = false;
+        }
+    });
+
     const openConversation = async (contact) => {
         activeContact = { ...contact };
         const requestedContact = activeContact;
@@ -399,6 +494,7 @@
         titleElement.textContent = contact.nome;
         subtitleElement.textContent = `${translate(contact.rotulo)} · ${translate('Atualização automática')}`;
         renderAvatar(conversationAvatar, contact);
+        profileTrigger.disabled = true;
         messageInput.disabled = false;
         sendButton.disabled = false;
         deleteConversationButton.disabled = true;
@@ -439,6 +535,7 @@
             titleElement.textContent = activeContact.nome;
             subtitleElement.textContent = `${translate(activeContact.rotulo)} · ${translate('Atualização automática')}`;
             renderAvatar(conversationAvatar, activeContact);
+            profileTrigger.disabled = activeContact.tipo === 'sistema';
         } catch (error) {
             if (activeContact === requestedContact) sendStatus.textContent = error.message;
             return false;

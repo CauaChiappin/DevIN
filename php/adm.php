@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/controllers/JobReports.php';
+require_once __DIR__ . '/controllers/ProfileReports.php';
 require_once __DIR__ . '/helpers.php';
 
 // Garante que apenas uma sessão administrativa alcance ações de moderação.
@@ -14,6 +15,11 @@ $tipo    = 'adm';
 $nome    = $_SESSION['usuario_nome']  ?? 'Administrador';
 $email   = $_SESSION['usuario_email'] ?? 'adm@devin.com';
 $pagina  = requestString($_GET, 'pagina');
+$categoriaReport = requestString($_GET, 'categoria');
+$categoriasReport = ['vagas', 'empresas', 'pessoas'];
+if (!in_array($categoriaReport, $categoriasReport, true)) {
+    $categoriaReport = 'vagas';
+}
 
 $paginasPermitidas = ['inicio', 'candidatos', 'posts', 'reports', 'sobre', 'perfil'];
 if (!in_array($pagina, $paginasPermitidas, true)) {
@@ -92,6 +98,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        if ($action === 'resolve_profile_report') {
+            $reportId = filter_var($_POST['id_report'] ?? null, FILTER_VALIDATE_INT);
+            $categoria = requestString($_POST, 'categoria');
+            if ($reportId === false || !in_array($categoria, $categoriasReport, true)) {
+                throw new InvalidArgumentException('Denúncia inválida.');
+            }
+
+            $conn = getDatabaseConnection();
+            try {
+                ensureProfileReportsSchema($conn);
+                completeProfileReport($conn, $reportId, (int) $_SESSION['usuario_id']);
+            } finally {
+                $conn->close();
+            }
+
+            $_SESSION['admin_success'] = 'Denúncia concluída. Ela permanecerá disponível por mais 1 dia.';
+            header('Location: adm.php?pagina=reports&categoria=' . rawurlencode($categoria));
+            exit;
+        }
+
         if ($action === 'update_profile') {
             updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null);
             $_SESSION['usuario_nome']    = trim(requestString($_POST, 'nome'));
@@ -127,6 +153,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? $exception->getMessage()
                 : 'Não foi possível registrar a decisão da denúncia.';
             header('Location: adm.php?pagina=reports');
+        } elseif ($action === 'resolve_profile_report') {
+            $_SESSION['admin_error'] = $exception instanceof InvalidArgumentException
+                ? $exception->getMessage()
+                : 'Não foi possível concluir a denúncia.';
+            $categoria = requestString($_POST, 'categoria');
+            if (!in_array($categoria, $categoriasReport, true)) {
+                $categoria = 'vagas';
+            }
+            header('Location: adm.php?pagina=reports&categoria=' . rawurlencode($categoria));
         } elseif ($action === 'update_profile') {
             $_SESSION['profile_error'] = 'Não foi possível atualizar o perfil. Tente novamente.';
             header('Location: adm.php?pagina=' . rawurlencode($pagina));
@@ -157,6 +192,9 @@ $empresasAdmin = [];
 $usuariosAdmin = [];
 $vagasAdmin    = [];
 $reportsAdmin  = [];
+$profileReportsAdmin = [];
+$reportCounts = ['vagas' => 0, 'empresas' => 0, 'pessoas' => 0];
+$totalReportsAdmin = 0;
 
 try {
     $conn = getDatabaseConnection();
@@ -204,9 +242,29 @@ try {
                    CASE WHEN r.descricao_vaga IS NULL THEN COALESCE(v.limite_aprovados, r.limite_aprovados) ELSE r.limite_aprovados END AS limite_exibicao
             FROM reports_vagas r
             LEFT JOIN vagas v ON v.id_vaga = r.id_vaga
+            WHERE r.status = "pendente"
+               OR r.analisado_em >= DATE_SUB(NOW(), INTERVAL 1 DAY)
             ORDER BY FIELD(r.status, "pendente", "mantida", "excluida"), r.criado_em DESC, r.id DESC
         ');
         $reportsAdmin = $resultReports->fetch_all(MYSQLI_ASSOC);
+
+        if ($pagina === 'reports') {
+            ensureProfileReportsSchema($conn);
+            $resultProfileReports = $conn->query('
+                SELECT *
+                FROM reports_perfis
+                WHERE status = "pendente"
+                   OR analisado_em >= DATE_SUB(NOW(), INTERVAL 1 DAY)
+                ORDER BY FIELD(status, "pendente", "concluida"), criado_em DESC, id DESC
+            ');
+            $profileReportsAdmin = $resultProfileReports->fetch_all(MYSQLI_ASSOC);
+            $reportCounts['vagas'] = count($reportsAdmin);
+            foreach ($profileReportsAdmin as $profileReport) {
+                $category = $profileReport['tipo_denunciado'] === 'empresa' ? 'empresas' : 'pessoas';
+                $reportCounts[$category]++;
+            }
+            $totalReportsAdmin = $reportCounts[$categoriaReport];
+        }
     } finally {
         $conn->close();
     }
@@ -240,7 +298,7 @@ try {
             <nav class="menu-principal" aria-label="Menu principal">
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a>
                 <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Posts das empresas</span></a>
-                <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Candidatos</span></a>
+                <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Pessoas</span></a>
                 <a class="<?= ativo($pagina, 'reports') ?>" href="adm.php?pagina=reports"><?= dashboardIcon('info') ?><span class="menu-text">Reports</span></a>
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="adm.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span></a>
             </nav>
@@ -268,12 +326,27 @@ try {
             <?php if ($pagina !== 'sobre'): ?>
                 <?= dashboardListHeader(
                     $pagina,
-                    $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'posts' ? 'Posts das empresas' : ($pagina === 'reports' ? 'Reports de vagas' : ($pagina === 'perfil' ? 'Perfil' : 'Empresas'))),
+                    $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'posts' ? 'Posts das empresas' : ($pagina === 'reports' ? 'Reports de ' . $categoriaReport : ($pagina === 'perfil' ? 'Perfil' : 'Empresas'))),
                     'Pesquisar por nome ou habilidade...',
-                    $pagina === 'candidatos' ? count($usuariosAdmin) . ' candidatos' : ($pagina === 'posts' ? count($vagasAdmin) . ' posts' : ($pagina === 'reports' ? count($reportsAdmin) . ' reports' : ($pagina === 'inicio' ? (count($empresasAdmin) + count($vagasAdmin)) . ' registros' : '')))
+                    $pagina === 'candidatos' ? count($usuariosAdmin) . ' candidatos' : ($pagina === 'posts' ? count($vagasAdmin) . ' posts' : ($pagina === 'reports' ? $totalReportsAdmin . ' reports' : ($pagina === 'inicio' ? (count($empresasAdmin) + count($vagasAdmin)) . ' registros' : '')))
                 ) ?>
                 <?php if (in_array($pagina, ['inicio', 'candidatos', 'posts', 'reports'], true)): ?>
-                    <p class="list-section-label"><?= $pagina === 'reports' ? 'Denúncias recebidas' : 'Disponíveis' ?></p>
+                    <?php if ($pagina === 'reports'): ?>
+                        <nav class="report-folders" aria-label="Categorias de denúncias">
+                            <a class="<?= $categoriaReport === 'vagas' ? 'ativo' : '' ?>" href="adm.php?pagina=reports&categoria=vagas">
+                                <?= dashboardIcon('briefcase') ?><span>Vagas</span><strong><?= $reportCounts['vagas'] ?></strong>
+                            </a>
+                            <a class="<?= $categoriaReport === 'empresas' ? 'ativo' : '' ?>" href="adm.php?pagina=reports&categoria=empresas">
+                                <?= dashboardIcon('building') ?><span>Empresas</span><strong><?= $reportCounts['empresas'] ?></strong>
+                            </a>
+                            <a class="<?= $categoriaReport === 'pessoas' ? 'ativo' : '' ?>" href="adm.php?pagina=reports&categoria=pessoas">
+                                <?= dashboardIcon('user') ?><span>Pessoas</span><strong><?= $reportCounts['pessoas'] ?></strong>
+                            </a>
+                        </nav>
+                        <p class="list-section-label"><?= $categoriaReport === 'vagas' ? 'Denúncias de vagas' : ($categoriaReport === 'empresas' ? 'Denúncias de empresas' : 'Denúncias de pessoas') ?></p>
+                    <?php else: ?>
+                        <p class="list-section-label">Disponíveis</p>
+                    <?php endif; ?>
                 <?php endif; ?>
             <?php endif; ?>
 
@@ -329,8 +402,9 @@ try {
                     </article>
                 <?php endforeach; ?>
             <?php elseif ($pagina === 'reports'): ?>
-                <?php if (!$reportsAdmin): ?><p class="empty-state">Nenhuma vaga foi denunciada.</p><?php endif; ?>
-                <?php foreach ($reportsAdmin as $report): ?>
+                <?php if ($categoriaReport === 'vagas'): ?>
+                    <?php if (!$reportsAdmin): ?><p class="empty-state">Nenhuma vaga foi denunciada.</p><?php endif; ?>
+                    <?php foreach ($reportsAdmin as $report): ?>
                     <?php
                     if ($report['status'] === 'mantida') {
                         $statusReport = 'Vaga mantida';
@@ -386,7 +460,57 @@ try {
                             </div>
                         <?php endif; ?>
                     </article>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <?php
+                    $tipoPerfilReport = $categoriaReport === 'empresas' ? 'empresa' : 'pessoa';
+                    $perfilReportsCategoria = array_values(array_filter(
+                        $profileReportsAdmin,
+                        static fn (array $report): bool => $report['tipo_denunciado'] === $tipoPerfilReport
+                    ));
+                    $rotuloPerfilReport = $tipoPerfilReport === 'empresa' ? 'Empresa' : 'Pessoa';
+                    $motivosPerfilReport = [
+                        'assedio' => 'Assédio ou comportamento abusivo',
+                        'fraude' => 'Fraude ou golpe',
+                        'falsidade' => 'Informações falsas',
+                        'conteudo_inadequado' => 'Conteúdo inadequado',
+                        'outro' => 'Outro',
+                    ];
+                    ?>
+                    <?php if (!$perfilReportsCategoria): ?><p class="empty-state">Nenhum perfil foi denunciado.</p><?php endif; ?>
+                    <?php foreach ($perfilReportsCategoria as $report): ?>
+                        <?php
+                        $statusPerfilReport = $report['status'] === 'pendente' ? 'Aguardando análise' : 'Concluída';
+                        $tipoDenunciante = $report['tipo_denunciante'] === 'empresa' ? 'Empresa' : 'Pessoa';
+                        ?>
+                        <article class="item-card report-card profile-report-card"
+                            data-detail="<?= h($report['detalhes']) ?>"
+                            data-detail-name="<?= h($report['nome_denunciado']) ?>"
+                            data-detail-role="<?= h('Perfil denunciado · ' . $rotuloPerfilReport) ?>"
+                            data-detail-tags="<?= h($rotuloPerfilReport . '|' . $statusPerfilReport) ?>"
+                            data-detail-experience="<?= h('Denunciante: ' . $report['nome_denunciante'] . ' (' . $tipoDenunciante . ')') ?>">
+                            <span class="card-avatar"><?= dashboardIcon($tipoPerfilReport === 'empresa' ? 'building' : 'user') ?></span>
+                            <div class="report-card-content">
+                                <h2><?= h($report['nome_denunciado']) ?></h2>
+                                <p><?= h($rotuloPerfilReport) ?> · Denunciante: <?= h($report['nome_denunciante']) ?> (<?= h($tipoDenunciante) ?>)</p>
+                                <p>Motivo: <?= h($motivosPerfilReport[$report['motivo']] ?? $report['motivo']) ?></p>
+                                <p><?= h($report['detalhes']) ?></p>
+                                <?= dashboardCardTags($statusPerfilReport) ?>
+                            </div>
+                            <?php if ($report['status'] === 'pendente'): ?>
+                                <div class="report-card-actions">
+                                    <form method="post">
+                                        <input type="hidden" name="action" value="resolve_profile_report">
+                                        <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                        <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
+                                        <input type="hidden" name="categoria" value="<?= h($categoriaReport) ?>">
+                                        <button class="btn primary" type="submit">Concluir análise</button>
+                                    </form>
+                                </div>
+                            <?php endif; ?>
+                        </article>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             <?php else: ?>
                 <?php if (!$empresasAdmin && !$vagasAdmin): ?><p class="empty-state">Nenhum registro disponível.</p><?php endif; ?>
                 <?php foreach ($empresasAdmin as $empresa): ?>

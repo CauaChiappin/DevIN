@@ -6,6 +6,7 @@ require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
 require_once __DIR__ . '/controllers/ChatStorage.php';
+require_once __DIR__ . '/controllers/ProfileReports.php';
 require_once __DIR__ . '/helpers.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -280,6 +281,35 @@ try {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $acao = requestString($_GET, 'acao');
 
+            if ($acao === 'perfil') {
+                $tipo = requestString($_GET, 'tipo');
+                $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
+                if ($id === false || $id < 1 || !validarTipoChat($tipo)) {
+                    throw new InvalidArgumentException('Perfil inválido.');
+                }
+                if (
+                    ($tipo === $ator['tipo'] && $id === $ator['id'])
+                    || !atorTemConversaChat($ator, $tipo, $id)
+                ) {
+                    responderMensagens(['sucesso' => false, 'mensagem' => 'Este perfil não está disponível.'], 404);
+                }
+
+                $perfil = buscarUsuarioChat($conn, $tipo, $id);
+                if ($perfil === null) {
+                    responderMensagens(['sucesso' => false, 'mensagem' => 'Este perfil não está disponível.'], 404);
+                }
+
+                responderMensagens([
+                    'sucesso' => true,
+                    'perfil' => [
+                        'id' => (int) $perfil['id'],
+                        'tipo' => $tipo,
+                        'nome' => (string) $perfil['nome'],
+                        'rotulo' => $tipo === 'pessoa' ? 'Pessoa' : 'Empresa',
+                    ],
+                ]);
+            }
+
             if ($acao === 'foto') {
                 $tipo = requestString($_GET, 'tipo');
                 $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
@@ -537,6 +567,29 @@ try {
         }
 
         $acao = is_string($entrada['acao'] ?? null) ? $entrada['acao'] : '';
+        if ($acao === 'denunciar_perfil') {
+            $tipo = is_string($entrada['tipo'] ?? null) ? $entrada['tipo'] : '';
+            $id = filter_var($entrada['id'] ?? null, FILTER_VALIDATE_INT);
+            $motivo = is_string($entrada['motivo'] ?? null) ? trim($entrada['motivo']) : '';
+            $detalhes = is_string($entrada['detalhes'] ?? null) ? trim($entrada['detalhes']) : '';
+            if ($id === false || $id < 1 || !validarTipoChat($tipo)) {
+                throw new InvalidArgumentException('Perfil inválido para denúncia.');
+            }
+            if (
+                ($tipo === $ator['tipo'] && $id === $ator['id'])
+                || !atorTemConversaChat($ator, $tipo, $id)
+            ) {
+                responderMensagens(['sucesso' => false, 'mensagem' => 'Este perfil não está disponível para denúncia.'], 404);
+            }
+
+            ensureProfileReportsSchema($conn);
+            submitProfileReport($conn, $ator, $tipo, $id, $motivo, $detalhes);
+            responderMensagens([
+                'sucesso' => true,
+                'mensagem' => 'Denúncia enviada para análise da equipe DevIN.',
+            ], 201);
+        }
+
         if ($acao === 'iniciar_conversa') {
             $tipo = is_string($entrada['tipo'] ?? null) ? $entrada['tipo'] : '';
             $id = filter_var($entrada['id'] ?? null, FILTER_VALIDATE_INT);

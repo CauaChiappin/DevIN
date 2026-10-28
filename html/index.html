@@ -8,7 +8,7 @@
     <script src="../js/index-language.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/site-navigation.css">
@@ -17,7 +17,7 @@
 
 <body>
     <header class="cabecalho-site">
-        <nav class="navegacao">
+        <nav class="navegacao" aria-label="Navegação principal">
             <a class="marca" href="#inicio">Dev<span>IN</span></a>
             <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu"
                 aria-expanded="false" data-site-menu-toggle>
@@ -47,13 +47,13 @@
 
     <!-- Reúne apresentação, etapas de uso, empresas parceiras e contato em seções navegáveis. -->
     <main>
-        <section class="principal tamanho-tela" id="inicio">
+        <section class="principal tamanho-tela" id="inicio" aria-labelledby="titulo-inicio">
             <div class="texto-principal">
-                <h1 class="titulo-principal">Comece novo.<br>Comece o <span class="palavra-rotativa-index"
+                <h1 class="titulo-principal" id="titulo-inicio">Comece novo.<br>Comece o <span class="palavra-rotativa-index"
                         data-rotating-word-index>universo</span><span class="ponto-rotativo-index"
                         data-rotating-point-index>.</span></h1>
                 <p>Encontre vagas, est&aacute;gios e oportunidades de jovem aprendiz em tecnologia.</p>
-                <div class="acoes-principal">
+                <div class="acoes-principal" role="group" aria-label="Ações principais">
                     <a class="botao botao-azul cta-principal" href="../php/cadastro_pessoa.php">Criar meu curr&iacute;culo</a>
                     <a class="link-empresa" href="../php/cadastro_empresa.php">&Eacute; uma empresa? Anuncie vagas</a>
                 </div>

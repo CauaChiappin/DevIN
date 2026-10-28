@@ -33,7 +33,8 @@
 
         root.addEventListener('click', (event) => {
             const insideMenu = typeof menu.contains === 'function' && menu.contains(event.target);
-            if (event.target !== toggle && !insideMenu) close();
+            const insideToggle = typeof toggle.contains === 'function' && toggle.contains(event.target);
+            if (!insideToggle && !insideMenu) close();
         });
 
         return { close, setOpen };

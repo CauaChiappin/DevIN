@@ -2457,6 +2457,54 @@ body.account-deleting .dashboard-shell {
 .report-card-content p { display: block !important; overflow-wrap: anywhere; -webkit-line-clamp: unset !important; }
 .report-card-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-self: center; }
 .report-card-actions form { margin: 0; }
+.report-folders {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 4px 0 18px;
+}
+.report-folders a {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 13px;
+    border: 1px solid #dce5ec;
+    border-radius: 10px;
+    background: #fff;
+    color: #526678;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: border-color .16s ease, background .16s ease, color .16s ease;
+}
+.report-folders a:hover,
+.report-folders a.ativo {
+    border-color: #b7d4ee;
+    background: #f0f7fd;
+    color: #075ba8;
+}
+.report-folders .ui-icon {
+    width: 16px;
+    height: 16px;
+}
+.report-folders strong {
+    display: grid;
+    min-width: 21px;
+    height: 21px;
+    place-items: center;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #edf2f6;
+    color: #526678;
+    font-size: 10px;
+}
+.report-folders a.ativo strong {
+    background: #075ba8;
+    color: #fff;
+}
+.profile-report-card { align-items: start; }
+.profile-report-card .report-card-actions { min-width: 140px; }
 .page-reports [data-detail-summary] { white-space: pre-line; }
 .page-reports [data-detail-experience] li { white-space: pre-line; }
 .report-confirm-modal { width: min(420px, calc(100% - 32px)); padding: 28px; }
