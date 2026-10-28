@@ -141,5 +141,6 @@ $isAdmin = $usuario['tipo'] === 'adm';
     <script>window.DevINArcadeCsrf = <?= json_encode($csrfToken, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
     <script src="../js/arcade-games.js?v=<?= filemtime(__DIR__ . '/../js/arcade-games.js') ?>"></script>
+    <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 </html>

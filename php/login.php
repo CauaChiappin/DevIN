@@ -134,6 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <script src="../js/site-navigation.js"></script>
     </main>
 
+    <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 
 </html>

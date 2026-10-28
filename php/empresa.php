@@ -817,6 +817,7 @@ foreach ($candidatos as $candidato) {
         </aside>
         <?php endif; ?>
     </main>
+    <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
 
     <!-- Modal Editar Perfil -->
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">
@@ -899,6 +900,7 @@ foreach ($candidatos as $candidato) {
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script>
     <script src="../js/konami-arcade.js?v=<?= filemtime(__DIR__ . '/../js/konami-arcade.js') ?>"></script>
+    <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>
     <?php endif; ?>

@@ -166,5 +166,6 @@ $mostrarEtapaAbnt = requestString($_GET, 'etapa') === 'abnt' && !empty($document
             <?php endif; ?>
         </section>
     </main>
+    <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 </html>

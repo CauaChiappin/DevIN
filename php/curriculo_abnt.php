@@ -41,5 +41,6 @@ if (($_SESSION['resume_abnt_consent'] ?? false) !== true) {
         </section>
     </main>
     <script src="../js/curriculo-abnt.js?v=<?= filemtime(__DIR__ . '/../js/curriculo-abnt.js') ?>" defer></script>
+    <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 </html>

@@ -75,5 +75,6 @@ requireWebAuth('pessoa');
             });
         })();
     </script>
+    <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 </html>

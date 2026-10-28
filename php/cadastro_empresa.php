@@ -329,5 +329,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script src="../js/cadastro.js"></script>
 <script src="../js/site-navigation.js"></script>
+<script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 </html>

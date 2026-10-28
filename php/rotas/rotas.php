@@ -82,6 +82,7 @@ if (isset($routes[$url])) {
 http_response_code(404);
 // Escapa o endereço de retorno antes de interpolá-lo no HTML da resposta 404.
 $homeUrl = htmlspecialchars(APP_BASE_URL . '/php/index.php', ENT_QUOTES, 'UTF-8');
+$lenisScriptUrl = htmlspecialchars(APP_BASE_URL . '/js/lenis-global.js', ENT_QUOTES, 'UTF-8');
 echo "<!DOCTYPE html>
 <html lang='pt-BR'>
 <head>
@@ -99,5 +100,6 @@ echo "<!DOCTYPE html>
     <h1>Erro 404</h1>
     <p>A página que você procurou não foi encontrada.</p>
     <a href='{$homeUrl}'>Voltar para o início</a>
+    <script src='{$lenisScriptUrl}'></script>
 </body>
 </html>";

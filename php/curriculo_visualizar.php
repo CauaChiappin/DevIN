@@ -96,5 +96,6 @@ header('Cache-Control: private, no-store');
     <?php else: ?>
         <p class="resume-preview-note">A prévia deste formato não está disponível no navegador. <a href="curriculo_baixar.php">Baixar arquivo original</a>.</p>
     <?php endif; ?>
+    <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 </html>

@@ -726,6 +726,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
             </aside>
         <?php endif; ?>
     </main>
+    <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
 
     <!-- Modal Editar Perfil -->
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">
@@ -820,6 +821,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
             }, 4000);
         })();
     </script>
+    <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 
 </html>

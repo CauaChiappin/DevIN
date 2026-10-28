@@ -249,7 +249,8 @@ body {
     color: var(--text);
     font-family: "Poppins", Arial, sans-serif;
     letter-spacing: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 button,
@@ -274,6 +275,104 @@ a {
     border-right: 1px solid #eeeeee;
     overflow: hidden;
     transition: grid-template-columns .25s ease;
+}
+
+.dashboard-footer {
+    background: #00549f;
+    color: #fff;
+    padding: 48px 24px 0;
+}
+
+.dashboard-footer__inner {
+    width: min(1194px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 28px;
+}
+
+.dashboard-footer__brand h2 {
+    margin: 0 0 12px;
+    color: #fff;
+    font-size: 20px;
+}
+
+.dashboard-footer__brand p {
+    max-width: 260px;
+    margin: 0;
+    color: rgba(255, 255, 255, .78);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.dashboard-footer__social {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.dashboard-footer__social a {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .12);
+    transition: background-color .2s ease, transform .2s ease;
+}
+
+.dashboard-footer__social a:hover {
+    background: rgba(255, 255, 255, .22);
+    transform: translateY(-2px);
+}
+
+.dashboard-footer__social img {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    object-fit: contain;
+}
+
+.dashboard-footer__column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.dashboard-footer__column h3 {
+    margin: 0 0 6px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.dashboard-footer__column a {
+    color: rgba(255, 255, 255, .78);
+    font-size: 14px;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.dashboard-footer__column a:hover {
+    color: #fff;
+    transform: translateX(2px);
+}
+
+.dashboard-footer__divider {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin: 4px 0 0;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, .2);
+}
+
+.dashboard-footer__copyright {
+    grid-column: 1 / -1;
+    margin: 0 0 20px;
+    color: rgba(255, 255, 255, .78);
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
 }
 
 .dashboard-shell.menu-fechado {
@@ -4019,5 +4118,43 @@ body.account-deleting .dashboard-shell {
     .dashboard-shell .sidebar {
         display: block;
         gap: 0;
+    }
+}
+
+@media (max-width: 900px) {
+    .dashboard-footer__inner {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-footer__brand {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .dashboard-footer {
+        padding: 36px 20px 0;
+    }
+
+    .dashboard-footer__inner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 26px;
+    }
+
+    .dashboard-footer__brand {
+        text-align: center;
+    }
+
+    .dashboard-footer__brand p {
+        margin: 0 auto;
+    }
+
+    .dashboard-footer__social {
+        justify-content: center;
+    }
+
+    .dashboard-footer__column {
+        align-items: center;
+        text-align: center;
     }
 }
