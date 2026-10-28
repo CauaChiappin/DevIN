@@ -200,6 +200,7 @@
         const summaryElement = detailPanel.querySelector('[data-detail-summary]');
         const experienceList = detailPanel.querySelector('[data-detail-experience]');
         const reportJobFacts = detailPanel.querySelector('[data-report-job-facts]');
+        const decisionBlock = detailPanel.querySelector('[data-report-decision-block]');
         const applicationSummary = card.dataset.applicationSummary === 'true';
         const reporterPrefix = translate('Denúncia enviada por');
         const experienceHeading = detailPanel.querySelector('[data-detail-experience-heading]');
@@ -219,6 +220,10 @@
                 card.dataset.reportJobSalary || translate('A combinar');
             reportJobFacts.querySelector('[data-report-job-limit]').textContent =
                 card.dataset.reportJobLimit || translate('Sem limite');
+        }
+        if (decisionBlock) {
+            const shouldShowDecision = card.dataset.reportDecision === 'true';
+            decisionBlock.hidden = !shouldShowDecision;
         }
         const summaryLabel = detailPanel.querySelector('[data-detail-summary-label]');
         if (summaryLabel) summaryLabel.textContent = translate(jobReport ? 'Detalhes da vaga denunciada' : 'Sobre');
@@ -266,6 +271,19 @@
         }
     };
 
+    detailPanel?.querySelectorAll('[data-report-decision]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const selectedCard = document.querySelector('.item-card.selecionado');
+            if (!selectedCard) return;
+
+            const verdict = button.dataset.reportDecision;
+            const form = selectedCard.querySelector(verdict === 'manter' ? '[data-report-keep-form]' : '[data-report-delete-form]');
+            if (!form) return;
+            form.requestSubmit?.();
+            if (!form.requestSubmit) form.submit();
+        });
+    });
+
     detailPanel?.querySelector('[data-detail-action]')?.addEventListener('click', () => selectedActionTarget?.click());
     document.addEventListener('click', (event) => {
         if (!(event.target instanceof Element)) return;
@@ -288,6 +306,7 @@
         detailPanel.querySelector('[data-detail-placeholder]')?.removeAttribute('hidden');
         detailPanel.querySelector('[data-detail-action]')?.setAttribute('hidden', '');
         detailPanel.querySelector('[data-start-chat]')?.setAttribute('hidden', '');
+        detailPanel.querySelector('[data-report-decision-block]')?.setAttribute('hidden', '');
     };
 
     const mobileDetailMedia = window.matchMedia('(max-width: 720px)');
@@ -332,6 +351,29 @@
     });
     mobileDetailMedia.addEventListener?.('change', (event) => {
         if (!event.matches && detailPanel?.classList.contains('mobile-detail-open')) closeMobileDetail();
+    });
+
+    document.querySelectorAll('[data-open-report-analysis]').forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const card = button.closest('.item-card[data-detail]');
+            if (!card) return;
+
+            document.querySelectorAll('.item-card[data-detail]').forEach((item) => {
+                item.classList.remove('selecionado');
+            });
+
+            card.classList.add('selecionado');
+            renderDetail(card);
+
+            if (detailPanel && mobileDetailMedia.matches) {
+                detailPanel.classList.add('mobile-detail-open');
+                detailPanel.setAttribute('role', 'dialog');
+                detailPanel.setAttribute('aria-modal', 'true');
+                detailPanel.querySelector('[data-close-detail]')?.focus({ preventScroll: true });
+            }
+        });
     });
 
     document.querySelectorAll('.item-card[data-detail]').forEach((card) => {

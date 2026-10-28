@@ -16,6 +16,8 @@ function ensureProfileReportsSchema(mysqli $conn): void
             motivo VARCHAR(40) NOT NULL,
             detalhes TEXT NOT NULL,
             status ENUM('pendente', 'concluida') NOT NULL DEFAULT 'pendente',
+            veredito ENUM('manter', 'excluir') NULL,
+            parecer TEXT NOT NULL DEFAULT '',
             analisado_por INT NULL,
             criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             analisado_em DATETIME NULL,
@@ -25,6 +27,33 @@ function ensureProfileReportsSchema(mysqli $conn): void
             INDEX idx_reports_perfis_status (tipo_denunciado, status, criado_em)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
+
+    $columns = [
+        'veredito' => 'ALTER TABLE reports_perfis ADD COLUMN veredito ENUM("manter", "excluir") NULL',
+        'parecer' => 'ALTER TABLE reports_perfis ADD COLUMN parecer TEXT NOT NULL DEFAULT ""',
+    ];
+    $stmt = $conn->prepare('
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = "reports_perfis"
+          AND COLUMN_NAME IN ("veredito", "parecer")
+    ');
+    $stmt->execute();
+    $existingColumns = array_column($stmt->get_result()->fetch_all(MYSQLI_ASSOC), 'COLUMN_NAME');
+    $stmt->close();
+
+    foreach ($columns as $column => $alterSql) {
+        if (!in_array($column, $existingColumns, true)) {
+            try {
+                $conn->query($alterSql);
+            } catch (mysqli_sql_exception $exception) {
+                if ($exception->getCode() !== 1060) {
+                    throw $exception;
+                }
+            }
+        }
+    }
 
     $conn->query("
         DELETE FROM reports_perfis
@@ -102,23 +131,65 @@ function submitProfileReport(
     }
 }
 
-function completeProfileReport(mysqli $conn, int $reportId, int $adminId): void
+function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $adminId): void
 {
-    if ($reportId < 1 || $adminId < 1) {
-        throw new InvalidArgumentException('Denúncia inválida.');
+    if ($reportId < 1 || !in_array($verdict, ['manter', 'excluir'], true)) {
+        throw new InvalidArgumentException('Decisão de moderação inválida.');
+    }
+    if ($adminId < 1) {
+        throw new InvalidArgumentException('Administrador inválido.');
     }
 
-    $stmt = $conn->prepare("
-        UPDATE reports_perfis
-        SET status = 'concluida', analisado_por = ?, analisado_em = NOW()
-        WHERE id = ? AND status = 'pendente'
-    ");
-    $stmt->bind_param('ii', $adminId, $reportId);
-    $stmt->execute();
-    $updated = $stmt->affected_rows === 1;
-    $stmt->close();
+    $conn->begin_transaction();
+    try {
+        $stmt = $conn->prepare('SELECT * FROM reports_perfis WHERE id = ? FOR UPDATE');
+        $stmt->bind_param('i', $reportId);
+        $stmt->execute();
+        $report = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
 
-    if (!$updated) {
-        throw new InvalidArgumentException('Esta denúncia já foi concluída ou não existe.');
+        if (!$report || $report['status'] !== 'pendente') {
+            throw new InvalidArgumentException('Esta denúncia já foi analisada ou não existe.');
+        }
+
+        if ($verdict === 'excluir') {
+            $table = $report['tipo_denunciado'] === 'empresa' ? 'empresa' : 'pessoa';
+            $idColumn = $report['tipo_denunciado'] === 'empresa' ? 'id_empresa' : 'id_pessoa';
+            $stmt = $conn->prepare("SELECT {$idColumn} FROM {$table} WHERE {$idColumn} = ? LIMIT 1");
+            $stmt->bind_param('i', $report['id_denunciado']);
+            $stmt->execute();
+            $profileExists = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$profileExists) {
+                throw new InvalidArgumentException('O perfil denunciado não está mais disponível.');
+            }
+
+            $stmt = $conn->prepare("DELETE FROM {$table} WHERE {$idColumn} = ?");
+            $stmt->bind_param('i', $report['id_denunciado']);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $parecer = $verdict === 'excluir'
+            ? 'O perfil foi removido após análise da denúncia.'
+            : 'O perfil foi mantido após análise da denúncia.';
+
+        $stmt = $conn->prepare('
+            UPDATE reports_perfis
+            SET status = "concluida",
+                veredito = ?,
+                parecer = ?,
+                analisado_por = ?,
+                analisado_em = NOW()
+            WHERE id = ?
+        ');
+        $stmt->bind_param('ssii', $verdict, $parecer, $adminId, $reportId);
+        $stmt->execute();
+        $stmt->close();
+        $conn->commit();
+    } catch (Throwable $exception) {
+        $conn->rollback();
+        throw $exception;
     }
 }

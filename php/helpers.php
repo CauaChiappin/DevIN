@@ -240,6 +240,14 @@ function dashboardDetailPanel(): string
             <h3 data-detail-experience-heading>Experiência</h3>
             <ul class="detail-timeline" data-detail-experience></ul>
         </section>
+        <section class="detail-report-decision" data-report-decision-block hidden>
+            <h3>Decisão da análise</h3>
+            <p>Revise os detalhes da denúncia e escolha se o item precisa continuar disponível ou ser removido.</p>
+            <div class="report-decision-actions">
+                <button class="btn primary" type="button" data-report-decision="manter">Manter</button>
+                <button class="btn danger" type="button" data-report-decision="excluir">Excluir</button>
+            </div>
+        </section>
         <section class="detail-report-section" data-report-job-section hidden>
             <div class="detail-report-copy">
                 <h3>Encontrou algo errado?</h3>

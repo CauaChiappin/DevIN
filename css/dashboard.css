@@ -2399,6 +2399,44 @@ body.account-deleting .dashboard-shell {
 .detail-report-action:focus-visible { outline: 2px solid rgba(159, 53, 64, .3); outline-offset: 2px; }
 .detail-report-action:disabled { border-color: #d9e3eb; background: #f5f7f9; color: #657586; cursor: default; }
 .detail-report-action[hidden] { display: none; }
+
+.detail-report-decision {
+    display: grid;
+    gap: 12px;
+    margin-top: 22px;
+    padding: 16px;
+    border: 1px solid #dfeaf7;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f3f9ff, #fff 85%);
+}
+
+.detail-report-decision h3 {
+    margin: 0;
+    color: #174b73;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.detail-report-decision p {
+    margin: 0;
+    color: #51657b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.report-decision-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.report-decision-actions .btn {
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 10px;
+}
+
+.detail-report-decision[hidden] { display: none; }
 .detail-section { padding-top: 18px; }
 
 .detail-section h3 {

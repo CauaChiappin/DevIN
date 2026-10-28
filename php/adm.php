@@ -101,19 +101,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'resolve_profile_report') {
             $reportId = filter_var($_POST['id_report'] ?? null, FILTER_VALIDATE_INT);
             $categoria = requestString($_POST, 'categoria');
-            if ($reportId === false || !in_array($categoria, $categoriasReport, true)) {
+            $verdict = requestString($_POST, 'veredito');
+            if ($reportId === false || !in_array($categoria, $categoriasReport, true) || !in_array($verdict, ['manter', 'excluir'], true)) {
                 throw new InvalidArgumentException('Denúncia inválida.');
             }
 
             $conn = getDatabaseConnection();
             try {
                 ensureProfileReportsSchema($conn);
-                completeProfileReport($conn, $reportId, (int) $_SESSION['usuario_id']);
+                decideProfileReport($conn, $reportId, $verdict, (int) $_SESSION['usuario_id']);
             } finally {
                 $conn->close();
             }
 
-            $_SESSION['admin_success'] = 'Denúncia concluída. Ela permanecerá disponível por mais 1 dia.';
+            $_SESSION['admin_success'] = $verdict === 'excluir'
+                ? 'Denúncia aceita. O perfil denunciado foi removido da plataforma.'
+                : 'Denúncia analisada. O perfil foi mantido na plataforma.';
             header('Location: adm.php?pagina=reports&categoria=' . rawurlencode($categoria));
             exit;
         }
@@ -432,7 +435,7 @@ try {
                         ? 'Aguardando decisão'
                         : (string) $report['parecer'];
                     ?>
-                    <article class="item-card report-card" data-job-report-card data-detail="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-description="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-salary="<?= h($salarioVaga) ?>" data-report-job-limit="<?= h($limiteAprovados) ?>" data-detail-name="<?= h($report['titulo_vaga']) ?>" data-report-company="<?= h($report['nome_empresa']) ?>" data-report-reporter="<?= h($report['nome_denunciante']) ?>" data-report-reason="<?= h($motivosReport[$report['motivo']] ?? $report['motivo']) ?>" data-report-message="<?= h($report['detalhes']) ?>" data-report-analysis="<?= h($analiseReport) ?>">
+                    <article class="item-card report-card" data-job-report-card data-detail="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-description="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-salary="<?= h($salarioVaga) ?>" data-report-job-limit="<?= h($limiteAprovados) ?>" data-detail-name="<?= h($report['titulo_vaga']) ?>" data-report-company="<?= h($report['nome_empresa']) ?>" data-report-reporter="<?= h($report['nome_denunciante']) ?>" data-report-reason="<?= h($motivosReport[$report['motivo']] ?? $report['motivo']) ?>" data-report-message="<?= h($report['detalhes']) ?>" data-report-analysis="<?= h($analiseReport) ?>" data-report-decision="<?= $report['status'] === 'pendente' ? 'true' : 'false' ?>">
                         <span class="card-avatar"><?= dashboardIcon('info') ?></span>
                         <div class="report-card-content">
                             <h2><?= h($report['titulo_vaga']) ?></h2>
@@ -443,21 +446,20 @@ try {
                         </div>
                         <?php if ($report['status'] === 'pendente'): ?>
                             <div class="report-card-actions">
-                                <form method="post">
-                                    <input type="hidden" name="action" value="resolve_job_report">
-                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                                    <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
-                                    <input type="hidden" name="veredito" value="manter">
-                                    <button class="btn primary" type="submit">Manter vaga</button>
-                                </form>
-                                <form method="post" data-report-exclusion-form>
-                                    <input type="hidden" name="action" value="resolve_job_report">
-                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                                    <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
-                                    <input type="hidden" name="veredito" value="excluir">
-                                    <button class="btn danger" type="submit">Excluir vaga</button>
-                                </form>
+                                <button class="btn primary" type="button" data-open-report-analysis>Fazer análise</button>
                             </div>
+                            <form hidden method="post" data-report-keep-form>
+                                <input type="hidden" name="action" value="resolve_job_report">
+                                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
+                                <input type="hidden" name="veredito" value="manter">
+                            </form>
+                            <form hidden method="post" data-report-delete-form data-report-exclusion-form>
+                                <input type="hidden" name="action" value="resolve_job_report">
+                                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
+                                <input type="hidden" name="veredito" value="excluir">
+                            </form>
                         <?php endif; ?>
                     </article>
                     <?php endforeach; ?>
@@ -488,7 +490,8 @@ try {
                             data-detail-name="<?= h($report['nome_denunciado']) ?>"
                             data-detail-role="<?= h('Perfil denunciado · ' . $rotuloPerfilReport) ?>"
                             data-detail-tags="<?= h($rotuloPerfilReport . '|' . $statusPerfilReport) ?>"
-                            data-detail-experience="<?= h('Denunciante: ' . $report['nome_denunciante'] . ' (' . $tipoDenunciante . ')') ?>">
+                            data-detail-experience="<?= h('Denunciante: ' . $report['nome_denunciante'] . ' (' . $tipoDenunciante . ')') ?>"
+                            data-report-decision="<?= $report['status'] === 'pendente' ? 'true' : 'false' ?>">
                             <span class="card-avatar"><?= dashboardIcon($tipoPerfilReport === 'empresa' ? 'building' : 'user') ?></span>
                             <div class="report-card-content">
                                 <h2><?= h($report['nome_denunciado']) ?></h2>
@@ -499,14 +502,22 @@ try {
                             </div>
                             <?php if ($report['status'] === 'pendente'): ?>
                                 <div class="report-card-actions">
-                                    <form method="post">
-                                        <input type="hidden" name="action" value="resolve_profile_report">
-                                        <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                                        <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
-                                        <input type="hidden" name="categoria" value="<?= h($categoriaReport) ?>">
-                                        <button class="btn primary" type="submit">Concluir análise</button>
-                                    </form>
+                                    <button class="btn primary" type="button" data-open-report-analysis>Fazer análise</button>
                                 </div>
+                                <form hidden method="post" data-report-keep-form>
+                                    <input type="hidden" name="action" value="resolve_profile_report">
+                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                    <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
+                                    <input type="hidden" name="categoria" value="<?= h($categoriaReport) ?>">
+                                    <input type="hidden" name="veredito" value="manter">
+                                </form>
+                                <form hidden method="post" data-report-delete-form>
+                                    <input type="hidden" name="action" value="resolve_profile_report">
+                                    <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                    <input type="hidden" name="id_report" value="<?= (int) $report['id'] ?>">
+                                    <input type="hidden" name="categoria" value="<?= h($categoriaReport) ?>">
+                                    <input type="hidden" name="veredito" value="excluir">
+                                </form>
                             <?php endif; ?>
                         </article>
                     <?php endforeach; ?>
