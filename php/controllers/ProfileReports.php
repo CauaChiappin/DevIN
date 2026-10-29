@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/ChatStorage.php';
+
 function ensureProfileReportsSchema(mysqli $conn): void
 {
     $conn->query("
@@ -56,11 +58,57 @@ function ensureProfileReportsSchema(mysqli $conn): void
     }
 
     $conn->query("
+        CREATE TABLE IF NOT EXISTS reports_perfis_notificacoes (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            id_report BIGINT UNSIGNED NOT NULL,
+            tipo_destinatario ENUM('pessoa', 'empresa') NOT NULL,
+            id_destinatario INT NOT NULL,
+            mensagem TEXT NOT NULL,
+            entregue_em DATETIME NULL,
+            UNIQUE KEY uq_report_perfil_notificacao_destinatario (id_report, tipo_destinatario, id_destinatario),
+            INDEX idx_reports_perfis_notificacoes_pendentes (entregue_em)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+
+    $conn->query("
         DELETE FROM reports_perfis
         WHERE status = 'concluida'
           AND analisado_em IS NOT NULL
           AND analisado_em <= DATE_SUB(NOW(), INTERVAL 1 DAY)
     ");
+}
+
+function dispatchProfileReportNotifications(mysqli $conn): bool
+{
+    $result = $conn->query('
+        SELECT id, tipo_destinatario, id_destinatario, mensagem
+        FROM reports_perfis_notificacoes
+        WHERE entregue_em IS NULL
+        ORDER BY id
+        LIMIT 100
+    ');
+    $notifications = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt = $conn->prepare('UPDATE reports_perfis_notificacoes SET entregue_em = NOW() WHERE id = ? AND entregue_em IS NULL');
+    $allDelivered = true;
+
+    foreach ($notifications as $notification) {
+        $notificationId = (int) $notification['id'];
+        try {
+            appendPlatformChatNotification(
+                'profile-report:' . $notificationId,
+                (string) $notification['tipo_destinatario'],
+                (int) $notification['id_destinatario'],
+                (string) $notification['mensagem']
+            );
+            $stmt->bind_param('i', $notificationId);
+            $stmt->execute();
+        } catch (Throwable $exception) {
+            error_log('Falha ao entregar notificação de denúncia de perfil: ' . $exception->getMessage());
+            $allDelivered = false;
+        }
+    }
+    $stmt->close();
+    return $allDelivered;
 }
 
 function submitProfileReport(
@@ -70,7 +118,7 @@ function submitProfileReport(
     int $targetId,
     string $reason,
     string $details
-): void {
+): array {
     $allowedReasons = ['assedio', 'fraude', 'falsidade', 'conteudo_inadequado', 'outro'];
     if (
         !in_array($reporter['tipo'] ?? '', ['pessoa', 'empresa'], true)
@@ -121,6 +169,7 @@ function submitProfileReport(
     );
     try {
         $stmt->execute();
+        $reportId = (int) $conn->insert_id;
     } catch (mysqli_sql_exception $exception) {
         if ((int) $exception->getCode() === 1062) {
             throw new InvalidArgumentException('Você já denunciou este perfil.');
@@ -129,9 +178,11 @@ function submitProfileReport(
     } finally {
         $stmt->close();
     }
+
+    return ['id' => $reportId, 'nome' => (string) $target['nome']];
 }
 
-function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $adminId): void
+function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $adminId): bool
 {
     if ($reportId < 1 || !in_array($verdict, ['manter', 'excluir'], true)) {
         throw new InvalidArgumentException('Decisão de moderação inválida.');
@@ -187,9 +238,34 @@ function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $
         $stmt->bind_param('ssii', $verdict, $parecer, $adminId, $reportId);
         $stmt->execute();
         $stmt->close();
+
+        $reporterMessage = $verdict === 'excluir'
+            ? 'Sua denúncia sobre o perfil "' . $report['nome_denunciado'] . '" foi aceita. O perfil foi removido da plataforma após análise da equipe DevIN.'
+            : 'Sua denúncia sobre o perfil "' . $report['nome_denunciado'] . '" foi recusada. Após análise da equipe DevIN, o perfil foi mantido na plataforma.';
+        $stmt = $conn->prepare('
+            INSERT IGNORE INTO reports_perfis_notificacoes
+                (id_report, tipo_destinatario, id_destinatario, mensagem)
+            VALUES (?, ?, ?, ?)
+        ');
+        $stmt->bind_param(
+            'isis',
+            $reportId,
+            $report['tipo_denunciante'],
+            $report['id_denunciante'],
+            $reporterMessage
+        );
+        $stmt->execute();
+        $stmt->close();
         $conn->commit();
     } catch (Throwable $exception) {
         $conn->rollback();
         throw $exception;
+    }
+
+    try {
+        return dispatchProfileReportNotifications($conn);
+    } catch (Throwable $exception) {
+        error_log('Decisão de denúncia de perfil registrada, mas a mensagem ao denunciante falhou: ' . $exception->getMessage());
+        return false;
     }
 }

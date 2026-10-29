@@ -7,6 +7,7 @@ require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
 require_once __DIR__ . '/controllers/ChatStorage.php';
 require_once __DIR__ . '/controllers/ProfileReports.php';
+require_once __DIR__ . '/MailerHelper.php';
 require_once __DIR__ . '/helpers.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -232,7 +233,7 @@ function resumirArmazenamentoChat(array $ator): array
 function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array
 {
     if ($tipo === 'sistema' && $id === 0) {
-        return ['id' => 0, 'nome' => 'Plataforma DevIN'];
+        return ['id' => 0, 'nome' => 'Support DevIN'];
     }
 
     if (!validarTipoChat($tipo) || $id < 1) {
@@ -583,11 +584,39 @@ try {
             }
 
             ensureProfileReportsSchema($conn);
-            submitProfileReport($conn, $ator, $tipo, $id, $motivo, $detalhes);
-            responderMensagens([
+            $language = ProfileLanguagePreference::load($conn, $ator['tipo'], (int) $ator['id']);
+            $submittedReport = submitProfileReport($conn, $ator, $tipo, $id, $motivo, $detalhes);
+            $reportId = $submittedReport['id'];
+            $reportedName = $submittedReport['nome'];
+            $warnings = [];
+            try {
+                appendPlatformChatNotification(
+                    'profile-report-submitted:' . $reportId,
+                    (string) $ator['tipo'],
+                    (int) $ator['id'],
+                    'Support DevIN: Recebemos sua denúncia sobre o perfil "' . $reportedName . '". Ela está sob análise da nossa equipe. Você receberá outra mensagem quando a análise for concluída.'
+                );
+            } catch (Throwable $exception) {
+                error_log('Falha ao enviar confirmação interna da denúncia de perfil: ' . $exception->getMessage());
+                $warnings[] = 'Não foi possível enviar a confirmação na aba de mensagens.';
+            }
+            if (!MailerHelper::enviarConfirmacaoDenuncia(
+                (string) $ator['email'],
+                (string) $ator['nome'],
+                'perfil',
+                $reportedName,
+                $language
+            )) {
+                $warnings[] = 'Não foi possível enviar o e-mail de confirmação.';
+            }
+            $response = [
                 'sucesso' => true,
                 'mensagem' => 'Denúncia enviada para análise da equipe DevIN.',
-            ], 201);
+            ];
+            if ($warnings !== []) {
+                $response['avisos'] = $warnings;
+            }
+            responderMensagens($response, 201);
         }
 
         if ($acao === 'iniciar_conversa') {

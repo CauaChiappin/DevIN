@@ -19,7 +19,7 @@ O `.env` também contém a URL local (`APP_URL`) e as credenciais do MySQL (`DB_
 
 O logout encerra a sessão e remove o cookie JWT do navegador, mas tokens já emitidos continuam válidos até expirarem (no máximo uma hora); a aplicação ainda não mantém uma lista de revogação. A pontuação do arcade é limitada por sessão e tempo de partida, mas ainda depende de dados enviados pelo cliente e pode ser falsificada; esse risco é aceito.
 
-Os e-mails de confirmação e recuperação são enviados durante a solicitação HTTP, com timeout SMTP de 8 segundos. A tela bloqueia reenvios do mesmo formulário enquanto a solicitação está em andamento.
+Os e-mails de confirmação, recuperação e recebimento de denúncias são enviados durante a solicitação HTTP, com timeout SMTP de 8 segundos. A tela bloqueia reenvios do mesmo formulário enquanto a solicitação está em andamento. Se o SMTP falhar no envio de uma confirmação de denúncia, o report permanece registrado e a interface informa que o e-mail não foi enviado.
 
 O lembrete de currículo após uma hora depende do Agendador de Tarefas do Windows. Configure uma tarefa para repetir a cada minuto, executando:
 
@@ -40,11 +40,13 @@ Para traduzir mensagens recebidas, a opção **Traduzir mensagem** no menu de tr
 
 ## Denúncias de vagas
 
-Uma pessoa autenticada pode denunciar uma vaga pelo painel de detalhes. Cada conta pode enviar uma denúncia por vaga; é necessário escolher um motivo e explicar o caso. As denúncias ficam na aba **Reports** do dashboard administrativo, onde a equipe pode manter ou excluir a vaga. A decisão e as notificações pendentes são salvas nas tabelas `reports_vagas` e `reports_vagas_notificacoes`, criadas automaticamente. Após a análise, quem denunciou e a empresa responsável recebem o resultado em uma conversa somente leitura com a Plataforma DevIN.
+Uma pessoa autenticada pode denunciar uma vaga pelo painel de detalhes ou um perfil pela conversa. Cada conta pode enviar uma denúncia por vaga ou perfil; é necessário escolher um motivo e explicar o caso. Os reports ficam na aba **Reports** do dashboard administrativo, com dados do alvo, denunciante, data, motivo, relato e decisão. Ao receber uma denúncia, o sistema envia uma confirmação por e-mail e uma mensagem interna de **Support DevIN** ao denunciante. Após a análise, o denunciante recebe uma mensagem personalizada informando se o report foi aceito ou recusado e a ação tomada; em reports de vagas, a empresa responsável também recebe o resultado.
+
+As denúncias de vagas ficam nas tabelas `reports_vagas` e `reports_vagas_notificacoes`; denúncias de perfil e sua fila de notificações ficam em `reports_perfis` e `reports_perfis_notificacoes`. As tabelas são criadas automaticamente. Notificações internas pendentes são tentadas novamente ao abrir a área de reports do painel administrativo. Os alertas de feedback desaparecem após cinco segundos e podem ser fechados manualmente.
 
 Cada denúncia guarda uma cópia do título, descrição, salário e limite de aprovados da vaga no momento do envio, para que a equipe possa analisar os detalhes mesmo que a vaga seja alterada ou removida depois.
 
-As mensagens de conversa, inclusive as notificações já entregues, continuam no armazenamento temporário local descrito acima; elas não são sincronizadas entre instalações e podem ser removidas pela limpeza dos arquivos temporários. A fila no banco de dados permite tentar novamente a entrega de notificações que ainda estejam pendentes.
+As mensagens de conversa, inclusive as notificações já entregues, continuam no armazenamento temporário local descrito acima; elas não são sincronizadas entre instalações e podem ser removidas pela limpeza dos arquivos temporários. As filas no banco de dados permitem tentar novamente a entrega de notificações de resolução que ainda estejam pendentes.
 
 As mensagens de conclusão da análise de denúncias de vagas ficam disponíveis no chat por 24 horas após a entrega e são removidas na próxima atualização do armazenamento de mensagens.
 

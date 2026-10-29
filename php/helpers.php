@@ -277,7 +277,10 @@ function dashboardDetailPanel(): string
         <label for="jobReportDetails">Detalhes
             <textarea id="jobReportDetails" name="detalhes" rows="4" maxlength="1000" required placeholder="Explique por que esta vaga deve ser analisada."></textarea>
         </label>
-        <p class="form-error" data-job-report-status role="status" hidden></p>
+        <div class="dashboard-feedback-toast" data-feedback-toast hidden role="status" aria-live="polite">
+            <p class="dashboard-toast__msg" data-job-report-status data-feedback-message></p>
+            <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
+        </div>
         <button class="btn primary" type="submit" data-job-report-submit>Enviar denúncia</button>
     </form>
 </dialog>
@@ -302,6 +305,11 @@ function dashboardIcon(string $name): string
         'logout'   => '<path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6"/>',
         'edit'     => '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>',
         'trash'    => '<path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6"/>',
+        'download' => '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+        'upload'   => '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+        'sparkle'  => '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+        'check'    => '<path d="M20 6 9 17l-5-5"/>',
+        'printer'  => '<path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/>',
     ];
     $paths = $paths[$name] ?? '';
 

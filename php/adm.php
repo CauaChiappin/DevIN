@@ -109,14 +109,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn = getDatabaseConnection();
             try {
                 ensureProfileReportsSchema($conn);
-                decideProfileReport($conn, $reportId, $verdict, (int) $_SESSION['usuario_id']);
+                $notificationDelivered = decideProfileReport($conn, $reportId, $verdict, (int) $_SESSION['usuario_id']);
             } finally {
                 $conn->close();
             }
 
-            $_SESSION['admin_success'] = $verdict === 'excluir'
-                ? 'Denúncia aceita. O perfil denunciado foi removido da plataforma.'
-                : 'Denúncia analisada. O perfil foi mantido na plataforma.';
+            $_SESSION['admin_success'] = $notificationDelivered
+                ? ($verdict === 'excluir'
+                    ? 'Denúncia aceita. O perfil denunciado foi removido e o denunciante foi notificado.'
+                    : 'Denúncia recusada. O perfil foi mantido e o denunciante foi notificado.')
+                : 'Decisão registrada, mas não foi possível enviar a mensagem ao denunciante.';
             header('Location: adm.php?pagina=reports&categoria=' . rawurlencode($categoria));
             exit;
         }
@@ -240,11 +242,16 @@ try {
         }
         $resultReports = $conn->query('
             SELECT r.*,
+                   e.email AS email_empresa,
+                   COALESCE(rp.email, re.email, \'\') AS email_denunciante,
                    COALESCE(NULLIF(r.descricao_vaga, \'\'), v.descricao, \'\') AS descricao_exibicao,
                    CASE WHEN r.descricao_vaga IS NULL THEN COALESCE(v.salario_mensal, r.salario_mensal) ELSE r.salario_mensal END AS salario_exibicao,
                    CASE WHEN r.descricao_vaga IS NULL THEN COALESCE(v.limite_aprovados, r.limite_aprovados) ELSE r.limite_aprovados END AS limite_exibicao
             FROM reports_vagas r
             LEFT JOIN vagas v ON v.id_vaga = r.id_vaga
+            LEFT JOIN empresa e ON e.id_empresa = r.id_empresa
+            LEFT JOIN pessoa rp ON r.tipo_denunciante = "pessoa" AND rp.id_pessoa = r.id_denunciante
+            LEFT JOIN empresa re ON r.tipo_denunciante = "empresa" AND re.id_empresa = r.id_denunciante
             WHERE r.status = "pendente"
                OR r.analisado_em >= DATE_SUB(NOW(), INTERVAL 1 DAY)
             ORDER BY FIELD(r.status, "pendente", "mantida", "excluida"), r.criado_em DESC, r.id DESC
@@ -253,12 +260,27 @@ try {
 
         if ($pagina === 'reports') {
             ensureProfileReportsSchema($conn);
+            try {
+                if (!dispatchProfileReportNotifications($conn)) {
+                    $_SESSION['admin_error'] = 'Algumas notificações de denúncias de perfil estão pendentes de entrega.';
+                }
+            } catch (Throwable $notificationException) {
+                error_log('Não foi possível reenviar notificações de denúncias de perfil: ' . $notificationException->getMessage());
+                $_SESSION['admin_error'] = 'Algumas notificações de denúncias de perfil estão pendentes de entrega.';
+            }
             $resultProfileReports = $conn->query('
-                SELECT *
-                FROM reports_perfis
-                WHERE status = "pendente"
-                   OR analisado_em >= DATE_SUB(NOW(), INTERVAL 1 DAY)
-                ORDER BY FIELD(status, "pendente", "concluida"), criado_em DESC, id DESC
+                SELECT r.*,
+                       COALESCE(tp.email, te.email, \'\') AS email_denunciado,
+                       COALESCE(te.cnpj, \'\') AS cnpj_denunciado,
+                       COALESCE(rp.email, re.email, \'\') AS email_denunciante
+                FROM reports_perfis r
+                LEFT JOIN pessoa tp ON r.tipo_denunciado = "pessoa" AND tp.id_pessoa = r.id_denunciado
+                LEFT JOIN empresa te ON r.tipo_denunciado = "empresa" AND te.id_empresa = r.id_denunciado
+                LEFT JOIN pessoa rp ON r.tipo_denunciante = "pessoa" AND rp.id_pessoa = r.id_denunciante
+                LEFT JOIN empresa re ON r.tipo_denunciante = "empresa" AND re.id_empresa = r.id_denunciante
+                WHERE r.status = "pendente"
+                   OR r.analisado_em >= DATE_SUB(NOW(), INTERVAL 1 DAY)
+                ORDER BY FIELD(r.status, "pendente", "concluida"), r.criado_em DESC, r.id DESC
             ');
             $profileReportsAdmin = $resultProfileReports->fetch_all(MYSQLI_ASSOC);
             $reportCounts['vagas'] = count($reportsAdmin);
@@ -320,10 +342,16 @@ try {
 
         <section class="lista-area">
             <?php if (!empty($_SESSION['admin_error'])): ?>
-                <p class="form-error"><?= h($_SESSION['admin_error']); unset($_SESSION['admin_error']); ?></p>
+                <div class="dashboard-toast dashboard-toast--error" data-auto-dismiss-toast role="alert">
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h($_SESSION['admin_error']); unset($_SESSION['admin_error']); ?></p>
+                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
+                </div>
             <?php endif; ?>
             <?php if (!empty($_SESSION['admin_success'])): ?>
-                <p class="form-success"><?= h($_SESSION['admin_success']); unset($_SESSION['admin_success']); ?></p>
+                <div class="dashboard-toast dashboard-toast--success" data-auto-dismiss-toast role="status">
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($_SESSION['admin_success']); unset($_SESSION['admin_success']); ?></p>
+                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
+                </div>
             <?php endif; ?>
 
             <?php if ($pagina !== 'sobre'): ?>
@@ -435,12 +463,14 @@ try {
                         ? 'Aguardando decisão'
                         : (string) $report['parecer'];
                     ?>
-                    <article class="item-card report-card" data-job-report-card data-detail="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-description="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-salary="<?= h($salarioVaga) ?>" data-report-job-limit="<?= h($limiteAprovados) ?>" data-detail-name="<?= h($report['titulo_vaga']) ?>" data-report-company="<?= h($report['nome_empresa']) ?>" data-report-reporter="<?= h($report['nome_denunciante']) ?>" data-report-reason="<?= h($motivosReport[$report['motivo']] ?? $report['motivo']) ?>" data-report-message="<?= h($report['detalhes']) ?>" data-report-analysis="<?= h($analiseReport) ?>" data-report-decision="<?= $report['status'] === 'pendente' ? 'true' : 'false' ?>">
+                    <article class="item-card report-card" data-job-report-card data-detail="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-description="<?= h($descricaoVaga ?: 'Sem descrição informada.') ?>" data-report-job-salary="<?= h($salarioVaga) ?>" data-report-job-limit="<?= h($limiteAprovados) ?>" data-detail-name="<?= h($report['titulo_vaga']) ?>" data-report-id="<?= (int) $report['id'] ?>" data-report-created-at="<?= h(date('d/m/Y H:i', strtotime($report['criado_em']))) ?>" data-report-target-id="<?= (int) $report['id_vaga'] ?>" data-report-company="<?= h($report['nome_empresa']) ?>" data-report-company-email="<?= h($report['email_empresa'] ?? '') ?>" data-report-reporter="<?= h($report['nome_denunciante']) ?>" data-report-reporter-email="<?= h($report['email_denunciante'] ?? '') ?>" data-report-reporter-type="<?= h($report['tipo_denunciante'] === 'empresa' ? 'Empresa' : 'Pessoa') ?>" data-report-reporter-id="<?= (int) $report['id_denunciante'] ?>" data-report-reason="<?= h($motivosReport[$report['motivo']] ?? $report['motivo']) ?>" data-report-message="<?= h($report['detalhes']) ?>" data-report-analysis="<?= h($analiseReport) ?>" data-report-decision="<?= $report['status'] === 'pendente' ? 'true' : 'false' ?>">
                         <span class="card-avatar"><?= dashboardIcon('info') ?></span>
                         <div class="report-card-content">
                             <h2><?= h($report['titulo_vaga']) ?></h2>
-                            <p>Empresa: <?= h($report['nome_empresa']) ?> · Denunciante: <?= h($report['nome_denunciante']) ?></p>
-                            <p>Motivo: <?= h($motivosReport[$report['motivo']] ?? $report['motivo']) ?></p>
+                            <p><span>Empresa:</span> <?= h($report['nome_empresa']) ?> · <span>Denunciante:</span> <?= h($report['nome_denunciante']) ?> (<span><?= h($report['tipo_denunciante'] === 'empresa' ? 'Empresa' : 'Pessoa') ?></span> #<?= (int) $report['id_denunciante'] ?>)</p>
+                            <?php if (!empty($report['email_denunciante'])): ?><p class="report-card-meta"><?= h($report['email_denunciante']) ?></p><?php endif; ?>
+                            <p class="report-card-meta"><span>Denúncia #</span><?= (int) $report['id'] ?> · <span>Vaga #</span><?= (int) $report['id_vaga'] ?> · <span>Enviada em</span> <?= h(date('d/m/Y H:i', strtotime($report['criado_em']))) ?></p>
+                            <p><span>Motivo:</span> <span><?= h($motivosReport[$report['motivo']] ?? $report['motivo']) ?></span></p>
                             <p><?= h($report['detalhes']) ?></p>
                             <?= dashboardCardTags($statusReport) ?>
                         </div>
@@ -488,15 +518,30 @@ try {
                         <article class="item-card report-card profile-report-card"
                             data-detail="<?= h($report['detalhes']) ?>"
                             data-detail-name="<?= h($report['nome_denunciado']) ?>"
-                            data-detail-role="<?= h('Perfil denunciado · ' . $rotuloPerfilReport) ?>"
+                            data-profile-report-card
+                            data-report-id="<?= (int) $report['id'] ?>"
+                            data-report-created-at="<?= h(date('d/m/Y H:i', strtotime($report['criado_em']))) ?>"
+                            data-report-target-id="<?= (int) $report['id_denunciado'] ?>"
+                            data-profile-report-role="<?= h($rotuloPerfilReport) ?>"
+                            data-profile-report-reporter="<?= h($report['nome_denunciante']) ?>"
+                            data-profile-report-reporter-email="<?= h($report['email_denunciante'] ?? '') ?>"
+                            data-profile-report-reporter-type="<?= h($tipoDenunciante) ?>"
+                            data-profile-report-reporter-id="<?= (int) $report['id_denunciante'] ?>"
+                            data-profile-report-target-email="<?= h($report['email_denunciado'] ?? '') ?>"
+                            data-profile-report-target-cnpj="<?= h($report['cnpj_denunciado'] ?? '') ?>"
+                            data-profile-report-reason="<?= h($motivosPerfilReport[$report['motivo']] ?? $report['motivo']) ?>"
+                            data-profile-report-message="<?= h($report['detalhes']) ?>"
+                            data-profile-report-analysis="<?= h($report['status'] === 'pendente' ? 'Aguardando decisão' : (string) $report['parecer']) ?>"
                             data-detail-tags="<?= h($rotuloPerfilReport . '|' . $statusPerfilReport) ?>"
-                            data-detail-experience="<?= h('Denunciante: ' . $report['nome_denunciante'] . ' (' . $tipoDenunciante . ')') ?>"
                             data-report-decision="<?= $report['status'] === 'pendente' ? 'true' : 'false' ?>">
                             <span class="card-avatar"><?= dashboardIcon($tipoPerfilReport === 'empresa' ? 'building' : 'user') ?></span>
                             <div class="report-card-content">
                                 <h2><?= h($report['nome_denunciado']) ?></h2>
-                                <p><?= h($rotuloPerfilReport) ?> · Denunciante: <?= h($report['nome_denunciante']) ?> (<?= h($tipoDenunciante) ?>)</p>
-                                <p>Motivo: <?= h($motivosPerfilReport[$report['motivo']] ?? $report['motivo']) ?></p>
+                                <p><span><?= h($rotuloPerfilReport) ?></span> #<?= (int) $report['id_denunciado'] ?> · <span>Denunciante:</span> <?= h($report['nome_denunciante']) ?> (<span><?= h($tipoDenunciante) ?></span> #<?= (int) $report['id_denunciante'] ?>)</p>
+                                <?php if (!empty($report['email_denunciado'])): ?><p class="report-card-meta"><?= h($report['email_denunciado']) ?><?= !empty($report['cnpj_denunciado']) ? ' · CNPJ ' . h($report['cnpj_denunciado']) : '' ?></p><?php endif; ?>
+                                <?php if (!empty($report['email_denunciante'])): ?><p class="report-card-meta"><span>E-mail do denunciante:</span> <?= h($report['email_denunciante']) ?></p><?php endif; ?>
+                                <p class="report-card-meta"><span>Denúncia #</span><?= (int) $report['id'] ?> · <span>Enviada em</span> <?= h(date('d/m/Y H:i', strtotime($report['criado_em']))) ?></p>
+                                <p><span>Motivo:</span> <span><?= h($motivosPerfilReport[$report['motivo']] ?? $report['motivo']) ?></span></p>
                                 <p><?= h($report['detalhes']) ?></p>
                                 <?= dashboardCardTags($statusPerfilReport) ?>
                             </div>
@@ -557,6 +602,9 @@ try {
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>
+            <?php if ($pagina === 'sobre'): ?>
+                <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
+            <?php endif; ?>
         </section>
 
         <?php if ($pagina === 'reports'): ?>
@@ -591,7 +639,6 @@ try {
         </aside>
         <?php endif; ?>
     </main>
-    <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
 
     <!-- Modal Editar Perfil -->
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">

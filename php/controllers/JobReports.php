@@ -82,7 +82,7 @@ function ensureJobReportsSchema(mysqli $conn): void
     ");
 }
 
-function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reason, string $details): void
+function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reason, string $details): array
 {
     ensureJobCompensationSchema($conn);
     $allowedReasons = ['fraude', 'informacao_falsa', 'discriminacao', 'conteudo_inadequado', 'vaga_expirada', 'outro'];
@@ -139,6 +139,7 @@ function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reas
     );
     try {
         $stmt->execute();
+        $reportId = (int) $conn->insert_id;
     } catch (mysqli_sql_exception $exception) {
         if ((int) $exception->getCode() === 1062) {
             throw new InvalidArgumentException('Você já denunciou esta vaga.');
@@ -147,6 +148,8 @@ function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reas
     } finally {
         $stmt->close();
     }
+
+    return ['id' => $reportId, 'titulo' => (string) $job['titulo']];
 }
 
 function dispatchJobReportNotifications(mysqli $conn): bool
@@ -221,8 +224,8 @@ function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $admi
 
         $title = (string) $report['titulo_vaga'];
         $reporterMessage = $verdict === 'excluir'
-            ? 'A denúncia sobre a vaga "' . $title . '" foi analisada pela Plataforma DevIN. A vaga foi removida da plataforma.'
-            : 'A denúncia sobre a vaga "' . $title . '" foi analisada pela Plataforma DevIN. A vaga permanecerá disponível na plataforma.';
+            ? 'Sua denúncia sobre a vaga "' . $title . '" foi aceita. A vaga foi removida da plataforma após análise da equipe DevIN.'
+            : 'Sua denúncia sobre a vaga "' . $title . '" foi recusada. Após análise da equipe DevIN, a vaga foi mantida na plataforma.';
         $companyMessage = $verdict === 'excluir'
             ? 'A vaga "' . $title . '" foi removida da DevIN após análise de uma denúncia. O anúncio não está mais disponível na plataforma.'
             : 'A vaga "' . $title . '" foi analisada pela Plataforma DevIN após uma denúncia e permanecerá disponível na plataforma.';

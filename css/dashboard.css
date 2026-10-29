@@ -150,7 +150,8 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-width: 340px;
+    max-width: min(440px, calc(100vw - 32px));
+    padding-right: 28px;
     animation: toast-in .25s ease;
 }
 @keyframes toast-in {
@@ -166,6 +167,32 @@
     box-shadow: 0 4px 16px rgba(0,0,0,.12);
     line-height: 1.4;
 }
+.dashboard-toast__close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #526678;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+.dashboard-toast__close:hover { background: rgba(15, 35, 55, .08); }
+.dashboard-toast--success,
+.dashboard-toast--error { position: fixed; }
+.dashboard-feedback-toast {
+    position: relative;
+    display: flex;
+    margin: 10px 0;
+    padding-right: 28px;
+}
+.dashboard-feedback-toast .dashboard-toast__msg { width: 100%; }
 .dashboard-toast__msg--success {
     background: #edf9f1;
     border: 1px solid #b9e3c8;
@@ -176,6 +203,13 @@
     border: 1px solid #f5c2c2;
     color: #b91c1c;
 }
+.dashboard-toast__msg--warning {
+    background: #fff8e6;
+    border: 1px solid #f4d58d;
+    color: #805b00;
+}
+.dashboard-toast[hidden],
+.dashboard-feedback-toast[hidden] { display: none; }
 
 
 .ui-icon {
@@ -383,6 +417,11 @@ a {
     /* A página institucional não usa o painel de detalhes, então a lista ocupa o espaço restante. */
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
 }
+.dashboard-shell.page-sobre > .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
 
 .dashboard-shell.page-curriculo {
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
@@ -423,15 +462,18 @@ a {
     padding: 0 !important;
     /* Mantém a área ao lado da sidebar na mesma base bege do site. */
     background-color: var(--bg) !important;
-    display: flex;
-    flex-direction: column;
+    display: block;
     height: 100vh;
 }
 
 .sobre-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    min-height: 100%;
+    width: 100%;
+}
+
+.page-sobre .dashboard-footer {
     width: 100%;
 }
 
@@ -2592,6 +2634,7 @@ body.account-deleting .dashboard-shell {
 .report-card { align-items: start; }
 .report-card-content { min-width: 0; }
 .report-card-content p { display: block !important; overflow-wrap: anywhere; -webkit-line-clamp: unset !important; }
+.report-card-content .report-card-meta { color: #64788b; font-size: 11px; }
 .report-card-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-self: center; }
 .report-card-actions form { margin: 0; }
 .report-folders {
@@ -3086,15 +3129,30 @@ body.account-deleting .dashboard-shell {
 /* Sobre nós: usa a mesma base clara das telas de vagas e candidatos. */
 .dashboard-shell.page-sobre .lista-area {
     height: 100vh;
-    padding: 32px 28px 40px !important;
+    padding: 32px 28px 0 !important;
     overflow-y: auto;
     background: #fbfbfa !important;
+}
+
+.dashboard-shell.page-sobre .dashboard-footer {
+    width: calc(100% + 56px);
+    margin: 0 -28px;
+}
+
+/* Evita que os cards esticiem para preencher a altura mínima do contêiner. */
+.page-sobre .sobre-container {
+    justify-content: flex-start;
+}
+
+.page-sobre .sobre-container > .sobre-bottom-section {
+    flex: none;
+    margin-bottom: 40px;
 }
 
 .page-sobre .sobre-container {
     width: min(1040px, 100%);
     height: auto;
-    min-height: 100%;
+    min-height: calc(100vh - 32px);
     margin: 0 auto;
 }
 
@@ -3248,6 +3306,10 @@ body.account-deleting .dashboard-shell {
         overflow: visible;
     }
 
+    .dashboard-shell.page-sobre > .sidebar {
+        position: static;
+    }
+
     .dashboard-shell.page-sobre .lista-area { grid-column: 1; padding: 22px 16px 30px !important; }
     .page-sobre .sobre-bottom-section {
         grid-template-columns: 1fr;
@@ -3390,7 +3452,12 @@ body.account-deleting .dashboard-shell {
     }
 
     .dashboard-shell.page-sobre .lista-area {
-        padding: 20px 14px 28px !important;
+        padding: 20px 14px 0 !important;
+    }
+
+    .dashboard-shell.page-sobre .dashboard-footer {
+        width: calc(100% + 28px);
+        margin: 0 -14px;
     }
 
     .page-sobre .sobre-container {
@@ -3942,18 +4009,448 @@ body.account-deleting .dashboard-shell {
     font-weight: 700;
 }
 
+/* ----- Tela "Meu currículo": mesmo padrão visual das demais páginas ----- */
+.dashboard-shell.page-curriculo .lista-area {
+    padding: 0 !important;
+    background: #fbfbf9;
+}
+
+/* Barra de título de ponta a ponta, com linhas divisórias como nas listas. */
+.dashboard-shell.page-curriculo .dashboard-resume__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 68px;
+    margin: 0;
+    padding: 12px 24px;
+    border-top: 1px solid #edf1f4;
+    border-bottom: 1px solid #dce5ec;
+    background: #fff;
+}
+
+.dashboard-resume__heading { min-width: 0; }
+
+.dashboard-shell.page-curriculo .dashboard-resume__header h1 {
+    margin: 0;
+    color: #0b4d89;
+    font-size: 21px;
+    line-height: 1.2;
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__header .dashboard-resume__heading > p {
+    margin: 4px 0 0;
+    color: #778595;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.dashboard-resume__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #b9e3c8;
+    border-radius: 999px;
+    background: #edf9f1;
+    color: #187343;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dashboard-resume__badge .ui-icon { width: 14px; height: 14px; }
+
+.dashboard-shell.page-curriculo .dashboard-resume__content {
+    grid-template-columns: minmax(330px, 410px) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0;
+    min-height: calc(100vh - 70px);
+}
+
+.dashboard-resume__side {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+    gap: 12px;
+    padding: 18px 16px 32px;
+}
+
+.dashboard-resume__card {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #dde6ee;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(14, 72, 125, .05);
+}
+
+.dashboard-resume__card-title {
+    margin: 0 0 14px;
+    color: #12345b;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.dashboard-resume__card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.dashboard-resume__card-head .dashboard-resume__card-title { margin: 0; font-size: 17px; }
+
+.dashboard-resume__card--ai {
+    border-color: #9ec4e8;
+    background: linear-gradient(160deg, #e4f0fd 0%, #ffffff 70%);
+}
+
+.dashboard-resume__generator-icon {
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    flex: 0 0 auto;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #176bb2, #00549f);
+    color: #fff;
+}
+
+.dashboard-resume__generator-icon .ui-icon { width: 20px; height: 20px; }
+
+.dashboard-resume__lead {
+    margin: 0 0 14px;
+    color: #586779;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.dashboard-resume__card--ai .dashboard-resume__consent {
+    margin: 0 0 14px;
+    padding: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.dashboard-resume__card--ai .dashboard-resume__button { min-height: 44px; }
+
+.dashboard-resume__card .dashboard-resume__actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+}
+
+.dashboard-resume__action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 46px;
+    padding: 8px 12px;
+    border: 1px solid #e1eaf3;
+    border-radius: 10px;
+    background: #fff;
+    color: #1d3a5a;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color .18s ease, background-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.dashboard-resume__action:hover {
+    border-color: #9ec4e8;
+    background: #f4f9ff;
+    box-shadow: 0 4px 12px rgba(0, 74, 148, .08);
+    transform: translateY(-1px);
+}
+
+.dashboard-resume__action:focus-visible {
+    outline: 3px solid rgba(0, 84, 159, .3);
+    outline-offset: 2px;
+}
+
+.dashboard-resume__action-icon {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 8px;
+    background: #e8f1fd;
+    color: #0b67b2;
+}
+
+.dashboard-resume__action-icon .ui-icon { width: 16px; height: 16px; }
+
+.dashboard-resume__editor { margin-top: 0; padding: 0; }
+
+.dashboard-resume__editor summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    list-style: none;
+}
+
+.dashboard-resume__editor summary::-webkit-details-marker { display: none; }
+
+.dashboard-resume__editor summary::after {
+    content: "+";
+    color: #0b67b2;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.dashboard-resume__editor[open] summary::after { content: "−"; }
+.dashboard-resume__editor[open] summary { border-bottom: 1px solid #e3ebf5; }
+.dashboard-resume__editor form { margin: 0; padding: 16px 20px 20px; }
+
+.dashboard-resume__danger { margin: 4px 0 0; text-align: center; }
+
+.dashboard-resume__danger-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    color: #b42332;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .18s ease, border-color .18s ease;
+}
+
+.dashboard-resume__danger-button:hover { border-color: #f5c2c2; background: #fff0f0; }
+.dashboard-resume__danger-button:focus-visible { outline: 3px solid rgba(180, 35, 50, .25); outline-offset: 2px; }
+.dashboard-resume__danger-button .ui-icon { width: 16px; height: 16px; }
+
+/* Painel de pré-visualização: mesmo fundo e linha lateral do painel de detalhes. */
+.dashboard-shell.page-curriculo .dashboard-resume__paper {
+    min-height: 0;
+    padding: 22px 24px 32px;
+    border: 0;
+    border-left: 1px solid #dce4eb;
+    border-radius: 0;
+    background: #fdfcf9;
+    box-shadow: none;
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__paper [data-resume-content] > h2:empty { display: none; }
+
+.dashboard-shell.page-curriculo .dashboard-resume__paper--empty {
+    background-image: none;
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__paper [data-resume-content] {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 30px 34px;
+    border: 1px solid #dde6ee;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(14, 72, 125, .06);
+}
+
+.dashboard-shell.page-curriculo .dashboard-resume__paper [data-resume-content]:has(> .dashboard-resume__file:only-child) {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+/* Estado sem currículo: bloco centralizado, como o placeholder dos painéis. */
+.dashboard-resume__missing {
+    display: grid;
+    justify-items: center;
+    max-width: none;
+    min-height: calc(100vh - 70px);
+    margin: 0;
+    padding: 40px 24px;
+    border: 0;
+    border-radius: 0;
+    background: #fdfcf9;
+    box-shadow: none;
+    align-content: center;
+    text-align: center;
+}
+
+.dashboard-resume__missing-icon {
+    display: inline-grid;
+    width: 60px;
+    height: 60px;
+    place-items: center;
+    margin-bottom: 14px;
+    border: 2px solid #c8ddf4;
+    border-radius: 50%;
+    background: #edf5ff;
+    color: #075ca8;
+}
+
+.dashboard-resume__missing-icon .ui-icon { width: 26px; height: 26px; }
+
+.dashboard-resume__missing h2 {
+    margin: 0 0 6px;
+    color: #19324a;
+    font-family: Georgia, serif;
+    font-size: 24px;
+}
+
+.dashboard-resume__missing > p {
+    max-width: 420px;
+    margin: 0 0 24px;
+    color: #5f6b77;
+    font-size: 13px;
+}
+
+.dashboard-resume__options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 260px));
+    gap: 14px;
+}
+
+.dashboard-resume__option {
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+    padding: 18px;
+    border: 1px solid #dde6ee;
+    border-radius: 12px;
+    background: #fff;
+    color: #24394b;
+    text-align: left;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(14, 72, 125, .05);
+    transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.dashboard-resume__steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 34px 0 0;
+    padding: 18px 0 0;
+    border-top: 1px solid #e3eaf0;
+    list-style: none;
+}
+
+.dashboard-resume__steps li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 220px;
+    color: #4d5f70;
+    font-size: 12px;
+    text-align: left;
+}
+
+.dashboard-resume__steps b {
+    display: grid;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border-radius: 50%;
+    background: #075ca8;
+    color: #fff;
+    font-size: 12px;
+}
+
+.dashboard-resume__missing {
+    background:
+        radial-gradient(circle at 50% 38%, rgba(25, 118, 210, .10), transparent 46%),
+        repeating-linear-gradient(0deg, transparent 0 39px, rgba(11, 77, 137, .05) 39px 40px),
+        #fdfcf9;
+}
+
+.dashboard-resume__missing-icon { width: 76px; height: 76px; }
+.dashboard-resume__missing-icon .ui-icon { width: 32px; height: 32px; }
+.dashboard-resume__missing h2 { font-size: 28px; }
+.dashboard-resume__missing > p { font-size: 14px; }
+.dashboard-resume__options { grid-template-columns: repeat(2, minmax(0, 300px)); }
+.dashboard-resume__option { padding: 24px; border-top: 3px solid #075ca8; }
+.dashboard-resume__option strong { font-size: 15px; }
+
+.dashboard-resume__option .dashboard-resume__action-icon { margin-bottom: 8px; background: linear-gradient(135deg, #176bb2, #00549f); color: #fff; }
+.dashboard-resume__option strong { color: #0b4d89; font-size: 14px; }
+.dashboard-resume__option small { color: #778595; font-size: 12px; line-height: 1.4; }
+
+.dashboard-resume__option:hover,
+.dashboard-resume__option:focus-visible {
+    border-color: #1976d2;
+    box-shadow: 0 10px 24px rgba(0, 74, 148, .14);
+    transform: translateY(-2px);
+}
+
+.dashboard-resume__option:focus-visible { outline: 3px solid rgba(0, 84, 159, .3); outline-offset: 2px; }
+
+.dashboard-resume__file { margin: 0; }
+
+.dashboard-resume__file-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid #dbe6f0;
+    border-radius: 12px;
+    background: #f6faff;
+}
+
+.dashboard-resume__file-icon {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 10px;
+    background: #e1eefc;
+    color: #0b67b2;
+}
+
+.dashboard-resume__file-info { min-width: 0; flex: 1 1 180px; }
+.dashboard-resume__file-info small { display: block; color: #6b7c8f; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.dashboard-resume__file-info strong { display: block; overflow: hidden; color: #12345b; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+
+.dashboard-resume__file-bar a {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #00549f;
+    color: #fff;
+    font-size: 12px;
+    text-decoration: none;
+    transition: background-color .18s ease;
+}
+
+.dashboard-resume__file-bar a:hover { background: #063f7c; }
+
+.dashboard-resume__uploaded-preview {
+    min-height: calc(100vh - 230px);
+    border-radius: 10px;
+}
+
 .dashboard-resume__uploaded-preview {
     display: block;
     width: 100%;
-    min-height: 560px;
+    min-height: calc(100vh - 230px);
     margin-top: 16px;
     border: 1px solid #d6e2ef;
+    border-radius: 10px;
     background: #fff;
 }
 
 @media print {
     .dashboard-resume__editor,
-    .dashboard-resume__file a,
+    .dashboard-resume__file-bar,
+    .dashboard-resume__badge,
     .dashboard-resume__uploaded-preview {
         display: none !important;
     }
@@ -3972,7 +4469,7 @@ body.account-deleting .dashboard-shell {
     }
 
     .dashboard-shell.page-curriculo .sidebar,
-    .dashboard-shell.page-curriculo .dashboard-resume__generator,
+    .dashboard-shell.page-curriculo .dashboard-resume__side,
     .dashboard-shell.page-curriculo .dashboard-toast {
         display: none !important;
     }
@@ -3987,10 +4484,16 @@ body.account-deleting .dashboard-shell {
         display: block;
     }
 
-    .dashboard-shell.page-curriculo .dashboard-resume__paper {
+    .dashboard-shell.page-curriculo .dashboard-resume__header {
+        display: none;
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__paper,
+    .dashboard-shell.page-curriculo .dashboard-resume__paper [data-resume-content] {
         min-height: 0;
         padding: 0;
         border: 0;
+        background: #fff;
         box-shadow: none;
     }
 
@@ -4006,6 +4509,12 @@ body.account-deleting .dashboard-shell {
 
     .dashboard-shell.page-curriculo .dashboard-resume__content {
         grid-template-columns: minmax(0, 1fr);
+        min-height: 0;
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__paper {
+        border-left: 0;
+        border-top: 1px solid #dce4eb;
     }
 }
 
@@ -4015,25 +4524,48 @@ body.account-deleting .dashboard-shell {
     }
 
     .dashboard-shell.page-curriculo .lista-area {
-        padding: 22px 16px 30px;
+        padding: 0 !important;
     }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__header {
+        padding: 12px 16px;
+    }
+
+    .dashboard-resume__options {
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+    }
+
+    .dashboard-resume__missing { min-height: 0; padding: 32px 16px; }
 
     .dashboard-shell.page-curriculo .dashboard-resume__content {
         grid-template-columns: minmax(0, 1fr);
     }
 
     .dashboard-shell.page-curriculo .dashboard-resume__paper {
-        min-height: 360px;
-        padding: 26px 20px;
+        min-height: 320px;
+        padding: 18px 16px 26px;
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__paper [data-resume-content] {
+        padding: 22px 18px;
     }
 
     .dashboard-shell.page-curriculo .dashboard-resume__paper [data-resume-content] > h2 {
         margin-bottom: 22px;
-        font-size: 30px;
+        font-size: 26px;
     }
 
     .dashboard-shell.page-curriculo .dashboard-resume__actions > * {
         width: 100%;
+    }
+
+    .dashboard-resume__card .dashboard-resume__actions {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-shell.page-curriculo .dashboard-resume__header h1 {
+        font-size: 19px;
     }
 
     .dashboard-resume__actions {

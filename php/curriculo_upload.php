@@ -155,17 +155,58 @@ $mostrarEtapaAbnt = requestString($_GET, 'etapa') === 'abnt' && !empty($document
                 <?php if (!empty($documento['arquivo_nome'])): ?>
                     <p class="resume-upload-current">Arquivo atual: <strong><?= htmlspecialchars((string) $documento['arquivo_nome'], ENT_QUOTES, 'UTF-8') ?></strong></p>
                 <?php endif; ?>
-                <form method="post" enctype="multipart/form-data" class="resume-upload-form">
+                <form method="post" enctype="multipart/form-data" class="resume-upload-form" data-upload-form>
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                     <input type="hidden" name="action" value="upload">
-                    <label for="resume-file">Arquivo do currículo</label>
-                    <input id="resume-file" name="curriculo" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+                    <label class="resume-dropzone" for="resume-file" data-dropzone>
+                        <span class="resume-dropzone__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/></svg>
+                        </span>
+                        <strong data-dropzone-title>Arraste seu currículo aqui</strong>
+                        <small data-dropzone-hint>ou clique para escolher um arquivo · PDF, DOC ou DOCX · até 10 MB</small>
+                        <input id="resume-file" name="curriculo" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+                    </label>
                     <button class="resume-onboarding__button resume-onboarding__button--primary" type="submit">Enviar currículo</button>
                 </form>
-                <a class="resume-onboarding__back" href="pessoa.php?pagina=curriculo">Voltar para meu currículo</a>
+                <ul class="resume-upload-tips">
+                    <li>Arquivo privado, acessível apenas pela sua conta.</li>
+                    <li>Você poderá substituir o arquivo quando quiser.</li>
+                </ul>
+                <a class="resume-onboarding__back" href="pessoa.php?pagina=curriculo">← Voltar para meu currículo</a>
             <?php endif; ?>
         </section>
     </main>
+    <script>
+        (function () {
+            var form = document.querySelector('[data-upload-form]');
+            if (!form) return;
+            var zone = form.querySelector('[data-dropzone]');
+            var input = form.querySelector('input[type="file"]');
+            var title = form.querySelector('[data-dropzone-title]');
+            var hint = form.querySelector('[data-dropzone-hint]');
+            var defaults = [title.textContent, hint.textContent];
+            function update() {
+                var file = input.files && input.files[0];
+                zone.classList.toggle('has-file', !!file);
+                title.textContent = file ? file.name : defaults[0];
+                hint.textContent = file ? (file.size / 1048576).toFixed(2) + ' MB · clique para trocar' : defaults[1];
+            }
+            input.addEventListener('change', update);
+            ['dragenter', 'dragover'].forEach(function (name) {
+                zone.addEventListener(name, function (event) { event.preventDefault(); zone.classList.add('is-dragging'); });
+            });
+            ['dragleave', 'drop'].forEach(function (name) {
+                zone.addEventListener(name, function () { zone.classList.remove('is-dragging'); });
+            });
+            zone.addEventListener('drop', function (event) {
+                event.preventDefault();
+                if (event.dataTransfer && event.dataTransfer.files.length) {
+                    input.files = event.dataTransfer.files;
+                    update();
+                }
+            });
+        })();
+    </script>
     <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 </html>

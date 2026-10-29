@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
+require_once __DIR__ . '/MailerHelper.php';
 require_once __DIR__ . '/controllers/JobReports.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -42,21 +44,50 @@ try {
     $conn = getDatabaseConnection();
     try {
         ensureJobReportsSchema($conn);
-        submitJobReport(
+        $language = ProfileLanguagePreference::load($conn, $reporter['tipo'], (int) $reporter['id']);
+        $submittedReport = submitJobReport(
             $conn,
             $reporter,
             $jobId,
             is_string($input['motivo'] ?? null) ? trim($input['motivo']) : '',
             is_string($input['detalhes'] ?? null) ? trim($input['detalhes']) : ''
         );
+        $reportId = $submittedReport['id'];
+        $jobTitle = $submittedReport['titulo'];
     } finally {
         $conn->close();
     }
 
-    responderDenunciaVaga([
+    $warnings = [];
+    try {
+        appendPlatformChatNotification(
+            'job-report-submitted:' . $reportId,
+            (string) $reporter['tipo'],
+            (int) $reporter['id'],
+            'Support DevIN: Recebemos sua denúncia sobre a vaga "' . $jobTitle . '". Ela está sob análise da nossa equipe. Você receberá outra mensagem quando a análise for concluída.'
+        );
+    } catch (Throwable $exception) {
+        error_log('Falha ao enviar confirmação interna da denúncia de vaga: ' . $exception->getMessage());
+        $warnings[] = 'Não foi possível enviar a confirmação na aba de mensagens.';
+    }
+    if (!MailerHelper::enviarConfirmacaoDenuncia(
+        (string) $reporter['email'],
+        (string) $reporter['nome'],
+        'vaga',
+        $jobTitle,
+        $language
+    )) {
+        $warnings[] = 'Não foi possível enviar o e-mail de confirmação.';
+    }
+
+    $response = [
         'sucesso' => true,
         'mensagem' => 'Denúncia enviada para análise da equipe DevIN.',
-    ], 201);
+    ];
+    if ($warnings !== []) {
+        $response['avisos'] = $warnings;
+    }
+    responderDenunciaVaga($response, 201);
 } catch (InvalidArgumentException $exception) {
     responderDenunciaVaga(['sucesso' => false, 'mensagem' => $exception->getMessage()], 400);
 } catch (mysqli_sql_exception $exception) {

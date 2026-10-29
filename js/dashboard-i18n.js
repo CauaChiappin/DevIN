@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
     'use strict';
 
     const language = ['en', 'es'].includes(document.documentElement.lang) ? document.documentElement.lang : 'pt-BR';
@@ -164,6 +164,7 @@
             'Configurações': 'Settings',
             'Sair da Conta': 'Log out',
             'Pesquisar por nome ou habilidade...': 'Search by name or skill...',
+            'Pesquisar por nome ou e-mail...': 'Search by name or email...',
             'Filtros': 'Filters',
             'Disponíveis': 'Available',
             'Você ainda não se candidatou a nenhuma vaga.': 'You have not applied to any jobs yet.',
@@ -178,6 +179,8 @@
             'Denúncia enviada': 'Report submitted',
             'Denúncia enviada para análise da equipe DevIN.': 'Your report was sent to the DevIN team for review.',
             'Não foi possível enviar a denúncia.': 'Could not submit the report.',
+            'Não foi possível enviar a confirmação na aba de mensagens.': 'The confirmation could not be sent to your messages.',
+            'Não foi possível enviar o e-mail de confirmação.': 'The confirmation email could not be sent.',
             'Denunciar perfil': 'Report profile',
             'Este perfil simplificado mostra apenas o nome e o tipo de conta.': 'This simplified profile only shows the name and account type.',
             'Assédio ou comportamento abusivo': 'Harassment or abusive behavior',
@@ -299,6 +302,7 @@
             'Buscando pessoas e empresas...': 'Searching people and companies...',
             'Digite pelo menos 2 caracteres para buscar.': 'Enter at least 2 characters to search.',
             'Atualização automática': 'Live updates',
+            'Hoje': 'Today',
             'Ontem': 'Yesterday',
             'Excluir conversa': 'Delete conversation',
             'Opções da conversa': 'Conversation options',
@@ -387,6 +391,19 @@
             'O currículo foi gerado, mas não pôde ser salvo. Tente novamente.': 'The resume was generated but could not be saved. Please try again.',
             'Uma seção do currículo excede o limite de 6.000 caracteres.': 'A resume section exceeds the 6,000-character limit.',
             'Preencha ao menos uma seção antes de salvar.': 'Fill in at least one section before saving.',
+            'Enviar arquivo pronto': 'Upload a ready file',
+            'PDF ou Word que você já tem': 'A PDF or Word file you already have',
+            'Criar com ajuda da IA': 'Create with AI help',
+            'Preencha seus dados e a IA monta o texto': 'Fill in your details and the AI writes the text',
+            'Adicione seu currículo': 'Add your resume',
+            'Empresas veem seu perfil completo': 'Companies see your full profile',
+            'Candidate-se às vagas com um clique': 'Apply to jobs with one click',
+            'Gerenciar currículo': 'Manage resume',
+            'Pronto para candidaturas': 'Ready to apply',
+            'Excluir currículo': 'Delete resume',
+            'Currículo excluído.': 'Resume deleted.',
+            'Excluir seu currículo? Você precisará adicionar outro para se candidatar.': 'Delete your resume? You will need to add another one to apply.',
+            'Não foi possível excluir o currículo agora.': 'Could not delete the resume right now.',
             'Currículo atualizado.': 'Resume updated.',
             'Não foi possível salvar o currículo agora.': 'Could not save the resume right now.',
             'Nossa história': 'Our story',
@@ -422,6 +439,7 @@
             'Configurações': 'Configuración',
             'Sair da Conta': 'Cerrar sesión',
             'Pesquisar por nome ou habilidade...': 'Buscar por nombre o habilidad...',
+            'Pesquisar por nome ou e-mail...': 'Buscar por nombre o correo electrónico...',
             'Filtros': 'Filtros',
             'Nenhum resultado encontrado.': 'No se encontraron resultados.',
             'Disponíveis': 'Disponibles',
@@ -436,6 +454,8 @@
             'Denúncia enviada': 'Denuncia enviada',
             'Denúncia enviada para análise da equipe DevIN.': 'La denuncia se envió al equipo de DevIN para su revisión.',
             'Não foi possível enviar a denúncia.': 'No se pudo enviar la denuncia.',
+            'Não foi possível enviar a confirmação na aba de mensagens.': 'No se pudo enviar la confirmación a tus mensajes.',
+            'Não foi possível enviar o e-mail de confirmação.': 'No se pudo enviar el correo de confirmación.',
             'Denunciar perfil': 'Denunciar perfil',
             'Este perfil simplificado mostra apenas o nome e o tipo de conta.': 'Este perfil simplificado solo muestra el nombre y el tipo de cuenta.',
             'Assédio ou comportamento abusivo': 'Acoso o comportamiento abusivo',
@@ -557,6 +577,7 @@
             'Buscando pessoas e empresas...': 'Buscando personas y empresas...',
             'Digite pelo menos 2 caracteres para buscar.': 'Escribe al menos 2 caracteres para buscar.',
             'Atualização automática': 'Actualización automática',
+            'Hoje': 'Hoy',
             'Ontem': 'Ayer',
             'Excluir conversa': 'Eliminar conversación',
             'Opções da conversa': 'Opciones de conversación',
@@ -645,6 +666,19 @@
             'O currículo foi gerado, mas não pôde ser salvo. Tente novamente.': 'Se generó el currículum, pero no se pudo guardar. Inténtalo de nuevo.',
             'Uma seção do currículo excede o limite de 6.000 caracteres.': 'Una sección del currículum supera el límite de 6.000 caracteres.',
             'Preencha ao menos uma seção antes de salvar.': 'Completa al menos una sección antes de guardar.',
+            'Enviar arquivo pronto': 'Subir un archivo listo',
+            'PDF ou Word que você já tem': 'Un PDF o Word que ya tienes',
+            'Criar com ajuda da IA': 'Crear con ayuda de la IA',
+            'Preencha seus dados e a IA monta o texto': 'Completa tus datos y la IA arma el texto',
+            'Adicione seu currículo': 'Agrega tu currículum',
+            'Empresas veem seu perfil completo': 'Las empresas ven tu perfil completo',
+            'Candidate-se às vagas com um clique': 'Postúlate a vacantes con un clic',
+            'Gerenciar currículo': 'Gestionar currículum',
+            'Pronto para candidaturas': 'Listo para postulaciones',
+            'Excluir currículo': 'Eliminar currículum',
+            'Currículo excluído.': 'Currículum eliminado.',
+            'Excluir seu currículo? Você precisará adicionar outro para se candidatar.': '¿Eliminar tu currículum? Deberás añadir otro para postularte.',
+            'Não foi possível excluir o currículo agora.': 'No se pudo eliminar el currículum ahora.',
             'Currículo atualizado.': 'Currículum actualizado.',
             'Não foi possível salvar o currículo agora.': 'No se pudo guardar el currículum ahora.',
             'Nossa história': 'Nuestra historia',
@@ -932,6 +966,22 @@
             'Vaga mantida': 'Job kept',
             'Vaga excluída': 'Job deleted',
             'Denunciante': 'Reporter',
+            'Perfil denunciado': 'Reported profile',
+            'Support DevIN': 'Support DevIN',
+            'Denúncia #': 'Report #',
+            'Vaga #': 'Job #',
+            'Enviada em': 'Submitted at',
+            'Motivo': 'Reason',
+            'Análise': 'Review',
+            'Mensagem da denúncia': 'Report details',
+            'Relato da denúncia': 'Report statement',
+            'Dados da denúncia': 'Report information',
+            'E-mail do perfil': 'Profile email',
+            'E-mail do denunciante': 'Reporter email',
+            'E-mail da empresa': 'Company email',
+            'A denúncia foi aceita. O perfil denunciado foi removido e o denunciante foi notificado.': 'Report accepted. The reported profile was removed, and the reporter was notified.',
+            'A denúncia foi recusada. O perfil foi mantido e o denunciante foi notificado.': 'Report declined. The profile was kept, and the reporter was notified.',
+            'Decisão registrada, mas não foi possível enviar a mensagem ao denunciante.': 'Decision recorded, but the reporter could not be notified.',
             'Detalhes do registro': 'Record details',
             'Informacoes da plataforma': 'Platform information',
             'Informacao disponivel': 'Information available',
@@ -960,6 +1010,7 @@
             'Cadastro na plataforma': 'Platform registration',
             'CNPJ': 'Company tax ID',
             'Denunciante:': 'Reporter:',
+            'Pesquisar por vaga ...': 'Search for a job...',
             'Todos': 'All',
             'Detalhes da vaga': 'Job details',
             'Sobre': 'About',
@@ -1224,6 +1275,22 @@
             'Vaga mantida': 'Empleo mantenido',
             'Vaga excluída': 'Empleo eliminado',
             'Denunciante': 'Denunciante',
+            'Perfil denunciado': 'Perfil reportado',
+            'Support DevIN': 'Support DevIN',
+            'Denúncia #': 'Denuncia #',
+            'Vaga #': 'Empleo #',
+            'Enviada em': 'Enviada el',
+            'Motivo': 'Motivo',
+            'Análise': 'Revisión',
+            'Mensagem da denúncia': 'Detalles de la denuncia',
+            'Relato da denúncia': 'Relato de la denuncia',
+            'Dados da denúncia': 'Datos de la denuncia',
+            'E-mail do perfil': 'Correo electrónico del perfil',
+            'E-mail do denunciante': 'Correo de quien denunció',
+            'E-mail da empresa': 'Correo de la empresa',
+            'A denúncia foi aceita. O perfil denunciado foi removido e o denunciante foi notificado.': 'Denuncia aceptada. El perfil reportado fue eliminado y se notificó a quien la presentó.',
+            'A denúncia foi recusada. O perfil foi mantido e o denunciante foi notificado.': 'Denuncia rechazada. El perfil se mantuvo y se notificó a quien la presentó.',
+            'Decisão registrada, mas não foi possível enviar a mensagem ao denunciante.': 'Decisión registrada, pero no se pudo enviar un mensaje a quien presentó la denuncia.',
             'Detalhes do registro': 'Detalles del registro',
             'Informacoes da plataforma': 'Información de la plataforma',
             'Informacao disponivel': 'Información disponible',
@@ -1252,6 +1319,7 @@
             'Cadastro na plataforma': 'Registro en la plataforma',
             'CNPJ': 'Identificación fiscal',
             'Denunciante:': 'Denunciante:',
+            'Pesquisar por vaga ...': 'Buscar empleo...',
             'Todos': 'Todos',
             'Detalhes da vaga': 'Detalles del empleo',
             'Sobre': 'Acerca de',
@@ -1364,17 +1432,24 @@
         const translated = translate(node.nodeValue);
         if (translated !== node.nodeValue) node.nodeValue = translated;
     };
+    const translateAttributes = (element) => {
+        const elements = [element, ...element.querySelectorAll(
+            translatedAttributes.map((attribute) => `[${attribute}]`).join(',')
+        )];
+        elements.forEach((target) => {
+            for (const attribute of translatedAttributes) {
+                if (!target.hasAttribute(attribute)) continue;
+                const value = target.getAttribute(attribute);
+                const translated = translate(value);
+                if (translated !== value) target.setAttribute(attribute, translated);
+            }
+        });
+    };
     const translateElement = (element) => {
         const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
         let node;
         while ((node = walker.nextNode())) translateTextNode(node);
-        for (const attribute of translatedAttributes) {
-            if (element.hasAttribute(attribute)) {
-                const value = element.getAttribute(attribute);
-                const translated = translate(value);
-                if (translated !== value) element.setAttribute(attribute, translated);
-            }
-        }
+        translateAttributes(element);
     };
 
     translateElement(document.body);
