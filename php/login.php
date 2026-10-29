@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../css/login.css?v=<?= filemtime(__DIR__ . '/../css/login.css') ?>">
     <link rel="stylesheet" href="../css/style.css?v=<?= filemtime(__DIR__ . '/../css/style.css') ?>">
     <link rel="stylesheet" href="../css/site-navigation.css">
+    <script src="../js/index-language.js"></script>
     <title>DevIN | Login</title>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 </head>
@@ -85,6 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="acoes">
                     <a class="botao botao-branco" href="cadastro_pessoa.php">Cadastrar-se</a>
+                    <label class="language-picker" for="site-language">
+                        <span>Idioma</span>
+                        <select id="site-language" aria-label="Idioma">
+                            <option value="pt-BR">Português</option>
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                        </select>
+                    </label>
                 </div>
             </div>
         </nav>
@@ -135,6 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
     <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
+    <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
 </body>
 
 </html>

@@ -103,7 +103,7 @@ if (loginForm && !loginCsrfInput) {
             await loginCsrfRequest;
             loginForm.requestSubmit(event.submitter);
         } catch (error) {
-            window.alert('Nao foi possivel preparar o login. Atualize a pagina e tente novamente.');
+            window.alert((window.DevINTranslate || ((text) => text))('Nao foi possivel preparar o login. Atualize a pagina e tente novamente.'));
         }
     });
 }

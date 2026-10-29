@@ -1,50 +1,65 @@
-:root { --bg: #f8f7f2; --blue: #004a94; --text: #111111; --white: #ffffff; }
+:root { --bg: #f8f7f2; --blue: #004a94; --text: #111827; --muted: #4b5563; --white: #ffffff; --line: #e3e1d9; }
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+html, body { max-width: 100%; overflow-x: hidden; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', Arial, sans-serif; }
 a { text-decoration: none; }
-.cabecalho-site { width: min(80%, 1280px); height: 83px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+
+.cabecalho-site { width: min(1160px, calc(100% - 48px)); height: 83px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
 .marca { color: var(--text); font-size: 28px; font-weight: 700; }
 .marca span, footer span { color: var(--blue); }
-.cabecalho-site > .voltar { display: none; }
-.voltar { min-height: 40px; display: inline-flex; align-items: center; padding: 0 18px; border: 2px solid var(--blue); border-radius: 11px; color: var(--blue); font-weight: 600; transition: .2s ease; }
-.voltar:hover { color: var(--white); background: var(--blue); transform: translateY(-1px); }
-.pagina-politica { width: min(900px, calc(100% - 40px)); margin: 48px auto 70px; }
-/* O cabeçalho em gradiente destaca título e resumo antes das seções legais. */
-.hero-politica { padding: 46px 56px; border-radius: 30px; color: var(--white); background: linear-gradient(125deg, #003a76, #0755a7); box-shadow: 0 20px 45px rgba(0, 74, 148, .2); }
-.eyebrow { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .12em; opacity: .8; }
-h1 { margin: 0; font-size: clamp(32px, 5vw, 48px); line-height: 1.12; }
-.hero-politica > p:not(.eyebrow) { max-width: 650px; margin: 18px 0; font-size: 17px; }
-.hero-politica small { opacity: .8; }
-.conteudo-politica { margin-top: 28px; padding: 42px 56px; border-radius: 28px; background: var(--white); box-shadow: 0 16px 35px rgba(0, 0, 0, .08); }
-.conteudo-politica section + section { margin-top: 30px; }
-h2 { margin: 0 0 8px; color: var(--blue); font-size: 19px; }
-.conteudo-politica p { margin: 0; color: #4e5360; font-size: 14px; line-height: 1.8; }
-.aviso-lgpd { margin-top: 36px; padding: 20px 22px; border-left: 4px solid var(--blue); border-radius: 0 14px 14px 0; background: #edf5ff; }
-.aviso-lgpd strong { color: var(--blue); }
-.aviso-lgpd p { margin-top: 6px; }
-footer { padding: 24px; border-top: 1px solid #e3e1d9; color: #555; font-size: 13px; text-align: center; }
-@media (max-width: 600px) { .cabecalho-site { width: calc(100% - 32px); height: 72px; } .marca { font-size: 25px; } .voltar { min-height: 36px; padding: 0 13px; font-size: 13px; } .pagina-politica { width: min(100% - 28px, 900px); margin-top: 26px; } .hero-politica, .conteudo-politica { padding: 30px 24px; border-radius: 22px; } }
+.cabecalho-site .site-menu { display: flex; align-items: center; gap: 12px; }
+.language-picker { display: inline-flex; }
+.voltar { min-height: 40px; display: inline-flex; align-items: center; padding: 0 20px; border: 1px solid rgba(0, 74, 148, .3); border-radius: 999px; color: var(--blue); font-size: 14px; font-weight: 600; transition: .2s ease; }
+.voltar:hover { color: var(--white); background: var(--blue); border-color: var(--blue); }
 
-html,
-body { max-width: 100%; overflow-x: hidden; }
+.pagina-politica { width: min(1160px, calc(100% - 48px)); margin: 24px auto 96px; }
 
-@media (max-width: 600px) {
-    .cabecalho-site {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 10px;
-        height: 72px;
-        width: calc(100% - 32px);
-    }
-    .cabecalho-site .site-menu-toggle { display: inline-flex; justify-self: end; }
-    .cabecalho-site .site-menu {
-        background: var(--bg);
-        border: 1px solid #e3e1d9;
-        border-radius: 0 0 16px 16px;
-        display: none;
-        grid-column: 1 / -1;
-        padding: 12px;
-    }
+.hero-politica { position: relative; overflow: hidden; padding: 64px 56px; border-radius: 32px; color: var(--white); background: linear-gradient(125deg, #003a76 0%, #0a5cb5 100%); box-shadow: 0 24px 50px rgba(0, 74, 148, .22); }
+.hero-politica::before, .hero-politica::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .14); pointer-events: none; }
+.hero-politica::before { width: 380px; height: 380px; right: -90px; top: -150px; }
+.hero-politica::after { width: 240px; height: 240px; right: 120px; bottom: -150px; }
+.eyebrow { display: inline-block; margin: 0 0 16px; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, .14); font-size: 12px; font-weight: 700; letter-spacing: .12em; }
+h1 { margin: 0; font-size: clamp(34px, 5vw, 54px); line-height: 1.1; font-weight: 600; }
+.hero-politica > p:not(.eyebrow) { max-width: 640px; margin: 20px 0 22px; font-size: 18px; line-height: 1.6; opacity: .92; }
+.hero-politica small { display: inline-block; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .22); opacity: .85; font-size: 13px; }
+
+.politica-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 32px; margin-top: 32px; align-items: start; }
+
+.indice-politica { position: sticky; top: 24px; display: grid; gap: 4px; padding: 22px; border: 1px solid var(--line); border-radius: 24px; background: var(--white); }
+.indice-politica h2 { margin: 0 0 10px; color: var(--muted); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+.indice-politica a { padding: 10px 12px; border-radius: 12px; color: var(--text); font-size: 14px; font-weight: 500; transition: .2s ease; }
+.indice-politica a:hover { background: rgba(0, 74, 148, .08); color: var(--blue); }
+
+.conteudo-politica { display: grid; gap: 16px; }
+.conteudo-politica section { display: grid; grid-template-columns: auto 1fr; gap: 24px; padding: 32px 36px; border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 22px; background: var(--white); transition: box-shadow .2s ease, transform .2s ease; }
+.conteudo-politica section:hover { box-shadow: 0 16px 34px rgba(0, 74, 148, .1); transform: translateY(-2px); }
+.numero { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: rgba(0, 74, 148, .09); color: var(--blue); font-size: 15px; font-weight: 700; }
+.conteudo-politica h2 { margin: 2px 0 10px; color: var(--text); font-size: 20px; font-weight: 600; }
+.conteudo-politica p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
+
+.aviso-lgpd { margin-top: 8px; padding: 24px 28px; border: 1px solid rgba(0, 74, 148, .18); border-radius: 22px; background: #edf5ff; }
+.aviso-lgpd strong { color: var(--blue); font-size: 15px; }
+.aviso-lgpd p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+footer { padding: 28px 24px; border-top: 1px solid var(--line); color: #555; font-size: 13px; text-align: center; }
+
+@media (max-width: 960px) {
+    .politica-layout { grid-template-columns: 1fr; }
+    .indice-politica { position: static; grid-template-columns: 1fr 1fr; }
+    .indice-politica h2 { grid-column: 1 / -1; }
+}
+
+@media (max-width: 720px) {
+    .cabecalho-site { display: grid; grid-template-columns: 1fr auto; gap: 10px; height: 72px; width: calc(100% - 32px); }
+    .marca { font-size: 25px; }
+    .cabecalho-site .site-menu-toggle { justify-self: end; }
+    .cabecalho-site .site-menu { display: none; grid-column: 1 / -1; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 0 0 16px 16px; background: var(--bg); position: relative; z-index: 20; }
     .cabecalho-site .site-menu.is-open { display: grid; }
     .cabecalho-site .voltar { justify-content: center; width: 100%; }
+    .pagina-politica { width: calc(100% - 28px); margin-top: 16px; }
+    .hero-politica { padding: 40px 26px; border-radius: 24px; }
+    .hero-politica > p:not(.eyebrow) { font-size: 16px; }
+    .indice-politica { grid-template-columns: 1fr; }
+    .conteudo-politica section { grid-template-columns: 1fr; gap: 14px; padding: 24px 22px; }
 }
