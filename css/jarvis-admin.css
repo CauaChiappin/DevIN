@@ -1,7 +1,7 @@
 /* JARVIS Admin: componente isolado do dashboard existente. */
 .jarvis-admin{position:fixed;left:18px;bottom:18px;z-index:1100;font-family:inherit;color:#19334d}
 .jarvis-admin *{box-sizing:border-box}
-.jarvis-admin__launcher{display:flex;align-items:center;gap:9px;min-height:54px;padding:0 17px;border:1px solid #5ba4fa;border-radius:999px;background:linear-gradient(135deg,#083b79,#0069cb);color:#fff;box-shadow:0 8px 26px #002b6260;cursor:pointer;font:700 14px inherit}
+.jarvis-admin__launcher{display:flex;align-items:center;gap:9px;min-height:54px;padding:0 17px;border:1px solid #5ba4fa;border-radius:999px;background:linear-gradient(135deg,#083b79,#0069cb);color:#fff;box-shadow:0 8px 26px #002b6260;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700}
 .jarvis-admin__launcher>span:first-child{font-size:25px}
 .jarvis-admin__panel{position:absolute;bottom:68px;left:0;display:flex;flex-direction:column;width:min(410px,calc(100vw - 28px));height:min(580px,calc(100dvh - 110px));background:#fff;border:1px solid #d9e4f0;border-radius:18px;box-shadow:0 18px 50px #112c4b45;overflow:hidden}
 .jarvis-admin__panel[hidden]{display:none}
@@ -24,7 +24,7 @@
 .jarvis-admin__quick-actions button{background:#e9f3ff;color:#075aa8;border:1px solid #c4def9;border-radius:999px;padding:6px 11px;font-size:12px;cursor:pointer}
 .jarvis-admin__status{min-height:17px;margin:0;padding:0 14px;background:#fff;color:#546e84;font-size:11px}
 .jarvis-admin__composer{display:flex;gap:8px;align-items:flex-end;padding:8px 11px 3px;background:#fff}
-.jarvis-admin__composer textarea{flex:1;min-height:42px;max-height:150px;resize:none;overflow:auto;padding:10px 12px;border:1px solid #c9d8e8;border-radius:13px;background:#fff;color:#182d46;font:13px/1.45 inherit}
+.jarvis-admin__composer textarea{flex:1;min-height:42px;max-height:150px;resize:none;overflow:auto;padding:10px 12px;border:1px solid #c9d8e8;border-radius:13px;background:#fff;color:#182d46;font-family:inherit;font-size:13px;line-height:1.45}
 .jarvis-admin__composer textarea:focus{outline:2px solid #8dbff8;outline-offset:1px}
 .jarvis-admin__composer button{width:42px;height:42px;flex:none;border:0;border-radius:12px;background:#0765ba;color:#fff;font-size:20px;cursor:pointer}
 .jarvis-admin__composer button:disabled{opacity:.5;cursor:wait}
