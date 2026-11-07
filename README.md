@@ -30,9 +30,9 @@ São rotas PHP do **próprio projeto**, acessadas pelo frontend com `fetch()` ou
 | `php/analisar_curriculo_abnt_api.php` | Solicitar análise de currículo via Gemini |
 | `php/arcade_unlock.php` | Liberar o arcade após verificação da sequência no dashboard |
 | `php/arcade_api.php` | Iniciar partidas, consultar/salvar progresso e administrar pontuações |
-| `php/api/jarvis/chat.php` | **Branch `feature/jarvis-admin`**: chat ADM e resumo agregado de pessoas, empresas, vagas e reports; protegido por sessão administrativa, CSRF e limite de uso |
+| `php/api/jarvis/chat.php` | **Branch `feature/jarvis-admin`**: chat ADM com memória MySQL por administrador e resumo de indicadores agregados |\n| `php/api/jarvis/conversations.php` | Recuperar, pesquisar e excluir conversas do JARVIS isoladas por ADM |\n| `php/api/jarvis/tasks.php` | Central de atividades: criar tarefas, registrar andamento e cancelamento com trilha de auditoria |
 
-**Ainda planejados, não implementados:** `php/api/jarvis/conversations.php`, `action-confirm.php` e `action-cancel.php`, além de ferramentas para consultas detalhadas, memória persistente e ações administrativas com confirmação e auditoria. O protótipo atual do JARVIS **não executa exclusões, aprovações nem mudanças no banco a pedido do modelo**. Consulte `docs/jarvis-admin.md` para o escopo e as limitações desta fase.
+**Ainda planejados, não implementados:** `action-confirm.php` e `action-cancel.php` para ações **reais** do painel; ferramentas de consulta detalhada, busca semântica e execução de ações com confirmação e auditoria. A memória e a fila de atividades agora utilizam tabelas próprias do MySQL. Mudar o estado de uma tarefa não modifica contas, vagas ou denúncias. Consulte `docs/jarvis-admin.md` para o escopo e as limitações desta fase.
 
 ### Outras integrações e tecnologias (não são APIs REST externas)
 
@@ -57,7 +57,7 @@ DEVIN_JARVIS_MODEL=
 DEVIN_JARVIS_API_KEY=
 ```
 
-Antes de usar dados reais com um provedor de IA, revise os termos de uso, os limites do plano e a política de privacidade. Evite enviar CPF, credenciais e outros dados pessoais desnecessários. As APIs internas devem permanecer protegidas mesmo que um usuário descubra seus endereços.
+Para habilitar a memória e a central de atividades, aplique primeiro `database/migrations/jarvis_admin.sql` em um banco de desenvolvimento (com backup). O ID de exemplo GLM gratuito é do OpenRouter, sujeito a cotas e mudanças. Veja `docs/jarvis-admin.md` para instalação e testes.\n\nAntes de usar dados reais com um provedor de IA, revise os termos de uso, os limites do plano e a política de privacidade. Evite enviar CPF, credenciais e outros dados pessoais desnecessários. As APIs internas devem permanecer protegidas mesmo que um usuário descubra seus endereços.
 
 ---
 
