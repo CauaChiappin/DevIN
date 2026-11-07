@@ -1,6 +1,66 @@
 # DevIN
 TCC - Alcina Dantas Feijão 2026. Site com o propósito de ajudar as pessoas que queiram e trabalhem na área de Dev, e ajudar as empresas a contratar essas pessoas.
 
+## APIs e integrações utilizadas
+
+Esta seção diferencia **APIs externas**, consumidas pelo servidor PHP, das **APIs internas** criadas pelo próprio DevIN. A presença de uma integração no código **não significa** que sua credencial esteja configurada ou que o serviço tenha sido testado na hospedagem.
+
+### APIs externas (serviços de terceiros)
+
+| Serviço | Tipo / protocolo | Utilização no DevIN | Código e configuração | Estado |
+| --- | --- | --- | --- | --- |
+| **Google Gemini API** | HTTP(S) REST/JSON, `generateContent` | Gerar ou melhorar textos de currículos e analisar currículo segundo critérios ABNT | `php/gerar_curriculo_api.php`, `php/analisar_curriculo_abnt_api.php`; `DEVIN_GEMINI_API_KEY` e `DEVIN_GEMINI_MODEL` | Integração implementada; exige chave válida e cota disponível |
+| **MyMemory Translation API** | HTTP(S) GET/JSON | Traduzir mensagens sob solicitação do usuário | `php/mensagens_api.php`; não requer chave na implementação atual | Integração implementada; sujeita aos limites e à disponibilidade do serviço |
+| **Groq API** | HTTP(S) POST/JSON, interface Chat Completions compatível com OpenAI | Chat do JARVIS Admin | `php/api/jarvis/chat.php`; `DEVIN_JARVIS_PROVIDER=groq` | Opção implementada na branch `feature/jarvis-admin`; requer configuração |
+| **OpenRouter API** | HTTP(S) POST/JSON, interface Chat Completions compatível com OpenAI | Chat do JARVIS Admin | `php/api/jarvis/chat.php`; `DEVIN_JARVIS_PROVIDER=openrouter` | Opção implementada na branch `feature/jarvis-admin`; requer configuração |
+| **OpenAI API** | HTTP(S) POST/JSON, Chat Completions | Chat do JARVIS Admin | `php/api/jarvis/chat.php`; `DEVIN_JARVIS_PROVIDER=openai` | Opção implementada na branch `feature/jarvis-admin`; requer configuração |
+
+**Importante:** Groq, OpenRouter e OpenAI são **alternativas de provedor** para o JARVIS Admin. Na primeira fase, o servidor seleciona apenas **um** por configuração; não há fallback automático entre provedores. O JARVIS Admin **não** utiliza automaticamente a chave Gemini empregada nos currículos. A seleção de um modelo gratuito depende das opções, cotas e políticas vigentes de cada provedor. Não presuma que o uso seja ilimitado ou gratuito.
+
+### APIs HTTP internas do DevIN
+
+São rotas PHP do **próprio projeto**, acessadas pelo frontend com `fetch()` ou requisições HTTP. A maioria retorna JSON, controla sessão/permissões e valida CSRF quando aplicável. São APIs internas *estilo REST*, mas não constituem uma API pública versionada.
+
+| Endpoint | Função principal |
+| --- | --- |
+| `php/csrf.php` | Fornecer token CSRF à interface para proteger requisições |
+| `php/mensagens_api.php` | Conversas entre usuários/empresas, mensagens, tradução e denúncias de perfil |
+| `php/denunciar_vaga_api.php` | Registrar denúncias de vagas autenticadas |
+| `php/gerar_curriculo_api.php` | Solicitar geração de currículo via Gemini com consentimento |
+| `php/analisar_curriculo_abnt_api.php` | Solicitar análise de currículo via Gemini |
+| `php/arcade_unlock.php` | Liberar o arcade após verificação da sequência no dashboard |
+| `php/arcade_api.php` | Iniciar partidas, consultar/salvar progresso e administrar pontuações |
+| `php/api/jarvis/chat.php` | **Branch `feature/jarvis-admin`**: chat ADM e resumo agregado de pessoas, empresas, vagas e reports; protegido por sessão administrativa, CSRF e limite de uso |
+
+**Ainda planejados, não implementados:** `php/api/jarvis/conversations.php`, `action-confirm.php` e `action-cancel.php`, além de ferramentas para consultas detalhadas, memória persistente e ações administrativas com confirmação e auditoria. O protótipo atual do JARVIS **não executa exclusões, aprovações nem mudanças no banco a pedido do modelo**. Consulte `docs/jarvis-admin.md` para o escopo e as limitações desta fase.
+
+### Outras integrações e tecnologias (não são APIs REST externas)
+
+- **SMTP** (Gmail, Outlook ou outro provedor configurado): envio de e-mails com **PHPMailer**, em `php/MailerHelper.php`. É um protocolo de e-mail, **não** uma API HTTP. Variáveis `DEVIN_SMTP_*`.
+- **MySQL**: armazenamento e consultas pelo driver PHP **`mysqli`**, via `php/config/database.php`; não é um serviço de IA nem uma API HTTP do projeto.
+- **JWT, sessão PHP e CSRF**: mecanismos de autenticação/proteção, não provedores externos. Arquivos `php/auth/Jwt.php`, `php/middlewares/auth.php` e `php/config/security.php`.
+- **Google Fonts**: recurso de tipografia carregado pelo navegador em algumas páginas; não é utilizado como API de negócios nem exige API Key.
+- **GitHub / ChatGPT Codex Connector**: ferramentas do fluxo de desenvolvimento e revisão de código; **não** são chamadas pelo DevIN em execução para atender usuários.
+
+### Configuração da IA no servidor
+
+O `.env` local deve permanecer fora do Git. Nunca coloque chaves no JavaScript, HTML, README ou em commits. Exemplo de **nomes de variáveis**, sem valores secretos:
+
+```dotenv
+# Gemini: geração e análise de currículos
+DEVIN_GEMINI_API_KEY=
+DEVIN_GEMINI_MODEL=gemini-2.5-flash-lite
+
+# JARVIS Admin (um provedor de cada vez: groq, openrouter ou openai)
+DEVIN_JARVIS_PROVIDER=groq
+DEVIN_JARVIS_MODEL=
+DEVIN_JARVIS_API_KEY=
+```
+
+Antes de usar dados reais com um provedor de IA, revise os termos de uso, os limites do plano e a política de privacidade. Evite enviar CPF, credenciais e outros dados pessoais desnecessários. As APIs internas devem permanecer protegidas mesmo que um usuário descubra seus endereços.
+
+---
+
 ## E-mails e lembrete de currículo
 
 Preencha o `.env` na raiz do projeto com os dados do seu provedor SMTP. Um modelo também está disponível em `.env.example`. As variáveis usadas são:
