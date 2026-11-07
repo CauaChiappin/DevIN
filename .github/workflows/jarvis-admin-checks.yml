@@ -1,0 +1,28 @@
+name: JARVIS Admin — syntax checks
+on:
+  pull_request:
+    paths:
+      - 'php/api/jarvis/**'
+      - 'php/controllers/Jarvis/**'
+      - 'php/components/jarvis-admin-widget.php'
+      - 'js/jarvis-admin.js'
+      - 'php/adm.php'
+      - '.github/workflows/jarvis-admin-checks.yml'
+  push:
+    branches:
+      - 'feature/jarvis-admin'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax
+        run: |
+          php -v
+          php -l php/adm.php
+          php -l php/components/jarvis-admin-widget.php
+          for f in php/api/jarvis/*.php php/controllers/Jarvis/*.php; do php -l "$f"; done
+      - name: JavaScript syntax
+        run: node --check js/jarvis-admin.js
