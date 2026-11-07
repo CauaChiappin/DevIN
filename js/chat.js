@@ -27,6 +27,7 @@
     const profileReportReason = profileDialog?.querySelector('[data-chat-profile-reason]');
     const profileReportDetails = profileDialog?.querySelector('[data-chat-profile-details]');
     const profileStatus = profileDialog?.querySelector('[data-chat-profile-status]');
+    const profileFeedbackToast = profileStatus?.closest('[data-feedback-toast]');
     const profileSubmitButton = profileDialog?.querySelector('[data-chat-profile-submit]');
     const backToContactsButton = app.querySelector('[data-chat-back]');
     const profileTrigger = app.querySelector('[data-chat-profile-open]');
@@ -232,17 +233,7 @@
         const date = new Date(message.enviada_em);
         time.dateTime = message.enviada_em;
         if (!Number.isNaN(date.getTime())) {
-            const now = new Date();
-            const yesterday = new Date(now);
-            yesterday.setDate(now.getDate() - 1);
-            const sameDay = (first, second) => first.toDateString() === second.toDateString();
-            const formattedTime = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
-
-            time.textContent = sameDay(date, now)
-                ? formattedTime
-                : sameDay(date, yesterday)
-                    ? `${translate('Ontem')}, ${formattedTime}`
-                    : `${date.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' })} ${formattedTime}`;
+            time.textContent = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
         }
         bubble.append(text, time);
 
@@ -320,6 +311,24 @@
         if (existingBubble) {
             existingBubble.replaceWith(bubble);
         } else {
+            const dayKey = Number.isNaN(date.getTime()) ? '' : date.toDateString();
+            bubble.dataset.chatDay = dayKey;
+            const lastBubble = messagesElement.querySelector('.chat-bubble:last-of-type');
+            if (dayKey && (!lastBubble || lastBubble.dataset.chatDay !== dayKey)) {
+                const now = new Date();
+                const yesterday = new Date(now);
+                yesterday.setDate(now.getDate() - 1);
+                const separator = document.createElement('div');
+                separator.className = 'chat-day-separator';
+                const label = document.createElement('span');
+                label.textContent = dayKey === now.toDateString()
+                    ? translate('Hoje')
+                    : dayKey === yesterday.toDateString()
+                        ? translate('Ontem')
+                        : date.toLocaleDateString(locale, { day: '2-digit', month: 'long', year: 'numeric' });
+                separator.appendChild(label);
+                messagesElement.appendChild(separator);
+            }
             messagesElement.appendChild(bubble);
         }
     };
@@ -426,7 +435,7 @@
             profileNameElement.textContent = data.perfil.nome;
             profileTypeElement.textContent = translate(data.perfil.rotulo);
             profileAvatarElement.textContent = initials(data.perfil.nome);
-            profileStatus.textContent = '';
+            profileFeedbackToast.hidden = true;
             profileReportForm.reset();
             profileReportForm.hidden = true;
             profileReportButton.hidden = false;
@@ -444,13 +453,14 @@
     profileReportButton?.addEventListener('click', () => {
         profileReportButton.hidden = true;
         profileReportForm.hidden = false;
+        profileFeedbackToast.hidden = true;
         profileReportReason.focus();
     });
 
     profileDialog?.querySelector('[data-chat-profile-report-cancel]')?.addEventListener('click', () => {
         profileReportForm.hidden = true;
         profileReportButton.hidden = false;
-        profileStatus.textContent = '';
+        profileFeedbackToast.hidden = true;
     });
 
     profileDialog?.querySelector('[data-chat-profile-close]')?.addEventListener('click', () => {
@@ -462,7 +472,7 @@
         if (!profileReportTarget) return;
 
         profileSubmitButton.disabled = true;
-        profileStatus.textContent = '';
+        profileFeedbackToast.hidden = true;
         try {
             const data = await request({}, {
                 method: 'POST',
@@ -475,11 +485,16 @@
                     detalhes: profileReportDetails.value,
                 }),
             });
-            profileStatus.textContent = translate(data.mensagem || 'Denúncia enviada para análise da equipe DevIN.');
+            const warnings = Array.isArray(data.avisos) ? data.avisos.map(translate) : [];
+            window.DevINShowToast?.(
+                profileFeedbackToast,
+                [translate(data.mensagem || 'Denúncia enviada para análise da equipe DevIN.'), ...warnings].join(' '),
+                warnings.length > 0 ? 'warning' : 'success'
+            );
             profileReportForm.hidden = true;
             profileReportButton.hidden = true;
         } catch (error) {
-            profileStatus.textContent = error.message;
+            window.DevINShowToast?.(profileFeedbackToast, error.message, 'error');
         } finally {
             profileSubmitButton.disabled = false;
         }

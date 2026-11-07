@@ -83,6 +83,28 @@ final class ResumeDocument
         return $previousPath !== '' && $previousPath !== $relativePath ? $previousPath : null;
     }
 
+    /** Remove o currículo estruturado, o documento e o arquivo enviado da pessoa. */
+    public static function deleteAll(mysqli $connection, int $personId): void
+    {
+        $previous = self::find($connection, $personId);
+
+        $connection->begin_transaction();
+        try {
+            foreach (['DELETE FROM curriculo_documentos WHERE id_pessoa = ?', 'DELETE FROM curriculo WHERE id_pessoa = ?'] as $sql) {
+                $statement = $connection->prepare($sql);
+                $statement->bind_param('i', $personId);
+                $statement->execute();
+                $statement->close();
+            }
+            $connection->commit();
+        } catch (Throwable $exception) {
+            $connection->rollback();
+            throw $exception;
+        }
+
+        self::removeFile((string) ($previous['arquivo_caminho'] ?? '') ?: null);
+    }
+
     public static function storageDirectory(): string
     {
         $directory = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'resumes';

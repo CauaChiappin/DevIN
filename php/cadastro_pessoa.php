@@ -220,6 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevIN | Criar Conta Pessoal</title>
+    <script src="../js/index-language.js"></script>
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
     <link rel="stylesheet" href="../css/cadastrostyle.css?v=<?= filemtime(__DIR__ . '/../css/cadastrostyle.css') ?>">
     <link rel="stylesheet" href="../css/site-navigation.css">
@@ -242,6 +243,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
             </button>
             <div class="site-menu" id="site-menu" data-site-menu>
+                <label class="language-picker" for="site-language">
+                        <span>Idioma</span>
+                        <select id="site-language" aria-label="Idioma">
+                            <option value="pt-BR">Português</option>
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                        </select>
+                    </label>
                 <a href="login.php" class="header-action">Login</a>
             </div>
         </header>
@@ -361,6 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script src="../js/cadastro.js"></script>
 <script src="../js/site-navigation.js"></script>
+<script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>
 <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 
 </body>

@@ -65,13 +65,14 @@ summary:focus-visible {
 }
 
 .navegacao {
-    width: 80%;
+    width: min(1240px, calc(100% - 48px));
     height: 83px;
     margin: 0 auto;
     padding: 0;
-    /* Reserva colunas para marca, links centrais e ações da conta no cabeçalho. */
+    /* Marca à esquerda, links centrais e ações da conta compactas à direita. */
     display: grid;
-    grid-template-columns: 140px minmax(0, 1fr) 390px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: 24px;
     align-items: center;
     transition: width .35s ease, height .35s ease, margin-top .35s ease, padding .35s ease, background-color .35s ease, border-radius .35s ease, box-shadow .35s ease, backdrop-filter .35s ease, transform .35s ease;
 }
@@ -82,14 +83,14 @@ summary:focus-visible {
 }
 
 .cabecalho-site.rolado .navegacao {
-    width: min(920px, calc(100% - 32px));
-    height: 62px;
+    width: min(1040px, calc(100% - 32px));
+    height: 60px;
     margin-top: 10px;
-    padding: 0 28px;
-    border: 1px solid rgba(255, 255, 255, .45);
-    border-radius: 28px;
-    background: rgba(248, 247, 242, .72);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, .09);
+    padding: 0 12px 0 26px;
+    border: 1px solid rgba(0, 74, 148, .08);
+    border-radius: 999px;
+    background: rgba(248, 247, 242, .82);
+    box-shadow: 0 10px 30px rgba(17, 24, 39, .08);
     backdrop-filter: blur(16px);
 }
 
@@ -107,16 +108,16 @@ summary:focus-visible {
 }
 
 .cabecalho-site.rolado .marca {
-    font-size: 24px;
+    font-size: 22px;
 }
 
 .cabecalho-site.rolado .menu {
-    gap: 24px;
+    gap: 26px;
     font-size: 14px;
 }
 
 .cabecalho-site.rolado .botao {
-    height: 40px;
+    height: 38px;
     padding: 0 16px;
     font-size: 14px;
 }
@@ -139,8 +140,8 @@ summary:focus-visible {
 .menu {
     display: flex;
     justify-content: center;
-    gap: clamp(18px, 3vw, 40px);
-    font-size: 16px;
+    gap: clamp(18px, 3vw, 36px);
+    font-size: 15px;
     font-weight: 500;
     transition: gap .35s ease, font-size .35s ease;
 }
@@ -176,7 +177,7 @@ summary:focus-visible {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 8px;
 }
 
 .language-picker {
@@ -189,23 +190,24 @@ summary:focus-visible {
 }
 
 .language-picker select {
-    min-height: 44px;
-    width: 126px;
+    min-height: 38px;
+    width: auto;
     max-width: 100%;
-    padding: 0 18px;
-    border: 2px solid var(--blue);
-    border-radius: 12px;
-    background: var(--bg);
-    color: var(--blue);
+    padding: 0 12px;
+    border: 1px solid rgba(0, 74, 148, .22);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-primary);
     font: inherit;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
+    transition: border-color .2s ease, background-color .2s ease;
 }
 
 .language-picker select:hover {
-    background: var(--blue);
-    color: var(--white);
+    border-color: var(--blue);
+    background: rgba(0, 74, 148, .06);
 }
 
 .language-picker select:focus-visible {
@@ -213,6 +215,25 @@ summary:focus-visible {
     outline-offset: 3px;
 }
 
+@media (min-width: 1241px) {
+    .language-picker span {
+        display: none;
+    }
+
+    .acoes .botao {
+        min-width: 0;
+        height: 38px;
+        min-height: 38px;
+        padding: 0 18px;
+        border-radius: 999px;
+        font-size: 14px;
+    }
+
+    .acoes .botao-branco {
+        border-width: 1px;
+        border-color: rgba(0, 74, 148, .3);
+    }
+}
 .botao {
     min-height: 44px;
     height: 44px;
@@ -281,17 +302,17 @@ summary:focus-visible {
     display: grid;
     grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
     align-items: center;
-    gap: clamp(32px, 5vw, 80px);
-    min-height: max(640px, calc(100svh - 83px));
-    padding: clamp(56px, 8vw, 120px) clamp(24px, 8vw, 128px);
+    gap: clamp(24px, 3vw, 48px);
+    min-height: 100svh;
+    padding: 72px max(24px, calc((100% - 1380px) / 2)) 280px max(24px, calc((100% - 1240px) / 2));
     border-bottom: 1px solid rgba(180, 180, 180, .18);
     overflow: hidden;
 }
 
 .principal h1 {
     margin: 0;
-    font-size: clamp(2.5rem, 4vw, 3.5rem);
-    line-height: 1.1;
+    font-size: clamp(2.5rem, 4vw, 3.75rem);
+    line-height: 1.12;
     font-weight: 500;
     letter-spacing: 0;
     text-shadow: 0 8px 22px rgba(0, 0, 0, .06);
@@ -299,6 +320,12 @@ summary:focus-visible {
 
 .principal h1 span {
     color: var(--blue);
+}
+
+@media (min-width: 1241px) {
+    .principal h1 {
+        white-space: nowrap;
+    }
 }
 
 .palavra-rotativa-index {
@@ -362,10 +389,10 @@ summary:focus-visible {
 
 .texto-principal p {
     max-width: min(48ch, 100%);
-    margin: 22px 0 0;
+    margin: 24px 0 0;
     color: var(--text-muted);
     font-size: clamp(18px, 1.4vw, 21px);
-    line-height: 1.55;
+    line-height: 1.65;
     font-weight: 500;
     text-align: left;
 }
@@ -374,8 +401,8 @@ summary:focus-visible {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px 20px;
-    margin-top: 26px;
+    gap: 16px 24px;
+    margin-top: 36px;
 }
 
 .cta-principal {
@@ -401,10 +428,11 @@ summary:focus-visible {
 
 .arte-principal {
     display: block;
-    width: min(100%, 620px);
-    max-height: 560px;
-    justify-self: center;
-    object-fit: contain;
+    width: min(100%, 520px);
+    aspect-ratio: 1.05;
+    justify-self: end;
+    object-fit: cover;
+    object-position: 58% 55%;
 }
 
 .texto-principal {
@@ -414,20 +442,17 @@ summary:focus-visible {
 }
 
 .sobre {
-    height: 1040px;
+    display: grid;
+    gap: clamp(64px, 8vw, 112px);
     position: relative;
+    padding: 96px max(24px, calc((100% - 1160px) / 2)) 96px;
     border-bottom: 1px solid rgba(180, 180, 180, .18);
     overflow: hidden;
 }
 
 .titulo-sobre {
-    position: absolute;
-    top: 22px;
-    left: 0;
-    right: 0;
     text-align: center;
 }
-
 .titulo-sobre h2,
 .cabecalho-etapas h2,
 .empresas h2,
@@ -453,62 +478,53 @@ summary:focus-visible {
     width: auto;
     margin: 0;
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: center;
-    position: absolute;
+    gap: clamp(40px, 7vw, 120px);
 }
 
 .linha-sobre img {
-    width: 430px;
+    width: 100%;
+    max-width: 470px;
 }
 
 .linha-sobre h3 {
-    margin: 0 0 18px;
+    margin: 0 0 16px;
     font-size: clamp(26px, 2.6vw, 34px);
     line-height: 1.18;
     font-weight: 600;
 }
 
 .linha-sobre p {
+    max-width: 38ch;
     margin: 0;
+    color: var(--text-muted);
     font-size: clamp(17px, 1.3vw, 20px);
-    line-height: 1.55;
+    line-height: 1.6;
     font-weight: 400;
 }
 
-.linha-curriculo {
-    grid-template-columns: 430px 520px;
-    gap: 260px;
-    left: max(40px, calc(50% - 605px));
-    top: 245px;
+.linha-sobre p br {
+    display: none;
 }
 
-.linha-feed {
-    grid-template-columns: 520px 430px;
-    gap: 260px;
-    left: max(40px, calc(50% - 605px));
-    top: 650px;
-}
-
-.linha-feed div {
-    text-align: center;
+.linha-curriculo img {
+    justify-self: start;
 }
 
 .linha-feed img {
     justify-self: end;
 }
-
 .bloco-etapas {
-    height: 840px;
+    display: grid;
+    gap: 56px;
+    padding: 96px max(24px, calc((100% - 1160px) / 2)) 96px;
     position: relative;
     border-bottom: 1px solid rgba(180, 180, 180, .18);
     overflow: hidden;
 }
 
 .cabecalho-etapas {
-    position: absolute;
-    top: 25px;
-    left: 0;
-    right: 0;
     text-align: center;
 }
 
@@ -525,10 +541,6 @@ summary:focus-visible {
 }
 
 .lista-etapas {
-    position: absolute;
-    top: 171px;
-    left: 0;
-    right: 0;
     margin: 0 auto;
     display: flex;
     justify-content: center;
@@ -628,19 +640,18 @@ summary:focus-visible {
 }
 
 .formato {
-    position: absolute;
-    left: max(40px, calc(50% - 535px));
-    top: 360px;
     margin: 0;
     display: grid;
-    grid-template-columns: 490px 340px;
-    gap: 240px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(40px, 7vw, 120px);
     align-items: center;
 }
 
 .formato img {
-    width: 490px;
-    height: 397px;
+    width: 100%;
+    max-width: 490px;
+    height: auto;
+    aspect-ratio: 490 / 397;
     object-fit: cover;
 }
 
@@ -652,6 +663,7 @@ summary:focus-visible {
 }
 
 .formato p {
+    max-width: 30ch;
     margin: 0;
     color: var(--text-muted);
     font-size: clamp(17px, 1.4vw, 20px);
@@ -1161,6 +1173,8 @@ summary:focus-visible {
     .language-picker {
         width: 100%;
         justify-content: space-between;
+        order: -1;
+        margin-bottom: 6px;
     }
 
     .language-picker select {
@@ -1333,9 +1347,10 @@ summary:focus-visible {
         position: static;
         display: block;
         width: min(100%, 560px);
-        max-height: 380px;
+        max-height: none;
         margin: 0;
-        object-fit: contain;
+        justify-self: center;
+        object-fit: cover;
     }
 
     .sobre {
@@ -1549,7 +1564,8 @@ summary:focus-visible {
 
     .arte-principal {
         width: min(100%, 520px);
-        max-height: 430px;
+        max-height: none;
+        justify-self: center;
     }
 }
 
@@ -1652,8 +1668,8 @@ summary:focus-visible {
     }
 
     .arte-principal {
-        width: min(100%, 500px);
-        max-height: 300px;
+        width: min(100%, 420px);
+        max-height: none;
     }
 
     .sobre {
@@ -1762,6 +1778,114 @@ summary:focus-visible {
 
     .coluna-rodape,
     .marca-rodape {
+        text-align: center;
+    }
+}
+
+/* Ajustes de respiro e hierarquia da landing em celular. */
+@media (max-width: 720px) {
+    .principal {
+        min-height: 0;
+        gap: 36px;
+        padding: 40px 24px 56px;
+    }
+
+    .texto-principal h1 {
+        line-height: 1.18;
+    }
+
+    .texto-principal p {
+        margin-top: 20px;
+        line-height: 1.65;
+    }
+
+    .acoes-principal {
+        align-items: stretch;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .acoes-principal .cta-principal {
+        width: 100%;
+    }
+
+    .link-empresa {
+        justify-content: center;
+    }
+
+    .arte-principal {
+        width: min(100%, 340px);
+        justify-self: center;
+    }
+
+    .sobre,
+    .bloco-etapas,
+    .empresas,
+    .contato {
+        padding: 72px 24px;
+    }
+
+    .sobre {
+        gap: 48px;
+    }
+
+    .titulo-sobre,
+    .cabecalho-etapas,
+    .linha-sobre {
+        text-align: center;
+    }
+
+    .linha-sobre {
+        gap: 20px;
+        justify-items: center;
+    }
+
+    .linha-sobre img {
+        width: min(100%, 260px);
+        max-height: 200px;
+    }
+
+    .linha-sobre p,
+    .formato p {
+        text-align: center;
+    }
+
+    .bloco-etapas {
+        gap: 40px;
+    }
+
+    .formato {
+        gap: 28px;
+        justify-items: center;
+    }
+
+    .contato {
+        gap: 56px;
+    }
+
+    .suporte {
+        gap: 32px;
+        text-align: center;
+    }
+
+    .sac {
+        width: 100%;
+        max-width: 340px;
+        height: auto;
+        margin-inline: auto;
+        padding-bottom: 20px;
+    }
+
+    .sac a {
+        height: auto;
+        min-height: 48px;
+        padding: 8px 14px;
+        gap: 10px;
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .perguntas h2 {
         text-align: center;
     }
 }

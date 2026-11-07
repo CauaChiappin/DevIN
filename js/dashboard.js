@@ -17,6 +17,36 @@
     const rotatingWord = document.querySelector('[data-rotating-word]');
     const interfaceLocale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR';
     const translate = (value) => window.DevINTranslate?.(value) ?? value;
+    const toastTimers = new WeakMap();
+    const dismissToast = (toast) => {
+        const timer = toastTimers.get(toast);
+        if (timer) window.clearTimeout(timer);
+        toastTimers.delete(toast);
+        toast.hidden = true;
+    };
+    const showToast = (toast, message, variant = 'success') => {
+        if (!toast) return;
+        const messageElement = toast.querySelector('[data-feedback-message], .dashboard-toast__msg');
+        if (messageElement) {
+            messageElement.textContent = message;
+            messageElement.classList.remove('dashboard-toast__msg--success', 'dashboard-toast__msg--error', 'dashboard-toast__msg--warning');
+            messageElement.classList.add(`dashboard-toast__msg--${variant}`);
+        }
+        toast.hidden = false;
+        const previousTimer = toastTimers.get(toast);
+        if (previousTimer) window.clearTimeout(previousTimer);
+        toastTimers.set(toast, window.setTimeout(() => dismissToast(toast), 5000));
+    };
+    document.querySelectorAll('[data-auto-dismiss-toast]').forEach((toast) => {
+        toastTimers.set(toast, window.setTimeout(() => dismissToast(toast), 5000));
+    });
+    document.addEventListener('click', (event) => {
+        if (!(event.target instanceof Element)) return;
+        const closeButton = event.target.closest('[data-toast-close]');
+        const toast = closeButton?.closest('[data-auto-dismiss-toast], [data-feedback-toast]');
+        if (toast) dismissToast(toast);
+    });
+    window.DevINShowToast = showToast;
 
     document.querySelectorAll('[data-job-closure-mode]').forEach((modeSelect) => {
         const form = modeSelect.closest('form');
@@ -184,12 +214,56 @@
         const subtitle = card.querySelector('p')?.textContent?.trim() || translate('Informacoes da plataforma');
         const name = card.dataset.detailName || card.dataset.jobTitle || title;
         const jobReport = card.hasAttribute('data-job-report-card');
+        const profileReport = card.hasAttribute('data-profile-report-card');
         const role = jobReport
             ? `${translate('Empresa:')} ${card.dataset.reportCompany || ''}`
+            : profileReport
+                ? `${translate('Perfil denunciado')} · ${translate(card.dataset.profileReportRole || '')}`
             : card.dataset.detailRole || subtitle;
         const summary = jobReportSummary(card) || card.dataset.detailSummary || card.dataset.detail || subtitle;
         const tags = splitItems(card.dataset.detailTags, ['DevIN', translate('Informacao disponivel')]).map(translate);
-        const experience = splitItems(card.dataset.detailExperience, [`${translate('Registro selecionado')}::${role}`]);
+        const experience = profileReport
+            ? [
+                { title: 'Denúncia #', description: card.dataset.reportId || '' },
+                { title: 'Enviada em', description: card.dataset.reportCreatedAt || '' },
+                {
+                    title: 'Denunciante',
+                    description: `${card.dataset.profileReportReporter || ''} (${translate(card.dataset.profileReportReporterType || '')} #${card.dataset.profileReportReporterId || ''})`
+                },
+                ...(card.dataset.profileReportTargetEmail
+                    ? [{ title: 'E-mail do perfil', description: card.dataset.profileReportTargetEmail }]
+                    : []),
+                ...(card.dataset.profileReportTargetCnpj
+                    ? [{ title: 'CNPJ', description: card.dataset.profileReportTargetCnpj }]
+                    : []),
+                ...(card.dataset.profileReportReporterEmail
+                    ? [{ title: 'E-mail do denunciante', description: card.dataset.profileReportReporterEmail }]
+                    : []),
+                { title: 'Motivo', description: translate(card.dataset.profileReportReason || '') },
+                { title: 'Análise', description: translate(card.dataset.profileReportAnalysis || '') }
+            ]
+            : jobReport
+                ? [
+                    { title: 'Denúncia #', description: card.dataset.reportId || '' },
+                    { title: 'Vaga #', description: card.dataset.reportTargetId || '' },
+                    { title: 'Enviada em', description: card.dataset.reportCreatedAt || '' },
+                    {
+                        title: 'Denunciante',
+                        description: `${card.dataset.reportReporter || ''} (${translate(card.dataset.reportReporterType || '')} #${card.dataset.reportReporterId || ''})`
+                    },
+                    ...(card.dataset.reportReporterEmail
+                        ? [{ title: 'E-mail do denunciante', description: card.dataset.reportReporterEmail }]
+                        : []),
+                    ...(card.dataset.reportCompanyEmail
+                        ? [{ title: 'E-mail da empresa', description: card.dataset.reportCompanyEmail }]
+                        : []),
+                    {
+                        title: 'Mensagem da denúncia',
+                        description: `${translate('Motivo:')} ${translate(card.dataset.reportReason || '')}\n${card.dataset.reportMessage || ''}`
+                    },
+                    { title: 'Análise', description: translate(card.dataset.reportAnalysis || '') }
+                ]
+                : splitItems(card.dataset.detailExperience, [`${translate('Registro selecionado')}::${role}`]);
 
         detailPanel.querySelector('[data-detail-placeholder]')?.setAttribute('hidden', '');
         content.hidden = false;
@@ -202,7 +276,6 @@
         const reportJobFacts = detailPanel.querySelector('[data-report-job-facts]');
         const decisionBlock = detailPanel.querySelector('[data-report-decision-block]');
         const applicationSummary = card.dataset.applicationSummary === 'true';
-        const reporterPrefix = translate('Denúncia enviada por');
         const experienceHeading = detailPanel.querySelector('[data-detail-experience-heading]');
 
         if (avatar) avatar.textContent = getInitials(name);
@@ -210,7 +283,9 @@
         if (roleElement) roleElement.textContent = role;
         if (metaElement) {
             metaElement.textContent = jobReport
-                ? `${reporterPrefix} ${card.dataset.reportReporter || ''}`
+                ? `${translate('Denúncia #')}${card.dataset.reportId || ''} · ${translate('Enviada em').toLocaleLowerCase(interfaceLocale)} ${card.dataset.reportCreatedAt || ''}`
+                : profileReport
+                    ? `${translate('Denúncia #')}${card.dataset.reportId || ''} · ${translate('Enviada em').toLocaleLowerCase(interfaceLocale)} ${card.dataset.reportCreatedAt || ''}`
                 : card.dataset.detailMeta || translate('Disponivel na plataforma');
         }
         if (summaryElement) summaryElement.textContent = summary;
@@ -226,23 +301,20 @@
             decisionBlock.hidden = !shouldShowDecision;
         }
         const summaryLabel = detailPanel.querySelector('[data-detail-summary-label]');
-        if (summaryLabel) summaryLabel.textContent = translate(jobReport ? 'Detalhes da vaga denunciada' : 'Sobre');
+        if (summaryLabel) {
+            summaryLabel.textContent = translate(jobReport
+                ? 'Detalhes da vaga denunciada'
+                : profileReport ? 'Relato da denúncia' : 'Sobre');
+        }
         if (experienceHeading) {
             experienceHeading.textContent = translate(jobReport
                 ? 'Detalhes da denúncia'
-                : applicationSummary ? 'Informações da vaga' : 'Experiência');
+                : profileReport ? 'Dados da denúncia'
+                    : applicationSummary ? 'Informações da vaga' : 'Experiência');
         }
         detailPanel.querySelector('[data-detail-tags-section]')?.toggleAttribute('hidden', jobReport);
         renderList(detailPanel.querySelector('[data-detail-tags]'), tags);
-        renderList(experienceList, jobReport
-            ? [
-                {
-                    title: 'Mensagem da denúncia',
-                    description: `${translate('Motivo:')} ${translate(card.dataset.reportReason || '')}\n${card.dataset.reportMessage || ''}`
-                },
-                { title: 'Análise', description: translate(card.dataset.reportAnalysis || '') }
-            ]
-            : experience, true);
+        renderList(experienceList, experience, true);
         detailPanel.classList.toggle('has-application-summary', applicationSummary);
         experienceList?.classList.toggle('application-summary', applicationSummary);
         experienceList?.closest('.detail-section')?.classList.toggle('application-summary-section', applicationSummary);
@@ -447,7 +519,7 @@
         jobReportForm.reset();
         jobReportForm.querySelectorAll('select, textarea').forEach((field) => { field.disabled = false; });
         jobReportForm.querySelector('[data-job-report-id]').value = reportId;
-        jobReportStatus.hidden = true;
+        jobReportStatus.closest('[data-feedback-toast]').hidden = true;
         jobReportStatus.classList.remove('form-success');
         jobReportStatus.textContent = '';
         jobReportSubmit.disabled = false;
@@ -461,7 +533,7 @@
 
         jobReportSubmit.disabled = true;
         jobReportSubmit.textContent = translate('Enviando...');
-        jobReportStatus.hidden = true;
+        jobReportStatus.closest('[data-feedback-toast]').hidden = true;
         jobReportStatus.classList.remove('form-success');
         try {
             const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
@@ -483,9 +555,12 @@
                 throw new Error(translate(data.mensagem || 'Não foi possível enviar a denúncia.'));
             }
 
-            jobReportStatus.textContent = translate(data.mensagem);
-            jobReportStatus.classList.add('form-success');
-            jobReportStatus.hidden = false;
+            const warnings = Array.isArray(data.avisos) ? data.avisos.map(translate) : [];
+            showToast(
+                jobReportStatus.closest('[data-feedback-toast]'),
+                [translate(data.mensagem), ...warnings].join(' '),
+                warnings.length > 0 ? 'warning' : 'success'
+            );
             jobReportSubmit.textContent = translate('Denúncia enviada');
             jobReportForm.querySelectorAll('select, textarea').forEach((field) => { field.disabled = true; });
             const reportedCard = detailCards.find((card) => card.dataset.reportJobId === jobReportButton.dataset.jobId);
@@ -493,8 +568,7 @@
             jobReportButton.disabled = true;
             jobReportButton.textContent = translate('Denúncia enviada');
         } catch (error) {
-            jobReportStatus.textContent = error.message;
-            jobReportStatus.hidden = false;
+            showToast(jobReportStatus.closest('[data-feedback-toast]'), error.message, 'error');
             jobReportSubmit.disabled = false;
             jobReportSubmit.textContent = translate('Enviar denúncia');
         }

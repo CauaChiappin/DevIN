@@ -87,7 +87,31 @@ body {
 
 .cadastro-header .site-menu { 
     align-items: center; 
+    display: flex;
+    gap: 10px;
     margin-left: auto; 
+}
+
+.cadastro-header .language-picker { display: inline-flex; }
+.cadastro-header .language-picker span { display: none; }
+
+.cadastro-header .language-picker select {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid #c9d8ea;
+    border-radius: 30px;
+    background: #ffffff;
+    color: #004aad;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cadastro-header .language-picker select:hover,
+.cadastro-header .language-picker select:focus-visible {
+    border-color: #004aad;
+    outline: none;
 }
 
 .cadastro-header .header-action {
@@ -523,8 +547,11 @@ body {
         top: calc(100% + 8px);
         z-index: 4;
     }
+    .cadastro-header .site-menu { display: none; }
     .cadastro-header .site-menu.is-open { display: grid; }
     .cadastro-header .header-action { width: 100%; }
+    .cadastro-header .language-picker { width: 100%; }
+    .cadastro-header .lang-dd, .cadastro-header .lang-dd-btn { width: 100%; }
     .input-group input,
     .input-group select,
     .input-group textarea { max-width: 100%; }

@@ -395,6 +395,24 @@
     box-shadow: 0 1px 1px rgba(11, 20, 26, .08);
 }
 
+.chat-day-separator {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    margin: 10px 0 4px;
+}
+
+.chat-day-separator span {
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .92);
+    color: #54656f;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: capitalize;
+    box-shadow: 0 1px 1px rgba(11, 20, 26, .1);
+}
+
 .chat-bubble {
     position: relative;
     display: grid;

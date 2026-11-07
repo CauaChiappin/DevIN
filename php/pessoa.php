@@ -129,27 +129,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        if ($action === 'update_resume_content') {
-            $submittedResume = is_array($_POST['resume'] ?? null) ? $_POST['resume'] : [];
-            $resumeContentToSave = ['nome' => $nome];
-            foreach (['resumo', 'formacao', 'experiencia', 'cursos', 'idiomas'] as $field) {
-                $value = requestString($submittedResume, $field);
-                if (strlen($value) > 6000) {
-                    throw new InvalidArgumentException('Uma seção do currículo excede o limite de 6.000 caracteres.');
-                }
-                $resumeContentToSave[$field] = $value;
-            }
-            if (count(array_filter($resumeContentToSave, static fn ($value): bool => is_string($value) && trim($value) !== '')) < 2) {
-                throw new InvalidArgumentException('Preencha ao menos uma seção antes de salvar.');
-            }
-
+        if ($action === 'delete_resume') {
             $conn = getDatabaseConnection();
             try {
-                ResumeDocument::saveGenerated($conn, $idPessoaAtual, $resumeContentToSave);
+                ResumeDocument::deleteAll($conn, $idPessoaAtual);
             } finally {
                 $conn->close();
             }
-            $_SESSION['resume_content_success'] = 'Currículo atualizado.';
+            $_SESSION['resume_content_success'] = 'Currículo excluído.';
             header('Location: pessoa.php?pagina=curriculo');
             exit;
         }
@@ -207,10 +194,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? $exception->getMessage()
                 : 'Não foi possível enviar a candidatura. Tente novamente.';
             header('Location: pessoa.php?pagina=vagas');
-        } elseif ($action === 'update_resume_content') {
+        } elseif ($action === 'update_resume_content' || $action === 'delete_resume') {
             $_SESSION['resume_content_error'] = $exception instanceof InvalidArgumentException
                 ? $exception->getMessage()
-                : 'Não foi possível salvar o currículo agora.';
+                : ($action === 'delete_resume' ? 'Não foi possível excluir o currículo agora.' : 'Não foi possível salvar o currículo agora.');
             header('Location: pessoa.php?pagina=curriculo');
         } elseif ($action === 'update_profile') {
             $_SESSION['profile_error'] = 'Não foi possível atualizar o perfil. Tente novamente.';
@@ -360,7 +347,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
 <body>
     <main class="dashboard-shell page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
         <?php if ($mensagemSenhaAlterada !== '' || $mensagemCadastro !== '' || $mensagemEmailSenha !== '' || $mensagemEmailCadastro !== '' || $mensagemCurriculoSalvo !== '' || $mensagemEmailCurriculo !== '' || $mensagemCurriculoEditado !== '' || $mensagemCurriculoErro !== ''): ?>
-            <div class="dashboard-toast" role="status" aria-live="polite">
+            <div class="dashboard-toast" data-auto-dismiss-toast role="status" aria-live="polite">
                 <?php if ($mensagemSenhaAlterada !== ''): ?>
                     <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemSenhaAlterada) ?></p>
                 <?php endif; ?>
@@ -385,6 +372,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                 <?php if ($mensagemEmailCurriculo !== ''): ?>
                     <p class="dashboard-toast__msg dashboard-toast__msg--error" role="alert"><?= h($mensagemEmailCurriculo) ?></p>
                 <?php endif; ?>
+                <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
             </div>
         <?php endif; ?>
         <aside class="sidebar">
@@ -510,6 +498,10 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                         </div>
                         <p class="chat-profile-dialog__privacy">Este perfil simplificado mostra apenas o nome e o tipo de conta.</p>
                         <button class="chat-profile-dialog__report-button" type="button" data-chat-profile-report-open>Denunciar perfil</button>
+                        <div class="dashboard-feedback-toast chat-profile-feedback" data-feedback-toast hidden role="status" aria-live="polite">
+                            <p class="dashboard-toast__msg" data-chat-profile-status data-feedback-message></p>
+                            <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
+                        </div>
                         <form class="chat-profile-report-form" data-chat-profile-report-form hidden>
                             <label for="chat-profile-report-reason">Motivo</label>
                             <select id="chat-profile-report-reason" required data-chat-profile-reason>
@@ -522,7 +514,6 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                             </select>
                             <label for="chat-profile-report-details">Detalhes</label>
                             <textarea id="chat-profile-report-details" maxlength="1000" required data-chat-profile-details placeholder="Explique por que este perfil deve ser analisado."></textarea>
-                            <p class="chat-profile-dialog__status" data-chat-profile-status role="status" aria-live="polite"></p>
                             <div class="chat-profile-report-form__actions">
                                 <button type="button" data-chat-profile-report-cancel>Cancelar</button>
                                 <button type="submit" data-chat-profile-submit>Enviar denúncia</button>
@@ -533,8 +524,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
             <?php elseif ($pagina === 'curriculo'): ?>
                 <section class="dashboard-resume">
                     <header class="dashboard-resume__header">
-                        <div>
-                            <p class="dashboard-resume__eyebrow">MEU CURRÍCULO</p>
+                        <div class="dashboard-resume__heading">
                             <h1><?= $possuiCurriculo ? 'Seu currículo' : 'Adicione um currículo para se candidatar' ?></h1>
                             <p><?= $possuiCurriculo ? 'Revise, edite e baixe seu documento. Você pode substituir o arquivo enviado quando quiser.' : 'Você pode enviar um arquivo pronto ou criar um currículo com ajuda da IA.' ?></p>
                         </div>
@@ -542,36 +532,78 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
 
                     <?php if (!$possuiCurriculo): ?>
                         <section class="dashboard-resume__missing" aria-labelledby="resume-missing-title">
+                            <span class="dashboard-resume__missing-icon"><?= dashboardIcon('file') ?></span>
                             <h2 id="resume-missing-title">Ainda não há currículo nesta conta</h2>
                             <p>Para se candidatar às vagas, envie um PDF/Word ou preencha seus dados para criar um currículo.</p>
-                            <a class="dashboard-resume__button dashboard-resume__button--primary" href="curriculo_onboarding.php">Escolher como continuar</a>
+                            <div class="dashboard-resume__options">
+                                <a class="dashboard-resume__option" href="curriculo_upload.php">
+                                    <span class="dashboard-resume__action-icon"><?= dashboardIcon('upload') ?></span>
+                                    <strong>Enviar arquivo pronto</strong>
+                                    <small>PDF ou Word que você já tem</small>
+                                </a>
+                                <a class="dashboard-resume__option" href="cadastrar_curriculo.php?ia=1">
+                                    <span class="dashboard-resume__action-icon"><?= dashboardIcon('sparkle') ?></span>
+                                    <strong>Criar com ajuda da IA</strong>
+                                    <small>Preencha seus dados e a IA monta o texto</small>
+                                </a>
+                            </div>
+                            <ol class="dashboard-resume__steps">
+                                <li><b>1</b><span>Adicione seu currículo</span></li>
+                                <li><b>2</b><span>Empresas veem seu perfil completo</span></li>
+                                <li><b>3</b><span>Candidate-se às vagas com um clique</span></li>
+                            </ol>
                         </section>
                     <?php else: ?>
                     <div class="dashboard-resume__content">
-                        <section class="dashboard-resume__generator" aria-labelledby="resume-generator-title" data-resume-csrf="<?= h(csrfToken()) ?>" data-resume-auto-generate="<?= $gerarCurriculoAutomaticamente ? 'true' : 'false' ?>">
-                            <div class="dashboard-resume__generator-icon" aria-hidden="true">✦</div>
-                            <h2 id="resume-generator-title">Editar ou melhorar</h2>
-                            <p>Usaremos seu nome social, escolaridade, cursos, experiência e idiomas para criar um currículo claro e profissional. A IA não deve inventar dados; confira o texto antes de usar.</p>
-                            <label class="dashboard-resume__consent">
-                                <input type="checkbox" data-resume-consent>
-                                <span>Entendo que, ao gerar, os dados do meu currículo serão enviados ao Google Gemini para criar o texto. A chave da API fica protegida no servidor.</span>
-                            </label>
-                            <div class="dashboard-resume__actions">
+                        <div class="dashboard-resume__side">
+                            <section class="dashboard-resume__card" aria-labelledby="resume-actions-title">
+                                <h2 id="resume-actions-title" class="dashboard-resume__card-title">Gerenciar currículo</h2>
+                                <div class="dashboard-resume__actions">
+                                    <?php if ($hasResumeText): ?>
+                                        <button class="dashboard-resume__action" type="button" data-print-resume>
+                                            <span class="dashboard-resume__action-icon"><?= dashboardIcon('printer') ?></span>
+                                            <span>Baixar / Imprimir PDF</span>
+                                        </button>
+                                        <a class="dashboard-resume__action" href="curriculo_exportar.php?formato=docx">
+                                            <span class="dashboard-resume__action-icon"><?= dashboardIcon('download') ?></span>
+                                            <span>Baixar DOCX</span>
+                                        </a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($resumeDocument['arquivo_caminho'])): ?>
+                                        <a class="dashboard-resume__action" href="curriculo_baixar.php">
+                                            <span class="dashboard-resume__action-icon"><?= dashboardIcon('download') ?></span>
+                                            <span>Baixar arquivo original</span>
+                                        </a>
+                                    <?php endif; ?>
+                                    <a class="dashboard-resume__action" href="curriculo_upload.php">
+                                        <span class="dashboard-resume__action-icon"><?= dashboardIcon('upload') ?></span>
+                                        <span>Substituir currículo</span>
+                                    </a>
+                                    <a class="dashboard-resume__action" href="cadastrar_curriculo.php">
+                                        <span class="dashboard-resume__action-icon"><?= dashboardIcon('edit') ?></span>
+                                        <span>Editar nome e dados</span>
+                                    </a>
+                                </div>
+                            </section>
+
+                            <section class="dashboard-resume__card dashboard-resume__card--ai dashboard-resume__generator" aria-labelledby="resume-generator-title" data-resume-csrf="<?= h(csrfToken()) ?>" data-resume-auto-generate="<?= $gerarCurriculoAutomaticamente ? 'true' : 'false' ?>">
+                                <div class="dashboard-resume__card-head">
+                                    <span class="dashboard-resume__generator-icon" aria-hidden="true"><?= dashboardIcon('sparkle') ?></span>
+                                    <h2 id="resume-generator-title" class="dashboard-resume__card-title">Editar ou melhorar</h2>
+                                </div>
+                                <p class="dashboard-resume__lead">Usaremos seu nome social, escolaridade, cursos, experiência e idiomas para criar um currículo claro e profissional. A IA não deve inventar dados; confira o texto antes de usar.</p>
+                                <label class="dashboard-resume__consent">
+                                    <input type="checkbox" data-resume-consent>
+                                    <span>Entendo que, ao gerar, os dados do meu currículo serão enviados ao Google Gemini para criar o texto. A chave da API fica protegida no servidor.</span>
+                                </label>
                                 <?php if (!empty($curriculoAtual['id_curriculo'])): ?>
                                     <button class="dashboard-resume__button dashboard-resume__button--primary" type="button" data-generate-resume disabled>✦ Gerar com IA</button>
                                 <?php endif; ?>
-                                <?php if ($hasResumeText): ?>
-                                    <button class="dashboard-resume__button dashboard-resume__button--secondary" type="button" data-print-resume>Baixar / Imprimir PDF</button>
-                                    <a class="dashboard-resume__button dashboard-resume__button--secondary" href="curriculo_exportar.php?formato=docx">Baixar DOCX</a>
-                                <?php endif; ?>
-                                <?php if (!empty($resumeDocument['arquivo_caminho'])): ?>
-                                    <a class="dashboard-resume__button dashboard-resume__button--secondary" href="curriculo_baixar.php">Baixar arquivo original</a>
-                                <?php endif; ?>
-                                <a class="dashboard-resume__button dashboard-resume__button--secondary" href="curriculo_upload.php">Substituir currículo</a>
-                                <a class="dashboard-resume__button dashboard-resume__button--secondary" href="cadastrar_curriculo.php">Editar nome e dados</a>
-                            </div>
-                            <p class="dashboard-resume__status" data-resume-status role="status" aria-live="polite">Seus dados só serão enviados quando você confirmar e solicitar a geração.</p>
-                            <details class="dashboard-resume__editor">
+                                <p class="dashboard-resume__status" data-resume-status role="status" aria-live="polite">Seus dados só serão enviados quando você confirmar e solicitar a geração.</p>
+                                <p class="dashboard-resume__privacy">A geração envia os dados ao Google Gemini somente após consentimento e pode consumir cota da chave configurada pelo DevIN.</p>
+                            </section>
+
+                            <details class="dashboard-resume__card dashboard-resume__editor">
                                 <summary>Editar conteúdo do currículo</summary>
                                 <form method="post">
                                     <input type="hidden" name="action" value="update_resume_content">
@@ -582,8 +614,13 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                                     <button class="dashboard-resume__button dashboard-resume__button--primary" type="submit">Salvar alterações</button>
                                 </form>
                             </details>
-                            <p class="dashboard-resume__privacy">A geração envia os dados ao Google Gemini somente após consentimento e pode consumir cota da chave configurada pelo DevIN.</p>
-                        </section>
+
+                            <form class="dashboard-resume__danger" method="post" onsubmit="return confirm('Excluir seu currículo? Você precisará adicionar outro para se candidatar.');">
+                                <input type="hidden" name="action" value="delete_resume">
+                                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
+                                <button class="dashboard-resume__danger-button" type="submit"><?= dashboardIcon('trash') ?><span>Excluir currículo</span></button>
+                            </form>
+                        </div>
 
                         <article class="dashboard-resume__paper<?= $hasResumePreview ? '' : ' dashboard-resume__paper--empty' ?>" data-resume-output aria-label="Prévia do currículo" aria-live="polite">
                             <div class="dashboard-resume__empty-state" data-resume-empty <?= $hasResumePreview ? 'hidden' : '' ?>>
@@ -603,9 +640,14 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                                 <?php endforeach; ?>
                                 <?php if (!empty($resumeDocument['arquivo_nome'])): ?>
                                     <section class="dashboard-resume__section dashboard-resume__file">
-                                        <h3>Arquivo enviado</h3>
-                                        <p><?= h((string) $resumeDocument['arquivo_nome']) ?></p>
-                                        <a href="curriculo_baixar.php">Abrir ou baixar arquivo original</a>
+                                        <div class="dashboard-resume__file-bar">
+                                            <span class="dashboard-resume__file-icon"><?= dashboardIcon('file') ?></span>
+                                            <div class="dashboard-resume__file-info">
+                                                <small>Arquivo enviado</small>
+                                                <strong><?= h((string) $resumeDocument['arquivo_nome']) ?></strong>
+                                            </div>
+                                            <a href="curriculo_baixar.php">Abrir ou baixar arquivo original</a>
+                                        </div>
                                         <iframe class="dashboard-resume__uploaded-preview" src="curriculo_visualizar.php" title="Prévia do currículo enviado" loading="lazy"></iframe>
                                     </section>
                                 <?php endif; ?>
@@ -709,6 +751,9 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>
+            <?php if ($pagina === 'sobre'): ?>
+                <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
+            <?php endif; ?>
         </section>
 
         <?php if (!in_array($pagina, ['sobre', 'perfil', 'mensagens', 'curriculo'], true)): ?>
@@ -726,7 +771,6 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
             </aside>
         <?php endif; ?>
     </main>
-    <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
 
     <!-- Modal Editar Perfil -->
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">
@@ -810,17 +854,6 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo'])
     <?php if ($pagina === 'curriculo'): ?>
         <script src="../js/curriculo.js?v=<?= filemtime(__DIR__ . '/../js/curriculo.js') ?>" defer></script>
     <?php endif; ?>
-    <script>
-        (function () {
-            var toast = document.querySelector('.dashboard-toast');
-            if (!toast) return;
-            setTimeout(function () {
-                toast.style.transition = 'opacity .4s ease';
-                toast.style.opacity = '0';
-                setTimeout(function () { toast.remove(); }, 420);
-            }, 4000);
-        })();
-    </script>
     <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script>
 </body>
 

@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="../js/index-language.js"></script>
 </head>
 <body>
     <header class="cabecalho-site">
@@ -19,12 +20,17 @@
             <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
         </button>
         <div class="site-menu" id="site-menu" data-site-menu>
-            <a class="voltar" href="../php/login.php">Voltar ao login</a>
+            <label class="language-picker" for="site-language">
+                <select id="site-language" aria-label="Idioma">
+                    <option value="pt-BR">Português</option>
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                </select>
+            </label>
+            <a class="voltar" href="../php/login.php">← Voltar ao login</a>
         </div>
-        <a class="voltar" href="../php/login.php">← Voltar ao login</a>
     </header>
 
-    <!-- Apresenta o resumo da política e as seções sobre coleta, uso e proteção de dados. -->
     <main class="pagina-politica">
         <section class="hero-politica">
             <p class="eyebrow">PRIVACIDADE E SEGURANÇA</p>
@@ -33,42 +39,73 @@
             <small>Última atualização: 12 de agosto de 2026</small>
         </section>
 
-        <article class="conteudo-politica">
-            <section>
-                <h2>1. Dados que coletamos</h2>
-                <p>Coletamos os dados fornecidos no cadastro, como nome, e-mail, telefone, CPF, endereço e informações profissionais. Também podemos registrar dados de acesso necessários para segurança e funcionamento da plataforma.</p>
-            </section>
-            <section>
-                <h2>2. Como usamos seus dados</h2>
-                <p>Usamos essas informações para criar e manter sua conta, permitir candidaturas e divulgação de vagas, entrar em contato sobre o uso da plataforma e aprimorar nossos serviços.</p>
-            </section>
-            <section>
-                <h2>3. Compartilhamento</h2>
-                <p>Quando você se candidata a uma vaga, os dados necessários do seu perfil podem ser compartilhados com a empresa responsável pela oportunidade. Não comercializamos dados pessoais.</p>
-            </section>
-            <section>
-                <h2>4. Segurança e armazenamento</h2>
-                <p>Adotamos medidas técnicas e organizacionais para proteger os dados contra acesso não autorizado, perda ou alteração. Os dados são mantidos pelo tempo necessário às finalidades descritas e às obrigações legais aplicáveis.</p>
-            </section>
-            <section>
-                <h2>5. Seus direitos</h2>
-                <p>Você pode solicitar confirmação do tratamento, acesso, correção, anonimização, eliminação ou informações sobre compartilhamento dos seus dados, conforme a legislação aplicável.</p>
-            </section>
-            <section>
-                <h2>6. Alterações nesta política</h2>
-                <p>Esta política pode ser atualizada para refletir mudanças no DevIN ou na legislação. A data de atualização no topo da página indica a versão mais recente.</p>
-            </section>
+        <div class="politica-layout">
+            <nav class="indice-politica" aria-label="Índice">
+                <h2>Nesta página</h2>
+                <a href="#dados">1. Dados que coletamos</a>
+                <a href="#uso">2. Como usamos seus dados</a>
+                <a href="#compartilhamento">3. Compartilhamento</a>
+                <a href="#seguranca">4. Segurança e armazenamento</a>
+                <a href="#direitos">5. Seus direitos</a>
+                <a href="#alteracoes">6. Alterações nesta política</a>
+            </nav>
 
-            <aside class="aviso-lgpd">
-                <strong>Importante</strong>
-                <p>Este texto é uma base para o projeto. Antes de publicar o DevIN para uso real, defina o canal de contato do encarregado de dados e revise a política conforme a operação da plataforma.</p>
-            </aside>
-        </article>
+            <article class="conteudo-politica">
+                <section id="dados">
+                    <span class="numero" aria-hidden="true">01</span>
+                    <div>
+                        <h2>Dados que coletamos</h2>
+                        <p>Coletamos os dados fornecidos no cadastro, como nome, e-mail, telefone, CPF, endereço e informações profissionais. Também podemos registrar dados de acesso necessários para segurança e funcionamento da plataforma.</p>
+                    </div>
+                </section>
+                <section id="uso">
+                    <span class="numero" aria-hidden="true">02</span>
+                    <div>
+                        <h2>Como usamos seus dados</h2>
+                        <p>Usamos essas informações para criar e manter sua conta, permitir candidaturas e divulgação de vagas, entrar em contato sobre o uso da plataforma e aprimorar nossos serviços.</p>
+                    </div>
+                </section>
+                <section id="compartilhamento">
+                    <span class="numero" aria-hidden="true">03</span>
+                    <div>
+                        <h2>Compartilhamento</h2>
+                        <p>Quando você se candidata a uma vaga, os dados necessários do seu perfil podem ser compartilhados com a empresa responsável pela oportunidade. Não comercializamos dados pessoais.</p>
+                    </div>
+                </section>
+                <section id="seguranca">
+                    <span class="numero" aria-hidden="true">04</span>
+                    <div>
+                        <h2>Segurança e armazenamento</h2>
+                        <p>Adotamos medidas técnicas e organizacionais para proteger os dados contra acesso não autorizado, perda ou alteração. Os dados são mantidos pelo tempo necessário às finalidades descritas e às obrigações legais aplicáveis.</p>
+                    </div>
+                </section>
+                <section id="direitos">
+                    <span class="numero" aria-hidden="true">05</span>
+                    <div>
+                        <h2>Seus direitos</h2>
+                        <p>Você pode solicitar confirmação do tratamento, acesso, correção, anonimização, eliminação ou informações sobre compartilhamento dos seus dados, conforme a legislação aplicável.</p>
+                    </div>
+                </section>
+                <section id="alteracoes">
+                    <span class="numero" aria-hidden="true">06</span>
+                    <div>
+                        <h2>Alterações nesta política</h2>
+                        <p>Esta política pode ser atualizada para refletir mudanças no DevIN ou na legislação. A data de atualização no topo da página indica a versão mais recente.</p>
+                    </div>
+                </section>
+
+                <aside class="aviso-lgpd">
+                    <strong>Importante</strong>
+                    <p>Este texto é uma base para o projeto. Antes de publicar o DevIN para uso real, defina o canal de contato do encarregado de dados e revise a política conforme a operação da plataforma.</p>
+                </aside>
+            </article>
+        </div>
     </main>
 
     <footer>Dev<span>IN</span> · Escola Profª Alcina Dantas Feijão · © 2026</footer>
     <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
     <script src="../js/lenis-smooth.js"></script>
     <script src="../js/site-navigation.js"></script>
+    <script src="../js/dashboard-i18n.js"></script>
 </body>
 </html>

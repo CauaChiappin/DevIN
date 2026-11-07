@@ -432,7 +432,7 @@ foreach ($candidatos as $candidato) {
 <body>
     <main class="dashboard-shell empresa-dashboard page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>">
         <?php if ($mensagemSenhaAlterada !== '' || $mensagemCadastro !== '' || $mensagemEmailSenha !== '' || $mensagemEmailCadastro !== ''): ?>
-            <div class="dashboard-toast" role="status" aria-live="polite">
+            <div class="dashboard-toast" data-auto-dismiss-toast role="status" aria-live="polite">
                 <?php if ($mensagemSenhaAlterada !== ''): ?>
                     <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h($mensagemSenhaAlterada) ?></p>
                 <?php endif; ?>
@@ -445,6 +445,7 @@ foreach ($candidatos as $candidato) {
                 <?php if ($mensagemEmailCadastro !== ''): ?>
                     <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h($mensagemEmailCadastro) ?></p>
                 <?php endif; ?>
+                <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
             </div>
         <?php endif; ?>
         
@@ -546,6 +547,10 @@ foreach ($candidatos as $candidato) {
                         </div>
                         <p class="chat-profile-dialog__privacy">Este perfil simplificado mostra apenas o nome e o tipo de conta.</p>
                         <button class="chat-profile-dialog__report-button" type="button" data-chat-profile-report-open>Denunciar perfil</button>
+                        <div class="dashboard-feedback-toast chat-profile-feedback" data-feedback-toast hidden role="status" aria-live="polite">
+                            <p class="dashboard-toast__msg" data-chat-profile-status data-feedback-message></p>
+                            <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
+                        </div>
                         <form class="chat-profile-report-form" data-chat-profile-report-form hidden>
                             <label for="chat-profile-report-reason">Motivo</label>
                             <select id="chat-profile-report-reason" required data-chat-profile-reason>
@@ -558,7 +563,6 @@ foreach ($candidatos as $candidato) {
                             </select>
                             <label for="chat-profile-report-details">Detalhes</label>
                             <textarea id="chat-profile-report-details" maxlength="1000" required data-chat-profile-details placeholder="Explique por que este perfil deve ser analisado."></textarea>
-                            <p class="chat-profile-dialog__status" data-chat-profile-status role="status" aria-live="polite"></p>
                             <div class="chat-profile-report-form__actions">
                                 <button type="button" data-chat-profile-report-cancel>Cancelar</button>
                                 <button type="submit" data-chat-profile-submit>Enviar denúncia</button>
@@ -797,6 +801,9 @@ foreach ($candidatos as $candidato) {
                 <?php endforeach; ?>
 
             <?php endif; ?>
+            <?php if ($pagina === 'sobre'): ?>
+                <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
+            <?php endif; ?>
         </section>
 
         <?php if (!in_array($pagina, ['sobre', 'perfil', 'mensagens'], true)): ?>
@@ -817,7 +824,6 @@ foreach ($candidatos as $candidato) {
         </aside>
         <?php endif; ?>
     </main>
-    <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
 
     <!-- Modal Editar Perfil -->
     <dialog class="settings-modal profile-modal" id="profileModal" aria-labelledby="profileModalTitle">
@@ -904,16 +910,5 @@ foreach ($candidatos as $candidato) {
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script>
     <?php endif; ?>
-    <script>
-        (function () {
-            var toast = document.querySelector('.dashboard-toast');
-            if (!toast) return;
-            setTimeout(function () {
-                toast.style.transition = 'opacity .4s ease';
-                toast.style.opacity = '0';
-                setTimeout(function () { toast.remove(); }, 420);
-            }, 4000);
-        })();
-    </script>
 </body>
 </html>

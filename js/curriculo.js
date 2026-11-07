@@ -91,7 +91,7 @@
             emptyState.hidden = true;
             content.hidden = false;
             output.classList.remove('dashboard-resume__paper--empty');
-            printButton.hidden = false;
+            if (printButton) printButton.hidden = false;
             status.textContent = translate('Currículo gerado. Revise todas as informações antes de imprimir ou salvar em PDF.');
             status.dataset.state = 'success';
         } catch (error) {

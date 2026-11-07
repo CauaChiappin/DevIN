@@ -19,13 +19,19 @@
             return;
         }
 
+        // Nos dashboards a rolagem acontece em .lista-area, não na janela.
+        const dashboardArea = document.querySelector('.dashboard-shell .lista-area');
+        const useDashboardArea = dashboardArea
+            && /(auto|scroll)/.test(window.getComputedStyle(dashboardArea).overflowY);
+        const boundary = useDashboardArea ? dashboardArea : document.body;
+
         const preventNativeScroll = (node) => {
             if (!(node instanceof Element)) return false;
             if (node.closest('dialog, [data-lenis-prevent]')) return true;
 
             for (
                 let element = node;
-                element && element !== document.body && element !== document.documentElement;
+                element && element !== boundary && element !== document.body && element !== document.documentElement;
                 element = element.parentElement
             ) {
                 const overflowY = window.getComputedStyle(element).overflowY;
@@ -41,10 +47,17 @@
             smoothWheel: true,
             smoothTouch: true,
             lerp: 0.08,
-            prevent: preventNativeScroll
+            prevent: preventNativeScroll,
+            ...(useDashboardArea ? { wrapper: dashboardArea, content: dashboardArea, eventsTarget: dashboardArea } : {})
         });
 
         window.__devinLenis = lenis;
+
+        if (useDashboardArea) {
+            // O conteúdo da lista muda sem redimensionar o wrapper (filtros, abas, footer).
+            new MutationObserver(() => lenis.resize()).observe(dashboardArea, { childList: true, subtree: true });
+            window.addEventListener('load', () => lenis.resize());
+        }
 
         const raf = (time) => {
             lenis.raf(time);

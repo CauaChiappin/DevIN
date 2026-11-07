@@ -126,6 +126,37 @@ class MailerHelper
         }
     }
 
+    public static function enviarConfirmacaoDenuncia(
+        string $destinatarioEmail,
+        string $destinatarioNome,
+        string $tipoDenuncia,
+        string $alvo,
+        string $idioma = 'pt-BR'
+    ): bool {
+        $nomeSeguro = htmlspecialchars($destinatarioNome, ENT_QUOTES, 'UTF-8');
+        $alvoSeguro = htmlspecialchars($alvo, ENT_QUOTES, 'UTF-8');
+        $tipoPt = $tipoDenuncia === 'perfil' ? 'o perfil' : 'a vaga';
+        $tipoEn = $tipoDenuncia === 'perfil' ? 'profile' : 'job';
+        $tipoEs = $tipoDenuncia === 'perfil' ? 'el perfil' : 'el empleo';
+        $assunto = self::mensagem(
+            $idioma,
+            'Recebemos sua denúncia - DevIN',
+            'We received your report - DevIN',
+            'Recibimos tu denuncia - DevIN'
+        );
+        $corpo = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#243b53">'
+            . '<h2>' . self::mensagem($idioma, 'Olá, ', 'Hello, ', 'Hola, ') . $nomeSeguro . '!</h2>'
+            . '<p>' . self::mensagem(
+                $idioma,
+                'Recebemos sua denúncia sobre ' . $tipoPt . ' <strong>' . $alvoSeguro . '</strong>. Nossa equipe está analisando o caso.',
+                'We received your report about the ' . $tipoEn . ' <strong>' . $alvoSeguro . '</strong>. Our team is reviewing it.',
+                'Recibimos tu denuncia sobre ' . $tipoEs . ' <strong>' . $alvoSeguro . '</strong>. Nuestro equipo está revisando el caso.'
+            ) . '</p><p>' . self::mensagem($idioma, 'Você receberá uma mensagem na plataforma quando a análise for concluída.', 'You will receive a message on the platform when the review is complete.', 'Recibirás un mensaje en la plataforma cuando finalice la revisión.') . '</p>'
+            . '<p>Support DevIN</p></div>';
+
+        return self::enviar($destinatarioEmail, $destinatarioNome, $assunto, $corpo);
+    }
+
     /**
      * Envia e-mail após o cadastro do currículo.
      */

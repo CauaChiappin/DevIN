@@ -322,12 +322,79 @@
 }
 
 .resume-upload-form input[type="file"] {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    min-height: 48px;
-    padding: 10px;
-    border: 1px solid #cad8dc;
-    border-radius: 6px;
-    background: #fff;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.resume-dropzone {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 32px 20px;
+    border: 2px dashed #9ec4e8;
+    border-radius: 12px;
+    background: #f3f8ff;
+    text-align: center;
+    transition: border-color .18s ease, background-color .18s ease;
+}
+
+.resume-dropzone:hover,
+.resume-dropzone:focus-within,
+.resume-dropzone.is-dragging {
+    border-color: #004aad;
+    background: #e8f1fd;
+}
+
+.resume-dropzone.has-file {
+    border-style: solid;
+    border-color: #004aad;
+    background: #eaf2ff;
+}
+
+.resume-dropzone__icon {
+    display: grid;
+    width: 56px;
+    height: 56px;
+    place-items: center;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    background: #004aad;
+    color: #fff;
+}
+
+.resume-dropzone strong {
+    max-width: 100%;
+    color: #0b3f7a;
+    font-size: 17px;
+    overflow-wrap: anywhere;
+}
+
+.resume-dropzone small {
+    color: #5f7388;
+    font-size: 13px;
+}
+
+.resume-upload-tips {
+    display: grid;
+    gap: 6px;
+    margin: 0 0 18px;
+    padding: 14px 0 0;
+    border-top: 1px solid #e3eaf0;
+    color: #5f7388;
+    font-size: 13px;
+    list-style: none;
+}
+
+.resume-upload-tips li::before {
+    content: "✓";
+    margin-right: 8px;
+    color: #004aad;
+    font-weight: 800;
 }
 
 .resume-upload-form button,

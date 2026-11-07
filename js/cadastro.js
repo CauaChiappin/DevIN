@@ -80,7 +80,7 @@ if (senhaInput && confirmeSenhaInput) {
 
         if (!senhaValida || senha !== confirmeSenhaInput.value) {
             event.preventDefault();
-            alert('Por favor, corrija os erros nos campos de senha antes de prosseguir.');
+            alert((window.DevINTranslate || ((text) => text))('Por favor, corrija os erros nos campos de senha antes de prosseguir.'));
         }
     });
 }
@@ -93,7 +93,7 @@ cadastroForm?.addEventListener('submit', async (event) => {
         await csrfRequest;
         cadastroForm.requestSubmit(event.submitter);
     } catch (error) {
-        window.alert('Nao foi possivel preparar o formulario. Atualize a pagina e tente novamente.');
+        window.alert((window.DevINTranslate || ((text) => text))('Nao foi possivel preparar o formulario. Atualize a pagina e tente novamente.'));
     }
 });
 
