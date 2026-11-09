@@ -6,11 +6,23 @@ $toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED']
     ?? getenv('DEVIN_JARVIS_ACTIONS_ENABLED') ?: '0') === '1';
 ?>
 <section class="jarvis-admin" id="jarvisAdmin" data-endpoint="api/jarvis/chat.php" data-conversations="api/jarvis/conversations.php" data-tasks="api/jarvis/tasks.php" data-tools="api/jarvis/admin_tools.php" data-csrf="<?= h(csrfToken()) ?>" data-page="<?= h($pagina) ?>">
-    <button class="jarvis-admin__launcher" type="button" aria-label="Abrir JARVIS Admin" aria-controls="jarvisAdminPanel" aria-expanded="false" data-jarvis-toggle><span aria-hidden="true">✦</span><span class="jarvis-admin__launcher-label">JARVIS</span></button>
-    <section class="jarvis-admin__panel" id="jarvisAdminPanel" role="dialog" aria-modal="false" aria-label="Assistente JARVIS Admin" hidden>
+    <button class="jarvis-admin__launcher" type="button" aria-label="Abrir JarvisDevIn" aria-controls="jarvisAdminPanel" aria-expanded="false" data-jarvis-toggle><svg class="jarvis-admin__jd-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+    <path d="M 8 13 H 28 V 41 C 28 52 20 57 12 53 C 8 51 6 47 6 43" fill="none" stroke="#0fe1ee" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 36 52 V 13 H 40 C 52 13 58 21 58 32 C 58 44 52 52 40 52 H 36" fill="none" stroke="#db4fe6" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 6 6 H 28 M 3 40 V 44 M 36 6 H 41 M 58 54 V 57" fill="none" stroke="#3cbbfa" stroke-width="2" stroke-linecap="round" />
+    <circle cx="6" cy="6" r="2.2" fill="#0fe1ee"/><circle cx="28" cy="6" r="2" fill="#0fe1ee"/>
+    <circle cx="41" cy="6" r="2.2" fill="#db4fe6"/><circle cx="58" cy="58" r="2.2" fill="#db4fe6"/>
+</svg><span class="jarvis-admin__launcher-label">JarvisDevIn</span></button>
+    <section class="jarvis-admin__panel" id="jarvisAdminPanel" role="dialog" aria-modal="false" aria-label="Assistente JarvisDevIn" hidden>
         <header class="jarvis-admin__header">
-            <span class="jarvis-admin__mark" aria-hidden="true">✦</span>
-            <div class="jarvis-admin__identity"><strong>JARVIS Admin</strong><small>Copiloto administrativo · DevIN</small></div>
+            <svg class="jarvis-admin__jd-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+    <path d="M 8 13 H 28 V 41 C 28 52 20 57 12 53 C 8 51 6 47 6 43" fill="none" stroke="#0fe1ee" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 36 52 V 13 H 40 C 52 13 58 21 58 32 C 58 44 52 52 40 52 H 36" fill="none" stroke="#db4fe6" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 6 6 H 28 M 3 40 V 44 M 36 6 H 41 M 58 54 V 57" fill="none" stroke="#3cbbfa" stroke-width="2" stroke-linecap="round" />
+    <circle cx="6" cy="6" r="2.2" fill="#0fe1ee"/><circle cx="28" cy="6" r="2" fill="#0fe1ee"/>
+    <circle cx="41" cy="6" r="2.2" fill="#db4fe6"/><circle cx="58" cy="58" r="2.2" fill="#db4fe6"/>
+</svg>
+            <div class="jarvis-admin__identity"><strong>JarvisDevIn</strong><small>Copiloto administrativo · DevIN</small></div>
             <button type="button" class="jarvis-admin__icon-button" aria-label="Expandir chat" title="Expandir chat" data-jarvis-expand>⛶</button>
             <button type="button" class="jarvis-admin__icon-button" aria-label="Fechar chat" data-jarvis-close>×</button>
         </header>
@@ -35,8 +47,8 @@ $toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED']
             <label class="jarvis-admin__context-option" title="Somente com sua autorização, mensagens anteriores desta conversa serão enviadas ao modelo externo."><input type="checkbox" data-jarvis-use-history><span>Usar mensagens anteriores como contexto da IA</span></label>
             <p class="jarvis-admin__status" role="status" aria-live="polite" data-jarvis-status></p>
             <form class="jarvis-admin__composer" data-jarvis-form>
-                <label class="jarvis-admin__sr-only" for="jarvisAdminInput">Mensagem para o JARVIS</label>
-                <textarea id="jarvisAdminInput" rows="1" maxlength="3000" placeholder="Pergunte ao JARVIS..." data-jarvis-input></textarea>
+                <label class="jarvis-admin__sr-only" for="jarvisAdminInput">Mensagem para o JarvisDevIn</label>
+                <textarea id="jarvisAdminInput" rows="1" maxlength="3000" placeholder="Pergunte ao JarvisDevIn..." data-jarvis-input></textarea>
                 <button type="submit" aria-label="Enviar mensagem" data-jarvis-send>➤</button>
             </form>
         </section>

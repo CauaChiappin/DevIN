@@ -71,7 +71,7 @@
     item.className = 'jarvis-admin__message' + (role === 'user' ? ' is-user' : '');
     const label = document.createElement('span');
     label.className = 'jarvis-admin__message-label';
-    label.textContent = role === 'user' ? 'Você' : 'JARVIS Admin';
+    label.textContent = role === 'user' ? 'Você' : 'JarvisDevIn';
     const text = document.createElement('div');
     text.className = 'jarvis-admin__message-body';
     text.textContent = String(content);
