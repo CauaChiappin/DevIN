@@ -1,87 +1,92 @@
-# DevIN — verificação administrativa em duas etapas
+# DevIN — Token 2 permanente dos ADMs (Fase 1 LGPD)
 
-> Fase 1 LGPD, branch `feature/lgpd-phase1-foundation`, PR #8. **Não implantar diretamente em produção.** A proteção envolve o código do painel ADM e a integração do PR #7 (JARVIS).
+> Branch de desenvolvimento: feature/lgpd-phase1-foundation, PR #8 (draft).
+> O banco da hospedagem NÃO foi alterado. Realizar testes e backup antes do deploy.
 
-## Fluxos implementados
+## Comportamento
 
-- Login ADM existente permanece com e-mail e senha.
-- Site: ao executar pela primeira vez uma operação sensível, o servidor apresenta apenas **Informe o Token 2**. Quando aceito, retoma o POST original na mesma sessão (inclusive formulário enviado sem JavaScript).
-- IA: ao abrir o JARVIS, o servidor exige **Informe o Token 1** e, somente depois da validação, **Informe o Token 2**. O backend bloqueia até lá todos os endpoints de chat, conversa, resumo e atividades.
-- Os dois escopos de autorização são separados. Uma aprovação para o site não libera a IA nem vice-versa.
-- O sistema **não** fornece explicação dos tokens nas telas nem nas mensagens do modelo. Tokens não são persistidos em texto puro, salvos no chat, logs ou enviados à IA.
+Há quatro contas ADM identificadas por administrador.id_administrador.
+Cada uma possui uma senha principal de login e pode pré-cadastrar um Token 2
+**pessoal, permanente e sem data de validade**.
 
-**Nota técnica para revisão de segurança:** dois segredos de conhecimento não constituem MFA com fatores independentes, segundo a OWASP. Esta é uma autenticação adicional sequencial ("step-up"); para MFA propriamente dito, acrescente futuramente TOTP ou passkeys/WebAuthn. Ocultar descrições dos campos melhora discrição visual, mas não substitui proteção de credenciais, HTTPS e revisão de código.
+- Acessar /php/JarvisT.php (somente ADM logado) para configurar ou trocar.
+- Primeiro cadastro: informar Token 1, definir Token 2 e confirmar.
+- Mudança futura: informar Token 1, informar o Token 2 atual, definir e confirmar o novo.
+- Não há códigos de ativação, prazo de 30 minutos ou renovação compulsória.
+- Quem perdeu o Token 2 precisa de procedimento de recuperação supervisionado no servidor, ainda não exposto na interface. Não permitir recuperação só pela sessão.
+- Após alterar, autorizações antigas de site e IA são invalidadas imediatamente; a senha registrada permanece válida até o próprio ADM mudá-la.
 
-## Atribuição individual aos 4 ADMs
+As interfaces operacionais do site e da IA continuam a pedir apenas "Informe o Token 1"
+ou "Informe o Token 2", sem explicar a função dos tokens.
 
-Migration: `database/migrations/2026_11_09_002_admin_stepup.sql`.
+## Esquema SQL
 
-- Cria `admin_security_credentials` com vínculo por `administrador.id_administrador`, hash de Token 2 e versão para revogação imediata.
-- **Cada ADM escolhe o próprio Token 2**, sem que o operador do sistema o conheça. O servidor salva somente o hash Argon2id (se disponível) ou hash seguro padrão do PHP.
-- O operador emite apenas um **código de ativação temporário** por ADM, enviado individualmente por canal seguro. O código expira em 30 minutos e é consumido após uso.
-- Ao entrar no painel, cada ADM usa o link **Configurar Token 2**. A página apresenta apenas os campos **Informe o Token 1**, **Informe o código de ativação**, **Defina o Token 2** e **Confirme o Token 2**.
-- O código de ativação não substitui nenhuma das duas etapas posteriores, não é enviado ao JARVIS e não libera as ações críticas.
-- Exigência para o novo Token 2: pelo menos 14 caracteres e no máximo 72 bytes, não pode coincidir com o Token 1 nem com outro Token 2 existente. A nova escolha invalida permissões de sessões anteriores.
+Arquivo: database/migrations/2026_11_09_002_admin_stepup.sql
 
-Migrações necessárias: `2026_11_09_002_admin_stepup.sql` **e depois** `2026_11_09_003_admin_token2_enrollment.sql`.
+Novas colunas adicionadas à tabela existente administrador:
 
-No servidor de **desenvolvimento**, depois de aplicar as duas migrations e conferir os quatro IDs reais:
+| Coluna | Tipo | Uso |
+|---|---|---|
+| token2_hash | VARCHAR(255) NULL | Hash protegido e individual; NULL antes da configuração |
+| token2_version | BIGINT UNSIGNED | Revisão da credencial; invalida sessões após troca |
+| token2_configured_at | DATETIME(6) NULL | Data de criação ou última alteração, **não é expiração** |
 
-```bash
-php scripts/issue-admin-token2-activation.php <id_administrador>
-```
+token2_hash é o nome técnico da coluna (não "cartografia 2"); nenhum valor legível é salvo.
+Uma migração de banco deve ser aplicada **uma única vez pelo operador**, com backup,
+permissões adequadas e em banco de desenvolvimento. A página web nunca executa
+CREATE TABLE ou ALTER TABLE.
 
-Execute uma vez para cada ADM. Não adivinhe IDs; os números nos exemplos anteriores não eram IDs confirmados. O código gerado só aparece uma vez no terminal e deve ser entregue por canal privado. **Não peça aos ADMs que enviem seus Tokens 1 ou 2 para outra pessoa.** Para recuperação ou troca do Token 2, emita um novo código temporário; o ADM configurará outro segredo. O script antigo `provision-admin-token2.php` foi desabilitado para impedir atribuição automática.
+Os antigos arquivos de convite 2026_11_09_003_admin_token2_enrollment.sql e
+scripts/issue-admin-token2-activation.php foram retirados da branch. Se algum
+ambiente de desenvolvimento recebeu versões anteriores dessas migrations,
+não as rode novamente sem comparar o schema e planejar a convergência.
 
-## Como ativar com segurança
+## Segurança do Token 2 longo
 
-1. Confirme backup recuperável e teste o banco em ambiente descartável (a CI usa MySQL 8.0).
-2. Confirme a coluna `administrador.senha_hash` e chave `administrador.id_administrador`; a migration cria FK para essa tabela.
-3. Aplique a migration **apenas em desenvolvimento**.
-4. Emitir quatro códigos temporários, um por ADM, entregá-los com segurança e permitir que **cada ADM configure o próprio Token 2** antes de ativar o bloqueio. Não existe credencial compartilhada nem padrão.
-5. Em `.env` do ambiente de desenvolvimento, habilite `DEVIN_ADMIN_STEPUP_ENABLED=1`; antes disso o controle permanece desligado no painel para não bloquear funções existentes durante preparação.
-6. Valide: exclusões/edições/reports do painel, exclusão administrativa no arcade, gate do site com reenvio seguro; bloqueio de bypass com POST direto e CSRF; token inválido e limites; suspensão por inatividade, logout, troca de senha e rotação de Token 2.
-7. Após revisão de segurança e testes funcionais, ativar em produção apenas com HTTPS e os quatro ADMs provisionados. Nunca habilitar IA que dependa desse gate antes de aplicar o PR #8.
+- Sem atributo maxlength e sem limite de caracteres na interface.
+- Pelo menos 12 caracteres Unicode; validação UTF-8 e confirmação idêntica.
+- Teto técnico de 64 KiB de entrada, para evitar ataques de negação de serviço.
+- SHA-256 com domínio específico **antes** de password_hash() Argon2id
+  (ou algoritmo PHP seguro disponível), evitando truncamento de 72 bytes do bcrypt.
+- Verificação com password_verify(), sem guardar dados sensíveis em logs,
+  JavaScript ou prompts de IA. adminId() vem da sessão autenticada, nunca do POST.
+- Antes de substituir um Token 2 cadastrado, exige o Token 2 atual e o Token 1.
+- Valores iguais ao Token 1 ou ao Token 2 de outro ADM são recusados.
+- Rate limit e CSRF em POST; a tela só deve operar em HTTPS em produção.
 
-**A IA do PR #7 falha de forma fechada** se os arquivos do guard ainda não estiverem presentes ou a configuração não estiver ativa. Ordem recomendada: validar/implantar PR #8 primeiro e PR #7 depois.
+**Nota de risco:** para um ADM ainda sem Token 2, o pré-cadastro depende do login
+existente + confirmação do Token 1. Um invasor que já possua essa senha poderia
+tentar cadastrar primeiro. Por isso os quatro administradores devem realizar
+o pré-cadastro de forma supervisionada e segura antes da ativação da proteção.
+Para resistência real contra comprometimento dessa senha, é recomendável
+adicionar autenticação independente (passkey/WebAuthn ou TOTP).
 
-## Permissões e persistência
+## Acesso ao painel e JARVIS
 
-- A autorização fica na **sessão PHP atual**, vinculada ao ID do administrador e à revisão da credencial do banco.
-- Não armazena nenhuma senha ou token em cookie/JWT/localStorage; apenas um estado de autorização na sessão do servidor.
-- O estado expira após **30 minutos de inatividade** ou **8 horas desde a validação**, o que ocorrer primeiro; logout também encerra o estado.
-- Troca de senha da conta ou rotação de Token 2 invalida imediatamente as permissões ao serem verificadas no backend.
-- Nova sessão, outro navegador ou outro dispositivo exigem autenticação novamente.
-- O estágio intermediário do desbloqueio da IA expira em cinco minutos.
-- O rate limiter existente impõe limites por ADM e IP, sem armazenar os tokens.
-- Em modo habilitado, erros de banco ou credenciais não provisionadas devem impedir novas ações em vez de liberar acesso.
+- Ações críticas no painel: Token 2 obrigatório antes do primeiro POST;
+  autorização por sessão (site).
+- JARVIS Admin do PR #7: Token 1, depois Token 2, obrigatoriamente nessa ordem;
+  sem tokens no histórico/modelo.
+- A senha é permanente, **mas** as autorizações de sessão expiram após
+  30 minutos de inatividade ou 8 horas da validação. O logout revoga a sessão.
+- AdminStepUp.php verifica a versão/hash atuais no banco a cada acesso protegido.
+- Falta da migration/credencial impede uso do desbloqueio; não há fallback inseguro.
+- No .env de desenvolvimento: DEVIN_ADMIN_STEPUP_ENABLED=1 somente depois
+  de migrar a tabela e configurar os quatro ADMs. Iniciar com 0 para pré-cadastro.
 
-## Arquivos
+## Testes e deploy
 
-| Arquivo | Função |
-| --- | --- |
-| `database/migrations/2026_11_09_002_admin_stepup.sql` | tabela de credenciais exclusivas |
-| `scripts/issue-admin-token2-activation.php` | emissão de convite temporário individual via CLI |
-| `php/admin_token2.php` | formulário protegido para o próprio ADM definir o Token 2 |
-| `php/controllers/Security/AdminToken2Enrollment.php` | validação do Token 1, convite de uso único e hash do novo Token 2 |
-| `scripts/provision-admin-token2.php` | comando antigo descontinuado |
-| `php/controllers/Security/AdminStepUp.php` | verificação e sessão autorizada |
-| `php/controllers/Security/AdminGate.php` | interceptação e retomada segura do POST |
-| `php/admin_security_gate.php` | formulário restrito para ações do painel |
-| `php/api/admin_security.php` | API restrita ao navegador para desbloqueio da IA |
-| `php/adm.php`, `php/arcade_api.php` | guardas nas operações administrativas |
-| `php/controllers/AuthController.php` | revogação na criação de novas sessões |
-| `tests/admin_stepup_integration.php` | testes de ordem, isolação, sessão e rotação |
+- tests/admin_token2_permanent_integration.php: cadastro, senhas longas,
+  troca, recusa da chave anterior, verificação da chave de outro ADM,
+  persistência sem expiração e revogação dos grants.
+- tests/admin_stepup_integration.php: sequência de IA, isolamento de sessões,
+  revalidação e proteção de POST de ações críticas.
+- .github/workflows/lgpd-phase1.yml executa PHP lint e MySQL 8.0
+  descartável, sem conexão com o banco de produção.
 
-## Limitações e cuidados
+Ordem: backup/validação do schema real → migração 001 (LGPD) e 002
+(administrador) em desenvolvimento → pré-cadastro dos quatro ADMs em
+JarvisT.php → ativar a flag em desenvolvimento → testar painel/JARVIS →
+revisão do PR #8 → só então integrar o PR #7 e considerar produção.
 
-- O gate não substitui regras de autorização por recurso, CSRF, auditoria, checagem de propriedade ou revisão humana.
-- Formulários com arquivos anexados não podem ter o arquivo temporário automaticamente retomado após o desbloqueio: por segurança, é necessário reenviar esse formulário.
-- O gate do site protege as ações existentes de `adm.php` e remoção de progresso do arcade; novas rotas administrativas críticas **devem obrigatoriamente invocar `AdminStepUp::requireAllowed('site')`**.
-- A UI da IA é desenvolvida no PR #7 e depende da implantação deste guard. Enquanto os PRs não forem integrados, não há um sistema completo em produção.
-
-### Segurança da autoinscrição
-
-O código individual e o Token 1 são exigidos simultaneamente para definir o Token 2; uma sessão ADM já aberta não é suficiente. A confirmação ocorre por HTTPS no ambiente de produção e exige CSRF. Não há tokens pré-fixados em `.env`. O processo é isolado por conta, usa limitação de tentativas por ADM/IP e consome o código no mesmo COMMIT que salva o novo hash. A tela não mostra a finalidade dos tokens.
-
-Os dados de ativação e o novo Token 2 não podem ser enviados por mensagens, incluídos no histórico do JARVIS ou registrados no console do navegador. A senha escolhida deve ficar só com o respectivo ADM. Essa etapa não transforma dois segredos de conhecimento em fatores independentes de MFA.
+Não há garantia de conformidade LGPD apenas por implementar essas rotas.
