@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 // Montado pelo dashboard após autenticação ADM.
+$toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED']
+    ?? $_SERVER['DEVIN_JARVIS_ACTIONS_ENABLED']
+    ?? getenv('DEVIN_JARVIS_ACTIONS_ENABLED') ?: '0') === '1';
 ?>
 <section class="jarvis-admin" id="jarvisAdmin" data-endpoint="api/jarvis/chat.php" data-conversations="api/jarvis/conversations.php" data-tasks="api/jarvis/tasks.php" data-tools="api/jarvis/admin_tools.php" data-csrf="<?= h(csrfToken()) ?>" data-page="<?= h($pagina) ?>">
     <button class="jarvis-admin__launcher" type="button" aria-label="Abrir JARVIS Admin" aria-controls="jarvisAdminPanel" aria-expanded="false" data-jarvis-toggle><span aria-hidden="true">✦</span><span class="jarvis-admin__launcher-label">JARVIS</span></button>
@@ -14,9 +17,9 @@ declare(strict_types=1);
         <nav class="jarvis-admin__tabs" aria-label="Seções do JARVIS">
             <button type="button" class="is-active" aria-pressed="true" data-jarvis-tab="chat">Conversas</button>
             <button type="button" aria-pressed="false" data-jarvis-tab="tasks">Atividades</button>
-            <button type="button" aria-pressed="false" data-jarvis-tab="lookup">Consultar</button>
-            <button type="button" aria-pressed="false" data-jarvis-tab="outbox">Mensagens</button>
-            <button type="button" aria-pressed="false" data-jarvis-tab="audit">Histórico</button>
+            <button type="button" aria-pressed="false" data-jarvis-tab="lookup" <?= $toolsEnabled ? '' : 'disabled title="Exige instalação da migration e ativação no servidor"' ?>>Consultar</button>
+            <button type="button" aria-pressed="false" data-jarvis-tab="outbox" <?= $toolsEnabled ? '' : 'disabled title="Exige instalação da migration e ativação no servidor"' ?>>Mensagens</button>
+            <button type="button" aria-pressed="false" data-jarvis-tab="audit" <?= $toolsEnabled ? '' : 'disabled title="Exige instalação da migration e ativação no servidor"' ?>>Histórico</button>
         </nav>
         <section class="jarvis-admin__pane jarvis-admin__pane--chat" data-jarvis-pane="chat" aria-label="Conversas">
             <div class="jarvis-admin__conversation-bar">
