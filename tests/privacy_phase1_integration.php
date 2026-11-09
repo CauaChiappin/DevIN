@@ -36,7 +36,7 @@ $db->query('CREATE TABLE IF NOT EXISTS empresa (id_empresa INT PRIMARY KEY) ENGI
 $db->query('CREATE TABLE IF NOT EXISTS administrador (id_administrador INT PRIMARY KEY) ENGINE=InnoDB');
 $db->query('INSERT INTO pessoa VALUES (101),(102)');
 $db->query('INSERT INTO empresa VALUES (201)');
-$db->query('INSERT INTO administrador VALUES (301)');
+$db->query('INSERT INTO administrador(id_administrador) VALUES (301)');
 $_ENV['DEVIN_LGPD_IP_HASH_KEY'] = str_repeat('Z', 48);
 $_SERVER['REMOTE_ADDR'] = '192.0.2.50';
 $_SERVER['HTTP_USER_AGENT'] = "LGPD-CI/1.0";
