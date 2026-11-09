@@ -77,6 +77,7 @@
         details.push('Modelo: ' + String(metadata.provider || 'API') + ' / ' + metadata.model);
       }
       if (metadata.fallback_used === true) details.push('Modelo gratuito de reserva');
+      if (metadata.key_used === 'backup') details.push('Chave reserva utilizada');
       if (Array.isArray(metadata.skills) && metadata.skills.length) {
         details.push('Habilidades: ' + metadata.skills.map(s => String(s.label || '')).filter(Boolean).join(', '));
       }

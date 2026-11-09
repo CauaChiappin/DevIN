@@ -28,7 +28,16 @@ Implementação do PR #7, preparada para integração à `main` **sem verificaç
 4. Verifique a extensão cURL e `mbstring` do PHP, as dependências Composer do DevIN, e se a hospedagem permite conexões HTTPS com o provedor.
 5. Acesse `php/adm.php` com sessão ADM válida, abra o ícone JARVIS e teste as abas **Conversas** e **Atividades**.
 
-> O ID `z-ai/glm-5.3-flash:free` é um exemplo encontrado no OpenRouter em novembro de 2026. Modelos e cotas podem mudar. A variante gratuita tem limite de uso; revise disponibilidade, termos de dados e custos antes de colocá-la em produção. Alternativamente, escolha outro ID suportado. O fallback só é tentado **no mesmo provedor OpenRouter**, com a mesma chave e quando `DEVIN_JARVIS_FALLBACK_MODEL` está configurado com um ID terminado em `:free`. Só responde a falhas temporárias (por exemplo HTTP 429/503); não muda de provedor, não seleciona modelos pagos nem garante disponibilidade.
+> O ID `z-ai/glm-5.3-flash:free` é um exemplo encontrado no OpenRouter em novembro de 2026. Modelos e cotas podem mudar. A variante gratuita tem limite de uso; revise disponibilidade, termos de dados e custos antes de colocá-la em produção. Alternativamente, escolha outro ID suportado. O roteador OpenRouter usa até **10 modelos gratuitos reserva**, configuráveis em `DEVIN_JARVIS_FALLBACK_MODELS` (lista separada por vírgulas), com defaults no código e último recurso `openrouter/free`. Envia a cadeia no campo `models` em uma chamada, sem tentar cada modelo com requisições separadas. `DEVIN_JARVIS_API_KEY` é a chave principal e `DEVIN_JARVIS_BACKUP_API_KEY` é uma segunda chave opcional usada quando a principal falha por credencial, cota, rede ou indisponibilidade. Duas chaves da mesma conta podem compartilhar cota. A variável antiga `DEVIN_JARVIS_FALLBACK_MODEL` continua aceitando **somente ID de modelo**, nunca chave de API. Consulte `docs/jarvis-openrouter-dual-key.md`.
+
+## Atualização do roteador OpenRouter (duas chaves)
+
+- Configure `DEVIN_JARVIS_API_KEY` e opcionalmente `DEVIN_JARVIS_BACKUP_API_KEY`.
+- `DEVIN_JARVIS_FALLBACK_MODELS` aceita até dez IDs gratuitos priorizados; se ficar vazia, usa dez reservas padrão.
+- Erros do modelo agora informam `error_code` e `provider_http_status` seguros, sem chave, prompt ou resposta bruta.
+- Metadados das respostas incluem `model`, `fallback_used` e `key_used` (nível `primary` ou `backup`).
+- A lógica do 2FA continua **fora** desta versão; o login normal ADM ainda é obrigatório.
+- Instalação e diagnóstico: `docs/jarvis-openrouter-dual-key.md`.
 
 ## Endpoints
 - `POST php/api/jarvis/chat.php`: `{mode:"chat",message,page,conversation_id}`; retorna `{reply,conversation_id}`. `{mode:"summary"}` devolve dados agregados sem usar provedor externo.
@@ -62,7 +71,7 @@ Revisar arquitetura e testes reais no servidor. Depois: consultas administrativa
 
 Adaptações próprias, sem copiar dependências de terceiros:
 - **SkillManager**: seleção determinística por palavras-chave e até duas especializações do próprio portal; o gerenciador permanece ativo, sem executar scripts ou ações administrativas.
-- **ModelRouter**: fallback opcional somente para modelo gratuito e já autorizado no mesmo provedor OpenRouter; um pedido curto normalmente usa uma única chamada de IA.
+- **ModelRouter**: fallback nativo entre modelo principal e até dez reservas gratuitas, mais uma chave OpenRouter independente de backup, sem alternar para provedores diferentes nem modelos pagos.
 - **Contexto e memória**: separação entre persistir histórico no MySQL e consentir em enviá-lo ao modelo.
 - **Central de atividades**: três exemplos explicativos e botões para registrar andamento, sem automação, fila executável ou poderes de moderação.
 - **Visibilidade**: metadados de modelo/skill por resposta nova. As mensagens antigas não guardam esses metadados na tabela atual.

@@ -25,14 +25,23 @@ checkJarvis(count(AdminSkillManager::labels($selected)) === count($selected), 'e
 
 $single = ModelRouter::candidates('groq', 'modelo-primario', 'modelo-secundario:free');
 checkJarvis($single === ['modelo-primario'], 'não alternar em provedor diferente de OpenRouter');
-$free = ModelRouter::candidates('openrouter', 'z-ai/glm-5.3-flash:free', 'outro/modelo:free');
-checkJarvis($free === ['z-ai/glm-5.3-flash:free', 'outro/modelo:free'], 'fallback gratuito configurado');
-checkJarvis(
-    ModelRouter::candidates('openrouter', 'openrouter/free', 'modelo-pago') === ['openrouter/free'],
-    'não ativar fallback pago automaticamente'
-);
-checkJarvis(ModelRouter::candidates('openrouter', 'modelo', 'https://site-malicioso/') === ['modelo'], 'bloquear URLs');
-checkJarvis(ModelRouter::shouldFallback(429) && ModelRouter::shouldFallback(503), 'retry apenas transitório');
-checkJarvis(!ModelRouter::shouldFallback(401) && !ModelRouter::shouldFallback(403), 'não repetir falhas de credenciais');
+$default = ModelRouter::candidates('openrouter', 'z-ai/glm-5.3-flash:free');
+checkJarvis(count($default) === 11, 'modelo principal e 10 reservas padrão');
+checkJarvis($default[10] === 'openrouter/free', 'roteador gratuito como último recurso');
+checkJarvis(count(array_unique($default)) === count($default), 'nenhum modelo duplicado');
+checkJarvis(array_reduce($default, static fn(bool $ok, string $model): bool => $ok && ModelRouter::isFree($model), true), 'todos gratuitos');
+$singleBackup = ModelRouter::candidates('openrouter', 'z-ai/glm-5.3-flash:free', 'google/gemma-4-31b-it:free');
+checkJarvis($singleBackup === ['z-ai/glm-5.3-flash:free', 'google/gemma-4-31b-it:free'], 'compatibilidade com fallback legado');
+$badLegacy = ModelRouter::candidates('openrouter', 'openrouter/free', 'sk-or-v1-simulated');
+checkJarvis(count($badLegacy) === 10 && !in_array('sk-or-v1-simulated', $badLegacy, true), 'ignora chave colada em campo de modelo e mantém reservas');
+$config = ModelRouter::candidates('openrouter', 'openrouter/free', '', 'google/gemma-4-31b-it:free,openai/gpt-6,google/gemma-4-31b-it:free,liquid/lfm-3-1.7b:free');
+checkJarvis($config === ['openrouter/free','google/gemma-4-31b-it:free','liquid/lfm-3-1.7b:free'], 'CSV filtra modelos pagos, inválidos e repetidos');
+checkJarvis(ModelRouter::shouldTrySecondKey(401) && ModelRouter::shouldTrySecondKey(402)
+    && ModelRouter::shouldTrySecondKey(429) && ModelRouter::shouldTrySecondKey(503), 'reserva por credencial/cota/indisponibilidade');
+checkJarvis(!ModelRouter::shouldTrySecondKey(400) && !ModelRouter::shouldTrySecondKey(404), 'não repetir falhas de pedido/modelo');
+try {
+    ModelRouter::candidates('openrouter', 'openai/gpt-6');
+    throw new RuntimeException('Modelo pago passou pela validação.');
+} catch (InvalidArgumentException $expected) {}
 
-echo "JARVIS Admin smoke: OK\n";
+echo "JARVIS Admin smoke: OK\\n";

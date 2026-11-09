@@ -106,10 +106,23 @@ $messages[] = ['role' => 'user', 'content' => trim($message)];
 try {
     $modelResult = ModelProvider::chatWithMeta($messages);
     $answer = $modelResult['reply'];
+} catch (JarvisModelException $exception) {
+    // Retorna somente categoria e status HTTP; nunca payloads nem credenciais.
+    $status = $exception->reason === 'rate_limit' ? 429
+        : ($exception->reason === 'auth' ? 502 : 503);
+    jarvisJson($status, [
+        'success' => false,
+        'message' => $exception->getMessage(),
+        'error_code' => $exception->reason,
+        'provider_http_status' => $exception->httpStatus,
+    ]);
 } catch (Throwable $exception) {
-    error_log('JARVIS model: ' . $exception->getMessage());
-    // Mensagens de erro são mantidas genéricas; jamais retornar credenciais ou payload.
-    jarvisJson(503, ['success' => false, 'message' => 'Modelo temporariamente indisponível. Verifique a configuração e os limites do provedor.']);
+    error_log('JARVIS model unexpected: ' . get_class($exception));
+    jarvisJson(503, [
+        'success' => false,
+        'message' => 'A IA não conseguiu responder. Consulte o log técnico do servidor.',
+        'error_code' => 'unexpected',
+    ]);
 }
 try {
     $db = getDatabaseConnection();
@@ -140,6 +153,7 @@ jarvisJson(200, [
     'model' => $modelResult['model'],
     'provider' => $modelResult['provider'],
     'fallback_used' => $modelResult['fallback_used'],
+    'key_used' => $modelResult['key_used'],
     'skills' => AdminSkillManager::labels($selectedSkills),
     'history_used' => $useHistory && $history !== [],
 ]);
