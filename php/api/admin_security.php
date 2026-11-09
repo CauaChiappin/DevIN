@@ -41,11 +41,11 @@ try {
     if (!verifyCsrfToken($_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
         securityJson(403, ['success'=>false,'message'=>'Solicitação inválida.']);
     }
-    if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 1024) {
+    if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 205000) {
         securityJson(413, ['success'=>false,'message'=>'Solicitação inválida.']);
     }
-    $raw = file_get_contents('php://input', false, null, 0, 1025);
-    if (!is_string($raw) || strlen($raw) > 1024) {
+    $raw = file_get_contents('php://input', false, null, 0, 205001);
+    if (!is_string($raw) || strlen($raw) > 205000) {
         securityJson(413, ['success'=>false,'message'=>'Solicitação inválida.']);
     }
     $body = json_decode($raw, true, 6, JSON_THROW_ON_ERROR);
