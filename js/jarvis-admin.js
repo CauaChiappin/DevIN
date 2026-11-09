@@ -13,11 +13,6 @@
   const send = $('[data-jarvis-send]');
   const conversationSelect = $('[data-jarvis-conversation]');
   const taskList = $('[data-jarvis-tasks-list]');
-  const security = $('[data-jarvis-security]');
-  const securityInput = $('[data-jarvis-security-input]');
-  const securityLabel = $('[data-jarvis-security-label]');
-  const securityStatus = $('[data-jarvis-security-status]');
-  let aiUnlocked = false;
   let conversationId = null;
   let busy = false;
   let activeTab = 'chat';
@@ -33,68 +28,25 @@
     }
     const response = await fetch(url, options);
     const data = await response.json().catch(() => null);
-    if (response.status === 423) {
-      aiUnlocked = false;
-      showSecurity(data?.next_token === 2 ? 2 : 1);
-    }
     if (!data || !response.ok || data.success !== true) {
       throw new Error(data?.message || 'Falha ao consultar o servidor. Verifique sua sessão.');
     }
     return data;
   }
-  function showSecurity(stage) {
-    security.hidden = false;
-    securityLabel.textContent = stage === 2 ? 'Informe o Token 2' : 'Informe o Token 1';
-    securityInput.value = '';
-    securityStatus.textContent = '';
-    securityInput.focus();
-  }
-  async function securityRequest(payload = null) {
-    const options = {credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}};
-    let url = root.dataset.security + '?scope=ai';
-    if (payload !== null) {
-      options.method = 'POST';
-      options.headers['Content-Type'] = 'application/json';
-      options.headers['X-CSRF-Token'] = root.dataset.csrf;
-      options.body = JSON.stringify(payload);
-      url = root.dataset.security;
-    }
-    const response = await fetch(url, options);
-    const data = await response.json().catch(() => null);
-    if (!data || !response.ok || data.success !== true) {
-      throw new Error(data?.message || 'Verificação indisponível.');
-    }
-    return data;
-  }
-  async function ensureSecurity() {
-    aiUnlocked = false;
-    security.hidden = false;
-    securityInput.value = '';
-    securityStatus.textContent = 'Verificando acesso...';
-    try {
-      const state = await securityRequest();
-      aiUnlocked = state.unlocked === true;
-      if (aiUnlocked) {
-        security.hidden = true;
-        securityStatus.textContent = '';
-        await loadConversations().catch(error => {status.textContent = error.message;});
-        if (activeTab === 'chat') input.focus();
-        else loadTasks();
-      } else {
-        showSecurity(state.next_token === 2 ? 2 : 1);
-      }
-    } catch (error) {
-      securityStatus.textContent = error.message;
-    }
-  }
   function open(show) {
     panel.hidden = !show;
     launcher.setAttribute('aria-expanded', String(show));
-    if (show) { void ensureSecurity(); }
-    else launcher.focus();
+    if (show) {
+      loadConversations($('[data-jarvis-search]').value.trim()).catch(error => {
+        status.textContent = error.message;
+      });
+      if (activeTab === 'tasks') void loadTasks();
+      else input.focus();
+    } else {
+      launcher.focus();
+    }
   }
   function tab(name) {
-    if (!aiUnlocked) return;
     activeTab = name;
     root.querySelectorAll('[data-jarvis-tab]').forEach((button) => {
       const selected = button.dataset.jarvisTab === name;
@@ -178,7 +130,7 @@
     status.textContent = '';
   }
   async function chat(mode, message = '') {
-    if (busy || !aiUnlocked) return;
+    if (busy) return;
     busy = true;
     send.disabled = true;
     status.textContent = 'Consultando...';
@@ -251,35 +203,6 @@
     }
   }
 
-  $('[data-jarvis-security-form]').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const token = securityInput.value;
-    const submit = $('[data-jarvis-security-submit]');
-    if (!token || submit.disabled) return;
-    submit.disabled = true;
-    securityStatus.textContent = 'Verificando...';
-    try {
-      const result = await securityRequest({scope:'ai', token});
-      // Token nunca é adicionado às mensagens nem às chamadas do modelo.
-      securityInput.value = '';
-      aiUnlocked = result.unlocked === true;
-      if (aiUnlocked) {
-        security.hidden = true;
-        securityStatus.textContent = '';
-        await loadConversations().catch(error => {status.textContent = error.message;});
-        if (activeTab === 'chat') input.focus();
-        else loadTasks();
-      } else {
-        showSecurity(result.next_token === 2 ? 2 : 1);
-      }
-    } catch (error) {
-      securityInput.value = '';
-      securityStatus.textContent = error.message;
-      securityInput.focus();
-    } finally {
-      submit.disabled = false;
-    }
-  });
   launcher.addEventListener('click', () => open(panel.hidden));
   $('[data-jarvis-close]').addEventListener('click', () => open(false));
   $('[data-jarvis-expand]').addEventListener('click', () => panel.classList.toggle('is-expanded'));
@@ -380,5 +303,5 @@
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && !panel.hidden) open(false);
   });
-  // Não carregar mensagens, tarefas ou chamar o provedor antes da liberação.
+  // O chat, histórico e a fila exigem sessão ADM no backend.
 })();
