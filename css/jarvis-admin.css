@@ -72,16 +72,3 @@
 .jarvis-admin__examples button:hover{background:#eaf4ff}
 .jarvis-admin__context-option:focus-within,.jarvis-admin__examples button:focus-visible{outline:2px solid #75b3ed;outline-offset:2px}
 @media(max-width:600px){.jarvis-admin__context-option{padding:8px 12px;min-height:44px}.jarvis-admin__examples button{min-height:40px}}
-
-/* Verificação discreta do JARVIS, cobrindo totalmente histórico, chat e atividades. */
-.jarvis-admin__security{position:absolute;inset:56px 0 0;z-index:40;display:flex;align-items:center;justify-content:center;padding:22px;background:#fff;overflow:auto}
-.jarvis-admin__security[hidden]{display:none!important}
-.jarvis-admin__security form{width:100%;max-width:310px;display:flex;flex-direction:column;gap:12px}
-.jarvis-admin__security strong{color:#183c5c;font-size:18px}
-.jarvis-admin__security label{font-size:14px;font-weight:650;color:#294865}
-.jarvis-admin__security input{min-height:46px;width:100%;padding:12px;border:1px solid #b8cee4;border-radius:10px;background:#fff;color:#1b3e5f;font-family:inherit;font-size:16px}
-.jarvis-admin__security input:focus-visible{outline:2px solid #62a9eb;outline-offset:2px}
-.jarvis-admin__security button{min-height:44px;border:0;border-radius:10px;background:#0867b8;color:#fff;font-weight:700;font-family:inherit;cursor:pointer}
-.jarvis-admin__security button:disabled{opacity:.55}
-.jarvis-admin__security p{min-height:16px;margin:0;color:#a62b32;font-size:12px}
-@media(max-width:600px){.jarvis-admin__security{inset:58px 0 0;padding:24px}}
