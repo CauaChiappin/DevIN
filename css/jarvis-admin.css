@@ -61,3 +61,14 @@
 .jarvis-admin__task-actions button:disabled{opacity:.6}
 .jarvis-admin__tasks-empty{margin:10px 0;color:#667c90;font-size:12px}
 @media(max-width:600px){.jarvis-admin__tabs button{padding:12px 8px}.jarvis-admin__pane--tasks{padding-bottom:8px}}
+
+/* Novidades selecionadas do JARVIS Code: contexto opt-in, origem do modelo e exemplos. */
+.jarvis-admin__context-option{display:flex;align-items:center;gap:8px;flex:none;min-height:38px;padding:5px 12px;background:#fff;color:#3c596f;font-size:12px;line-height:1.35;cursor:pointer}
+.jarvis-admin__context-option input{flex:0 0 auto;min-width:17px;min-height:17px;accent-color:#075aa8}
+.jarvis-admin__response-meta{display:block;max-width:100%;padding:1px 5px 3px;color:#456784;font-size:11px;line-height:1.45;overflow-wrap:anywhere}
+.jarvis-admin__examples{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:11px 12px 0;background:#f7fafc}
+.jarvis-admin__examples>span{flex:0 0 100%;color:#465e74;font-size:12px;font-weight:600}
+.jarvis-admin__examples button{min-height:34px;padding:7px 10px;border:1px solid #bfd8ef;border-radius:9px;background:#fff;color:#125a9b;font-family:inherit;font-size:12px;cursor:pointer}
+.jarvis-admin__examples button:hover{background:#eaf4ff}
+.jarvis-admin__context-option:focus-within,.jarvis-admin__examples button:focus-visible{outline:2px solid #75b3ed;outline-offset:2px}
+@media(max-width:600px){.jarvis-admin__context-option{padding:8px 12px;min-height:44px}.jarvis-admin__examples button{min-height:40px}}
