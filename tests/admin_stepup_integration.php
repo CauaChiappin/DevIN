@@ -144,5 +144,38 @@ $usedCode = $db->query("SELECT COUNT(*) FROM admin_security_enrollments WHERE ad
 ensure((int) $usedCode[0] === 0, 'ativação consumida pelo MySQL');
 $db->close();
 
+// 303 não pode escolher o mesmo Token 2 que 304, mesmo com um convite válido.
+$_SESSION['usuario_id'] = 303;
+$db = getDatabaseConnection();
+$invite303 = rtrim(strtr(base64_encode(random_bytes(24)), '+/', '-_'), '=');
+$hash303 = password_hash($invite303, PASSWORD_DEFAULT);
+$stmt = $db->prepare(
+    'INSERT INTO admin_security_enrollments (admin_id, activation_hash, expires_at) '
+    . 'VALUES (303, ?, DATE_ADD(UTC_TIMESTAMP(6), INTERVAL 30 MINUTE))'
+);
+$stmt->bind_param('s', $hash303);
+$stmt->execute();
+$stmt->close();
+$db->close();
+ensure(!AdminToken2Enrollment::enroll(303, $original, $invite303, $newToken2, $newToken2), 'impede Token 2 igual ao de outro ADM');
+$unique303 = 'Escolha-particular-303@' . bin2hex(random_bytes(8));
+ensure(AdminToken2Enrollment::enroll(303, $original, $invite303, $unique303, $unique303), 'aceita Token 2 exclusivo');
+
+// 302 não consegue utilizar convite expirado.
+$_SESSION['usuario_id'] = 302;
+$db = getDatabaseConnection();
+$invite302 = rtrim(strtr(base64_encode(random_bytes(24)), '+/', '-_'), '=');
+$hash302 = password_hash($invite302, PASSWORD_DEFAULT);
+$stmt = $db->prepare(
+    'INSERT INTO admin_security_enrollments (admin_id, activation_hash, expires_at) '
+    . 'VALUES (302, ?, DATE_SUB(UTC_TIMESTAMP(6), INTERVAL 1 MINUTE))'
+);
+$stmt->bind_param('s', $hash302);
+$stmt->execute();
+$stmt->close();
+$db->close();
+$unique302 = 'Escolha-individual-302@' . bin2hex(random_bytes(8));
+ensure(!AdminToken2Enrollment::enroll(302, $original, $invite302, $unique302, $unique302), 'convite expirado não concede nova credencial');
+
 session_destroy();
 echo "ADM step-up MySQL: OK\n";
