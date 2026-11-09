@@ -15,6 +15,7 @@ final class AuditService
         'data_export_requested', 'privacy_request_created',
         'legal_document_accepted', 'consent_changed',
         'admin_stepup_site', 'admin_stepup_ai_stage1', 'admin_stepup_ai_complete',
+        'admin_token2_enrolled',
     ];
     private const OUTCOMES = ['success', 'failure', 'blocked'];
 
