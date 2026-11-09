@@ -129,3 +129,7 @@ O portal contém Labirinto DevIN, Snake, Blocos, Quebra-blocos, Memória e Salto
 No portal, selecionar um jogo abre uma tela com a descrição e os controles; a partida só começa após confirmação e uma contagem regressiva de três segundos. Reiniciar também aguarda essa contagem.
 
 Ao perder, a tela mostra os dez melhores recordes daquele jogo. O servidor exige que a partida seja iniciada pela API e rejeita pontuações e fases acima de limites plausíveis para o tempo da sessão. Isso reduz envios acidentais ou pontuações claramente impossíveis, mas não torna os jogos invioláveis: a simulação ainda roda no navegador e jogadores determinados podem manipular o cliente. Para uma classificação competitiva confiável, a simulação e a validação de cada jogada precisariam ser executadas no servidor. A classificação reutiliza `progresso_jogos`; não é necessária alteração ou migração do banco de dados.
+
+## Verificação do JARVIS Admin
+
+**Dependência:** o JARVIS Admin do PR #7 exige a camada administrativa da Fase 1 LGPD (PR #8). Sem ela, chat, histórico e atividades ficam bloqueados no servidor, sem alternativa insegura. Antes do primeiro uso, o ADM passa por verificação sequencial usando apenas os campos **Token 1** e **Token 2**. Tokens não são enviados à IA e a liberação persiste apenas na sessão segura atual, sujeita a expiração. Consulte `docs/jarvis-admin.md` e, depois de integrar PR #8, `docs/admin-stepup-security.md`.
