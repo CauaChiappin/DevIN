@@ -17,6 +17,7 @@ $_SERVER['REMOTE_ADDR'] = '192.0.2.25';
 
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminStepUp.php';
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminGate.php';
+require_once dirname(__DIR__) . '/php/controllers/Security/AdminToken2Enrollment.php';
 function ensure(bool $value, string $message): void {
     if (!$value) throw new RuntimeException('Teste step-up: ' . $message);
 }
@@ -106,5 +107,35 @@ $_SESSION['admin_stepup_pending'] = [
     'page'=>'perfil', 'category'=>'vagas',
 ];
 ensure(AdminGate::consumePending(301) === null, 'formulário expirado');
+// Cadastro individual de Token 2 no banco descartável.
+$db = getDatabaseConnection();
+$code = rtrim(strtr(base64_encode(random_bytes(24)), '+/', '-_'), '=');
+$codeHash = password_hash($code, PASSWORD_DEFAULT);
+$stmt = $db->prepare(
+    'INSERT INTO admin_security_enrollments (admin_id,activation_hash,expires_at) '
+    . 'VALUES (?, ?, DATE_ADD(UTC_TIMESTAMP(6), INTERVAL 30 MINUTE))'
+);
+$targetId = 301;
+$stmt->bind_param('is', $targetId, $codeHash);
+$stmt->execute();
+$stmt->close();
+$db->close();
+
+$newToken2 = 'Escolha-individual-@' . bin2hex(random_bytes(8));
+ensure(!AdminToken2Enrollment::enroll(301, 'incorreto', $code, $newToken2, $newToken2), 'Token 1 errado impede cadastro');
+ensure(!AdminToken2Enrollment::enroll(301, 'nova-credencial-local-de-testes', 'codigo-invalido', $newToken2, $newToken2), 'código inválido impede cadastro');
+try {
+    AdminToken2Enrollment::validateNewToken('curto','curto');
+    throw new RuntimeException('Token 2 curto não foi rejeitado');
+} catch (InvalidArgumentException $expected) {}
+ensure(AdminToken2Enrollment::enroll(301,'nova-credencial-local-de-testes',$code,$newToken2,$newToken2), 'admin configura seu Token 2');
+ensure(!AdminToken2Enrollment::enroll(301,'nova-credencial-local-de-testes',$code,$newToken2,$newToken2), 'código de ativação de uso único');
+ensure(AdminStepUp::verifySite($newToken2), 'novo Token 2 libera site do próprio ADM');
+ensure(!AdminStepUp::allowed('ai'), 'novo Token 2 não libera IA sem sequência');
+$db = getDatabaseConnection();
+$usedCode = $db->query("SELECT COUNT(*) FROM admin_security_enrollments WHERE admin_id = 301")->fetch_row();
+ensure((int) $usedCode[0] === 0, 'ativação consumida pelo MySQL');
+$db->close();
+
 session_destroy();
 echo "ADM step-up MySQL: OK\n";
