@@ -72,3 +72,25 @@
 .jarvis-admin__examples button:hover{background:#eaf4ff}
 .jarvis-admin__context-option:focus-within,.jarvis-admin__examples button:focus-visible{outline:2px solid #75b3ed;outline-offset:2px}
 @media(max-width:600px){.jarvis-admin__context-option{padding:8px 12px;min-height:44px}.jarvis-admin__examples button{min-height:40px}}
+
+/* Consultas, envio individual supervisionado e trilha de auditoria. */
+.jarvis-admin__tabs{overflow-x:auto;scrollbar-width:thin;flex-wrap:nowrap;gap:0}
+.jarvis-admin__tabs button{min-width:70px;flex:1 0 auto;padding:11px 9px;white-space:nowrap}
+.jarvis-admin__pane--tools{overflow-y:auto;overscroll-behavior:contain;min-height:0;padding-bottom:15px}
+.jarvis-admin__tool-form{display:grid;gap:10px;padding:12px;background:#f7fafc}
+.jarvis-admin__tool-form label,.jarvis-admin__tool-question{display:grid;gap:5px;color:#294e6a;font-size:12px;font-weight:650}
+.jarvis-admin__tool-form input,.jarvis-admin__tool-form select,.jarvis-admin__tool-form textarea,.jarvis-admin__tool-question textarea,.jarvis-admin__tool-card textarea{width:100%;min-height:40px;border:1px solid #bed2e4;border-radius:9px;background:#fff;color:#213a51;font-family:inherit;font-size:14px;line-height:1.5;padding:8px 10px}
+.jarvis-admin__tool-form textarea,.jarvis-admin__tool-question textarea,.jarvis-admin__tool-card textarea{resize:vertical}
+.jarvis-admin__tool-form button,.jarvis-admin__tool-card button,.jarvis-admin__tool-refresh{min-height:40px;border:1px solid #a8cbed;border-radius:9px;padding:9px 12px;background:#eef7ff;color:#12588d;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.jarvis-admin__tool-form>button{background:#0969bd;color:#fff;border:0}
+.jarvis-admin__tool-form button:disabled,.jarvis-admin__tool-card button:disabled{opacity:.5;cursor:not-allowed}
+.jarvis-admin__tool-results{display:grid;align-content:start;gap:8px;padding:9px 12px}
+.jarvis-admin__tool-card{display:grid;gap:8px;padding:12px;border:1px solid #d3e2ef;border-radius:11px;background:#fff;overflow-wrap:anywhere}
+.jarvis-admin__tool-card strong{font-size:13px;color:#183e5c}
+.jarvis-admin__tool-card small{color:#54718a;font-size:11px}
+.jarvis-admin__tool-actions{display:flex;flex-wrap:wrap;gap:7px}
+.jarvis-admin__analysis{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px 13px;font-size:13px;line-height:1.6;color:#1d4460}
+.jarvis-admin__tool-question{padding:8px 12px}
+.jarvis-admin__tool-refresh{margin:8px 12px}
+.jarvis-admin__audit-entry{border-left:3px solid #9ebfda}
+@media(max-width:600px){.jarvis-admin__tabs button{min-width:80px;font-size:12px}.jarvis-admin__tool-form button,.jarvis-admin__tool-card button{min-height:44px}}
