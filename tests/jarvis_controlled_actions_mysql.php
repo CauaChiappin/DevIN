@@ -89,6 +89,15 @@ prove(in_array('message_sent',$eventsNames,true)
     && in_array('draft_cancelled',$eventsNames,true),
     'histórico de envio, revisão e cancelamento');
 prove(count(JarvisAdminActivity::latest($db,$other))===0,'histórico por ADM isolado');
+$otherDraft=JarvisPlatformOutbox::create($db,$other,'empresa',21,'Olá TechNova. Comunicado individual.','admin');
+prove($otherDraft['id']>0,'outro ADM pode criar rascunho próprio');
+$shared=JarvisAdminActivity::latestAll($db);
+prove(in_array($admin,array_map('intval',array_column($shared,'admin_id')),true)
+    && in_array($other,array_map('intval',array_column($shared,'admin_id')),true),
+    'trilha compartilhada permite fiscalização entre ADMs');
+$apiCode=file_get_contents(dirname(__DIR__).'/php/api/jarvis/admin_tools.php');
+prove(!preg_match('/\\b(DELETE FROM (pessoa|empresa|vagas)|UPDATE (pessoa|empresa|vagas))\\b/i',$apiCode),
+    'API da IA não contém SQL de banimento ou exclusão');
 $logs=json_encode($events,JSON_THROW_ON_ERROR);
 prove(!str_contains($logs,'Mensagem personalizada revisada')
     && !str_contains($logs,'Ana Candidata'), 'auditoria sem conteúdo pessoal');
