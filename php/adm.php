@@ -337,6 +337,7 @@ try {
                     <div class="perfil-menu">
                         <button type="button" data-open-profile><?= profileAvatar($perfilAtual, 'avatar-foto') ?><span class="menu-text">Meu perfil</span></button>
                         <button type="button" data-open-settings><?= dashboardIcon('settings') ?><span class="menu-text">Configurações</span></button>
+                        <a href="admin_token2.php"><?= dashboardIcon('settings') ?><span class="menu-text">Configurar Token 2</span></a>
                     </div>
                 </details>
                 <a class="sair" href="logout.php" data-confirm-logout="Tem certeza que deseja sair da sua conta?"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>
