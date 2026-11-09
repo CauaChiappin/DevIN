@@ -310,7 +310,7 @@
         card.className='jarvis-admin__tool-card jarvis-admin__audit-entry';
         const heading=document.createElement('strong');
         heading.textContent=(row.origin === 'ai'?'IA':row.origin === 'admin'?'ADM':'Sistema')
-          + ' · ' + row.event_name + ' · ' + row.status;
+          + ' · ADM #' + row.admin_id + ' · ' + row.event_name + ' · ' + row.status;
         const detail=document.createElement('small');
         detail.textContent=row.created_at + ' · ' + row.target_type
           + (row.target_id ? ' #' + row.target_id : '');
