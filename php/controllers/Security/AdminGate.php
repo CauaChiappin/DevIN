@@ -57,6 +57,7 @@ final class AdminGate
         $category = in_array($category, $categories, true) ? $category : 'vagas';
         $_SESSION['admin_stepup_pending'] = [
             'admin_id' => $adminId,
+            'nonce' => bin2hex(random_bytes(16)),
             'created_at' => time(),
             'post' => $hasFile ? null : $data,
             'page' => $page,
