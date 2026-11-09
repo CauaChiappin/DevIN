@@ -44,7 +44,7 @@ Publicar o **texto real e juridicamente aprovado** antes de usar `LegalDocumentS
 Diretório `php/controllers/Privacy/`:
 - `PrivacyContext.php`: valida tipos de conta, origens IP e HMAC-SHA256 usando chave independente.
 - `LegalDocumentService.php`: lê versão publicada e publica exclusivamente versão/hashes já aprovados com transação.
-- `ConsentService.php`: aceita Termos só mediante `termsChecked === true`, registra versões da base, e altera opção/gera evento dentro da mesma transação.
+- `ConsentService.php`: aceita Termos só mediante `termsChecked === true` **e versões de Termos/Privacidade idênticas às exibidas no formulário**; se documentos mudarem durante o cadastro a operação é recusada e a página deve ser recarregada. Altera preferências opcionais e grava cada evento na mesma transação. O caller do cadastro deve iniciar a transação antes de criar a conta e confirmar o aceite.
 - `AuditService.php`: eventos em lista permitida, retenção operacional própria, integração opcional (`tryRecord`) nos fluxos antigos.
 - `AccessLogService.php`: coleta `REMOTE_ADDR` validado, caminho sem query string, seis meses quando aplicável; **a captura global ainda não está ligada**.
 - `PrivacyRequestService.php`: cria e consulta protocolos por conta; gestão restrita a ADM com transições.
@@ -101,3 +101,10 @@ O teste de integração **se recusa** a rodar fora de um banco nomeado `devin_lg
 - Política ANPD para incidentes, avaliação de fornecedores externos de IA (Gemini/JARVIS), comunicação e gestão de possíveis dados de adolescentes.
 - Verificar que nenhum arquivo com dados pessoais reais esteja no histórico Git.
 - Revisão jurídica: LGPD 13.709/2018, Marco Civil 12.965/2014 e regulamentação ANPD aplicável; a mera existência de tabelas não garante conformidade.
+
+## Resultado da validação automatizada
+
+- Workflow GitHub Actions `LGPD Fase 1 — privacy services and MySQL`, execução de PR no commit `1bd42f8`: **aprovado**. 
+- Migração das 9 tabelas executada em **MySQL 8.0 descartável de CI**, sem tocar a base do DevIN.
+- Serviços PHP e pontos de integração sem erros de sintaxe; testes puros e integração MySQL aprovados, incluindo rejeição de versão obsoleta de documentos.
+- Testes de segurança ponta a ponta, navegador, retenção real e integridade do banco do projeto continuam pendentes antes de qualquer merge.
