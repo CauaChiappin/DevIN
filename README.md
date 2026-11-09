@@ -15,7 +15,7 @@ Esta seção diferencia **APIs externas**, consumidas pelo servidor PHP, das **A
 | **OpenRouter API** | HTTP(S) POST/JSON, interface Chat Completions compatível com OpenAI | Chat do JARVIS Admin | `php/api/jarvis/chat.php`; `DEVIN_JARVIS_PROVIDER=openrouter` | Opção implementada na branch `feature/jarvis-admin`; requer configuração |
 | **OpenAI API** | HTTP(S) POST/JSON, Chat Completions | Chat do JARVIS Admin | `php/api/jarvis/chat.php`; `DEVIN_JARVIS_PROVIDER=openai` | Opção implementada na branch `feature/jarvis-admin`; requer configuração |
 
-**Importante:** Groq, OpenRouter e OpenAI são **alternativas de provedor** para o JARVIS Admin. Na primeira fase, o servidor seleciona apenas **um** por configuração; não há fallback automático entre provedores. O JARVIS Admin **não** utiliza automaticamente a chave Gemini empregada nos currículos. A seleção de um modelo gratuito depende das opções, cotas e políticas vigentes de cada provedor. Não presuma que o uso seja ilimitado ou gratuito.
+**Importante:** Groq, OpenRouter e OpenAI são **alternativas de provedor** para o JARVIS Admin. O servidor seleciona **um** provedor por configuração; há fallback opcional somente entre modelos do **mesmo OpenRouter** quando a reserva `:free` é explicitamente autorizada. O JARVIS Admin **não** utiliza automaticamente a chave Gemini empregada nos currículos. A seleção de um modelo gratuito depende das opções, cotas e políticas vigentes de cada provedor. Não presuma que o uso seja ilimitado ou gratuito.
 
 ### APIs HTTP internas do DevIN
 
@@ -60,6 +60,12 @@ DEVIN_JARVIS_API_KEY=
 Para habilitar a memória e a central de atividades, aplique primeiro `database/migrations/jarvis_admin.sql` em um banco de desenvolvimento (com backup). O ID de exemplo GLM gratuito é do OpenRouter, sujeito a cotas e mudanças. Veja `docs/jarvis-admin.md` para instalação e testes.\n\nAntes de usar dados reais com um provedor de IA, revise os termos de uso, os limites do plano e a política de privacidade. Evite enviar CPF, credenciais e outros dados pessoais desnecessários. As APIs internas devem permanecer protegidas mesmo que um usuário descubra seus endereços.
 
 ---
+
+## Adaptações recentes do JARVIS Code para o JARVIS Admin
+
+No PR #7 (`feature/jarvis-admin`) o módulo incorpora somente conceitos úteis ao DevIN: **gerenciador de habilidades administrativas** (até duas orientações por mensagem para reports, vagas, usuários e indicadores); **contexto anterior enviado ao modelo somente com opt-in** (mas conversas continuam salvas no MySQL); **identificação do modelo utilizado** nas respostas novas; **fallback opcional para modelo explicitamente configurado com sufixo `:free` no mesmo provedor OpenRouter**; e **exemplos de atividades** na interface. Não executa habilidades de terceiros ou ações administrativas.
+
+O programa Android, voz, Shizuku, comandos de shell, skills genéricas e agentes autônomos não fazem parte do DevIN. Veja `docs/jarvis-admin.md` para escopo, configuração, testes e limitações.
 
 ## E-mails e lembrete de currículo
 
