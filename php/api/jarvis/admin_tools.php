@@ -28,7 +28,7 @@ try {
         $db=getDatabaseConnection();
         try {
             if ($action==='history') {
-                $rows=JarvisAdminActivity::latest($db,$adminId);
+                $rows=JarvisAdminActivity::latestAll($db);
                 jarvisJson(200,['success'=>true,'events'=>$rows]);
             }
             if ($action==='drafts') {
