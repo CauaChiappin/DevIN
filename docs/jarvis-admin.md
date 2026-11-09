@@ -75,3 +75,15 @@ node --check js/jarvis-admin.js
 ```
 
 A CI executa os testes sem banco de dados e sem chave de API. O uso real do chat, a migração e a UI ainda requerem testes manuais no servidor de desenvolvimento.
+
+## Verificação administrativa sequencial (dependência da Fase 1 LGPD)
+
+A partir desta revisão, o JARVIS Admin exige uma verificação sequencial antes de qualquer acesso a conversas, tarefas, resumo, memória ou provedor de IA. A interface mostra **somente** os campos `Informe o Token 1` e depois `Informe o Token 2` e não exibe a finalidade dos tokens.
+
+Os valores digitados são enviados exclusivamente para a API interna `php/api/admin_security.php`, via HTTPS no mesmo domínio, e **nunca** para o endpoint de chat ou provedores externos. O modelo não participa do desbloqueio.
+
+O `jarvisAdmin()` passa a bloquear por padrão todos os endpoints existentes `chat.php`, `tasks.php` e `conversations.php` com erro HTTP 423 enquanto a verificação não estiver concluída. Em caso de ausência da camada de segurança, erro de banco ou flag desabilitada, responde 503 e **não** permite acesso à IA.
+
+**Dependências obrigatórias:** PR #8 deve ser implantado primeiro, incluindo migration `database/migrations/2026_11_09_002_admin_stepup.sql`, a credencial individual dos quatro administradores e `DEVIN_ADMIN_STEPUP_ENABLED=1`. Só então o PR #7 pode ser ativado. O histórico é persistido no MySQL, mas o contexto só é enviado ao modelo conforme a escolha explícita do ADM, como já previsto.
+
+As autorizações do site e da IA são separadas, mantidas no servidor, com expiração; detalhes operacionais em `docs/admin-stepup-security.md` (PR #8). Não ative um JARVIS sem backend de verificação funcional.
