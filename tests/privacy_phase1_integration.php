@@ -49,8 +49,9 @@ rejects(static fn() => LegalDocumentService::publishApproved($db,'terms','2026-1
 
 $db->begin_transaction();
 try {
-    rejects(static fn() => ConsentService::recordLegalAcceptance($db,'pessoa',101,false),'checkbox não marcado');
-    $consentId = ConsentService::recordLegalAcceptance($db,'pessoa',101,true);
+    rejects(static fn() => ConsentService::recordLegalAcceptance($db,'pessoa',101,false,'2026-11-v1','2026-11-v1'),'checkbox não marcado');
+    rejects(static fn() => ConsentService::recordLegalAcceptance($db,'pessoa',101,true,'2025-old','2026-11-v1'), 'versão não exibida');
+    $consentId = ConsentService::recordLegalAcceptance($db,'pessoa',101,true,'2026-11-v1','2026-11-v1');
     $db->commit();
 } catch (Throwable $e) {$db->rollback();throw $e;}
 check($consentId > 0, 'registro aceite');
