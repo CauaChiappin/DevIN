@@ -45,7 +45,7 @@ final class AccessLogService
             . '(client_ip,accessed_at,method,path,http_status,actor_type,actor_id,delete_after) '
             . 'VALUES (INET6_ATON(?),UTC_TIMESTAMP(6),?,?,?,?,?,DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 6 MONTH))'
         );
-        $stmt->bind_param('sssis i', $clientIp, $method, $path, $status, $actorType, $actorId);
+        $stmt->bind_param('sssisi', $clientIp, $method, $path, $status, $actorType, $actorId);
         $stmt->execute();
         $insertId = (int) $db->insert_id;
         $stmt->close();
