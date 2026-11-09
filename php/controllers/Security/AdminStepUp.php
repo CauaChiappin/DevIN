@@ -159,6 +159,7 @@ final class AdminStepUp
             return false;
         }
         self::grant('site', $id, $credentials);
+        RateLimiter::clear('stepup:admin:' . $id);
         self::auditStep('admin_stepup_site', 'success', $id);
         return true;
     }
@@ -181,6 +182,7 @@ final class AdminStepUp
             self::auditStep('admin_stepup_ai_stage1', 'failure', $id);
             return false;
         }
+        RateLimiter::clear('stepup:admin:' . $id);
         self::auditStep('admin_stepup_ai_stage1', 'success', $id);
         $_SESSION['admin_stepup_ai_stage'] = [
             'admin_id' => $id, 'at' => time(), 'revision' => self::revision($credentials),
@@ -208,6 +210,7 @@ final class AdminStepUp
         }
         unset($_SESSION['admin_stepup_ai_stage']);
         self::grant('ai', $id, $credentials);
+        RateLimiter::clear('stepup:admin:' . $id);
         self::auditStep('admin_stepup_ai_complete', 'success', $id);
         return true;
     }
