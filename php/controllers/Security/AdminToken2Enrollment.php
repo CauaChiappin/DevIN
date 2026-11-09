@@ -126,6 +126,8 @@ final class AdminToken2Enrollment
             // As autorizações de site e IA desta sessão perdem validade agora;
             // outras sessões serão invalidadas pela mudança de versão/hash.
             AdminStepUp::clear();
+            RateLimiter::clear('stepup:admin:' . $id);
+            RateLimiter::clear('stepup:enroll:' . $id);
             require_once __DIR__ . '/../Privacy/AuditService.php';
             AuditService::tryRecord('admin_token2_enrolled', 'success', 'adm', $id);
             return true;
