@@ -2,7 +2,7 @@
 declare(strict_types=1);
 // Montado pelo dashboard após autenticação ADM.
 ?>
-<section class="jarvis-admin" id="jarvisAdmin" data-endpoint="api/jarvis/chat.php" data-conversations="api/jarvis/conversations.php" data-tasks="api/jarvis/tasks.php" data-csrf="<?= h(csrfToken()) ?>" data-page="<?= h($pagina) ?>">
+<section class="jarvis-admin" id="jarvisAdmin" data-endpoint="api/jarvis/chat.php" data-conversations="api/jarvis/conversations.php" data-tasks="api/jarvis/tasks.php" data-security="api/admin_security.php" data-csrf="<?= h(csrfToken()) ?>" data-page="<?= h($pagina) ?>">
     <button class="jarvis-admin__launcher" type="button" aria-label="Abrir JARVIS Admin" aria-controls="jarvisAdminPanel" aria-expanded="false" data-jarvis-toggle><span aria-hidden="true">✦</span><span class="jarvis-admin__launcher-label">JARVIS</span></button>
     <section class="jarvis-admin__panel" id="jarvisAdminPanel" role="dialog" aria-modal="false" aria-label="Assistente JARVIS Admin" hidden>
         <header class="jarvis-admin__header">
@@ -11,6 +11,15 @@ declare(strict_types=1);
             <button type="button" class="jarvis-admin__icon-button" aria-label="Expandir chat" title="Expandir chat" data-jarvis-expand>⛶</button>
             <button type="button" class="jarvis-admin__icon-button" aria-label="Fechar chat" data-jarvis-close>×</button>
         </header>
+        <section class="jarvis-admin__security" data-jarvis-security role="region" aria-label="Verificação" hidden>
+            <form data-jarvis-security-form autocomplete="off">
+                <strong>Verificação</strong>
+                <label for="jarvisSecurityToken" data-jarvis-security-label>Informe o Token 1</label>
+                <input id="jarvisSecurityToken" type="password" autocomplete="off" maxlength="512" required data-jarvis-security-input>
+                <p role="status" aria-live="polite" data-jarvis-security-status></p>
+                <button type="submit" data-jarvis-security-submit>Continuar</button>
+            </form>
+        </section>
         <nav class="jarvis-admin__tabs" aria-label="Seções do JARVIS">
             <button type="button" class="is-active" aria-pressed="true" data-jarvis-tab="chat">Conversas</button>
             <button type="button" aria-pressed="false" data-jarvis-tab="tasks">Atividades</button>
