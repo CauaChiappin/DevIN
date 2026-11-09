@@ -44,6 +44,19 @@ final class JarvisAdminActivity
         $stmt->close();
         return $rows;
     }
+
+    /**
+     * Painel de fiscalização: qualquer um dos quatro ADMs pode verificar
+     * o que foi registrado pela IA e o que foi aprovado por outros ADMs.
+     * O log omite o texto e os dados privados do destinatário.
+     */
+    public static function latestAll(mysqli $db): array
+    {
+        $result=$db->query('SELECT id,admin_id,origin,event_name,status,'
+            . 'target_type,target_id,detail_code,created_at '
+            . 'FROM jarvis_action_events ORDER BY id DESC LIMIT 100');
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }
 
 /**
