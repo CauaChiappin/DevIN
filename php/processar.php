@@ -14,6 +14,7 @@ require_once __DIR__ . '/middlewares/auth.php';
 require_once __DIR__ . '/MailerHelper.php';
 require_once __DIR__ . '/config/RateLimiter.php';
 require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
+require_once __DIR__ . '/controllers/Privacy/AuditService.php';
 
 startSecureSession();
 
@@ -333,6 +334,7 @@ switch ($acao) {
                 throw new RuntimeException('A senha não foi atualizada.');
             }
             $stmt->close();
+            AuditService::tryRecord('password_reset', 'success', $tipo, $idUsuario);
 
             $nomeUsuario = (string) ($_SESSION['recuperacao_nome'] ?? 'Usuário');
             $emailUsuario = (string) ($_SESSION['recuperacao_email'] ?? '');
