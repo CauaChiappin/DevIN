@@ -67,3 +67,7 @@ Ao perder, a tela mostra os dez melhores recordes daquele jogo. O servidor exige
 ## LGPD — Fase 1 (branch de desenvolvimento)
 
 A branch `feature/lgpd-phase1-foundation` acrescenta uma migration SQL **aditiva** com tabelas de documentos versionados, consentimentos e revogações, auditoria de segurança, registros de acesso, solicitações de privacidade, recibos de eliminação e incidentes. Ela **não foi aplicada no banco da hospedagem**. Serviços PHP estão disponíveis em `php/controllers/Privacy/` e a instrumentação de login/cadastro/reset/exclusão fica desativada por padrão até configuração segura. Não existe ainda aceite obrigatório no cadastro; isso será implementado na Fase 2. Verifique `docs/lgpd-phase1.md` para instalação, testes, migração, limitações e etapas posteriores.
+
+## Proteção das ações ADM e do JARVIS — Fase 1
+
+A branch `feature/lgpd-phase1-foundation` acrescenta verificação administrativa individual para os quatro ADMs: operações críticas do painel exigem etapa adicional antes da primeira alteração, e o JARVIS Admin (PR #7) exige **duas etapas sequenciais** antes de oferecer chat, memória e atividades. As telas usam apenas os rótulos **Token 1** e **Token 2**. As permissões persistem na sessão PHP com expiração e invalidação após rotação, sem armazenar credenciais em texto puro. **Não ativar sem configurar a migration, provisionar todos os ADMs e testar os fluxos.** Veja `docs/admin-stepup-security.md`.
