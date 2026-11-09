@@ -39,3 +39,6 @@ composer.phar
     !sql/mensagens.sql
 *.sqlite
 *.sqlite3
+
+# Migration versionada; demais exports SQL continuam ignorados.
+!database/migrations/*.sql
