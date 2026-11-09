@@ -9,6 +9,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/security.php';
 require_once __DIR__ . '/MailerHelper.php';
 require_once __DIR__ . '/config/RateLimiter.php';
+require_once __DIR__ . '/controllers/Privacy/AuditService.php';
 
 startSecureSession();
 
@@ -177,6 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Autentica a conta recém-criada, inicia a sessão e segue para o painel conforme o tipo de usuário.
         $auth = AuthController::login($email, $senha);
         AuthController::establishSession($auth);
+        AuditService::tryRecord('registration_success', 'success', 'empresa', (int) $auth['usuario']['id']);
 
         $idiomaEmailCadastro = $_SESSION['idioma_cadastro'] ?? ($auth['usuario']['idioma'] ?? 'pt-BR');
         if (MailerHelper::enviarConfirmacaoCadastroEmpresa($email, $nome, $idiomaEmailCadastro)) {
