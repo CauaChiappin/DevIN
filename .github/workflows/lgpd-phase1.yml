@@ -1,0 +1,58 @@
+name: LGPD Fase 1 — privacy services and MySQL
+on:
+  push:
+    branches:
+      - feature/lgpd-phase1-foundation
+  pull_request:
+    paths:
+      - 'php/controllers/Privacy/**'
+      - 'database/migrations/**'
+      - 'tests/privacy_phase1_*.php'
+      - 'php/login.php'
+      - 'php/cadastro_*.php'
+      - 'php/processar.php'
+      - 'php/pessoa.php'
+      - 'php/empresa.php'
+      - '.github/workflows/lgpd-phase1.yml'
+jobs:
+  privacy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: devin-ci-temporary-only
+          MYSQL_DATABASE: devin_lgpd_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pdevin-ci-temporary-only"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install disposable test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y php-cli php-mysql php-mbstring default-mysql-client
+      - name: PHP syntax validation
+        run: |
+          for f in php/controllers/Privacy/*.php tests/privacy_phase1_*.php php/login.php php/cadastro_pessoa.php php/cadastro_empresa.php php/processar.php php/pessoa.php php/empresa.php; do php -l "$f"; done
+      - name: Privacy helpers unit tests
+        run: php tests/privacy_phase1_unit.php
+      - name: Apply additive migration to disposable MySQL
+        env:
+          MYSQL_PWD: devin-ci-temporary-only
+        run: |
+          mysql --host=127.0.0.1 --user=root devin_lgpd_test < database/migrations/2026_11_09_001_lgpd_foundation.sql
+          test "$(MYSQL_PWD=devin-ci-temporary-only mysql --host=127.0.0.1 --user=root --batch --skip-column-names devin_lgpd_test -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='devin_lgpd_test'")" -eq 9
+      - name: Privacy MySQL integration tests
+        env:
+          LGPD_TEST_HOST: 127.0.0.1
+          LGPD_TEST_DB: devin_lgpd_test
+          LGPD_TEST_USER: root
+          LGPD_TEST_PASSWORD: devin-ci-temporary-only
+        run: php tests/privacy_phase1_integration.php
