@@ -579,6 +579,16 @@ a {
     font-weight: 700;
 }
 
+.icon-placeholder svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .sobre-card h3 {
     font-size: 19px;
     margin-bottom: 8px;
