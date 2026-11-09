@@ -9,11 +9,13 @@ on:
       - 'php/adm.php'
       - '.github/workflows/jarvis-admin-checks.yml'
       - 'tests/jarvis_admin_smoke.php'
+      - 'tests/jarvis_openrouter_router.php'
       - 'tests/jarvis_admin_mysql.php'
       - 'database/migrations/jarvis_admin.sql'
   push:
     branches:
       - 'feature/jarvis-admin'
+      - 'fix/jarvis-openrouter-dual-key-model-fallback'
       - 'main'
 jobs:
   lint:
@@ -28,11 +30,14 @@ jobs:
           php -l php/adm.php
           php -l php/components/jarvis-admin-widget.php
           php -l tests/jarvis_admin_mysql.php
+          php -l tests/jarvis_openrouter_router.php
           for f in php/api/jarvis/*.php php/controllers/Jarvis/*.php; do php -l "$f"; done
       - name: JavaScript syntax
         run: node --check js/jarvis-admin.js
       - name: Skill manager and model routing smoke tests
-        run: php tests/jarvis_admin_smoke.php
+        run: |
+          php tests/jarvis_admin_smoke.php
+          php tests/jarvis_openrouter_router.php
 
   mysql:
     runs-on: ubuntu-latest
