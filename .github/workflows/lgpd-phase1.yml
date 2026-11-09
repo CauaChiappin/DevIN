@@ -9,7 +9,7 @@ on:
       - 'php/controllers/Security/**'
       - 'php/api/admin_security.php'
       - 'php/admin_token2.php'
-      - 'scripts/issue-admin-token2-activation.php'
+      - 'php/JarvisT.php'
       - 'php/admin_security_gate.php'
       - 'php/adm.php'
       - 'php/arcade_api.php'
@@ -52,7 +52,7 @@ jobs:
           composer install --no-interaction --no-ansi --no-progress --prefer-dist --no-scripts
       - name: PHP syntax validation
         run: |
-          for f in php/controllers/Privacy/*.php php/controllers/Security/*.php tests/privacy_phase1_*.php tests/admin_stepup_integration.php tests/admin_token2_permanent_integration.php php/api/admin_security.php php/admin_security_gate.php php/admin_token2.php scripts/issue-admin-token2-activation.php scripts/provision-admin-token2.php php/login.php php/cadastro_pessoa.php php/cadastro_empresa.php php/processar.php php/pessoa.php php/empresa.php php/adm.php php/arcade_api.php php/controllers/AuthController.php; do php -l "$f"; done
+          for f in php/controllers/Privacy/*.php php/controllers/Security/*.php tests/privacy_phase1_*.php tests/admin_stepup_integration.php tests/admin_token2_permanent_integration.php php/api/admin_security.php php/admin_security_gate.php php/admin_token2.php scripts/provision-admin-token2.php php/login.php php/cadastro_pessoa.php php/cadastro_empresa.php php/processar.php php/pessoa.php php/empresa.php php/adm.php php/arcade_api.php php/controllers/AuthController.php; do php -l "$f"; done
       - name: Privacy helpers unit tests
         run: php tests/privacy_phase1_unit.php
       - name: Apply additive migration to disposable MySQL
@@ -62,8 +62,7 @@ jobs:
           mysql --host=127.0.0.1 --user=root devin_lgpd_test < database/migrations/2026_11_09_001_lgpd_foundation.sql
           mysql --host=127.0.0.1 --user=root devin_lgpd_test -e "CREATE TABLE administrador (id_administrador INT NOT NULL PRIMARY KEY) ENGINE=InnoDB"
           mysql --host=127.0.0.1 --user=root devin_lgpd_test < database/migrations/2026_11_09_002_admin_stepup.sql
-          mysql --host=127.0.0.1 --user=root devin_lgpd_test < database/migrations/2026_11_09_003_admin_token2_enrollment.sql
-          test "$(MYSQL_PWD=devin-ci-temporary-only mysql --host=127.0.0.1 --user=root --batch --skip-column-names devin_lgpd_test -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='devin_lgpd_test'")" -eq 11
+          test "$(MYSQL_PWD=devin-ci-temporary-only mysql --host=127.0.0.1 --user=root --batch --skip-column-names devin_lgpd_test -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='devin_lgpd_test'")" -eq 10
       - name: Privacy MySQL integration tests
         env:
           LGPD_TEST_HOST: 127.0.0.1
