@@ -141,6 +141,7 @@ try {
             JarvisPlatformOutbox::send($db,$adminId,$id);
             jarvisJson(200,['success'=>true,'message'=>'Mensagem enviada pela plataforma.']);
         }
+        JarvisAdminActivity::log($db,$adminId,'system','action_denied','denied','none',null,'unknown_action');
         throw new InvalidArgumentException('Ação não autorizada.');
     } finally {$db->close();}
 } catch (JarvisModelException $e) {
