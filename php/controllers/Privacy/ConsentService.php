@@ -20,6 +20,8 @@ final class ConsentService
         string $accountType,
         int $accountId,
         bool $termsChecked,
+        string $shownTermsVersion,
+        string $shownPrivacyVersion,
         string $source = 'registration'
     ): int {
         PrivacyContext::validateAccount($accountType, $accountId);
@@ -29,6 +31,11 @@ final class ConsentService
         PrivacyContext::requireAccount($db, $accountType, $accountId);
         $terms = LegalDocumentService::active($db, 'terms');
         $privacy = LegalDocumentService::active($db, 'privacy');
+        // O backend não atribui ao titular uma versão que ele nunca viu.
+        if ($shownTermsVersion !== $terms['version_code']
+            || $shownPrivacyVersion !== $privacy['version_code']) {
+            throw new DomainException('Documentos legais atualizados. Recarregue e aceite a versão exibida.');
+        }
         $ipHash = PrivacyContext::ipHash(PrivacyContext::clientIp());
         $ua = PrivacyContext::userAgent();
 
