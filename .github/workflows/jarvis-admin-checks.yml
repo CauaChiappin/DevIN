@@ -6,6 +6,10 @@ on:
       - 'php/controllers/Jarvis/**'
       - 'php/components/jarvis-admin-widget.php'
       - 'js/jarvis-admin.js'
+      - 'js/jarvis-dock.js'
+      - 'css/jarvis-admin.css'
+      - 'img/jarvisdevin-jd.webp'
+      - 'tests/jarvis-dock.test.cjs'
       - 'php/adm.php'
       - '.github/workflows/jarvis-admin-checks.yml'
       - 'tests/jarvis_admin_smoke.php'
@@ -19,6 +23,7 @@ on:
       - 'feature/jarvis-admin'
       - 'fix/jarvis-openrouter-dual-key-model-fallback'
       - 'feat/jarvis-controlled-actions-and-platform-messages'
+      - 'feat/jarvis-jd-draggable-dock'
       - 'main'
 jobs:
   lint:
@@ -37,7 +42,10 @@ jobs:
           php -l tests/jarvis_openrouter_router.php
           for f in php/api/jarvis/*.php php/controllers/Jarvis/*.php; do php -l "$f"; done
       - name: JavaScript syntax
-        run: node --check js/jarvis-admin.js
+        run: |
+          node --check js/jarvis-dock.js
+          node --check js/jarvis-admin.js
+          node --test tests/jarvis-dock.test.cjs
       - name: Skill manager and model routing smoke tests
         run: |
           php tests/jarvis_admin_smoke.php

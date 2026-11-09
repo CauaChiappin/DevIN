@@ -18,6 +18,132 @@
   let activeTab = 'chat';
   let searchTimer = null;
 
+  // Persistência local: salva apenas lado e altura proporcional, nunca credenciais.
+  const docking = window.DevInJarvisDock;
+  const dockStorageKey = 'devin:jarvisdevin:dock:v1';
+  let savedDock = null;
+  let dockSide = 'left';
+  let pointerDrag = null;
+  let suppressDragClick = false;
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(dockStorageKey) || 'null');
+    if (stored && ['left', 'right'].includes(stored.side) && Number.isFinite(stored.yRatio)) {
+      savedDock = {side: stored.side, yRatio: stored.yRatio};
+    }
+  } catch (_) {
+    // Navegação anônima/bloqueio de armazenamento: apenas não persiste.
+  }
+
+  function positionPanelNearLauncher() {
+    if (panel.hidden) return;
+    if (window.matchMedia('(max-width:600px)').matches) {
+      panel.style.position = '';
+      panel.style.left = '';
+      panel.style.top = '';
+      panel.style.right = '';
+      panel.style.bottom = '';
+      return;
+    }
+    panel.style.position = 'fixed';
+    panel.style.right = 'auto';
+    panel.style.bottom = 'auto';
+    const rect = launcher.getBoundingClientRect();
+    const width = panel.getBoundingClientRect().width;
+    const height = panel.getBoundingClientRect().height;
+    const limitX = Math.max(12, window.innerWidth - width - 12);
+    const limitY = Math.max(12, window.innerHeight - height - 12);
+    const desiredX = dockSide === 'right' ? rect.right - width : rect.left;
+    let desiredY = rect.top - height - 10;
+    if (desiredY < 12) desiredY = rect.bottom + 10;
+    panel.style.left = Math.round(Math.max(12, Math.min(limitX, desiredX))) + 'px';
+    panel.style.top = Math.round(Math.max(12, Math.min(limitY, desiredY))) + 'px';
+  }
+
+  function placeLauncher(position) {
+    dockSide = position.side;
+    root.dataset.dockSide = dockSide;
+    root.style.left = Math.round(position.left) + 'px';
+    root.style.top = Math.round(position.top) + 'px';
+    root.style.right = 'auto';
+    root.style.bottom = 'auto';
+    positionPanelNearLauncher();
+  }
+
+  function restoreLauncher() {
+    if (!docking || pointerDrag) return;
+    placeLauncher(docking.restore(savedDock, window.innerWidth, window.innerHeight,
+      launcher.offsetWidth, launcher.offsetHeight));
+  }
+
+  function persistLauncher(position) {
+    savedDock = {side: position.side, yRatio: position.yRatio};
+    try { window.localStorage.setItem(dockStorageKey, JSON.stringify(savedDock)); }
+    catch (_) { /* Disponibilidade de storage não afeta a navegação. */ }
+  }
+
+  function initLauncherDocking() {
+    if (!docking || !window.PointerEvent) return;
+    restoreLauncher();
+    launcher.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || event.isPrimary === false) return;
+      suppressDragClick = false;
+      const rect = launcher.getBoundingClientRect();
+      pointerDrag = {
+        id: event.pointerId, startX: event.clientX, startY: event.clientY,
+        left: rect.left, top: rect.top, moved: false
+      };
+      try { launcher.setPointerCapture(event.pointerId); } catch (_) {}
+    });
+    launcher.addEventListener('pointermove', event => {
+      const state = pointerDrag;
+      if (!state || state.id !== event.pointerId) return;
+      const dx = event.clientX - state.startX;
+      const dy = event.clientY - state.startY;
+      if (!state.moved && Math.hypot(dx, dy) < 8) return;
+      state.moved = true;
+      launcher.classList.add('is-dragging');
+      const width = launcher.offsetWidth;
+      const height = launcher.offsetHeight;
+      const maxX = Math.max(12, window.innerWidth - width - 12);
+      const maxY = Math.max(12, window.innerHeight - height - 12);
+      root.style.left = Math.round(docking.clamp(state.left + dx, 12, maxX)) + 'px';
+      root.style.top = Math.round(docking.clamp(state.top + dy, 12, maxY)) + 'px';
+      root.style.right = 'auto';
+      root.style.bottom = 'auto';
+      positionPanelNearLauncher();
+    });
+    function finishDrag(event) {
+      const state = pointerDrag;
+      if (!state || state.id !== event.pointerId) return;
+      pointerDrag = null;
+      launcher.classList.remove('is-dragging');
+      try { launcher.releasePointerCapture(event.pointerId); } catch (_) {}
+      if (!state.moved) return; // Toque simples continua abrindo o chat.
+      suppressDragClick = true;
+      const rect = launcher.getBoundingClientRect();
+      const target = docking.snap(rect.left + rect.width / 2, rect.top,
+        window.innerWidth, window.innerHeight, rect.width, rect.height);
+      placeLauncher(target);
+      persistLauncher(target);
+      event.preventDefault();
+    }
+    launcher.addEventListener('pointerup', finishDrag);
+    launcher.addEventListener('pointercancel', finishDrag);
+    launcher.addEventListener('keydown', event => {
+      if (!event.altKey || !['ArrowLeft','ArrowRight'].includes(event.key)) return;
+      event.preventDefault();
+      const targetSide = event.key === 'ArrowLeft' ? 'left' : 'right';
+      const rect = launcher.getBoundingClientRect();
+      const target = docking.snap(targetSide === 'left' ? 0 : window.innerWidth,
+        rect.top, window.innerWidth, window.innerHeight, rect.width, rect.height);
+      placeLauncher(target);
+      persistLauncher(target);
+    });
+    window.addEventListener('resize', restoreLauncher);
+    window.addEventListener('orientationchange', restoreLauncher);
+  }
+  initLauncherDocking();
+
   async function api(url, body = null) {
     const options = {credentials: 'same-origin', cache: 'no-store', headers: {Accept: 'application/json'}};
     if (body !== null) {
@@ -36,6 +162,7 @@
   function open(show) {
     panel.hidden = !show;
     launcher.setAttribute('aria-expanded', String(show));
+    if (show) positionPanelNearLauncher();
     if (show) {
       loadConversations($('[data-jarvis-search]').value.trim()).catch(error => {
         status.textContent = error.message;
@@ -383,9 +510,20 @@
     finally {submit.disabled=false;}
   });
 
-  launcher.addEventListener('click', () => open(panel.hidden));
+  launcher.addEventListener('click', event => {
+    if (suppressDragClick && event.detail !== 0) {
+      suppressDragClick = false;
+      event.preventDefault();
+      return;
+    }
+    suppressDragClick = false;
+    open(panel.hidden);
+  });
   $('[data-jarvis-close]').addEventListener('click', () => open(false));
-  $('[data-jarvis-expand]').addEventListener('click', () => panel.classList.toggle('is-expanded'));
+  $('[data-jarvis-expand]').addEventListener('click', () => {
+    panel.classList.toggle('is-expanded');
+    positionPanelNearLauncher();
+  });
   root.querySelectorAll('[data-jarvis-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.jarvisTab)));
   $('[data-jarvis-new]').addEventListener('click', () => {
     conversationId = null;
