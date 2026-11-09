@@ -20,6 +20,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     if (!verifyCsrfToken(is_string($_POST['csrf_token'] ?? null) ? $_POST['csrf_token'] : null)) {
         http_response_code(403);
         $error = 'Solicitação inválida.';
+    } elseif (isset($_SESSION['admin_stepup_pending'])
+        && (!is_string($_POST['pending_nonce'] ?? null)
+            || !hash_equals((string) ($_SESSION['admin_stepup_pending']['nonce'] ?? ''), $_POST['pending_nonce']))) {
+        http_response_code(403);
+        $error = 'Solicitação inválida.';
     } else {
         try {
             $token = is_string($_POST['token'] ?? null) ? $_POST['token'] : '';
@@ -71,6 +76,9 @@ a{display:inline-block;margin-top:20px;color:#24567d} .error{color:#a22929;line-
 <?php if ($error !== ''): ?><p class="error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
 <form method="post" autocomplete="off" action="admin_security_gate.php">
 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
+<?php if (isset($_SESSION['admin_stepup_pending']['nonce'])): ?>
+<input type="hidden" name="pending_nonce" value="<?= htmlspecialchars((string) $_SESSION['admin_stepup_pending']['nonce'], ENT_QUOTES, 'UTF-8') ?>">
+<?php endif; ?>
 <label for="token">Informe o Token 2</label>
 <input id="token" name="token" type="password" maxlength="512" required autocomplete="off" autofocus>
 <button type="submit">Continuar</button>
