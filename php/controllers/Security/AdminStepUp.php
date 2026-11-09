@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/security.php';
 require_once __DIR__ . '/../../config/RateLimiter.php';
+require_once __DIR__ . '/AdminToken2Hasher.php';
 
 /**
  * Verificação adicional ADM. Nenhuma credencial é exposta ao navegador nem ao modelo de IA.
@@ -40,10 +41,9 @@ final class AdminStepUp
     private static function credentials(mysqli $db, int $id): ?array
     {
         $stmt = $db->prepare(
-            'SELECT a.senha_hash AS password_hash, c.token2_hash, c.credential_version '
-            . 'FROM administrador a LEFT JOIN admin_security_credentials c '
-            . 'ON c.admin_id = a.id_administrador '
-            . 'WHERE a.id_administrador = ? LIMIT 1'
+            'SELECT senha_hash AS password_hash, token2_hash, '
+            . 'token2_version AS credential_version '
+            . 'FROM administrador WHERE id_administrador = ? LIMIT 1'
         );
         $stmt->bind_param('i', $id);
         $stmt->execute();
@@ -55,7 +55,9 @@ final class AdminStepUp
 
     private static function revision(array $credentials): string
     {
-        return hash('sha256', $credentials['password_hash'] . "\0" . (string) ($credentials['credential_version'] ?? '0'));
+        return hash('sha256', $credentials['password_hash'] . "\0"
+            . ($credentials['token2_hash'] ?? '') . "\0"
+            . (string) ($credentials['credential_version'] ?? '0'));
     }
 
     private static function sessionKey(string $scope): string
@@ -143,7 +145,7 @@ final class AdminStepUp
     {
         $id = self::adminId();
         self::limit($id);
-        if ($token === '' || strlen($token) > 512) return false;
+        if ($token === '' || strlen($token) > AdminToken2Hasher::MAX_INPUT_BYTES) return false;
         $db = getDatabaseConnection();
         try {
             $credentials = self::credentials($db, $id);
@@ -152,7 +154,7 @@ final class AdminStepUp
         }
         if (!$credentials || !is_string($credentials['token2_hash'])
             || $credentials['token2_hash'] === ''
-            || !password_verify($token, $credentials['token2_hash'])) {
+            || !AdminToken2Hasher::verify($token, $credentials['token2_hash'])) {
             self::auditStep('admin_stepup_site', 'failure', $id);
             return false;
         }
@@ -192,7 +194,7 @@ final class AdminStepUp
         if (self::nextAiToken() !== 2) return false;
         $id = self::adminId();
         self::limit($id);
-        if ($token === '' || strlen($token) > 512) return false;
+        if ($token === '' || strlen($token) > AdminToken2Hasher::MAX_INPUT_BYTES) return false;
         $db = getDatabaseConnection();
         try {
             $credentials = self::credentials($db, $id);
@@ -200,7 +202,7 @@ final class AdminStepUp
             $db->close();
         }
         if (!$credentials || !$credentials['token2_hash']
-            || !password_verify($token, $credentials['token2_hash'])) {
+            || !AdminToken2Hasher::verify($token, $credentials['token2_hash'])) {
             self::auditStep('admin_stepup_ai_complete', 'failure', $id);
             return false;
         }
