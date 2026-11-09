@@ -69,7 +69,6 @@ summary:focus-visible {
     height: 83px;
     margin: 0 auto;
     padding: 0;
-    /* Marca à esquerda, links centrais e ações da conta compactas à direita. */
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     column-gap: 24px;
@@ -863,37 +862,26 @@ summary:focus-visible {
     transform: translateY(-2px);
 }
 
-.icone-email {
-    width: 34px;
+.icone-email,
+.icone-telefone {
+    display: inline-flex;
+    width: 24px;
     height: 24px;
-    border: 3px solid var(--white);
-    position: relative;
+    flex: 0 0 24px;
+    align-items: center;
+    justify-content: center;
 }
 
-.icone-email::before,
-.icone-email::after {
-    content: "";
-    position: absolute;
-    top: 9px;
-    width: 21px;
-    height: 3px;
-    background: var(--white);
-}
-
-.icone-email::before {
-    left: -2px;
-    transform: rotate(31deg);
-}
-
-.icone-email::after {
-    right: -2px;
-    transform: rotate(-31deg);
-}
-
-.icone-telefone::before {
-    content: "\260E";
-    font-size: 33px;
-    line-height: 1;
+.icone-email svg,
+.icone-telefone svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: var(--white);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .imagem-suporte {
