@@ -138,3 +138,9 @@ Antes de usar o histórico e a central de atividades no servidor, um operador de
 
 Veja `docs/jarvis-admin.md` e `docs/jarvis-openrouter-dual-key.md` para instalação, chaves, segurança e diagnóstico. O PR #8 de LGPD/Token 2 permanece separado e **não é exigido** pelo JARVIS.
 
+
+## JARVIS — consultas controladas, histórico e mensagens oficiais
+
+A nova camada opcional do JARVIS adiciona abas **Consultar**, **Mensagens** e **Histórico** ao painel ADM. A IA pode analisar registros selecionados e gerar rascunhos personalizados para candidatos/empresas, mas **não possui rotas para banir, excluir, suspender ou editar registros**. Mensagens são entregues como `Support DevIN` somente após revisão, confirmação explícita e aprovação do administrador. O servidor limita envios a 15 por ADM/24h e 2 por destinatário/24h; atividades ficam em histórico auditável compartilhado entre os ADMs, sem texto confidencial nos eventos.
+
+**Atenção:** novas funções **desativadas por padrão** com `DEVIN_JARVIS_ACTIONS_ENABLED=0`. Antes de ativar, aplicar `database/migrations/jarvis_admin_controlled_actions.sql` em desenvolvimento após backup e realizar homologação. Essa migration não muda as tabelas originais. A entrega utiliza o armazenamento de mensagens existente (temporário); confira as limitações de persistência e privacidade em `docs/jarvis-controlled-actions.md`.
