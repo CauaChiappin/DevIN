@@ -16,6 +16,7 @@ $_ENV['DEVIN_ADMIN_STEPUP_ENABLED'] = '1';
 $_SERVER['REMOTE_ADDR'] = '192.0.2.25';
 
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminStepUp.php';
+require_once dirname(__DIR__) . '/php/controllers/Security/AdminGate.php';
 function ensure(bool $value, string $message): void {
     if (!$value) throw new RuntimeException('Teste step-up: ' . $message);
 }
@@ -71,10 +72,39 @@ $db->query("UPDATE admin_security_credentials SET credential_version = credentia
 $db->close();
 ensure(!AdminStepUp::allowed('ai'), 'rotação revoga grant IA');
 ensure(!AdminStepUp::allowed('site'), 'rotação revoga grant site');
+ensure(AdminStepUp::verifySite($keys[301]), 'revalidar após rotação');
+$db = getDatabaseConnection();
+$changed = password_hash('nova-credencial-local-de-testes', PASSWORD_DEFAULT);
+$stmt = $db->prepare('UPDATE administrador SET senha_hash = ? WHERE id_administrador = 301');
+$stmt->bind_param('s',$changed);
+$stmt->execute();
+$stmt->close();
+$db->close();
+ensure(!AdminStepUp::allowed('site'), 'troca de senha primária revoga grant');
 $_SESSION['usuario_id'] = 302;
 ensure(!AdminStepUp::allowed('ai') && !AdminStepUp::allowed('site'), 'isolamento por ADM');
 $_SESSION['usuario_id'] = 301;
 AdminStepUp::clear();
 ensure(!isset($_SESSION['admin_stepup_grant_ai']), 'logout invalida grant local');
+$token = csrfToken();
+$_SESSION['admin_stepup_pending'] = [
+    'admin_id' => 301, 'nonce' => bin2hex(random_bytes(16)),
+    'created_at' => time(), 'post' => ['action'=>'delete_account','csrf_token'=>$token],
+    'page'=>'perfil', 'category'=>'vagas',
+];
+ensure(AdminGate::consumePending(302) === null, 'formulário pendente não cruza contas');
+$_SESSION['admin_stepup_pending'] = [
+    'admin_id' => 301, 'nonce' => bin2hex(random_bytes(16)),
+    'created_at' => time(), 'post' => ['action'=>'delete_account','csrf_token'=>$token],
+    'page'=>'perfil', 'category'=>'vagas',
+];
+ensure(AdminGate::consumePending(301) !== null, 'consome formulário válido');
+ensure(AdminGate::consumePending(301) === null, 'formulário de uso único');
+$_SESSION['admin_stepup_pending'] = [
+    'admin_id' => 301, 'nonce' => bin2hex(random_bytes(16)),
+    'created_at' => time()-301, 'post' => ['action'=>'delete_account','csrf_token'=>$token],
+    'page'=>'perfil', 'category'=>'vagas',
+];
+ensure(AdminGate::consumePending(301) === null, 'formulário expirado');
 session_destroy();
 echo "ADM step-up MySQL: OK\n";
