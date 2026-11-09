@@ -94,3 +94,17 @@
 .jarvis-admin__tool-refresh{margin:8px 12px}
 .jarvis-admin__audit-entry{border-left:3px solid #9ebfda}
 @media(max-width:600px){.jarvis-admin__tabs button{min-width:80px;font-size:12px}.jarvis-admin__tool-form button,.jarvis-admin__tool-card button{min-height:44px}}
+
+/* JarvisDevIn (JD): símbolo vetorial sem depender de imagens externas.
+   Ciano e magenta complementam o gradiente azul já usado pelo DevIN.
+   Não altera o dashboard ADM nem a geometria da janela do chat. */
+.jarvis-admin__jd-logo{display:block;flex:none;width:34px;height:34px;overflow:visible;filter:drop-shadow(0 0 3px rgba(15,225,238,.28))}
+.jarvis-admin__header>.jarvis-admin__jd-logo{width:39px;height:39px}
+.jarvis-admin__launcher>.jarvis-admin__jd-logo{width:31px;height:31px}
+.jarvis-admin__launcher-label{white-space:nowrap}
+.jarvis-admin__identity strong{letter-spacing:.01em}
+@media(max-width:600px){
+  .jarvis-admin__jd-logo{width:33px;height:33px}
+  .jarvis-admin__header>.jarvis-admin__jd-logo{width:40px;height:40px}
+  .jarvis-admin__launcher{padding-inline:13px}
+}
