@@ -80,8 +80,8 @@ a{display:inline-block;margin-top:20px;color:#24567d} .error{color:#a22929;line-
 <input type="hidden" name="pending_nonce" value="<?= htmlspecialchars((string) $_SESSION['admin_stepup_pending']['nonce'], ENT_QUOTES, 'UTF-8') ?>">
 <?php endif; ?>
 <label for="token">Informe o Token 2</label>
-<input id="token" name="token" type="password" maxlength="512" required autocomplete="off" autofocus>
+<input id="token" name="token" type="password" required autocomplete="off" autofocus>
 <button type="submit">Continuar</button>
 </form>
-<a href="admin_token2.php">Configurar Token 2</a> · <a href="adm.php">Voltar ao painel</a>
+<a href="JarvisT.php">Configurar Token 2</a> · <a href="adm.php">Voltar ao painel</a>
 </main></body></html>
