@@ -46,6 +46,11 @@ final class AdminToken2Enrollment
         string $newToken2,
         string $confirmation
     ): bool {
+        // Proteção em profundidade: mesmo serviços chamados diretamente não
+        // podem configurar a credencial de outro administrador.
+        if (AdminStepUp::adminId() !== $adminId) {
+            throw new DomainException('Acesso não autorizado.');
+        }
         self::validateNewToken($newToken2, $confirmation);
         if ($adminId < 1 || strlen($token1) > 512 || strlen($activationCode) > 128) {
             return false;
