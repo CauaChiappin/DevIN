@@ -30,7 +30,7 @@ final class PrivacyContext
     {
         self::validateAccount($type, $id);
         [$table, $key] = self::ACCOUNT_TABLES[$type];
-        $stmt = $db->prepare("SELECT {$key} FROM {$table} WHERE {$key} = ?" . ($lock ? ' FOR UPDATE' : '') . ' LIMIT 1');
+        $stmt = $db->prepare("SELECT {$key} FROM {$table} WHERE {$key} = ? LIMIT 1" . ($lock ? ' FOR UPDATE' : ''));
         $stmt->bind_param('i', $id);
         $stmt->execute();
         $exists = $stmt->get_result()->fetch_row() !== null;
