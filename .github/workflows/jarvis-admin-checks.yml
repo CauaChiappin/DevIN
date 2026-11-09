@@ -1,0 +1,72 @@
+name: JARVIS Admin — syntax checks
+on:
+  pull_request:
+    paths:
+      - 'php/api/jarvis/**'
+      - 'php/controllers/Jarvis/**'
+      - 'php/components/jarvis-admin-widget.php'
+      - 'js/jarvis-admin.js'
+      - 'php/adm.php'
+      - '.github/workflows/jarvis-admin-checks.yml'
+      - 'tests/jarvis_admin_smoke.php'
+      - 'tests/jarvis_admin_mysql.php'
+      - 'database/migrations/jarvis_admin.sql'
+  push:
+    branches:
+      - 'feature/jarvis-admin'
+      - 'main'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax
+        run: |
+          php -v
+          php -l php/adm.php
+          php -l php/components/jarvis-admin-widget.php
+          php -l tests/jarvis_admin_mysql.php
+          for f in php/api/jarvis/*.php php/controllers/Jarvis/*.php; do php -l "$f"; done
+      - name: JavaScript syntax
+        run: node --check js/jarvis-admin.js
+      - name: Skill manager and model routing smoke tests
+        run: php tests/jarvis_admin_smoke.php
+
+  mysql:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: jarvis-ci-only
+          MYSQL_DATABASE: devin_jarvis_ci
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pjarvis-ci-only"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install MySQL and PHP extensions for isolated tests
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y php-cli php-mysql php-mbstring default-mysql-client
+      - name: Migrate disposable MySQL database
+        env:
+          MYSQL_PWD: jarvis-ci-only
+        run: |
+          mysql -h 127.0.0.1 -u root devin_jarvis_ci < database/migrations/jarvis_admin.sql
+          test "$(mysql -h 127.0.0.1 -u root -N -s devin_jarvis_ci -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='devin_jarvis_ci'")" -eq 4
+      - name: Persistence, access control and no-2FA integration
+        env:
+          JARVIS_TEST_HOST: 127.0.0.1
+          JARVIS_TEST_DB: devin_jarvis_ci
+          JARVIS_TEST_USER: root
+          JARVIS_TEST_PASSWORD: jarvis-ci-only
+        run: php tests/jarvis_admin_mysql.php

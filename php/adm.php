@@ -710,6 +710,9 @@ try {
         </section>
     </dialog>
 
+    <?php require __DIR__ . '/components/jarvis-admin-widget.php'; ?>
+    <link rel="stylesheet" href="../css/jarvis-admin.css?v=<?= filemtime(__DIR__ . '/../css/jarvis-admin.css') ?>">
+    <script src="../js/jarvis-admin.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-admin.js') ?>" defer></script>
     <script src="../js/site-navigation.js"></script>
     <script src="../js/dashboard-menu.js"></script>
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script>

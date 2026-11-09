@@ -1,6 +1,72 @@
 # DevIN
 TCC - Alcina Dantas Feijão 2026. Site com o propósito de ajudar as pessoas que queiram e trabalhem na área de Dev, e ajudar as empresas a contratar essas pessoas.
 
+## APIs e integrações utilizadas
+
+Esta seção diferencia **APIs externas**, consumidas pelo servidor PHP, das **APIs internas** criadas pelo próprio DevIN. A presença de uma integração no código **não significa** que sua credencial esteja configurada ou que o serviço tenha sido testado na hospedagem.
+
+### APIs externas (serviços de terceiros)
+
+| Serviço | Tipo / protocolo | Utilização no DevIN | Código e configuração | Estado |
+| --- | --- | --- | --- | --- |
+| **Google Gemini API** | HTTP(S) REST/JSON, `generateContent` | Gerar ou melhorar textos de currículos e analisar currículo segundo critérios ABNT | `php/gerar_curriculo_api.php`, `php/analisar_curriculo_abnt_api.php`; `DEVIN_GEMINI_API_KEY` e `DEVIN_GEMINI_MODEL` | Integração implementada; exige chave válida e cota disponível |
+| **MyMemory Translation API** | HTTP(S) GET/JSON | Traduzir mensagens sob solicitação do usuário | `php/mensagens_api.php`; não requer chave na implementação atual | Integração implementada; sujeita aos limites e à disponibilidade do serviço |
+| **Groq API** | HTTP(S) POST/JSON, interface Chat Completions compatível com OpenAI | Chat do JARVIS Admin | `php/api/jarvis/chat.php`; `DEVIN_JARVIS_PROVIDER=groq` | Opção implementada na branch `feature/jarvis-admin`; requer configuração |
+| **OpenRouter API** | HTTP(S) POST/JSON, interface Chat Completions compatível com OpenAI | Chat do JARVIS Admin | `php/api/jarvis/chat.php`; `DEVIN_JARVIS_PROVIDER=openrouter` | Opção implementada na branch `feature/jarvis-admin`; requer configuração |
+| **OpenAI API** | HTTP(S) POST/JSON, Chat Completions | Chat do JARVIS Admin | `php/api/jarvis/chat.php`; `DEVIN_JARVIS_PROVIDER=openai` | Opção implementada na branch `feature/jarvis-admin`; requer configuração |
+
+**Importante:** Groq, OpenRouter e OpenAI são **alternativas de provedor** para o JARVIS Admin. O servidor seleciona **um** provedor por configuração; há fallback opcional somente entre modelos do **mesmo OpenRouter** quando a reserva `:free` é explicitamente autorizada. O JARVIS Admin **não** utiliza automaticamente a chave Gemini empregada nos currículos. A seleção de um modelo gratuito depende das opções, cotas e políticas vigentes de cada provedor. Não presuma que o uso seja ilimitado ou gratuito.
+
+### APIs HTTP internas do DevIN
+
+São rotas PHP do **próprio projeto**, acessadas pelo frontend com `fetch()` ou requisições HTTP. A maioria retorna JSON, controla sessão/permissões e valida CSRF quando aplicável. São APIs internas *estilo REST*, mas não constituem uma API pública versionada.
+
+| Endpoint | Função principal |
+| --- | --- |
+| `php/csrf.php` | Fornecer token CSRF à interface para proteger requisições |
+| `php/mensagens_api.php` | Conversas entre usuários/empresas, mensagens, tradução e denúncias de perfil |
+| `php/denunciar_vaga_api.php` | Registrar denúncias de vagas autenticadas |
+| `php/gerar_curriculo_api.php` | Solicitar geração de currículo via Gemini com consentimento |
+| `php/analisar_curriculo_abnt_api.php` | Solicitar análise de currículo via Gemini |
+| `php/arcade_unlock.php` | Liberar o arcade após verificação da sequência no dashboard |
+| `php/arcade_api.php` | Iniciar partidas, consultar/salvar progresso e administrar pontuações |
+| `php/api/jarvis/chat.php` | **Branch `feature/jarvis-admin`**: chat ADM com memória MySQL por administrador e resumo de indicadores agregados |\n| `php/api/jarvis/conversations.php` | Recuperar, pesquisar e excluir conversas do JARVIS isoladas por ADM |\n| `php/api/jarvis/tasks.php` | Central de atividades: criar tarefas, registrar andamento e cancelamento com trilha de auditoria |
+
+**Ainda planejados, não implementados:** `action-confirm.php` e `action-cancel.php` para ações **reais** do painel; ferramentas de consulta detalhada, busca semântica e execução de ações com confirmação e auditoria. A memória e a fila de atividades agora utilizam tabelas próprias do MySQL. Mudar o estado de uma tarefa não modifica contas, vagas ou denúncias. Consulte `docs/jarvis-admin.md` para o escopo e as limitações desta fase.
+
+### Outras integrações e tecnologias (não são APIs REST externas)
+
+- **SMTP** (Gmail, Outlook ou outro provedor configurado): envio de e-mails com **PHPMailer**, em `php/MailerHelper.php`. É um protocolo de e-mail, **não** uma API HTTP. Variáveis `DEVIN_SMTP_*`.
+- **MySQL**: armazenamento e consultas pelo driver PHP **`mysqli`**, via `php/config/database.php`; não é um serviço de IA nem uma API HTTP do projeto.
+- **JWT, sessão PHP e CSRF**: mecanismos de autenticação/proteção, não provedores externos. Arquivos `php/auth/Jwt.php`, `php/middlewares/auth.php` e `php/config/security.php`.
+- **Google Fonts**: recurso de tipografia carregado pelo navegador em algumas páginas; não é utilizado como API de negócios nem exige API Key.
+- **GitHub / ChatGPT Codex Connector**: ferramentas do fluxo de desenvolvimento e revisão de código; **não** são chamadas pelo DevIN em execução para atender usuários.
+
+### Configuração da IA no servidor
+
+O `.env` local deve permanecer fora do Git. Nunca coloque chaves no JavaScript, HTML, README ou em commits. Exemplo de **nomes de variáveis**, sem valores secretos:
+
+```dotenv
+# Gemini: geração e análise de currículos
+DEVIN_GEMINI_API_KEY=
+DEVIN_GEMINI_MODEL=gemini-2.5-flash-lite
+
+# JARVIS Admin (um provedor de cada vez: groq, openrouter ou openai)
+DEVIN_JARVIS_PROVIDER=groq
+DEVIN_JARVIS_MODEL=
+DEVIN_JARVIS_API_KEY=
+```
+
+Para habilitar a memória e a central de atividades, aplique primeiro `database/migrations/jarvis_admin.sql` em um banco de desenvolvimento (com backup). O ID de exemplo GLM gratuito é do OpenRouter, sujeito a cotas e mudanças. Veja `docs/jarvis-admin.md` para instalação e testes.\n\nAntes de usar dados reais com um provedor de IA, revise os termos de uso, os limites do plano e a política de privacidade. Evite enviar CPF, credenciais e outros dados pessoais desnecessários. As APIs internas devem permanecer protegidas mesmo que um usuário descubra seus endereços.
+
+---
+
+## Adaptações recentes do JARVIS Code para o JARVIS Admin
+
+No PR #7 (`feature/jarvis-admin`) o módulo incorpora somente conceitos úteis ao DevIN: **gerenciador de habilidades administrativas** (até duas orientações por mensagem para reports, vagas, usuários e indicadores); **contexto anterior enviado ao modelo somente com opt-in** (mas conversas continuam salvas no MySQL); **identificação do modelo utilizado** nas respostas novas; **fallback opcional para modelo explicitamente configurado com sufixo `:free` no mesmo provedor OpenRouter**; e **exemplos de atividades** na interface. Não executa habilidades de terceiros ou ações administrativas.
+
+O programa Android, voz, Shizuku, comandos de shell, skills genéricas e agentes autônomos não fazem parte do DevIN. Veja `docs/jarvis-admin.md` para escopo, configuração, testes e limitações.
+
 ## E-mails e lembrete de currículo
 
 Preencha o `.env` na raiz do projeto com os dados do seu provedor SMTP. Um modelo também está disponível em `.env.example`. As variáveis usadas são:
@@ -63,3 +129,12 @@ O portal contém Labirinto DevIN, Snake, Blocos, Quebra-blocos, Memória e Salto
 No portal, selecionar um jogo abre uma tela com a descrição e os controles; a partida só começa após confirmação e uma contagem regressiva de três segundos. Reiniciar também aguarda essa contagem.
 
 Ao perder, a tela mostra os dez melhores recordes daquele jogo. O servidor exige que a partida seja iniciada pela API e rejeita pontuações e fases acima de limites plausíveis para o tempo da sessão. Isso reduz envios acidentais ou pontuações claramente impossíveis, mas não torna os jogos invioláveis: a simulação ainda roda no navegador e jogadores determinados podem manipular o cliente. Para uma classificação competitiva confiável, a simulação e a validação de cada jogada precisariam ser executadas no servidor. A classificação reutiliza `progresso_jogos`; não é necessária alteração ou migração do banco de dados.
+
+## JARVIS Admin — sem verificação adicional de dois tokens
+
+O painel administrativo inclui o widget **JARVIS**, com **Conversas**, **Resumo do DevIN** e **Atividades**. O acesso usa apenas a sessão de login normal do administrador (e-mail e senha); não existe requisito de Token 1/Token 2 ou dependência da branch LGPD.
+
+Antes de usar o histórico e a central de atividades no servidor, um operador deve aplicar `database/migrations/jarvis_admin.sql` no MySQL do DevIN, após backup. Para respostas de IA, configure `DEVIN_JARVIS_PROVIDER`, `DEVIN_JARVIS_MODEL` e `DEVIN_JARVIS_API_KEY` no `.env` privado. O resumo funciona localmente sem chave de IA, e o JARVIS **não altera usuários, vagas ou denúncias**. Ações da fila apenas registram o andamento e exigem confirmação manual.
+
+Veja `docs/jarvis-admin.md` para instalação, segurança e testes. O PR #8 de LGPD/Token 2 permanece separado e **não é exigido** pelo JARVIS.
+
