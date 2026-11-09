@@ -26,6 +26,7 @@ declare(strict_types=1);
                 <p class="jarvis-admin__welcome" data-jarvis-welcome>Olá! Suas conversas ficam salvas para continuar no computador ou celular. O JARVIS ainda não executa alterações administrativas.</p>
             </div>
             <div class="jarvis-admin__quick-actions"><button type="button" data-jarvis-summary>Resumo do DevIN</button></div>
+            <label class="jarvis-admin__context-option" title="Somente com sua autorização, mensagens anteriores desta conversa serão enviadas ao modelo externo."><input type="checkbox" data-jarvis-use-history><span>Usar mensagens anteriores como contexto da IA</span></label>
             <p class="jarvis-admin__status" role="status" aria-live="polite" data-jarvis-status></p>
             <form class="jarvis-admin__composer" data-jarvis-form>
                 <label class="jarvis-admin__sr-only" for="jarvisAdminInput">Mensagem para o JARVIS</label>
@@ -35,6 +36,12 @@ declare(strict_types=1);
         </section>
         <section class="jarvis-admin__pane jarvis-admin__pane--tasks" data-jarvis-pane="tasks" aria-label="Central de atividades" hidden>
             <p class="jarvis-admin__tasks-info">Organize atividades e decisões. Marcar uma tarefa como concluída <strong>não executa alterações</strong> no DevIN.</p>
+            <div class="jarvis-admin__examples" aria-label="Exemplos de atividades">
+                <span>Experimente criar uma atividade:</span>
+                <button type="button" data-jarvis-task-example="reports">Analisar denúncias</button>
+                <button type="button" data-jarvis-task-example="jobs">Revisar vagas</button>
+                <button type="button" data-jarvis-task-example="metrics">Preparar relatório</button>
+            </div>
             <form class="jarvis-admin__task-form" data-jarvis-task-form>
                 <label>Nova atividade<input type="text" maxlength="150" required placeholder="Ex.: Analisar denúncias pendentes" data-jarvis-task-title></label>
                 <label>Descrição (opcional)<textarea rows="2" maxlength="1200" placeholder="O que precisa ser verificado?" data-jarvis-task-description></textarea></label>
