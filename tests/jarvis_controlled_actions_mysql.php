@@ -29,7 +29,7 @@ $db->query("INSERT INTO vagas VALUES (31,21,'Desenvolvedor PHP','Criar aplicaç�
 $db->query("INSERT INTO reports_vagas VALUES (41,'Desenvolvedor PHP','spam','pendente',31)");
 $db->query("INSERT INTO reports_perfis VALUES (51,'Ana Candidata','abuso','pendente','pessoa',11)");
 
-$items=JarvisAdminRecords::search($db,'pessoa','Ana');
+$items=JarvisAdminRecords::search($db,'pessoa','Ana Candidata');
 prove(count($items)===1 && (int)$items[0]['id']===11,'busca por nome');
 prove(count(JarvisAdminRecords::search($db,'vaga','31'))===1,'busca de vaga pelo ID');
 prove(count(JarvisAdminRecords::search($db,'reports_vagas','spam'))===0,'busca não pesquisa motivos sensíveis');
