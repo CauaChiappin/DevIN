@@ -130,6 +130,11 @@ No portal, selecionar um jogo abre uma tela com a descrição e os controles; a 
 
 Ao perder, a tela mostra os dez melhores recordes daquele jogo. O servidor exige que a partida seja iniciada pela API e rejeita pontuações e fases acima de limites plausíveis para o tempo da sessão. Isso reduz envios acidentais ou pontuações claramente impossíveis, mas não torna os jogos invioláveis: a simulação ainda roda no navegador e jogadores determinados podem manipular o cliente. Para uma classificação competitiva confiável, a simulação e a validação de cada jogada precisariam ser executadas no servidor. A classificação reutiliza `progresso_jogos`; não é necessária alteração ou migração do banco de dados.
 
-## Verificação do JARVIS Admin
+## JARVIS Admin — sem verificação adicional de dois tokens
 
-**Dependência:** o JARVIS Admin do PR #7 exige a camada administrativa da Fase 1 LGPD (PR #8). Sem ela, chat, histórico e atividades ficam bloqueados no servidor, sem alternativa insegura. Antes do primeiro uso, o ADM passa por verificação sequencial usando apenas os campos **Token 1** e **Token 2**. Tokens não são enviados à IA e a liberação persiste apenas na sessão segura atual, sujeita a expiração. Consulte `docs/jarvis-admin.md` e, depois de integrar PR #8, `docs/admin-stepup-security.md`.
+O painel administrativo inclui o widget **JARVIS**, com **Conversas**, **Resumo do DevIN** e **Atividades**. O acesso usa apenas a sessão de login normal do administrador (e-mail e senha); não existe requisito de Token 1/Token 2 ou dependência da branch LGPD.
+
+Antes de usar o histórico e a central de atividades no servidor, um operador deve aplicar `database/migrations/jarvis_admin.sql` no MySQL do DevIN, após backup. Para respostas de IA, configure `DEVIN_JARVIS_PROVIDER`, `DEVIN_JARVIS_MODEL` e `DEVIN_JARVIS_API_KEY` no `.env` privado. O resumo funciona localmente sem chave de IA, e o JARVIS **não altera usuários, vagas ou denúncias**. Ações da fila apenas registram o andamento e exigem confirmação manual.
+
+Veja `docs/jarvis-admin.md` para instalação, segurança e testes. O PR #8 de LGPD/Token 2 permanece separado e **não é exigido** pelo JARVIS.
+
