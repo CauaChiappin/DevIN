@@ -9,5 +9,5 @@ if (PHP_SAPI !== 'cli') {
 }
 fwrite(STDERR, "Comando descontinuado: cada ADM configura seu próprio Token 2.\n");
 fwrite(STDERR, "Para emitir um código individual temporário, use:\n");
-fwrite(STDERR, "php scripts/issue-admin-token2-activation.php <id_administrador>\n");
+fwrite(STDERR, "Acesse a pagina autenticada php/JarvisT.php para cadastrar ou alterar o Token 2.\n");
 exit(2);
