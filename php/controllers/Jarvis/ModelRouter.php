@@ -16,7 +16,7 @@ final class ModelRouter
         'cohere/north-mini-code:free',
         'recursive/flint-v1.0:free',
         'liquid/lfm-3-1.7b:free',
-        'liquid/lfm-2.5-2.6b:free',
+        'nvidia/nemotron-3-ultra-550b-a55b:free',
         'openrouter/free',
     ];
 
