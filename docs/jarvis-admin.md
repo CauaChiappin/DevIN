@@ -1,4 +1,4 @@
-# JARVIS Admin — Fases 1 e 2 (experimental)
+# JARVIS Admin — Fases 1 a 3 (experimental)
 
 Código na branch `feature/jarvis-admin`, PR #7. **Não integrado à main**.
 
@@ -6,8 +6,8 @@ Código na branch `feature/jarvis-admin`, PR #7. **Não integrado à main**.
 - Widget flutuante e responsivo em todas as páginas do painel ADM.
 - Chat com provedores OpenAI-compatible (`groq`, `openrouter`, `openai`), selecionados por configuração no servidor.
 - **Memória persistente inspirada no conceito do OpenViking (não usa a biblioteca OpenViking):** conversa e mensagens gravadas no MySQL, isoladas por conta ADM; seleção, exclusão e busca por palavras individuais no histórico. Ainda **não** há busca semântica, memória vetorial ou tolerância a erros de digitação.
-- **Central de atividades inspirada no conceito de inbox/approval:** criar tarefas, iniciar análise, concluir o registro ou cancelar; mudanças de estado exigem confirmação do usuário e geram auditoria na tabela de atividades. As tarefas são planejamentos manuais, não agentes executando em segundo plano.
-- Resumo agregado de candidatos, empresas, vagas e denúncias pendentes (sem dados pessoais enviados ao modelo).
+- **Central de atividades com três exemplos de uso (reports, vagas e relatório):** os exemplos apenas preenchem o formulário; nenhum job é executado.\n- **Central de atividades inspirada no conceito de inbox/approval:** criar tarefas, iniciar análise, concluir o registro ou cancelar; mudanças de estado exigem confirmação do usuário e geram auditoria na tabela de atividades. As tarefas são planejamentos manuais, não agentes executando em segundo plano.
+- **Gerenciador sempre ativo, limitado ao DevIN:** seleciona automaticamente no máximo 2 orientações entre triagem de denúncias, qualidade de vagas, suporte a usuários e indicadores. Nenhuma das 26 skills do JarvisCode é executada no DevIN; trata-se de regras locais para elaborar respostas, não ferramentas nem autorização de escrita.\n- **Contexto com autorização:** histórico de conversas é salvo no MySQL, mas o envio das últimas 12 mensagens ao provedor está desligado por padrão e é habilitado pelo administrador no chat. Mensagem atual ainda é enviada para gerar resposta.\n- **Modelo usado visível nas respostas novas:** provedor, ID de modelo e sinalização de uso do fallback (se ocorrer). O modo Resumo usa somente dados locais.\n- Resumo agregado de candidatos, empresas, vagas e denúncias pendentes (sem dados pessoais enviados ao modelo).
 - Autenticação ADM com conferência da conta no banco, CSRF nas escritas, limites, SQL preparado, IDs restritos por administrador e endpoint HTTPS de provedor fixo.
 - O chat **não** executa ações administrativas. Concluir uma atividade não apaga vagas, empresas ou contas.
 
@@ -24,7 +24,7 @@ Código na branch `feature/jarvis-admin`, PR #7. **Não integrado à main**.
 4. Verifique a extensão cURL e `mbstring` do PHP, as dependências Composer do DevIN, e se a hospedagem permite conexões HTTPS com o provedor.
 5. Acesse `php/adm.php` com sessão ADM válida, abra o ícone JARVIS e teste as abas **Conversas** e **Atividades**.
 
-> O ID `z-ai/glm-5.3-flash:free` é um exemplo encontrado no OpenRouter em novembro de 2026. Modelos e cotas podem mudar. A variante gratuita tem limite de uso; revise disponibilidade, termos de dados e custos antes de colocá-la em produção. Alternativamente, escolha outro ID suportado. Não existe fallback automático.
+> O ID `z-ai/glm-5.3-flash:free` é um exemplo encontrado no OpenRouter em novembro de 2026. Modelos e cotas podem mudar. A variante gratuita tem limite de uso; revise disponibilidade, termos de dados e custos antes de colocá-la em produção. Alternativamente, escolha outro ID suportado. O fallback só é tentado **no mesmo provedor OpenRouter**, com a mesma chave e quando `DEVIN_JARVIS_FALLBACK_MODEL` está configurado com um ID terminado em `:free`. Só responde a falhas temporárias (por exemplo HTTP 429/503); não muda de provedor, não seleciona modelos pagos nem garante disponibilidade.
 
 ## Endpoints
 - `POST php/api/jarvis/chat.php`: `{mode:"chat",message,page,conversation_id}`; retorna `{reply,conversation_id}`. `{mode:"summary"}` devolve dados agregados sem usar provedor externo.
@@ -37,7 +37,7 @@ As escritas exigem cabeçalho `X-CSRF-Token`. Uma sessão inexistente retorna JS
 
 ## Privacidade e limites
 - Mensagens são armazenadas sem criptografia em nível de coluna no MySQL; proteja backups e acesso ao banco e defina uma política de retenção antes de uso real.
-- O conteúdo digitado no chat e até 12 mensagens anteriores pode ser enviado ao provedor selecionado. Evite CPF, credenciais, dados pessoais de candidatos e conteúdo sensível de denúncias.
+- O conteúdo digitado no chat é enviado ao provedor selecionado. Até 12 mensagens anteriores só são incluídas no pedido quando o administrador ativa **Usar mensagens anteriores como contexto da IA**. O MySQL continua guardando o histórico independentemente dessa escolha. Evite CPF, credenciais, dados pessoais de candidatos e conteúdo sensível de denúncias.
 - O chat depende da disponibilidade da API e não garante precisão. A pesquisa atual divide a consulta em palavras e usa `LIKE`; não equivale a recuperação semântica.
 - No momento não há buscas de entidades administrativas pelo modelo, workers em segundo plano, ferramenta de ações destrutivas, anexos ou streaming.
 
@@ -53,3 +53,25 @@ As escritas exigem cabeçalho `X-CSRF-Token`. Uma sessão inexistente retorna JS
 
 ## Próxima fase
 Revisar arquitetura e testes reais no servidor. Depois: consultas administrativas limitadas por ferramentas; propostas de ações com confirmação transacional e auditoria detalhada, sem jamais permitir SQL/execução arbitrária do modelo. Persistência e tarefas desta fase não autorizam o modelo a editar registros reais.
+
+## Mudanças adaptadas do JarvisCode V3 (escopo limitado)
+
+Adaptações próprias, sem copiar dependências de terceiros:
+- **SkillManager**: seleção determinística por palavras-chave e até duas especializações do próprio portal; o gerenciador permanece ativo, sem executar scripts ou ações administrativas.
+- **ModelRouter**: fallback opcional somente para modelo gratuito e já autorizado no mesmo provedor OpenRouter; um pedido curto normalmente usa uma única chamada de IA.
+- **Contexto e memória**: separação entre persistir histórico no MySQL e consentir em enviá-lo ao modelo.
+- **Central de atividades**: três exemplos explicativos e botões para registrar andamento, sem automação, fila executável ou poderes de moderação.
+- **Visibilidade**: metadados de modelo/skill por resposta nova. As mensagens antigas não guardam esses metadados na tabela atual.
+
+Não são incluídos: execução Android (Shizuku/rish), voz, captura de tela, controle de aplicativos, as 26 skills genéricas, modelos locais on-device, MCP amplo, edição de código, criação de agentes autônomos, sessões de shell ou tarefas agendadas. Atualizações futuras exigem revisão de segurança e testes.
+
+### Teste rápido
+
+```bash
+php tests/jarvis_admin_smoke.php
+php -l php/controllers/Jarvis/AdminSkillManager.php
+php -l php/controllers/Jarvis/ModelRouter.php
+node --check js/jarvis-admin.js
+```
+
+A CI executa os testes sem banco de dados e sem chave de API. O uso real do chat, a migração e a UI ainda requerem testes manuais no servidor de desenvolvimento.
