@@ -53,7 +53,7 @@ final class AuditService
             . 'VALUES (?,?,?,?,?,?,UTC_TIMESTAMP(6),?,?,NULL,DATE_ADD(UTC_TIMESTAMP(6),INTERVAL ? DAY))'
         );
         $stmt->bind_param(
-            'sssissssi',
+            'sssisissi',
             $event, $outcome, $actorType, $actorId, $subjectType, $subjectId, $ipHash, $requestId, $days
         );
         $stmt->execute();
