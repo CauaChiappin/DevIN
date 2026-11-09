@@ -52,7 +52,7 @@
     if (name === 'tasks') loadTasks();
     else input.focus();
   }
-  function addMessage(role, content) {
+  function addMessage(role, content, metadata = null) {
     $('[data-jarvis-welcome]').hidden = true;
     const item = document.createElement('div');
     item.className = 'jarvis-admin__message' + (role === 'user' ? ' is-user' : '');
@@ -63,6 +63,24 @@
     text.className = 'jarvis-admin__message-body';
     text.textContent = String(content);
     item.append(label, text);
+    if (role === 'assistant' && metadata) {
+      const details = [];
+      if (metadata.source === 'local') details.push('Fonte: banco DevIN');
+      if (typeof metadata.model === 'string') {
+        details.push('Modelo: ' + String(metadata.provider || 'API') + ' / ' + metadata.model);
+      }
+      if (metadata.fallback_used === true) details.push('Modelo gratuito de reserva');
+      if (Array.isArray(metadata.skills) && metadata.skills.length) {
+        details.push('Habilidades: ' + metadata.skills.map(s => String(s.label || '')).filter(Boolean).join(', '));
+      }
+      if (metadata.history_used === true) details.push('Contexto anterior utilizado');
+      if (details.length) {
+        const meta = document.createElement('small');
+        meta.className = 'jarvis-admin__response-meta';
+        meta.textContent = details.join(' · ');
+        item.append(meta);
+      }
+    }
     messages.append(item);
     messages.scrollTop = messages.scrollHeight;
   }
@@ -112,9 +130,10 @@
     if (mode === 'chat') addMessage('user', message);
     try {
       const data = await api(root.dataset.endpoint, {
-        mode, message, page: root.dataset.page || 'inicio', conversation_id: conversationId
+        mode, message, page: root.dataset.page || 'inicio', conversation_id: conversationId,
+        use_history: $('[data-jarvis-use-history]').checked
       });
-      addMessage('assistant', data.reply || 'Sem resposta.');
+      addMessage('assistant', data.reply || 'Sem resposta.', data);
       if (mode === 'chat') {
         conversationId = Number(data.conversation_id);
         await loadConversations($('[data-jarvis-search]').value.trim()).catch(() => {});
@@ -223,6 +242,30 @@
     input.value = '';
     resize();
     chat('chat', value);
+  });
+  const taskExamples = {
+    reports: {
+      title: 'Analisar denúncias pendentes',
+      description: 'Abrir a aba Reports, revisar os fatos de cada denúncia e registrar uma decisão humana.'
+    },
+    jobs: {
+      title: 'Revisar vagas publicadas',
+      description: 'Verificar descrições incompletas, anúncios repetidos e informações inconsistentes na lista de vagas.'
+    },
+    metrics: {
+      title: 'Preparar resumo de indicadores',
+      description: 'Conferir a contagem de candidatos, empresas, vagas e denúncias; preparar um relatório para a equipe.'
+    }
+  };
+  root.querySelectorAll('[data-jarvis-task-example]').forEach(button => {
+    button.addEventListener('click', () => {
+      const example = taskExamples[button.dataset.jarvisTaskExample];
+      if (!example) return;
+      $('[data-jarvis-task-title]').value = example.title;
+      $('[data-jarvis-task-description]').value = example.description;
+      taskStatus.textContent = 'Exemplo preenchido. Revise e toque em Adicionar à fila.';
+      $('[data-jarvis-task-title]').focus();
+    });
   });
   $('[data-jarvis-task-form]').addEventListener('submit', async (event) => {
     event.preventDefault();
