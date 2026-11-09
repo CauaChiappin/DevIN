@@ -1,13 +1,17 @@
 # JARVIS Admin — Fases 1 a 3 (experimental)
 
-Código na branch `feature/jarvis-admin`, PR #7. **Não integrado à main**.
+Implementação do PR #7, preparada para integração à `main` **sem verificação adicional de dois tokens**.
 
 ## Recursos implementados
 - Widget flutuante e responsivo em todas as páginas do painel ADM.
 - Chat com provedores OpenAI-compatible (`groq`, `openrouter`, `openai`), selecionados por configuração no servidor.
 - **Memória persistente inspirada no conceito do OpenViking (não usa a biblioteca OpenViking):** conversa e mensagens gravadas no MySQL, isoladas por conta ADM; seleção, exclusão e busca por palavras individuais no histórico. Ainda **não** há busca semântica, memória vetorial ou tolerância a erros de digitação.
-- **Central de atividades com três exemplos de uso (reports, vagas e relatório):** os exemplos apenas preenchem o formulário; nenhum job é executado.\n- **Central de atividades inspirada no conceito de inbox/approval:** criar tarefas, iniciar análise, concluir o registro ou cancelar; mudanças de estado exigem confirmação do usuário e geram auditoria na tabela de atividades. As tarefas são planejamentos manuais, não agentes executando em segundo plano.
-- **Gerenciador sempre ativo, limitado ao DevIN:** seleciona automaticamente no máximo 2 orientações entre triagem de denúncias, qualidade de vagas, suporte a usuários e indicadores. Nenhuma das 26 skills do JarvisCode é executada no DevIN; trata-se de regras locais para elaborar respostas, não ferramentas nem autorização de escrita.\n- **Contexto com autorização:** histórico de conversas é salvo no MySQL, mas o envio das últimas 12 mensagens ao provedor está desligado por padrão e é habilitado pelo administrador no chat. Mensagem atual ainda é enviada para gerar resposta.\n- **Modelo usado visível nas respostas novas:** provedor, ID de modelo e sinalização de uso do fallback (se ocorrer). O modo Resumo usa somente dados locais.\n- Resumo agregado de candidatos, empresas, vagas e denúncias pendentes (sem dados pessoais enviados ao modelo).
+- **Central de atividades com três exemplos de uso (reports, vagas e relatório):** os exemplos apenas preenchem o formulário; nenhum job é executado.
+- **Central de atividades inspirada no conceito de inbox/approval:** criar tarefas, iniciar análise, concluir o registro ou cancelar; mudanças de estado exigem confirmação do usuário e geram auditoria na tabela de atividades. As tarefas são planejamentos manuais, não agentes executando em segundo plano.
+- **Gerenciador sempre ativo, limitado ao DevIN:** seleciona automaticamente no máximo 2 orientações entre triagem de denúncias, qualidade de vagas, suporte a usuários e indicadores. Nenhuma das 26 skills do JarvisCode é executada no DevIN; trata-se de regras locais para elaborar respostas, não ferramentas nem autorização de escrita.
+- **Contexto com autorização:** histórico de conversas é salvo no MySQL, mas o envio das últimas 12 mensagens ao provedor está desligado por padrão e é habilitado pelo administrador no chat. Mensagem atual ainda é enviada para gerar resposta.
+- **Modelo usado visível nas respostas novas:** provedor, ID de modelo e sinalização de uso do fallback (se ocorrer). O modo Resumo usa somente dados locais.
+- Resumo agregado de candidatos, empresas, vagas e denúncias pendentes (sem dados pessoais enviados ao modelo).
 - Autenticação ADM com conferência da conta no banco, CSRF nas escritas, limites, SQL preparado, IDs restritos por administrador e endpoint HTTPS de provedor fixo.
 - O chat **não** executa ações administrativas. Concluir uma atividade não apaga vagas, empresas ou contas.
 
@@ -41,7 +45,7 @@ As escritas exigem cabeçalho `X-CSRF-Token`. Uma sessão inexistente retorna JS
 - O chat depende da disponibilidade da API e não garante precisão. A pesquisa atual divide a consulta em palavras e usa `LIKE`; não equivale a recuperação semântica.
 - No momento não há buscas de entidades administrativas pelo modelo, workers em segundo plano, ferramenta de ações destrutivas, anexos ou streaming.
 
-## Roteiro de testes antes de merge
+## Roteiro de testes de homologação
 1. Executar `php -l` nos endpoints, controllers e widget; `node --check js/jarvis-admin.js` (workflow automático incluído).
 2. Testar celular e desktop; campo multiline, conversas separadas, nova conversa, exclusão e pesquisa parcial.
 3. Confirmar que um administrador não pode acessar conversa ou tarefa de outro ADM por ID.
@@ -74,16 +78,13 @@ php -l php/controllers/Jarvis/ModelRouter.php
 node --check js/jarvis-admin.js
 ```
 
-A CI executa os testes sem banco de dados e sem chave de API. O uso real do chat, a migração e a UI ainda requerem testes manuais no servidor de desenvolvimento.
+A CI executa testes de sintaxe e habilidades sem chaves de API, além de integração MySQL isolada para memória, tarefas e isolamento dos administradores. O uso real do provedor externo e a UI mobile ainda exigem testes na hospedagem.
 
-## Verificação administrativa sequencial (dependência da Fase 1 LGPD)
+## Acesso administrativo sem 2FA interna
 
-A partir desta revisão, o JARVIS Admin exige uma verificação sequencial antes de qualquer acesso a conversas, tarefas, resumo, memória ou provedor de IA. A interface mostra **somente** os campos `Informe o Token 1` e depois `Informe o Token 2` e não exibe a finalidade dos tokens.
+O JARVIS Admin abre após o **login normal do ADM** no DevIN. Não exige Token 1, Token 2, `AdminStepUp`, `DEVIN_ADMIN_STEPUP_ENABLED`, nem a migração de segurança do PR #8.
 
-Os valores digitados são enviados exclusivamente para a API interna `php/api/admin_security.php`, via HTTPS no mesmo domínio, e **nunca** para o endpoint de chat ou provedores externos. O modelo não participa do desbloqueio.
+Os endpoints `chat.php`, `tasks.php` e `conversations.php` continuam obrigatoriamente autenticados como ADM (sessão válida e existência da conta no MySQL). O servidor usa validação de CSRF nas escritas, limites de uso, separação de dados por ID de ADM, e mensagens de erro sem expor segredos. Nenhum endpoint JARVIS executa alterações em usuários, vagas ou denúncias.
 
-O `jarvisAdmin()` passa a bloquear por padrão todos os endpoints existentes `chat.php`, `tasks.php` e `conversations.php` com erro HTTP 423 enquanto a verificação não estiver concluída. Em caso de ausência da camada de segurança, erro de banco ou flag desabilitada, responde 503 e **não** permite acesso à IA.
+**Não confundir com publicação:** merge na `main` não aplica automaticamente o esquema MySQL nem define chaves de IA na hospedagem. O JARVIS depende apenas de `database/migrations/jarvis_admin.sql` e da configuração do provedor para gerar respostas. O resumo agregado não usa API de modelo.
 
-**Dependências obrigatórias:** PR #8 deve ser implantado primeiro, incluindo migration `database/migrations/2026_11_09_002_admin_stepup.sql`, a credencial individual dos quatro administradores e `DEVIN_ADMIN_STEPUP_ENABLED=1`. Só então o PR #7 pode ser ativado. O histórico é persistido no MySQL, mas o contexto só é enviado ao modelo conforme a escolha explícita do ADM, como já previsto.
-
-As autorizações do site e da IA são separadas, mantidas no servidor, com expiração; detalhes operacionais em `docs/admin-stepup-security.md` (PR #8). Não ative um JARVIS sem backend de verificação funcional.
