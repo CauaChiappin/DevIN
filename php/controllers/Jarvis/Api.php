@@ -49,6 +49,28 @@ function jarvisAdmin(): int
         jarvisJson(403, ['success' => false, 'message' => 'Conta administrativa não encontrada.']);
     }
     $_SESSION['last_activity'] = $now;
+    // Falha fechada: nenhum histórico, consulta, tarefa ou chamada à IA
+    // pode ocorrer antes de completar o fluxo sequencial no servidor.
+    $securityFile = __DIR__ . '/../Security/AdminStepUp.php';
+    if (!is_file($securityFile)) {
+        jarvisJson(503, ['success'=>false, 'message'=>'Verificação temporariamente indisponível.']);
+    }
+    require_once $securityFile;
+    try {
+        if (!AdminStepUp::enabled()) {
+            jarvisJson(503, ['success'=>false, 'message'=>'Verificação temporariamente indisponível.']);
+        }
+        if (!AdminStepUp::allowed('ai')) {
+            jarvisJson(423, [
+                'success'=>false,
+                'message'=>'Verificação necessária.',
+                'next_token'=>AdminStepUp::nextAiToken(),
+            ]);
+        }
+    } catch (Throwable $exception) {
+        error_log('JARVIS admin step-up: ' . get_class($exception));
+        jarvisJson(503, ['success'=>false, 'message'=>'Verificação temporariamente indisponível.']);
+    }
     return $id;
 }
 
