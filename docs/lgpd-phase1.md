@@ -108,3 +108,7 @@ O teste de integração **se recusa** a rodar fora de um banco nomeado `devin_lg
 - Migração das 9 tabelas executada em **MySQL 8.0 descartável de CI**, sem tocar a base do DevIN.
 - Serviços PHP e pontos de integração sem erros de sintaxe; testes puros e integração MySQL aprovados, incluindo rejeição de versão obsoleta de documentos.
 - Testes de segurança ponta a ponta, navegador, retenção real e integridade do banco do projeto continuam pendentes antes de qualquer merge.
+
+## Extensão de Fase 1 — Token 2 escolhido por cada administrador
+
+A segurança administrativa passa a oferecer autoinscrição via `php/admin_token2.php`. O ADM não recebe um Token 2 imposto pelo operador: recebe um código individual de ativação de 30 minutos e escolhe seu próprio Token 2. A segunda migration `2026_11_09_002_admin_stepup.sql` deve ser seguida pela terceira `2026_11_09_003_admin_token2_enrollment.sql`. O antigo script de provisionamento automático foi descontinuado. Consulte `docs/admin-stepup-security.md` para as etapas, limites, revogação e testes.
