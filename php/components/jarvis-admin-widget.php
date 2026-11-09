@@ -15,7 +15,7 @@ declare(strict_types=1);
             <form data-jarvis-security-form autocomplete="off">
                 <strong>Verificação</strong>
                 <label for="jarvisSecurityToken" data-jarvis-security-label>Informe o Token 1</label>
-                <input id="jarvisSecurityToken" type="password" autocomplete="off" maxlength="512" required data-jarvis-security-input>
+                <input id="jarvisSecurityToken" type="password" autocomplete="off" required data-jarvis-security-input>
                 <p role="status" aria-live="polite" data-jarvis-security-status></p>
                 <button type="submit" data-jarvis-security-submit>Continuar</button>
             </form>
