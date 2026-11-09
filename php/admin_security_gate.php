@@ -83,5 +83,5 @@ a{display:inline-block;margin-top:20px;color:#24567d} .error{color:#a22929;line-
 <input id="token" name="token" type="password" maxlength="512" required autocomplete="off" autofocus>
 <button type="submit">Continuar</button>
 </form>
-<a href="adm.php">Voltar ao painel</a>
+<a href="admin_token2.php">Configurar Token 2</a> · <a href="adm.php">Voltar ao painel</a>
 </main></body></html>
