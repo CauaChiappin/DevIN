@@ -41,6 +41,9 @@
         status.textContent = error.message;
       });
       if (activeTab === 'tasks') void loadTasks();
+      else if (activeTab === 'outbox') void loadDrafts();
+      else if (activeTab === 'audit') void loadAudit();
+      else if (activeTab === 'lookup') $('[data-jarvis-record-query]').focus();
       else input.focus();
     } else {
       launcher.focus();
@@ -57,6 +60,9 @@
       pane.hidden = pane.dataset.jarvisPane !== name;
     });
     if (name === 'tasks') loadTasks();
+    else if (name === 'outbox') void loadDrafts();
+    else if (name === 'audit') void loadAudit();
+    else if (name === 'lookup') $('[data-jarvis-record-query]').focus();
     else input.focus();
   }
   function addMessage(role, content, metadata = null) {
@@ -203,6 +209,179 @@
       taskStatus.textContent = error.message;
     }
   }
+
+
+  // As ferramentas são uma API separada. Nunca há comando de moderação.
+  const toolUrl = root.dataset.tools;
+  const lookupStatus = $('[data-jarvis-lookup-status]');
+  const recordResults = $('[data-jarvis-record-results]');
+  const analysisArea = $('[data-jarvis-analysis]');
+  const outboxStatus = $('[data-jarvis-outbox-status]');
+  const outboxList = $('[data-jarvis-outbox-list]');
+  const auditStatus = $('[data-jarvis-audit-status]');
+  const auditList = $('[data-jarvis-audit-list]');
+
+  function toolNotice(node, text) { node.textContent = String(text); }
+
+  async function loadDrafts() {
+    toolNotice(outboxStatus, 'Carregando rascunhos...');
+    try {
+      const data = await api(toolUrl + '?action=drafts');
+      outboxList.replaceChildren();
+      if (!data.drafts.length) {
+        const info = document.createElement('p');
+        info.textContent = 'Nenhuma mensagem preparada.';
+        outboxList.append(info);
+      }
+      data.drafts.forEach(row => {
+        const card = document.createElement('article');
+        card.className = 'jarvis-admin__tool-card';
+        const heading = document.createElement('strong');
+        heading.textContent = (row.recipient_type === 'pessoa' ? 'Candidato' : 'Empresa')
+          + ' #' + row.recipient_id + ' · ' + row.status + ' · ' + (row.source === 'ai' ? 'IA' : 'ADM');
+        const body = document.createElement('textarea');
+        body.rows = 4;
+        body.maxLength = 1200;
+        body.value = row.body;
+        body.readOnly = row.status !== 'draft';
+        body.setAttribute('aria-label', 'Conteúdo da mensagem para revisão');
+        const actions = document.createElement('div');
+        actions.className = 'jarvis-admin__tool-actions';
+        if (row.status === 'draft' || row.status === 'failed') {
+          const send = document.createElement('button');
+          send.type = 'button';
+          send.textContent = 'Revisar e enviar';
+          send.addEventListener('click', async () => {
+            if (send.disabled) return;
+            if (row.status === 'draft' && body.value.trim() !== row.body) {
+              try {
+                await api(toolUrl, {action:'revise', draft_id:Number(row.id), body:body.value.trim()});
+              } catch (error) {toolNotice(outboxStatus,error.message);return;}
+            }
+            const recipient = (row.recipient_type === 'pessoa' ? 'candidato' : 'empresa') + ' #' + row.recipient_id;
+            const confirmed = window.prompt('Confira o destinatário (' + recipient
+              + ') e o texto acima. Digite ENVIAR para confirmar o envio único:');
+            if (confirmed !== 'ENVIAR') return;
+            send.disabled = true;
+            try {
+              await api(toolUrl, {action:'send', draft_id:Number(row.id), confirmed:true, approval:'ENVIAR'});
+              toolNotice(outboxStatus, 'Mensagem enviada como Support DevIN.');
+              await loadDrafts();
+            } catch (error) {
+              toolNotice(outboxStatus, error.message);
+              send.disabled = false;
+            }
+          });
+          actions.append(send);
+          const cancel = document.createElement('button');
+          cancel.type = 'button';
+          cancel.textContent = 'Descartar';
+          cancel.addEventListener('click', async () => {
+            if (!window.confirm('Descartar o rascunho?')) return;
+            cancel.disabled = true;
+            try {
+              await api(toolUrl, {action:'cancel', draft_id:Number(row.id)});
+              await loadDrafts();
+            } catch (error) {
+              toolNotice(outboxStatus,error.message);cancel.disabled = false;
+            }
+          });
+          actions.append(cancel);
+        }
+        card.append(heading,body,actions);
+        outboxList.append(card);
+      });
+      if (!data.drafts.length) toolNotice(outboxStatus, '');
+      else if (outboxStatus.textContent === 'Carregando rascunhos...') toolNotice(outboxStatus,'');
+    } catch (error) {toolNotice(outboxStatus,error.message);}
+  }
+
+  async function loadAudit() {
+    toolNotice(auditStatus,'Carregando histórico...');
+    try {
+      const data = await api(toolUrl + '?action=history');
+      auditList.replaceChildren();
+      if (!data.events.length) {
+        const text = document.createElement('p');text.textContent='Ainda não há ações registradas.';
+        auditList.append(text);
+      }
+      data.events.forEach(row => {
+        const card=document.createElement('article');
+        card.className='jarvis-admin__tool-card jarvis-admin__audit-entry';
+        const heading=document.createElement('strong');
+        heading.textContent=(row.origin === 'ai'?'IA':row.origin === 'admin'?'ADM':'Sistema')
+          + ' · ADM #' + row.admin_id + ' · ' + row.event_name + ' · ' + row.status;
+        const detail=document.createElement('small');
+        detail.textContent=row.created_at + ' · ' + row.target_type
+          + (row.target_id ? ' #' + row.target_id : '');
+        card.append(heading,detail);
+        auditList.append(card);
+      });
+      toolNotice(auditStatus,'');
+    } catch (error) {toolNotice(auditStatus,error.message);}
+  }
+
+  $('[data-jarvis-audit-refresh]').addEventListener('click', () => void loadAudit());
+  $('[data-jarvis-lookup-form]').addEventListener('submit', async event => {
+    event.preventDefault();
+    toolNotice(lookupStatus,'Consultando registros...');
+    analysisArea.textContent='';
+    recordResults.replaceChildren();
+    const kind=$('[data-jarvis-record-kind]').value;
+    const query=$('[data-jarvis-record-query]').value.trim();
+    try {
+      const data=await api(toolUrl + '?action=search&kind=' + encodeURIComponent(kind)
+        + '&q=' + encodeURIComponent(query));
+      data.records.forEach(record => {
+        const card=document.createElement('article');
+        card.className='jarvis-admin__tool-card';
+        const title=document.createElement('strong');
+        title.textContent='#'+record.id+' · '+(record.title||record.name||kind);
+        const subtitle=document.createElement('small');
+        subtitle.textContent=[record.subtitle,record.motivo,record.status].filter(Boolean).join(' · ');
+        const button=document.createElement('button');
+        button.type='button';button.textContent='Analisar com IA';
+        button.addEventListener('click',async()=>{
+          if (button.disabled) return;
+          button.disabled=true;
+          toolNotice(lookupStatus,'Analisando registro selecionado...');
+          try {
+            const result=await api(toolUrl,{
+              action:'analyze',kind,id:Number(record.id),
+              question:$('[data-jarvis-record-question]').value.trim()
+            });
+            analysisArea.textContent=result.reply;
+            toolNotice(lookupStatus,'Análise concluída. Nenhum dado foi alterado.');
+          } catch (error) {toolNotice(lookupStatus,error.message);}
+          finally {button.disabled=false;}
+        });
+        card.append(title,subtitle,button);
+        recordResults.append(card);
+      });
+      if (!data.records.length) toolNotice(lookupStatus,'Nenhum resultado encontrado.');
+      else toolNotice(lookupStatus,'Registros encontrados: '+data.records.length+'.');
+    } catch (error) {toolNotice(lookupStatus,error.message);}
+  });
+
+  $('[data-jarvis-compose-form]').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const submit=event.target.querySelector('button[type="submit"]');
+    if (submit.disabled) return;
+    submit.disabled=true;
+    toolNotice(outboxStatus,'Gerando rascunho, sem enviar...');
+    try {
+      const result=await api(toolUrl,{
+        action:'generate',
+        recipient_type:$('[data-jarvis-recipient-type]').value,
+        recipient_id:Number($('[data-jarvis-recipient-id]').value),
+        brief:$('[data-jarvis-brief]').value.trim()
+      });
+      toolNotice(outboxStatus,'Rascunho para '+result.draft.recipient.name+
+        ' criado. Revise o texto antes de qualquer envio.');
+      await loadDrafts();
+    } catch(error) {toolNotice(outboxStatus,error.message);}
+    finally {submit.disabled=false;}
+  });
 
   launcher.addEventListener('click', () => open(panel.hidden));
   $('[data-jarvis-close]').addEventListener('click', () => open(false));
