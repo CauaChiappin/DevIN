@@ -19,7 +19,9 @@ class AuthController
         // Troca o ID da sessão após login para impedir reutilização de um identificador anterior.
         startSecureSession();
         secureSessionRegenerate();
-        unset($_SESSION['arcade_unlock']);
+        unset($_SESSION['arcade_unlock'], $_SESSION['admin_stepup_grant_site'],
+            $_SESSION['admin_stepup_grant_ai'], $_SESSION['admin_stepup_ai_stage'],
+            $_SESSION['admin_stepup_pending']);
 
         // Mantém na sessão os dados usados pelos dashboards e marca os tempos de validade/atividade.
         $_SESSION['usuario_id']    = $auth['usuario']['id'];

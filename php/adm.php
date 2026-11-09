@@ -7,6 +7,7 @@ require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/controllers/JobReports.php';
 require_once __DIR__ . '/controllers/ProfileReports.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/controllers/Security/AdminGate.php';
 
 // Garante que apenas uma sessão administrativa alcance ações de moderação.
 $usuarioAtual = requireWebAuth('adm');
@@ -36,6 +37,8 @@ if (!in_array($pagina, $paginasPermitidas, true)) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Toda alteração administrativa precisa trazer o token associado à sessão atual.
     requireValidCsrf();
+    // Gate obrigatório no backend: não depende de JS nem do modal de exclusão.
+    AdminGate::interceptAdminPost();
 
     try {
         $action = requestString($_POST, 'action');
@@ -334,6 +337,7 @@ try {
                     <div class="perfil-menu">
                         <button type="button" data-open-profile><?= profileAvatar($perfilAtual, 'avatar-foto') ?><span class="menu-text">Meu perfil</span></button>
                         <button type="button" data-open-settings><?= dashboardIcon('settings') ?><span class="menu-text">Configurações</span></button>
+                        <a href="JarvisT.php"><?= dashboardIcon('settings') ?><span class="menu-text">Configurar Token 2</span></a>
                     </div>
                 </details>
                 <a class="sair" href="logout.php" data-confirm-logout="Tem certeza que deseja sair da sua conta?"><?= dashboardIcon('logout') ?><span class="menu-text">Sair da Conta</span></a>

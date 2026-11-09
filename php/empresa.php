@@ -9,6 +9,7 @@ startSecureSession();
 require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/controllers/JobSchema.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/controllers/Privacy/AuditService.php';
 
 $usuarioAtual = requireWebAuth('empresa');
 
@@ -274,7 +275,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($action === 'delete_account') {
+            AuditService::tryRecord('account_deletion_requested', 'success', $tipo, (int) $_SESSION['usuario_id']);
             deleteProfile($tipo, (int) $_SESSION['usuario_id']);
+            AuditService::tryRecord('account_deleted', 'success', $tipo, (int) $_SESSION['usuario_id']);
             header('Location: logout.php?destino=index');
             exit;
         }

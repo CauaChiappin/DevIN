@@ -191,6 +191,14 @@ try {
     }
 
     if ($action === 'excluir' && $usuario['tipo'] === 'adm') {
+        // Bloqueia edição de progresso de terceiros até verificação administrativa.
+        require_once __DIR__ . '/controllers/Security/AdminStepUp.php';
+        if (AdminStepUp::enabled() && !AdminStepUp::allowed('site')) {
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['sucesso' => false, 'mensagem' => 'Verificação adicional necessária.']);
+            exit;
+        }
         $perfilTipo = requestString($_POST, 'perfil_tipo');
         $perfilId = filter_var($_POST['perfil_id'] ?? null, FILTER_VALIDATE_INT);
         $game = requestString($_POST, 'jogo');

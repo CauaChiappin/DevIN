@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/config/RateLimiter.php';
+require_once __DIR__ . '/controllers/Privacy/AuditService.php';
 
 startSecureSession();
 
@@ -39,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         RateLimiter::clear($ipKey);
         RateLimiter::clear($identityKey);
         AuthController::establishSession($auth);
+        AuditService::tryRecord('login_success', 'success', (string) $auth['usuario']['tipo'], (int) $auth['usuario']['id']);
 
         if ($auth['usuario']['tipo'] === 'pessoa') {
             header('Location: pessoa.php');
@@ -48,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ' . AuthController::redirectByUserType($auth['usuario']['tipo']));
         exit;
     } catch (Throwable $exception) {
+        AuditService::tryRecord('login_failure', 'failure');
         $erro = $exception->getMessage();
     }
 }

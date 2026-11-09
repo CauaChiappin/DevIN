@@ -7,6 +7,7 @@ require_once __DIR__ . '/controllers/ProfileController.php';
 require_once __DIR__ . '/controllers/JobSchema.php';
 require_once __DIR__ . '/controllers/ResumeDocument.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/controllers/Privacy/AuditService.php';
 
 $usuarioAtual = requireWebAuth('pessoa');
 
@@ -183,7 +184,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($action === 'delete_account') {
+            AuditService::tryRecord('account_deletion_requested', 'success', $tipo, $idPessoaAtual);
             deleteProfile($tipo, $idPessoaAtual);
+            AuditService::tryRecord('account_deleted', 'success', $tipo, $idPessoaAtual);
             header('Location: logout.php?destino=index');
             exit;
         }
