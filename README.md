@@ -134,7 +134,7 @@ Ao perder, a tela mostra os dez melhores recordes daquele jogo. O servidor exige
 
 O painel administrativo inclui o widget **JARVIS**, com **Conversas**, **Resumo do DevIN** e **Atividades**. O acesso usa apenas a sessão de login normal do administrador (e-mail e senha); não existe requisito de Token 1/Token 2 ou dependência da branch LGPD.
 
-Antes de usar o histórico e a central de atividades no servidor, um operador deve aplicar `database/migrations/jarvis_admin.sql` no MySQL do DevIN, após backup. Para respostas de IA, configure `DEVIN_JARVIS_PROVIDER`, `DEVIN_JARVIS_MODEL` e `DEVIN_JARVIS_API_KEY` no `.env` privado. O resumo funciona localmente sem chave de IA, e o JARVIS **não altera usuários, vagas ou denúncias**. Ações da fila apenas registram o andamento e exigem confirmação manual.
+Antes de usar o histórico e a central de atividades no servidor, um operador deve aplicar `database/migrations/jarvis_admin.sql` no MySQL do DevIN, após backup. Para respostas de IA, configure `DEVIN_JARVIS_PROVIDER`, `DEVIN_JARVIS_MODEL` e `DEVIN_JARVIS_API_KEY` no `.env` privado. O OpenRouter pode usar uma **segunda chave** em `DEVIN_JARVIS_BACKUP_API_KEY` e até **10 modelos grátis de fallback** (configurados em `DEVIN_JARVIS_FALLBACK_MODELS` ou nos padrões do código). Nunca coloque chaves de API na variável `DEVIN_JARVIS_FALLBACK_MODEL`, que recebe apenas um nome de modelo. O resumo funciona localmente sem chave de IA, e o JARVIS **não altera usuários, vagas ou denúncias**. Ações da fila apenas registram o andamento e exigem confirmação manual.
 
-Veja `docs/jarvis-admin.md` para instalação, segurança e testes. O PR #8 de LGPD/Token 2 permanece separado e **não é exigido** pelo JARVIS.
+Veja `docs/jarvis-admin.md` e `docs/jarvis-openrouter-dual-key.md` para instalação, chaves, segurança e diagnóstico. O PR #8 de LGPD/Token 2 permanece separado e **não é exigido** pelo JARVIS.
 
