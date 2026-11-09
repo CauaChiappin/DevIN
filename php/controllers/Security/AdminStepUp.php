@@ -153,9 +153,11 @@ final class AdminStepUp
         if (!$credentials || !is_string($credentials['token2_hash'])
             || $credentials['token2_hash'] === ''
             || !password_verify($token, $credentials['token2_hash'])) {
+            self::auditStep('admin_stepup_site', 'failure', $id);
             return false;
         }
         self::grant('site', $id, $credentials);
+        self::auditStep('admin_stepup_site', 'success', $id);
         return true;
     }
 
@@ -173,7 +175,11 @@ final class AdminStepUp
             $db->close();
         }
         if (!$credentials || !$credentials['token2_hash']
-            || !password_verify($token, $credentials['password_hash'])) return false;
+            || !password_verify($token, $credentials['password_hash'])) {
+            self::auditStep('admin_stepup_ai_stage1', 'failure', $id);
+            return false;
+        }
+        self::auditStep('admin_stepup_ai_stage1', 'success', $id);
         $_SESSION['admin_stepup_ai_stage'] = [
             'admin_id' => $id, 'at' => time(), 'revision' => self::revision($credentials),
         ];
@@ -194,10 +200,20 @@ final class AdminStepUp
             $db->close();
         }
         if (!$credentials || !$credentials['token2_hash']
-            || !password_verify($token, $credentials['token2_hash'])) return false;
+            || !password_verify($token, $credentials['token2_hash'])) {
+            self::auditStep('admin_stepup_ai_complete', 'failure', $id);
+            return false;
+        }
         unset($_SESSION['admin_stepup_ai_stage']);
         self::grant('ai', $id, $credentials);
+        self::auditStep('admin_stepup_ai_complete', 'success', $id);
         return true;
+    }
+
+    private static function auditStep(string $event, string $outcome, int $id): void
+    {
+        require_once __DIR__ . '/../Privacy/AuditService.php';
+        AuditService::tryRecord($event, $outcome, 'adm', $id);
     }
 
     private static function grant(string $scope, int $id, array $credentials): void
