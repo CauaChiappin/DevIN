@@ -97,3 +97,7 @@ Os endpoints `chat.php`, `tasks.php` e `conversations.php` continuam obrigatoria
 
 **Não confundir com publicação:** merge na `main` não aplica automaticamente o esquema MySQL nem define chaves de IA na hospedagem. O JARVIS depende apenas de `database/migrations/jarvis_admin.sql` e da configuração do provedor para gerar respostas. O resumo agregado não usa API de modelo.
 
+
+## Ferramentas administrativas supervisionadas
+
+O JARVIS incorpora ferramentas adicionais descritas em `docs/jarvis-controlled-actions.md`: **Consultar** candidatos/empresas/vagas/denúncias (leitura restrita), **Analisar** um registro apenas mediante seleção humana, **Mensagens** com rascunho individual gerado por IA e **Histórico** compartilhado de eventos por ADM responsável. A IA NÃO executa banimentos, deleções, alterações de cadastro ou decisões automáticas sobre denúncias. A entrega de mensagens exige POST separado, aprovação explícita e quotas no backend, não apenas no JavaScript. Para ativar a fase, instalar a migration adicional e usar `DEVIN_JARVIS_ACTIONS_ENABLED=1` somente após testes em desenvolvimento. O canal oficial de mensagens usa atualmente arquivos temporários; a outbox e a auditoria novas são persistidas em MySQL. Acesse o guia técnico para riscos e limitações.
