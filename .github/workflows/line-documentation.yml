@@ -1,0 +1,114 @@
+name: DevIN — explicações linha por linha
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - '**/*.php'
+      - '**/*.js'
+      - '**/*.cjs'
+      - '**/*.mjs'
+      - '**/*.css'
+      - '**/*.html'
+      - '**/*.htm'
+      - '**/*.sql'
+      - '**/*.json'
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.svg'
+      - '**/*.xml'
+      - '**/*.sh'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '.env.example'
+      - '.gitignore'
+      - '.htaccess'
+      - '**/.htaccess'
+      - 'Dockerfile'
+      - 'Makefile'
+      - 'scripts/line_explanations.py'
+      - '.github/workflows/line-documentation.yml'
+  pull_request:
+    paths:
+      - '**/*.php'
+      - '**/*.js'
+      - '**/*.cjs'
+      - '**/*.mjs'
+      - '**/*.css'
+      - '**/*.html'
+      - '**/*.htm'
+      - '**/*.sql'
+      - '**/*.json'
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.svg'
+      - '**/*.xml'
+      - '**/*.sh'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '.env.example'
+      - '.gitignore'
+      - '.htaccess'
+      - '**/.htaccess'
+      - 'Dockerfile'
+      - 'Makefile'
+      - 'scripts/line_explanations.py'
+      - 'docs/line-by-line/**'
+      - '.github/workflows/line-documentation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  auto-document:
+    if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate an explanation for every source line
+        run: python3 scripts/line_explanations.py --write
+      - name: Verify generated documents
+        run: python3 scripts/line_explanations.py --check
+      - name: Commit synced line documentation to current branch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A docs/line-by-line
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: sincronizar explicações por linha [skip ci]"
+            git push origin HEAD:"$GITHUB_REF_NAME"
+          fi
+
+  verify-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Require updated explanation for every source line
+        run: python3 scripts/line_explanations.py --check
+
+  verify-manual:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Inspect line-by-line coverage
+        run: python3 scripts/line_explanations.py --check
