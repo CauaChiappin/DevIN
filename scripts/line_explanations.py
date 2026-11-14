@@ -23,7 +23,7 @@ from urllib.parse import quote
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "docs" / "line-by-line"
 SUFFIXES = {".php", ".js", ".cjs", ".mjs", ".css", ".html", ".htm", ".sql",
-            ".json", ".yml", ".yaml", ".svg", ".xml", ".sh", ".ts", ".tsx"}
+            ".json", ".yml", ".yaml", ".svg", ".xml", ".sh", ".ts", ".tsx", ".py"}
 SPECIAL_FILES = {".env.example", ".htaccess", ".gitignore", "Dockerfile", "Makefile"}
 IGNORE_SEGMENTS = {"vendor", "node_modules", ".git", "dist", "build",
                    "__pycache__", "coverage", "third_party"}
@@ -33,7 +33,7 @@ LANGUAGE = {
     ".mjs": "JavaScript/ESM", ".css": "CSS", ".html": "HTML", ".htm": "HTML",
     ".sql": "SQL/MySQL", ".json": "JSON", ".yml": "YAML", ".yaml": "YAML",
     ".svg": "SVG/XML", ".xml": "XML", ".sh": "Shell",
-    ".ts": "TypeScript", ".tsx": "TypeScript/JSX",
+    ".ts": "TypeScript", ".tsx": "TypeScript/JSX", ".py": "Python",
 }
 CSS_PROPERTIES = {
     "display": "modo de layout", "position": "modo de posicionamento",
@@ -284,6 +284,56 @@ def line_explanation(raw: str, language: str, previous: str) -> tuple[str, str]:
         if upper.startswith(("VALUES", "ORDER BY", "LIMIT ", "GROUP BY", "JOIN ", "ON ")):
             return "Completa cláusula de consulta ou manipulação SQL.", previous
         return "Continua a definição, restrição ou comando SQL do bloco atual.", previous
+
+    if language == "Python":
+        if line.startswith(("from ", "import ")):
+            return "Importa módulo, nome ou função que será utilizado neste script Python.", previous
+        if line.startswith("@"):
+            return "Aplica decorador para ajustar o comportamento da função/classe seguinte.", previous
+        found = re.match(r"(?:async\s+)?def\s+([A-Za-z_]\w*)\s*\(", line)
+        if found:
+            return "Declara função Python " + found.group(1) + ", com seus argumentos e lógica.", "função " + found.group(1)
+        found = re.match(r"class\s+([A-Za-z_]\w*)\b", line)
+        if found:
+            return "Declara classe Python " + found.group(1) + ".", "classe " + found.group(1)
+        if line.startswith(("if ", "elif ")):
+            return "Avalia uma condição para decidir se o bloco Python seguinte será executado.", previous
+        if line.startswith("else:"):
+            return "Define o caminho alternativo de uma condição anterior.", previous
+        if line.startswith(("for ", "async for ", "while ")):
+            return "Inicia laço Python para percorrer dados ou repetir enquanto houver condição.", previous
+        if line.startswith(("with ", "async with ")):
+            return "Abre contexto que administra um recurso durante o bloco.", previous
+        if line.startswith("try:"):
+            return "Inicia bloco Python que pode gerar uma exceção.", previous
+        if line.startswith(("except ", "except:")):
+            return "Captura exceção para tratamento de falhas do bloco anterior.", previous
+        if line.startswith("finally:"):
+            return "Executa instruções de finalização após a tentativa e seu tratamento.", previous
+        if line.startswith("return"):
+            return "Entrega resultado ou encerra a função Python.", previous
+        if line.startswith("raise "):
+            return "Lança uma exceção Python para sinalizar situação inválida.", previous
+        if line.startswith("yield"):
+            return "Produz um valor incremental por meio de um gerador Python.", previous
+        if line.startswith("assert "):
+            return "Verifica condição obrigatória; caso falhe, dispara AssertionError.", previous
+        if line.startswith(("break", "continue", "pass")):
+            return "Controla a execução do laço ou define bloco intencionalmente vazio.", previous
+        found = re.match(r"([A-Za-z_]\w*)\s*(?::[^=]+)?=", line)
+        if found:
+            return "Atribui resultado à variável Python " + found.group(1) + ".", previous
+        if line.startswith(("'''", '"""')):
+            return "Inicia ou encerra bloco de texto/documentação literal Python.", previous
+        if line.startswith(("#",)):
+            return "Comentário Python: explica ou organiza o trecho do script.", previous
+        if line.startswith("print("):
+            return "Escreve informação na saída do terminal Python.", previous
+        if line.startswith("subprocess."):
+            return "Invoca utilitário de execução de comandos do sistema por subprocesso.", previous
+        if previous != "trecho principal":
+            return "Continua expressão ou bloco Python pertencente a " + previous + ".", previous
+        return "Executa parte de uma expressão, chamada ou configuração Python.", previous
 
     # PHP/JS/TS e trechos de código com sintaxe de programação
     if line.startswith("<?php"):
