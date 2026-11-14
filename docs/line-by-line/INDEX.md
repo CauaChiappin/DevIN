@@ -7,13 +7,13 @@ como **pendentes de revisão humana**; a geração não prova o comportamento
 real em produção.
 
 **Arquivos documentados:** 121  
-**Linhas de código e de formatação rastreadas:** 30500
+**Linhas de código e de formatação rastreadas:** 30508
 
 ## Navegação por arquivo
 
 | Arquivo de origem | Explicação por linha | Linhas |
 | --- | --- | ---: |
-| .env.example | [abrir explicações](.env.example.md) | 63 |
+| .env.example | [abrir explicações](env.example.md) | 63 |
 | .github/workflows/jarvis-admin-checks.yml | [abrir explicações](.github/workflows/jarvis-admin-checks.yml.md) | 99 |
 | .github/workflows/line-documentation.yml | [abrir explicações](.github/workflows/line-documentation.yml.md) | 120 |
 | .gitignore | [abrir explicações](.gitignore.md) | 41 |
@@ -126,14 +126,14 @@ real em produção.
 | php/recuperacao.php | [abrir explicações](php/recuperacao.php.md) | 63 |
 | php/redefinir.php | [abrir explicações](php/redefinir.php.md) | 88 |
 | php/rotas/rotas.php | [abrir explicações](php/rotas/rotas.php.md) | 105 |
-| scripts/line_explanations.py | [abrir explicações](scripts/line_explanations.py.md) | 550 |
+| scripts/line_explanations.py | [abrir explicações](scripts/line_explanations.py.md) | 557 |
 | tests/jarvis-dock.test.cjs | [abrir explicações](tests/jarvis-dock.test.cjs.md) | 54 |
 | tests/jarvis-responsive.test.cjs | [abrir explicações](tests/jarvis-responsive.test.cjs.md) | 56 |
 | tests/jarvis_admin_mysql.php | [abrir explicações](tests/jarvis_admin_mysql.php.md) | 107 |
 | tests/jarvis_admin_smoke.php | [abrir explicações](tests/jarvis_admin_smoke.php.md) | 47 |
 | tests/jarvis_controlled_actions_mysql.php | [abrir explicações](tests/jarvis_controlled_actions_mysql.php.md) | 107 |
 | tests/jarvis_openrouter_router.php | [abrir explicações](tests/jarvis_openrouter_router.php.md) | 94 |
-| tests/test_line_explanations.py | [abrir explicações](tests/test_line_explanations.py.md) | 62 |
+| tests/test_line_explanations.py | [abrir explicações](tests/test_line_explanations.py.md) | 63 |
 
 ## Atualização obrigatória
 
