@@ -124,3 +124,47 @@
   .jarvis-admin__launcher{width:62px;height:62px;min-height:62px;padding:3px}
   .jarvis-admin__header>.jarvis-admin__jd-image{width:40px;height:40px}
 }
+
+/* Correção responsiva: nenhum botão ou campo do widget pode ultrapassar o painel.
+   O textarea pode encolher; o botão de envio mantém largura fixa e só exibe a seta.
+   Regras locais evitam alterar botões do restante do dashboard DevIN. */
+.jarvis-admin__panel,
+.jarvis-admin__pane,
+.jarvis-admin__composer,
+.jarvis-admin__conversation-bar{min-width:0;max-width:100%}
+.jarvis-admin__composer{
+  width:100%;min-width:0;flex:0 0 auto;
+  align-items:flex-end;
+}
+.jarvis-admin__composer textarea{
+  flex:1 1 0%;width:0;min-width:0;max-width:100%;
+}
+.jarvis-admin__composer button[data-jarvis-send]{
+  display:grid;place-items:center;
+  flex:0 0 44px;width:44px;min-width:44px;max-width:44px;height:44px;
+  padding:0;margin:0;line-height:1;white-space:nowrap;overflow:hidden;
+  font:inherit;font-size:20px;font-style:normal;
+  text-align:center;
+}
+.jarvis-admin__conversation-bar select{flex:1 1 0%;min-width:0;width:0}
+.jarvis-admin__conversation-bar button{
+  display:grid;place-items:center;flex:0 0 38px;
+  width:38px;min-width:38px;max-width:38px;height:38px;
+  padding:0;margin:0;line-height:1;white-space:nowrap;
+}
+.jarvis-admin__tabs button{min-width:max-content;min-height:44px}
+.jarvis-admin__tabs button:disabled{opacity:.55;cursor:not-allowed}
+.jarvis-admin__quick-actions button{max-width:100%;min-height:40px;white-space:normal;overflow-wrap:anywhere}
+.jarvis-admin__tool-actions button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.jarvis-admin__composer button[data-jarvis-send]:focus-visible,
+.jarvis-admin__conversation-bar button:focus-visible{outline:2px solid #73baff;outline-offset:2px}
+@media(max-width:360px){
+  .jarvis-admin__composer{gap:6px;padding-left:8px;padding-right:8px}
+  .jarvis-admin__composer button[data-jarvis-send]{
+    flex-basis:42px;width:42px;min-width:42px;max-width:42px;height:42px
+  }
+  .jarvis-admin__conversation-bar{gap:5px;padding-inline:8px}
+  .jarvis-admin__conversation-bar button{
+    flex-basis:36px;width:36px;min-width:36px;max-width:36px;height:36px
+  }
+}
