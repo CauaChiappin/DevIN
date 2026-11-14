@@ -39,6 +39,27 @@ $_SESSION['usuario_id'] = 401;
 $_SESSION['auth_time'] = time();
 $_SESSION['last_activity'] = time();
 
+// O formulário deve ser inacessível a não-ADMs ou a contas ADM ausentes no banco.
+assertPermanent(AdminToken2Enrollment::requireVerifiedAdminAccount() === 401, 'conta ADM real confirmada no banco');
+$_SESSION['usuario_tipo'] = 'pessoa';
+$deniedType = false;
+try {
+    AdminToken2Enrollment::requireVerifiedAdminAccount();
+} catch (DomainException $exception) {
+    $deniedType = true;
+}
+assertPermanent($deniedType, 'tipo pessoa não pode cadastrar Token 2');
+$_SESSION['usuario_tipo'] = 'adm';
+$_SESSION['usuario_id'] = 999;
+$deniedMissing = false;
+try {
+    AdminToken2Enrollment::requireVerifiedAdminAccount();
+} catch (DomainException $exception) {
+    $deniedMissing = true;
+}
+assertPermanent($deniedMissing, 'ID ADM inexistente não pode abrir formulário');
+$_SESSION['usuario_id'] = 401;
+
 assertPermanent(!AdminToken2Enrollment::configured(), 'ADM inicialmente sem chave');
 $chosen = str_repeat('uma-chave-sem-limite-de-caracteres-ç!@', 70);
 assertPermanent(strlen($chosen) > 72, 'a senha de teste excede 72 bytes');
