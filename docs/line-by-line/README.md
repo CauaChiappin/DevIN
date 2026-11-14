@@ -6,6 +6,8 @@ Este diretório registra **uma explicação vinculada a cada linha de cada arqui
 
 Abra [INDEX.md](INDEX.md) e escolha o arquivo desejado. Cada documento inclui um registro por linha, link direto para a linha original e SHA-256 do arquivo para detectar documentação desatualizada.
 
+**Nota sobre nomes:** o arquivo de origem `.env.example` recebe a página `env.example.md`, sem ponto inicial, para não ser ignorado pelas regras de proteção `.env.*` do Git. Essa página contém somente descrições de linhas, nunca os valores reais de produção.
+
 ### Cobertura
 
 Abrange arquivos rastreados no Git com as extensões PHP, JS/CJS/MJS, CSS, HTML, SQL, JSON, YAML, SVG/XML, shell e TypeScript, além dos arquivos especiais de configuração `.env.example`, `.htaccess`, `.gitignore`, `Dockerfile` e `Makefile`.
