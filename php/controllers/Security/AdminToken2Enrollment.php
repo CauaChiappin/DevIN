@@ -11,6 +11,34 @@ require_once __DIR__ . '/AdminToken2Hasher.php';
  */
 final class AdminToken2Enrollment
 {
+    /**
+     * Libera o cadastro somente para uma sessão ADM válida cuja conta ainda
+     * existe na tabela administrativa. Não confiar apenas em usuario_tipo na
+     * sessão nem aceitar IDs informados por GET ou POST.
+     */
+    public static function requireVerifiedAdminAccount(): int
+    {
+        $id = AdminStepUp::adminId(); // verifica login, tipo e validade da sessão
+        $db = getDatabaseConnection();
+        try {
+            $stmt = $db->prepare(
+                'SELECT senha_hash FROM administrador WHERE id_administrador = ? LIMIT 1'
+            );
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
+            $account = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+        } finally {
+            $db->close();
+        }
+        if (!is_array($account)
+            || !is_string($account['senha_hash'] ?? null)
+            || $account['senha_hash'] === '') {
+            throw new DomainException('Conta administrativa não autorizada.');
+        }
+        return $id;
+    }
+
     public static function configured(): bool
     {
         $id = AdminStepUp::adminId();
@@ -61,7 +89,7 @@ final class AdminToken2Enrollment
         string $token1, ?string $currentToken2,
         string $newToken2, string $confirmation
     ): bool {
-        $id = AdminStepUp::adminId();
+        $id = self::requireVerifiedAdminAccount();
         self::validateNewToken($newToken2, $confirmation);
         if ($token1 === '' || strlen($token1) > 512) return false;
         self::limit($id);
