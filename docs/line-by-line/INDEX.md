@@ -7,7 +7,7 @@ como **pendentes de revisão humana**; a geração não prova o comportamento
 real em produção.
 
 **Arquivos documentados:** 121  
-**Linhas de código e de formatação rastreadas:** 30496
+**Linhas de código e de formatação rastreadas:** 30500
 
 ## Navegação por arquivo
 
@@ -15,7 +15,7 @@ real em produção.
 | --- | --- | ---: |
 | .env.example | [abrir explicações](.env.example.md) | 63 |
 | .github/workflows/jarvis-admin-checks.yml | [abrir explicações](.github/workflows/jarvis-admin-checks.yml.md) | 99 |
-| .github/workflows/line-documentation.yml | [abrir explicações](.github/workflows/line-documentation.yml.md) | 116 |
+| .github/workflows/line-documentation.yml | [abrir explicações](.github/workflows/line-documentation.yml.md) | 120 |
 | .gitignore | [abrir explicações](.gitignore.md) | 41 |
 | .htaccess | [abrir explicações](.htaccess.md) | 38 |
 | composer.json | [abrir explicações](composer.json.md) | 6 |

@@ -2,8 +2,8 @@
 
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml)  
 **Linguagem:** YAML  
-**Linhas de origem:** 116  
-**SHA-256 da origem:** 34fe60f6f101236078958f2f9cad2f3f471fb3b85432823e78116ac70a643bf3
+**Linhas de origem:** 120  
+**SHA-256 da origem:** a6fd0abd0b056442d6f6ce2df0272e1a35a0d0345b8e3291400a09aa6feee009
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.
@@ -95,36 +95,40 @@
 | [L81](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L81) | Adiciona item a uma lista da configuração YAML. |
 | [L82](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L82) | Configura comando de execução (campo run). |
 | [L83](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L83) | Adiciona item a uma lista da configuração YAML. |
-| [L84](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L84) | Configura propriedade YAML (campo shell). |
-| [L85](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L85) | Configura comando de execução (campo run). |
-| [L86](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L86) | Continua valor ou parâmetro da configuração YAML. |
-| [L87](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L87) | Continua valor ou parâmetro da configuração YAML. |
+| [L84](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L84) | Configura comando de execução (campo run). |
+| [L85](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L85) | Adiciona item a uma lista da configuração YAML. |
+| [L86](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L86) | Configura propriedade YAML (campo shell). |
+| [L87](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L87) | Configura comando de execução (campo run). |
 | [L88](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L88) | Continua valor ou parâmetro da configuração YAML. |
 | [L89](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L89) | Continua valor ou parâmetro da configuração YAML. |
 | [L90](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L90) | Continua valor ou parâmetro da configuração YAML. |
 | [L91](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L91) | Continua valor ou parâmetro da configuração YAML. |
 | [L92](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L92) | Continua valor ou parâmetro da configuração YAML. |
-| [L93](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L93) | Linha em branco: separa visualmente trechos do código. |
-| [L94](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L94) | Configura propriedade YAML (campo verify-pr). |
-| [L95](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L95) | Configura condição de execução (campo if). |
-| [L96](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L96) | Configura ambiente executor (campo runs-on). |
-| [L97](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L97) | Configura permissões do workflow (campo permissions). |
-| [L98](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L98) | Configura propriedade YAML (campo contents). |
-| [L99](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L99) | Configura sequência de etapas (campo steps). |
-| [L100](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L100) | Adiciona item a uma lista da configuração YAML. |
-| [L101](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L101) | Adiciona item a uma lista da configuração YAML. |
-| [L102](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L102) | Configura propriedade YAML (campo with). |
-| [L103](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L103) | Configura propriedade YAML (campo python-version). |
-| [L104](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L104) | Adiciona item a uma lista da configuração YAML. |
-| [L105](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L105) | Configura comando de execução (campo run). |
-| [L106](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L106) | Linha em branco: separa visualmente trechos do código. |
-| [L107](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L107) | Configura propriedade YAML (campo verify-manual). |
-| [L108](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L108) | Configura condição de execução (campo if). |
-| [L109](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L109) | Configura ambiente executor (campo runs-on). |
-| [L110](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L110) | Configura sequência de etapas (campo steps). |
-| [L111](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L111) | Adiciona item a uma lista da configuração YAML. |
-| [L112](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L112) | Adiciona item a uma lista da configuração YAML. |
-| [L113](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L113) | Configura propriedade YAML (campo with). |
-| [L114](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L114) | Configura propriedade YAML (campo python-version). |
+| [L93](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L93) | Continua valor ou parâmetro da configuração YAML. |
+| [L94](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L94) | Continua valor ou parâmetro da configuração YAML. |
+| [L95](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L95) | Linha em branco: separa visualmente trechos do código. |
+| [L96](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L96) | Configura propriedade YAML (campo verify-pr). |
+| [L97](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L97) | Configura condição de execução (campo if). |
+| [L98](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L98) | Configura ambiente executor (campo runs-on). |
+| [L99](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L99) | Configura permissões do workflow (campo permissions). |
+| [L100](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L100) | Configura propriedade YAML (campo contents). |
+| [L101](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L101) | Configura sequência de etapas (campo steps). |
+| [L102](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L102) | Adiciona item a uma lista da configuração YAML. |
+| [L103](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L103) | Adiciona item a uma lista da configuração YAML. |
+| [L104](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L104) | Configura propriedade YAML (campo with). |
+| [L105](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L105) | Configura propriedade YAML (campo python-version). |
+| [L106](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L106) | Adiciona item a uma lista da configuração YAML. |
+| [L107](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L107) | Configura comando de execução (campo run). |
+| [L108](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L108) | Adiciona item a uma lista da configuração YAML. |
+| [L109](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L109) | Configura comando de execução (campo run). |
+| [L110](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L110) | Linha em branco: separa visualmente trechos do código. |
+| [L111](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L111) | Configura propriedade YAML (campo verify-manual). |
+| [L112](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L112) | Configura condição de execução (campo if). |
+| [L113](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L113) | Configura ambiente executor (campo runs-on). |
+| [L114](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L114) | Configura sequência de etapas (campo steps). |
 | [L115](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L115) | Adiciona item a uma lista da configuração YAML. |
-| [L116](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L116) | Configura comando de execução (campo run). |
+| [L116](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L116) | Adiciona item a uma lista da configuração YAML. |
+| [L117](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L117) | Configura propriedade YAML (campo with). |
+| [L118](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L118) | Configura propriedade YAML (campo python-version). |
+| [L119](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L119) | Adiciona item a uma lista da configuração YAML. |
+| [L120](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml#L120) | Configura comando de execução (campo run). |
