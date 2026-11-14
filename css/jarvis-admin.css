@@ -128,7 +128,7 @@
 /* Correção responsiva: nenhum botão ou campo do widget pode ultrapassar o painel.
    O textarea pode encolher; o botão de envio mantém largura fixa e só exibe a seta.
    Regras locais evitam alterar botões do restante do dashboard DevIN. */
-.jarvis-admin__panel,
+.jarvis-admin__panel{min-width:0;max-width:calc(100vw - 28px)}
 .jarvis-admin__pane,
 .jarvis-admin__composer,
 .jarvis-admin__conversation-bar{min-width:0;max-width:100%}
