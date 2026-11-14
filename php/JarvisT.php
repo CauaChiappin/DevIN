@@ -10,7 +10,22 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
 
+// Primeiro exige login e perfil ADM: sem sessão válida, o middleware
+// redireciona para login; pessoa/empresa não têm acesso ao formulário.
 requireWebAuth('adm');
+
+// Segundo confirma no banco que este ID da sessão pertence a um ADM existente.
+// Verificação obrigatória tanto no GET quanto no POST; falha de banco bloqueia.
+try {
+    AdminToken2Enrollment::requireVerifiedAdminAccount();
+} catch (DomainException $exception) {
+    http_response_code(403);
+    exit('Acesso restrito a administradores autorizados.');
+} catch (Throwable $exception) {
+    error_log('JarvisT admin verification unavailable: ' . get_class($exception));
+    http_response_code(503);
+    exit('Não foi possível confirmar a autorização.');
+}
 
 // A configuração trata segredos; nunca permitir POST em HTTP em produção.
 // Verifique HTTPS/proxy na hospedagem antes de habilitar esta página.
