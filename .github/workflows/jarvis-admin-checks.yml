@@ -10,6 +10,7 @@ on:
       - 'css/jarvis-admin.css'
       - 'img/jarvisdevin-jd.webp'
       - 'tests/jarvis-dock.test.cjs'
+      - 'tests/jarvis-responsive.test.cjs'
       - 'php/adm.php'
       - '.github/workflows/jarvis-admin-checks.yml'
       - 'tests/jarvis_admin_smoke.php'
@@ -24,6 +25,7 @@ on:
       - 'fix/jarvis-openrouter-dual-key-model-fallback'
       - 'feat/jarvis-controlled-actions-and-platform-messages'
       - 'feat/jarvis-jd-draggable-dock'
+      - 'fix/jarvis-composer-responsive-buttons'
       - 'main'
 jobs:
   lint:
@@ -45,7 +47,7 @@ jobs:
         run: |
           node --check js/jarvis-dock.js
           node --check js/jarvis-admin.js
-          node --test tests/jarvis-dock.test.cjs
+          node --test tests/jarvis-dock.test.cjs tests/jarvis-responsive.test.cjs
       - name: Skill manager and model routing smoke tests
         run: |
           php tests/jarvis_admin_smoke.php
