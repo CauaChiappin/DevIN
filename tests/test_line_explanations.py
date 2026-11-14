@@ -6,6 +6,7 @@ import unittest
 from scripts.line_explanations import (
     ROOT,
     OUTPUT,
+    documentation_path,
     expected_docs,
     line_explanation,
     source_paths,
@@ -46,7 +47,7 @@ class LineExplanationsTest(unittest.TestCase):
         self.assertGreater(total_lines, 25000)
         self.assertIn("scripts/line_explanations.py", [str(s) for s in sources])
         for source in sources:
-            dest = OUTPUT / (source.as_posix() + ".md")
+            dest = documentation_path(source)
             self.assertIn(dest, generated, "Documentação não criada: " + str(source))
             rendered = generated[dest]
             actual_lines = len((ROOT / source).read_text(
