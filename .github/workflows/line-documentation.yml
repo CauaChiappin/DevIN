@@ -80,6 +80,8 @@ jobs:
         run: python3 scripts/line_explanations.py --write
       - name: Verify generated documents
         run: python3 scripts/line_explanations.py --check
+      - name: Unit tests for explanation coverage and credentials
+        run: python3 -m unittest discover -s tests -p 'test_line_explanations.py'
       - name: Commit synced line documentation to current branch
         shell: bash
         run: |
@@ -103,6 +105,8 @@ jobs:
           python-version: '3.12'
       - name: Require updated explanation for every source line
         run: python3 scripts/line_explanations.py --check
+      - name: Unit tests for explanation coverage and credentials
+        run: python3 -m unittest discover -s tests -p 'test_line_explanations.py'
 
   verify-manual:
     if: github.event_name == 'workflow_dispatch'
