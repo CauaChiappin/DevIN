@@ -6,8 +6,8 @@ As explicações são geradas por regras de leitura estática e marcadas
 como **pendentes de revisão humana**; a geração não prova o comportamento
 real em produção.
 
-**Arquivos documentados:** 120  
-**Linhas de código e de formatação rastreadas:** 30434
+**Arquivos documentados:** 121  
+**Linhas de código e de formatação rastreadas:** 30497
 
 ## Navegação por arquivo
 
@@ -133,6 +133,7 @@ real em produção.
 | tests/jarvis_admin_smoke.php | [abrir explicações](tests/jarvis_admin_smoke.php.md) | 47 |
 | tests/jarvis_controlled_actions_mysql.php | [abrir explicações](tests/jarvis_controlled_actions_mysql.php.md) | 107 |
 | tests/jarvis_openrouter_router.php | [abrir explicações](tests/jarvis_openrouter_router.php.md) | 94 |
+| tests/test_line_explanations.py | [abrir explicações](tests/test_line_explanations.py.md) | 63 |
 
 ## Atualização obrigatória
 
