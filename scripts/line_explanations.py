@@ -120,6 +120,13 @@ def source_paths() -> list[Path]:
     return sorted(files, key=lambda p: str(p))
 
 
+def documentation_path(source: Path) -> Path:
+    """Nome seguro para a página de documentação; evita padrões de .gitignore."""
+    if source.name == ".env.example":
+        source = source.with_name("env.example")
+    return OUTPUT / (source.as_posix() + ".md")
+
+
 def lang_of(path: Path) -> str:
     if path.name == ".htaccess":
         return "Apache/.htaccess"
@@ -465,7 +472,7 @@ def expected_docs() -> tuple[dict[Path, str], int, int]:
     generated: dict[Path, str] = {}
     total = 0
     for source in source_paths():
-        output = OUTPUT / (source.as_posix() + ".md")
+        output = documentation_path(source)
         rendered, count = render(source)
         generated[output] = rendered
         total += count
@@ -487,11 +494,11 @@ def expected_docs() -> tuple[dict[Path, str], int, int]:
         "| --- | --- | ---: |",
     ]
     for source in source_paths():
-        doc = OUTPUT / (source.as_posix() + ".md")
+        doc = documentation_path(source)
         explanation = generated[doc]
         count = explanation.count("\n| [L")
         index.append("| " + source.as_posix().replace("|", "&#124;")
-                     + " | [abrir explicações](" + quote(source.as_posix() + ".md", safe="/._-")
+                     + " | [abrir explicações](" + quote(doc.relative_to(OUTPUT).as_posix(), safe="/._-")
                      + ") | " + str(count) + " |")
     index.extend([
         "",
