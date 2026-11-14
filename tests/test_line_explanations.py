@@ -4,6 +4,7 @@ from __future__ import annotations
 import unittest
 
 from scripts.line_explanations import (
+    ROOT,
     expected_docs,
     line_explanation,
     source_paths,
@@ -50,7 +51,7 @@ class LineExplanationsTest(unittest.TestCase):
             )
             self.assertIsNotNone(dest, "Documentação não criada: " + str(source))
             rendered = generated[dest]
-            actual_lines = len((dest.parents[len(source.parts)] / source).read_text(
+            actual_lines = len((ROOT / source).read_text(
                 encoding="utf-8-sig"
             ).splitlines())
             self.assertEqual(
