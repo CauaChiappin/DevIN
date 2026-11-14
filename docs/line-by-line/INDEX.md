@@ -6,8 +6,8 @@ As explicações são geradas por regras de leitura estática e marcadas
 como **pendentes de revisão humana**; a geração não prova o comportamento
 real em produção.
 
-**Arquivos documentados:** 119  
-**Linhas de código e de formatação rastreadas:** 29882
+**Arquivos documentados:** 120  
+**Linhas de código e de formatação rastreadas:** 30432
 
 ## Navegação por arquivo
 
@@ -126,6 +126,7 @@ real em produção.
 | php/recuperacao.php | [abrir explicações](php/recuperacao.php.md) | 63 |
 | php/redefinir.php | [abrir explicações](php/redefinir.php.md) | 88 |
 | php/rotas/rotas.php | [abrir explicações](php/rotas/rotas.php.md) | 105 |
+| scripts/line_explanations.py | [abrir explicações](scripts/line_explanations.py.md) | 550 |
 | tests/jarvis-dock.test.cjs | [abrir explicações](tests/jarvis-dock.test.cjs.md) | 54 |
 | tests/jarvis-responsive.test.cjs | [abrir explicações](tests/jarvis-responsive.test.cjs.md) | 56 |
 | tests/jarvis_admin_mysql.php | [abrir explicações](tests/jarvis_admin_mysql.php.md) | 107 |
