@@ -9,7 +9,13 @@ Há quatro contas ADM identificadas por administrador.id_administrador.
 Cada uma possui uma senha principal de login e pode pré-cadastrar um Token 2
 **pessoal, permanente e sem data de validade**.
 
-- Acessar /php/JarvisT.php (somente ADM logado) para configurar ou trocar.
+- Acessar /php/JarvisT.php para configurar ou trocar: a página exige login válido
+  pelo middleware web, perfil ADM na sessão e confirmação de existência da conta
+  na tabela `administrador` antes de renderizar o formulário (GET e POST).
+  Usuários deslogados vão ao login; pessoa/empresa são enviados ao seu painel.
+  Falha na consulta ou ADM inexistente bloqueia a página, nunca libera cadastro.
+- Ao enviar o formulário, o backend reconfirma a autorização no banco e
+  exige a senha de login (Token 1) antes de alterar qualquer credencial.
 - Primeiro cadastro: informar Token 1, definir Token 2 e confirmar.
 - Mudança futura: informar Token 1, informar o Token 2 atual, definir e confirmar o novo.
 - Não há códigos de ativação, prazo de 30 minutos ou renovação compulsória.
