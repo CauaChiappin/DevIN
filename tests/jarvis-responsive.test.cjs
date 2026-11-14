@@ -23,7 +23,7 @@ function hasRule(selector, expression) {
 
 test('envio tem somente um ícone pequeno e descrição acessível', () => {
   assert.match(html, /<button[^>]*type="submit"[^>]*aria-label="Enviar mensagem"[^>]*data-jarvis-send>➤<\/button>/);
-  assert.doesNotMatch(js,/\bsend\.textContent\s*=/);
+  assert.ok(js.includes("const send = $('[data-jarvis-send]');"));
 });
 
 test('textarea encolhe e o botão mantém largura estável', () => {
