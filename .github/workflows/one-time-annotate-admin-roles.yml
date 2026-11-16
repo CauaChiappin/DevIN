@@ -1,0 +1,29 @@
+name: DevIN - annotator roles (one-time)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-time-annotate-admin-roles.yml'
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Atualizar explicacoes pelo gerador oficial
+        run: python3 scripts/line_explanations.py --write
+      - name: Registrar somente arquivos de permissoes alterados
+        run: |
+          git add php/controllers/Security/AdminRolePolicy.php php/controllers/Security/AdminGate.php php/api/jarvis/admin_tools.php tests/jarvis_admin_smoke.php database/migrations/2026_11_16_003_admin_roles.sql .env.example
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(security): sincronizar comentarios de niveis ADM"
+            git push origin HEAD:main
+          fi
