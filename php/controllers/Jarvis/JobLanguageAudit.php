@@ -28,7 +28,7 @@ final class JobLanguageAudit
         $normalized = strtr($normalized, ['á'=>'a','à'=>'a','â'=>'a','ã'=>'a','é'=>'e','ê'=>'e','í'=>'i','ó'=>'o','ô'=>'o','õ'=>'o','ú'=>'u','ç'=>'c']);
         return preg_match('~\b(?:vaga|vagas|anuncio|anuncios)\b~u', $normalized) === 1
             && preg_match('~\b(?:ofensiv\w*|inapropriad\w*|inadequad\w*|discriminatori\w*|preconceituos\w*|abusiv\w*|assedi\w*|toxic\w*|impropri\w*)\b~u', $normalized) === 1
-            && preg_match('~\b(?:verific\w*|analis\w*|revis\w*|procur\w*|busc\w*|detect\w*|encontr\w*|identific\w*|varr\w*|examin\w*|exist\w*|tem|ha)\b~u', $normalized) === 1;
+            && preg_match('~\b(?:verifi\w*|analis\w*|revis\w*|procur\w*|busc\w*|detect\w*|encontr\w*|identific\w*|varr\w*|examin\w*|exist\w*|tem|ha)\b~u', $normalized) === 1;
     }
 
     /** @return list<array{categoria:string,trecho:string,campo:string}> */
