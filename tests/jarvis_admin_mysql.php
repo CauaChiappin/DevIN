@@ -99,9 +99,12 @@ $widget = file_get_contents(dirname(__DIR__) . '/php/components/jarvis-admin-wid
 $frontend = file_get_contents(dirname(__DIR__) . '/js/jarvis-admin.js'); // Explicação DevIN: Atribui um valor à variável PHP $frontend.
 assertJarvis(str_contains($api, "usuario_tipo") && str_contains($api, "jarvisCsrf"), // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
     'controle de ADM e CSRF preservados'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-foreach ([$api, $widget, $frontend] as $source) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
-    assertJarvis(!str_contains($source, 'AdminStepUp') // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
-        && !str_contains($source, 'data-jarvis-security') // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        && !str_contains($source, 'Token 2'), 'sem dependência de 2FA'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-echo "JARVIS Admin: MySQL, permissão ADM, auditoria e modo sem 2FA OK\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.
+// Agora há Token 2 opcional e obrigatório quando a flag está ativa.
+assertJarvis(str_contains($api, "AdminStepUp::enabled()")
+    && str_contains($api, "AdminStepUp::allowed('ai')"),
+    'API protege JARVIS ao ativar Token 2');
+assertJarvis(str_contains($widget, 'admin_security_ai.php'),
+    'widget oferece desbloqueio seguro');
+assertJarvis(!str_contains($frontend, 'DEVIN_JARVIS_API_KEY'),
+    'frontend não contém credenciais de IA');
+echo "JARVIS Admin: MySQL, permissão ADM, auditoria e Token 2 opcional OK\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.
