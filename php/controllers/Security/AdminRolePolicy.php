@@ -10,11 +10,12 @@ final class AdminRolePolicy
 {
     private const PERMISSIONS = [
         'consulta' => [],
-        'moderacao' => ['resolve_job_report', 'resolve_profile_report', 'admin_delete_vaga'],
+        'moderacao' => ['resolve_job_report', 'resolve_profile_report', 'admin_delete_vaga',
+            'jarvis_draft', 'jarvis_analyze'],
         'gestao' => [
             'resolve_job_report', 'resolve_profile_report',
             'admin_delete_vaga', 'admin_delete_pessoa', 'admin_delete_empresa',
-            'update_settings', 'delete_account',
+            'update_settings', 'delete_account', 'jarvis_draft', 'jarvis_analyze', 'jarvis_send',
         ],
     ];
 
