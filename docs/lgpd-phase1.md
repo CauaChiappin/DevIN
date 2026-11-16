@@ -1,6 +1,6 @@
 # DevIN — Fase 1 LGPD: fundação de evidências e auditoria
 
-> **Estado:** código proposto na branch `feature/lgpd-phase1-foundation`, baseado na `main`. Sem merge e sem qualquer migração aplicada à hospedagem. Esta fase é uma base técnica, **não um certificado de conformidade LGPD**.
+> **Estado:** implementação proposta no PR #8 e integrada localmente com a `main` atual para validação. Ainda não foi integrada à `main` remota nem aplicada na hospedagem. Esta fase é uma base técnica, **não um certificado de conformidade LGPD**.
 
 ## Inventário verificado da main
 - PHP + MySQL mysqli; contas em `pessoa.id_pessoa`, `empresa.id_empresa` e `administrador.id_administrador` (sem tabela única `users`).
@@ -8,7 +8,7 @@
 - Login `php/login.php`, recuperação `php/processar.php`, exclusão de perfil em `php/controllers/ProfileController.php`.
 - Informações também aparecem em `curriculo`, `candidatura`, `vagas`, `reports_vagas`, `reports_perfis`, uploads e arquivos JSON temporários em `php/controllers/ChatStorage.php`.
 - A política existente é uma versão-base, **não** uma política jurídico-operacional final.
-- `feature/jarvis-admin` acrescenta histórico MySQL do ADM; não foi incorporada à main nem alterada por este PR.
+- A `main` atual inclui o histórico MySQL do JARVIS Admin; esta Fase 1 acrescenta a etapa adicional de autenticação ADM sem alterar o histórico.
 
 **Não há dump completo, acesso ao MySQL da hospedagem, backup nem validação real de produção nesta análise.** A CI usa banco MySQL 8.0 descartável com tabelas de contas mínimas somente para testar serviços.
 

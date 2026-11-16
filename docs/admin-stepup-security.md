@@ -93,6 +93,7 @@ adicionar autenticação independente (passkey/WebAuthn ou TOTP).
 Ordem: backup/validação do schema real → migração 001 (LGPD) e 002
 (administrador) em desenvolvimento → pré-cadastro dos quatro ADMs em
 JarvisT.php → ativar a flag em desenvolvimento → testar painel/JARVIS →
-revisão do PR #8 → só então integrar o PR #7 e considerar produção.
+revisão do PR #8. O JARVIS Admin já está na `main` atual; mantenha a
+proteção desligada até concluir a revisão, o provisionamento e os testes.
 
 Não há garantia de conformidade LGPD apenas por implementar essas rotas.

@@ -1,0 +1,170 @@
+/* JARVIS Admin: componente isolado do dashboard existente. */
+.jarvis-admin{position:fixed;left:18px;bottom:18px;z-index:1100;font-family:inherit;color:#19334d}
+.jarvis-admin *{box-sizing:border-box}
+.jarvis-admin__launcher{display:flex;align-items:center;gap:9px;min-height:54px;padding:0 17px;border:1px solid #5ba4fa;border-radius:999px;background:linear-gradient(135deg,#083b79,#0069cb);color:#fff;box-shadow:0 8px 26px #002b6260;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700}
+.jarvis-admin__launcher>span:first-child{font-size:25px}
+.jarvis-admin__panel{position:absolute;bottom:68px;left:0;display:flex;flex-direction:column;width:min(410px,calc(100vw - 28px));height:min(580px,calc(100dvh - 110px));background:#fff;border:1px solid #d9e4f0;border-radius:18px;box-shadow:0 18px 50px #112c4b45;overflow:hidden}
+.jarvis-admin__panel[hidden]{display:none}
+.jarvis-admin__panel.is-expanded{width:min(740px,calc(100vw - 28px));height:min(760px,calc(100dvh - 100px))}
+.jarvis-admin__header{display:flex;align-items:center;gap:9px;padding:12px;background:linear-gradient(130deg,#063e80,#0968bd);color:white}
+.jarvis-admin__mark{font-size:26px}
+.jarvis-admin__identity{display:flex;flex:1;min-width:0;flex-direction:column;gap:2px}
+.jarvis-admin__identity strong{font-size:15px}
+.jarvis-admin__identity small{font-size:11px;color:#dbeaff}
+.jarvis-admin__icon-button{width:30px;height:30px;flex:none;border:0;border-radius:8px;background:#ffffff25;color:#fff;cursor:pointer;font-size:19px}
+.jarvis-admin__icon-button:hover{background:#ffffff40}
+.jarvis-admin__messages{flex:1;display:flex;flex-direction:column;gap:11px;overflow-y:auto;padding:18px 14px;background:#f6f9fc;overscroll-behavior:contain}
+.jarvis-admin__welcome{margin:0;padding:13px;border:1px solid #dbe7f4;border-radius:13px;background:#fff;color:#44596d;font-size:13px;line-height:1.5}
+.jarvis-admin__message{display:flex;flex-direction:column;max-width:92%;gap:4px;align-self:flex-start}
+.jarvis-admin__message.is-user{align-self:flex-end}
+.jarvis-admin__message-label{font-size:10px;font-weight:700;color:#627e96;padding:0 5px}
+.jarvis-admin__message-body{white-space:pre-wrap;overflow-wrap:anywhere;padding:11px 13px;border:1px solid #dce7f2;border-radius:13px;background:#fff;font-size:13px;line-height:1.55}
+.jarvis-admin__message.is-user .jarvis-admin__message-body{background:#075aa8;color:#fff;border-color:#075aa8}
+.jarvis-admin__quick-actions{padding:8px 12px 2px;background:#fff}
+.jarvis-admin__quick-actions button{background:#e9f3ff;color:#075aa8;border:1px solid #c4def9;border-radius:999px;padding:6px 11px;font-size:12px;cursor:pointer}
+.jarvis-admin__status{min-height:17px;margin:0;padding:0 14px;background:#fff;color:#546e84;font-size:11px}
+.jarvis-admin__composer{display:flex;gap:8px;align-items:flex-end;padding:8px 11px 3px;background:#fff}
+.jarvis-admin__composer textarea{flex:1;min-height:42px;max-height:150px;resize:none;overflow:auto;padding:10px 12px;border:1px solid #c9d8e8;border-radius:13px;background:#fff;color:#182d46;font-family:inherit;font-size:13px;line-height:1.45}
+.jarvis-admin__composer textarea:focus{outline:2px solid #8dbff8;outline-offset:1px}
+.jarvis-admin__composer button{width:42px;height:42px;flex:none;border:0;border-radius:12px;background:#0765ba;color:#fff;font-size:20px;cursor:pointer}
+.jarvis-admin__composer button:disabled{opacity:.5;cursor:wait}
+.jarvis-admin__disclaimer{margin:0;padding:3px 10px 9px;text-align:center;color:#75899d;background:#fff;font-size:10px}
+.jarvis-admin__sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:600px){.jarvis-admin{left:12px;bottom:calc(12px + env(safe-area-inset-bottom))}.jarvis-admin__launcher{min-height:49px}.jarvis-admin__panel,.jarvis-admin__panel.is-expanded{position:fixed;left:0;bottom:0;width:100vw;height:100dvh;max-height:100dvh;border-radius:0;border:0;padding-bottom:env(safe-area-inset-bottom)}.jarvis-admin__messages{padding:14px 12px}.jarvis-admin__icon-button{width:32px;height:32px}}
+@media(prefers-reduced-motion:no-preference){.jarvis-admin__launcher{transition:transform .2s,box-shadow .2s}.jarvis-admin__launcher:hover{transform:translateY(-2px);box-shadow:0 12px 32px #002b6280}}
+
+/* Fase 2: memória navegável e central de atividades. */
+.jarvis-admin__tabs{display:flex;flex:none;gap:5px;padding:8px 12px 4px;background:#fff;border-bottom:1px solid #e5eef7}
+.jarvis-admin__tabs button{flex:1;padding:9px 8px;border:0;border-bottom:2px solid transparent;border-radius:7px 7px 0 0;background:transparent;color:#536b83;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.jarvis-admin__tabs button.is-active{color:#085ca9;border-bottom-color:#086bbf;background:#f0f7ff}
+.jarvis-admin__pane{display:flex;flex:1;flex-direction:column;min-height:0;min-width:0}
+.jarvis-admin__pane[hidden],.jarvis-admin [hidden]{display:none!important}
+.jarvis-admin__conversation-bar{display:flex;flex:none;gap:6px;padding:8px 11px 5px;background:#fff}
+.jarvis-admin__conversation-bar select{flex:1;min-width:0;padding:7px;border:1px solid #c8d8e9;border-radius:9px;color:#234365;background:#fff;font-size:12px}
+.jarvis-admin__conversation-bar button{flex:none;min-width:31px;min-height:31px;border:1px solid #d7e3ef;border-radius:8px;background:#f5f9fd;color:#145a9b;font-size:19px;cursor:pointer}
+.jarvis-admin__search-wrap{display:block;flex:none;padding:3px 11px 7px;background:#fff}
+.jarvis-admin__search-wrap input{width:100%;min-height:31px;border:1px solid #dbe7f2;border-radius:9px;padding:6px 9px;color:#29445e;background:#fff;font-size:12px}
+.jarvis-admin__pane--tasks{background:#f7fafc;overflow-y:auto;overscroll-behavior:contain}
+.jarvis-admin__tasks-info{margin:0;padding:12px 14px;background:#eaf4ff;color:#36536e;font-size:12px;line-height:1.5}
+.jarvis-admin__task-form{display:grid;gap:9px;margin:12px;padding:13px;border:1px solid #e2ebf3;border-radius:12px;background:#fff}
+.jarvis-admin__task-form label{display:grid;gap:5px;font-size:12px;font-weight:700;color:#2d4660}
+.jarvis-admin__task-form input,.jarvis-admin__task-form textarea{width:100%;min-height:34px;padding:9px;border:1px solid #cbdcea;border-radius:8px;background:#fff;color:#213a51;font-family:inherit;font-size:13px;line-height:1.45;resize:vertical}
+.jarvis-admin__task-form button{min-height:35px;border:0;border-radius:9px;background:#0969bd;color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.jarvis-admin__task-form button:disabled{opacity:.6}
+.jarvis-admin__tasks-list{display:grid;align-content:start;gap:9px;padding:7px 12px 15px}
+.jarvis-admin__task{display:grid;gap:5px;padding:12px;border:1px solid #dae6f1;border-radius:11px;background:#fff;overflow-wrap:anywhere}
+.jarvis-admin__task>strong{font-size:13px;color:#1a405e}
+.jarvis-admin__task-status{font-size:11px;font-weight:700;color:#23638c}
+.jarvis-admin__task p{white-space:pre-wrap;margin:3px 0;color:#577085;font-size:12px;line-height:1.5}
+.jarvis-admin__task-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:5px}
+.jarvis-admin__task-actions button{padding:7px 10px;border:1px solid #b9d6f2;border-radius:8px;color:#155d98;background:#edf6ff;font-size:11px;cursor:pointer}
+.jarvis-admin__task-actions button:disabled{opacity:.6}
+.jarvis-admin__tasks-empty{margin:10px 0;color:#667c90;font-size:12px}
+@media(max-width:600px){.jarvis-admin__tabs button{padding:12px 8px}.jarvis-admin__pane--tasks{padding-bottom:8px}}
+
+/* Novidades selecionadas do JARVIS Code: contexto opt-in, origem do modelo e exemplos. */
+.jarvis-admin__context-option{display:flex;align-items:center;gap:8px;flex:none;min-height:38px;padding:5px 12px;background:#fff;color:#3c596f;font-size:12px;line-height:1.35;cursor:pointer}
+.jarvis-admin__context-option input{flex:0 0 auto;min-width:17px;min-height:17px;accent-color:#075aa8}
+.jarvis-admin__response-meta{display:block;max-width:100%;padding:1px 5px 3px;color:#456784;font-size:11px;line-height:1.45;overflow-wrap:anywhere}
+.jarvis-admin__examples{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:11px 12px 0;background:#f7fafc}
+.jarvis-admin__examples>span{flex:0 0 100%;color:#465e74;font-size:12px;font-weight:600}
+.jarvis-admin__examples button{min-height:34px;padding:7px 10px;border:1px solid #bfd8ef;border-radius:9px;background:#fff;color:#125a9b;font-family:inherit;font-size:12px;cursor:pointer}
+.jarvis-admin__examples button:hover{background:#eaf4ff}
+.jarvis-admin__context-option:focus-within,.jarvis-admin__examples button:focus-visible{outline:2px solid #75b3ed;outline-offset:2px}
+@media(max-width:600px){.jarvis-admin__context-option{padding:8px 12px;min-height:44px}.jarvis-admin__examples button{min-height:40px}}
+
+/* Consultas, envio individual supervisionado e trilha de auditoria. */
+.jarvis-admin__tabs{overflow-x:auto;scrollbar-width:thin;flex-wrap:nowrap;gap:0}
+.jarvis-admin__tabs button{min-width:70px;flex:1 0 auto;padding:11px 9px;white-space:nowrap}
+.jarvis-admin__pane--tools{overflow-y:auto;overscroll-behavior:contain;min-height:0;padding-bottom:15px}
+.jarvis-admin__tool-form{display:grid;gap:10px;padding:12px;background:#f7fafc}
+.jarvis-admin__tool-form label,.jarvis-admin__tool-question{display:grid;gap:5px;color:#294e6a;font-size:12px;font-weight:650}
+.jarvis-admin__tool-form input,.jarvis-admin__tool-form select,.jarvis-admin__tool-form textarea,.jarvis-admin__tool-question textarea,.jarvis-admin__tool-card textarea{width:100%;min-height:40px;border:1px solid #bed2e4;border-radius:9px;background:#fff;color:#213a51;font-family:inherit;font-size:14px;line-height:1.5;padding:8px 10px}
+.jarvis-admin__tool-form textarea,.jarvis-admin__tool-question textarea,.jarvis-admin__tool-card textarea{resize:vertical}
+.jarvis-admin__tool-form button,.jarvis-admin__tool-card button,.jarvis-admin__tool-refresh{min-height:40px;border:1px solid #a8cbed;border-radius:9px;padding:9px 12px;background:#eef7ff;color:#12588d;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.jarvis-admin__tool-form>button{background:#0969bd;color:#fff;border:0}
+.jarvis-admin__tool-form button:disabled,.jarvis-admin__tool-card button:disabled{opacity:.5;cursor:not-allowed}
+.jarvis-admin__tool-results{display:grid;align-content:start;gap:8px;padding:9px 12px}
+.jarvis-admin__tool-card{display:grid;gap:8px;padding:12px;border:1px solid #d3e2ef;border-radius:11px;background:#fff;overflow-wrap:anywhere}
+.jarvis-admin__tool-card strong{font-size:13px;color:#183e5c}
+.jarvis-admin__tool-card small{color:#54718a;font-size:11px}
+.jarvis-admin__tool-actions{display:flex;flex-wrap:wrap;gap:7px}
+.jarvis-admin__analysis{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px 13px;font-size:13px;line-height:1.6;color:#1d4460}
+.jarvis-admin__tool-question{padding:8px 12px}
+.jarvis-admin__tool-refresh{margin:8px 12px}
+.jarvis-admin__audit-entry{border-left:3px solid #9ebfda}
+@media(max-width:600px){.jarvis-admin__tabs button{min-width:80px;font-size:12px}.jarvis-admin__tool-form button,.jarvis-admin__tool-card button{min-height:44px}}
+
+/* Botão JD real: somente logo, com suporte a toque prolongado, mouse e snap. */
+.jarvis-admin{right:auto;user-select:none}
+.jarvis-admin__launcher{
+  display:grid;place-items:center;gap:0;
+  width:66px;height:66px;min-height:66px;
+  padding:4px;border:2px solid #49bff7;border-radius:50%;
+  background:#04142c;box-shadow:0 6px 21px #00346f75,0 0 0 2px #ffffff14;
+  touch-action:none;-webkit-user-select:none;user-select:none;
+  cursor:grab;overflow:hidden;
+}
+.jarvis-admin__launcher>.jarvis-admin__jd-image{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:center;
+  border-radius:50%;pointer-events:none;-webkit-user-drag:none;
+}
+.jarvis-admin__header>.jarvis-admin__jd-image{
+  display:block;width:40px;height:40px;object-fit:cover;border-radius:50%;
+  flex:none;pointer-events:none;
+}
+.jarvis-admin__launcher.is-dragging,
+.jarvis-admin__launcher.is-dragging:hover{
+  cursor:grabbing;transition:none!important;transform:none!important;
+  box-shadow:0 12px 32px #001f4c88,0 0 0 3px #67dfff88;
+}
+.jarvis-admin__launcher:focus-visible{outline:3px solid #73d9ff;outline-offset:4px}
+.jarvis-admin__panel{z-index:1101}
+@media(max-width:600px){
+  .jarvis-admin__launcher{width:62px;height:62px;min-height:62px;padding:3px}
+  .jarvis-admin__header>.jarvis-admin__jd-image{width:40px;height:40px}
+}
+
+/* Correção responsiva: nenhum botão ou campo do widget pode ultrapassar o painel.
+   O textarea pode encolher; o botão de envio mantém largura fixa e só exibe a seta.
+   Regras locais evitam alterar botões do restante do dashboard DevIN. */
+.jarvis-admin__panel{min-width:0}
+.jarvis-admin__pane,
+.jarvis-admin__composer,
+.jarvis-admin__conversation-bar{min-width:0;max-width:100%}
+.jarvis-admin__composer{
+  width:100%;min-width:0;flex:0 0 auto;
+  align-items:flex-end;
+}
+.jarvis-admin__composer textarea{
+  flex:1 1 0%;width:0;min-width:0;max-width:100%;
+}
+.jarvis-admin__composer button[data-jarvis-send]{
+  display:grid;place-items:center;
+  flex:0 0 44px;width:44px;min-width:44px;max-width:44px;height:44px;
+  padding:0;margin:0;line-height:1;white-space:nowrap;overflow:hidden;
+  font:inherit;font-size:20px;font-style:normal;
+  text-align:center;
+}
+.jarvis-admin__conversation-bar select{flex:1 1 0%;min-width:0;width:0}
+.jarvis-admin__conversation-bar button{
+  display:grid;place-items:center;flex:0 0 38px;
+  width:38px;min-width:38px;max-width:38px;height:38px;
+  padding:0;margin:0;line-height:1;white-space:nowrap;
+}
+.jarvis-admin__tabs button{min-width:max-content;min-height:44px}
+.jarvis-admin__tabs button:disabled{opacity:.55;cursor:not-allowed}
+.jarvis-admin__quick-actions button{max-width:100%;min-height:40px;white-space:normal;overflow-wrap:anywhere}
+.jarvis-admin__tool-actions button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.jarvis-admin__composer button[data-jarvis-send]:focus-visible,
+.jarvis-admin__conversation-bar button:focus-visible{outline:2px solid #73baff;outline-offset:2px}
+@media(max-width:360px){
+  .jarvis-admin__composer{gap:6px;padding-left:8px;padding-right:8px}
+  .jarvis-admin__composer button[data-jarvis-send]{
+    flex-basis:42px;width:42px;min-width:42px;max-width:42px;height:42px
+  }
+  .jarvis-admin__conversation-bar{gap:5px;padding-inline:8px}
+  .jarvis-admin__conversation-bar button{
+    flex-basis:36px;width:36px;min-width:36px;max-width:36px;height:36px
+  }
+}

@@ -10,37 +10,56 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
 }
 
-body { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--black); overflow-x: hidden; }
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg);
+    color: var(--black);
+    overflow-x: hidden;
+}
 
 /* ==========================================================================
    3. CORPO CENTRAL (ROBÔ + CARD LADO A LADO)
    ========================================================================== */
 .conteudo-login {
-    /* Mantém a ilustração e o formulário lado a lado no espaço principal da tela. */
     display: flex;
-    justify-content: center; 
+    justify-content: space-between;
     align-items: center;     
-    gap: 550px; 
+    gap: clamp(24px, 12vw, 190px);
     flex: 1;                 
-    padding: 40px 50px;
+    width: min(100%, 1600px);
+    margin-inline: auto;
+    padding: 40px clamp(48px, 6vw, 100px);
+    background-color: var(--bg);
+}
+
+.robo-area {
+    display: flex;
+    flex: 0 1 450px;
+    justify-content: center;
+    min-width: 0;
 }
 
 .gif-robo {
-    width: 450px;          
-    max-width: 90%;        
+    width: min(450px, 100%);
+    max-width: 100%;
     height: auto;          
 }
 
 .area-login {
     background-color: var(--white);
     padding: 45px 40px;
-    border-radius: 32px; 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra suavizada para um visual mais limpo */
+    border: 1px solid #e8e8e8;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .1);
+    flex: 0 1 450px;
+    min-width: 0;
     width: 100%;
-    max-width: 450px;    
+    max-width: 450px;
 }
 
 .area-login h1 {
@@ -48,6 +67,7 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
     font-size: 32px;
     color: var(--black);
     margin-bottom: 30px; 
+    line-height: 1.2;
 }
 
 .mensagem-erro {
@@ -80,10 +100,18 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
 .grupo-campo input {
     width: 100%;
     padding: 15px 20px;   
-    border: 1.5px solid var(--blue); 
-    border-radius: 14px;  
+    border: 1px solid #c8d0d8;
+    border-radius: 10px;
     font-size: 16px;
+    background: var(--white);
     outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+
+.grupo-campo input:focus {
+    border-color: var(--blue);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(0, 84, 159, .12);
 }
 
 .link-esqueceu {
@@ -109,24 +137,24 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
     padding: 13px;
     font-size: 18px;
     font-weight: bold;
-    border-radius: 50px;  
+    border-radius: 12px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color .2s ease;
 }
 
 .botao-entrar:hover {
-    filter: brightness(1.2);
+    background-color: #064582;
 }
 
 .texto-politica {
     font-size: 12px;
-    color: var(--gray);
+    color: #788695;
     text-align: center;
     line-height: 1.6;     
 }
 
 .texto-politica a {
-    color: var(--gray);
+    color: #788695;
     text-decoration: underline; 
 }
 
@@ -134,20 +162,29 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: var
    5. POSICIONAMENTO DO BOTÃO MOSTRAR SENHA (OLHO)
    ========================================================================== */
 .input-container {
-    position: relative; /* Define que os filhos absolutos se alinham por aqui */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
 }
 
 /* Dá um espaço no final do texto do input para não ficar embaixo do olho */
 .input-container input {
+    grid-column: 1;
+    grid-row: 2;
     padding-right: 50px; 
 }
 
+.input-container label {
+    grid-column: 1;
+    grid-row: 1;
+}
+
 #btn-mostrar {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    /* O calc puxa o olho para baixo compensando a altura do label 'Senha:' */
-    transform: translateY(calc(-50% + 12px)); 
+    position: relative;
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: end;
+    align-self: center;
+    margin-right: 4px;
     background: none;
     border: none;
     cursor: pointer; 
@@ -177,11 +214,11 @@ img { max-width: 100%; }
 .cabecalho-site * { font-family: "Poppins", Arial, sans-serif; }
 
 @media (max-width: 1050px) {
-    .conteudo-login { gap: clamp(40px, 12vw, 180px); }
-    .gif-robo { width: min(360px, 38vw); }
+    .conteudo-login { gap: clamp(24px, 11vw, 115px); }
+    .gif-robo { width: min(360px, 34vw); }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 960px) {
     .conteudo-login {
         flex-direction: column;
         gap: 12px;
@@ -190,13 +227,12 @@ img { max-width: 100%; }
     }
     .robo-area {
         order: 1;
-        display: flex;
-        justify-content: center;
         max-height: 132px;
     }
+    .conteudo-login > .gif-robo { max-height: 132px; }
     .area-login {
         order: 2;
-        max-width: 100%;
+        max-width: 560px;
         padding: 26px 20px;
         border-radius: 24px;
     }
