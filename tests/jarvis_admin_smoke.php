@@ -4,7 +4,8 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 // Smoke checks sem banco, rede ou credenciais.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/AdminSkillManager.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/ModelRouter.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once dirname(__DIR__) . '/php/controllers/Jarvis/JobLanguageAudit.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once dirname(__DIR__) . '/php/controllers/Jarvis/JobLanguageAudit.php';
+require_once dirname(__DIR__) . '/php/controllers/Jarvis/JarvisModeration.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 function checkJarvis(bool $condition, string $message): void // Explicação DevIN: Declara função/método checkJarvis, com seus parâmetros e comportamento.
@@ -86,4 +87,9 @@ checkJarvis(AdminRolePolicy::can('gestao','jarvis_send'), 'gestor pode aprovar c
 
 checkJarvis(AdminRolePolicy::can('consulta','update_profile'), 'ADM altera somente perfil proprio'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 
+checkJarvis(JarvisModeration::validKind('vaga'), 'permitir alvo vaga');
+checkJarvis(JarvisModeration::validKind('empresa'), 'permitir alvo empresa');
+checkJarvis(JarvisModeration::validKind('pessoa'), 'permitir alvo pessoa');
+checkJarvis(!JarvisModeration::validKind('administrador'), 'impedir exclusao de ADM');
+checkJarvis(!JarvisModeration::validKind('reports_vagas'), 'impedir exclusao fora das 3 categorias');
 echo "JARVIS Admin smoke: OK\\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.
