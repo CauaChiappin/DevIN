@@ -49,7 +49,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
       - name: PHP syntax # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           php -v # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          php -l php/adm.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/adm.php
+          php -l php/admin_security_ai.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/components/jarvis-admin-widget.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l tests/jarvis_admin_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l tests/jarvis_controlled_actions_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
