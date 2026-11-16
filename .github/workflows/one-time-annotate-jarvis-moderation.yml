@@ -1,0 +1,27 @@
+name: DevIN - annotate Jarvis moderation (one-time)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-time-annotate-jarvis-moderation.yml'
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate canonical inline explanations
+        run: python3 scripts/line_explanations.py --write
+      - name: Commit only moderation code (not workflows)
+        run: |
+          git add php/controllers/Jarvis/JarvisModeration.php php/api/jarvis/admin_tools.php js/jarvis-admin.js tests/jarvis_admin_smoke.php php/components/jarvis-admin-widget.php database/migrations/2026_11_16_004_jarvis_moderation.sql .env.example
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(jarvis): synchronize inline explanations for moderation"
+            git push origin HEAD:main
+          fi
