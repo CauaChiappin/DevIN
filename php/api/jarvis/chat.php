@@ -80,6 +80,8 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     jarvisJson(503, ['success' => false, 'message' => 'Histórico indisponível. Execute a migração SQL do JARVIS.']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+$selectedSkills = AdminSkillManager::select(trim($message));
+$useHistory = false;
 $auditRequested = JobLanguageAudit::requested($message);
 if ($auditRequested) {
     // Leitura de vagas após autenticação ADM, CSRF e limite de uso.
@@ -150,6 +152,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.}
 
+}
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
