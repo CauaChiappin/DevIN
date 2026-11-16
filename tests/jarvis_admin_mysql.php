@@ -100,11 +100,11 @@ $frontend = file_get_contents(dirname(__DIR__) . '/js/jarvis-admin.js'); // Expl
 assertJarvis(str_contains($api, "usuario_tipo") && str_contains($api, "jarvisCsrf"), // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
     'controle de ADM e CSRF preservados'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 // Agora há Token 2 opcional e obrigatório quando a flag está ativa.
-assertJarvis(str_contains($api, "AdminStepUp::enabled()")
-    && str_contains($api, "AdminStepUp::allowed('ai')"),
-    'API protege JARVIS ao ativar Token 2');
-assertJarvis(str_contains($widget, 'admin_security_ai.php'),
-    'widget oferece desbloqueio seguro');
-assertJarvis(!str_contains($frontend, 'DEVIN_JARVIS_API_KEY'),
-    'frontend não contém credenciais de IA');
+assertJarvis(str_contains($api, "AdminStepUp::enabled()") // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
+    && str_contains($api, "AdminStepUp::allowed('ai')"), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    'API protege JARVIS ao ativar Token 2'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+assertJarvis(str_contains($widget, 'admin_security_ai.php'), // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
+    'widget oferece desbloqueio seguro'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+assertJarvis(!str_contains($frontend, 'DEVIN_JARVIS_API_KEY'), // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
+    'frontend não contém credenciais de IA'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 echo "JARVIS Admin: MySQL, permissão ADM, auditoria e Token 2 opcional OK\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.

@@ -1,8 +1,8 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 // Montado pelo dashboard após autenticação ADM.
-require_once __DIR__ . '/../controllers/Security/AdminStepUp.php';
-$jarvisStepUpEnabled = AdminStepUp::enabled();
+require_once __DIR__ . '/../controllers/Security/AdminStepUp.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+$jarvisStepUpEnabled = AdminStepUp::enabled(); // Explicação DevIN: Atribui um valor à variável PHP $jarvisStepUpEnabled.
 $toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED'] // Explicação DevIN: Atribui um valor à variável PHP $toolsEnabled.
     ?? $_SERVER['DEVIN_JARVIS_ACTIONS_ENABLED'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     ?? getenv('DEVIN_JARVIS_ACTIONS_ENABLED') ?: '0') === '1'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -24,7 +24,7 @@ $toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED'] // Explicação 
             <button type="button" aria-pressed="false" data-jarvis-tab="audit" <?= $toolsEnabled ? '' : 'disabled title="Exige instalação da migration e ativação no servidor"' ?>>Histórico</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. Contém dado dinâmico processado pelo PHP. -->
         </nav> <!-- Explicação DevIN: Fecha elemento nav do documento. -->
         <?php if ($jarvisStepUpEnabled): ?>
-        <p class="jarvis-admin__stepup-link"><a href="admin_security_ai.php">Desbloquear IA com Token 1 e Token 2</a></p>
+        <p class="jarvis-admin__stepup-link"><a href="admin_security_ai.php">Desbloquear IA com Token 1 e Token 2</a></p> <!-- Explicação DevIN: Declara parágrafo. A linha reúne múltiplos elementos. -->
         <?php endif; ?>
         <section class="jarvis-admin__pane jarvis-admin__pane--chat" data-jarvis-pane="chat" aria-label="Conversas"> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
             <div class="jarvis-admin__conversation-bar"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->

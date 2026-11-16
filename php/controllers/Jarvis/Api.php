@@ -2,7 +2,7 @@
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 
 require_once __DIR__ . '/../../middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/../../config/RateLimiter.php';
+require_once __DIR__ . '/../../config/RateLimiter.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../Security/AdminStepUp.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 function jarvisJson(int $status, array $data): never // Explicação DevIN: Declara função/método jarvisJson, com seus parâmetros e comportamento.
@@ -51,20 +51,20 @@ function jarvisAdmin(): int // Explicação DevIN: Declara função/método jarv
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Segundo fator obrigatório somente após provisionamento e ativação.
     // Verificação feita por solicitação no servidor, nunca apenas na interface.
-    if (AdminStepUp::enabled()) {
-        try {
-            if (!AdminStepUp::allowed('ai')) {
-                jarvisJson(403, [
-                    'success' => false,
-                    'message' => 'Verificação adicional necessária para o JARVIS. Abra Desbloquear IA no painel.',
-                    'error_code' => 'stepup_required',
-                ]);
-            }
-        } catch (Throwable $exception) {
-            error_log('JARVIS step-up check: ' . get_class($exception));
-            jarvisJson(503, ['success' => false, 'message' => 'Verificação adicional temporariamente indisponível.']);
-        }
-    }
+    if (AdminStepUp::enabled()) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            if (!AdminStepUp::allowed('ai')) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                jarvisJson(403, [ // Explicação DevIN: Continua expressão ou bloco pertencente a função jarvisAdmin.
+                    'success' => false, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'message' => 'Verificação adicional necessária para o JARVIS. Abra Desbloquear IA no painel.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'error_code' => 'stepup_required', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            error_log('JARVIS step-up check: ' . get_class($exception)); // Explicação DevIN: Continua expressão ou bloco pertencente a função jarvisAdmin.
+            jarvisJson(503, ['success' => false, 'message' => 'Verificação adicional temporariamente indisponível.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função jarvisAdmin.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $_SESSION['last_activity'] = $now; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     // A sessão ADM, a existência da conta e os limites de uso já foram validados.
     return $id; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
