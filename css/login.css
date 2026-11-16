@@ -23,8 +23,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================================================
-   3. CORPO CENTRAL (ROBÔ + CARD LADO A LADO) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   3. CORPO CENTRAL (ROBÔ + CARD LADO A LADO)
+   ========================================================================== */
 .conteudo-login { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
     justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
@@ -83,8 +83,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================================================
-   4. CAMPOS DE ENTRADA, LINKS E BOTÃO INTERNO /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   4. CAMPOS DE ENTRADA, LINKS E BOTÃO INTERNO
+   ========================================================================== */
 .grupo-campo { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     margin-bottom: 20px;  /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-bottom. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
@@ -159,8 +159,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================================================
-   5. POSICIONAMENTO DO BOTÃO MOSTRAR SENHA (OLHO) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   5. POSICIONAMENTO DO BOTÃO MOSTRAR SENHA (OLHO)
+   ========================================================================== */
 .input-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
     grid-template-columns: minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */

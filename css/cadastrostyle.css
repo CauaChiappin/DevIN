@@ -1,6 +1,6 @@
 /* ==========================================
-   RESET GLOBAL E ESTILOS BASE /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   RESET GLOBAL E ESTILOS BASE
+   ========================================== */
 * {
     margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
     padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
@@ -23,8 +23,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   CONTAINER PRINCIPAL (LAYOUT TELA DIVIDIDA) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   CONTAINER PRINCIPAL (LAYOUT TELA DIVIDIDA)
+   ========================================== */
 .main-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     /* Divide a tela entre formulário e área ilustrada do cadastro. */
     display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
@@ -59,8 +59,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   CABEÇALHO E BRANDING /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   CABEÇALHO E BRANDING
+   ========================================== */
 .cadastro-header { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
     display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
@@ -134,8 +134,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   ALTERNADOR (PESSOAL / EMPRESA) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ALTERNADOR (PESSOAL / EMPRESA)
+   ========================================== */
 .toggle-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
     align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
@@ -169,8 +169,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   FORMULÁRIO E INPUTS EM FORMATO DE PÍLULA /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   FORMULÁRIO E INPUTS EM FORMATO DE PÍLULA
+   ========================================== */
 .page-title { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     font-size: 1.8rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
     font-weight: 800; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
@@ -310,8 +310,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   AÇÃO DO FORMULÁRIO E BOTÃO ENVIAR /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   AÇÃO DO FORMULÁRIO E BOTÃO ENVIAR
+   ========================================== */
 .form-footer-action { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
     flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
@@ -394,8 +394,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   RODAPÉ E NOTIFICAÇÕES (TOAST) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   RODAPÉ E NOTIFICAÇÕES (TOAST)
+   ========================================== */
 .page-footer { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     text-align: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
     font-size: 0.8rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
@@ -486,8 +486,8 @@ body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de el
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   RESPONSIVIDADE (MEDIA QUERIES) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   RESPONSIVIDADE (MEDIA QUERIES)
+   ========================================== */
 @media (max-width: 950px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
     .main-container { flex-direction: column; height: auto; overflow: visible; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     .right-side { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */

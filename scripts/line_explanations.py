@@ -561,9 +561,10 @@ def annotate_source(path: Path, source: str) -> tuple[str, int, int]:
     output: list[str] = []
     previous = "trecho principal"
     mode = language
-    in_php = path.suffix.lower() == ".php"
+    in_php = False
     in_script = False
     in_style = False
+    in_css_comment = False
     in_rcdata = ""
     in_tag = False
     in_template = False
@@ -716,6 +717,28 @@ def annotate_source(path: Path, source: str) -> tuple[str, int, int]:
                     yaml_block_indent = len(block.group(1)) - len(block.group(1).lstrip())
                     yaml_shell_block = bool(re.search(r"\brun\s*:", block.group(1)))
                 mode = "YAML"
+
+        if mode == "CSS":
+            started_in_comment = in_css_comment
+            position = 0
+            while position < len(line):
+                if in_css_comment:
+                    closing = line.find("*/", position)
+                    if closing < 0:
+                        break
+                    in_css_comment = False
+                    position = closing + 2
+                    continue
+                token = re.search(r""" "(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|/\* """.strip(), line[position:])
+                if token is None:
+                    break
+                position += token.end()
+                if token.group() == "/*":
+                    in_css_comment = True
+            if started_in_comment or in_css_comment:
+                output.append(raw)
+                skipped += 1
+                continue
 
         style = comment_for(mode)
         if style is None:

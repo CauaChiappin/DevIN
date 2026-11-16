@@ -1,7 +1,7 @@
 /* =========================================================
-   DASHBOARD — ESTILOS GERAIS COMPARTILHADOS /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   Usados por empresa, pessoa e administrador. /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-========================================================= */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   DASHBOARD — ESTILOS GERAIS COMPARTILHADOS
+   Usados por empresa, pessoa e administrador.
+========================================================= */
 :root { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     --bg: #f7f5f0; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
     --line: #9a9a9a; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
@@ -447,8 +447,8 @@ a { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de eleme
     padding: 52px 36px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 /* =========================================
-   ESTILOS DA PÁGINA SOBRE NÓS (SEM SCROLL) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-========================================= */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ESTILOS DA PÁGINA SOBRE NÓS (SEM SCROLL)
+========================================= */
 
 /* Trava a tela inteira para não ter rolagem */
 /* ----- Página Sobre nós (geral) ----- */
@@ -1174,10 +1174,10 @@ a { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de eleme
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* =========================================================
-   EMPRESA /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   Publicação e edição de vagas, além do gerenciamento /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   de candidaturas. /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-========================================================= */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   EMPRESA
+   Publicação e edição de vagas, além do gerenciamento
+   de candidaturas.
+========================================================= */
 .post-tools, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .acoes-card { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
@@ -1422,10 +1422,10 @@ a { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de eleme
 .edit-job-form .btn { justify-self: start; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 /* =========================================================
-   PESSOA /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   A pessoa utiliza os componentes gerais de vagas, perfil, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   busca e detalhes. Os status abaixo aparecem nas candidaturas. /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-========================================================= */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   PESSOA
+   A pessoa utiliza os componentes gerais de vagas, perfil,
+   busca e detalhes. Os status abaixo aparecem nas candidaturas.
+========================================================= */
 .btn, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .status { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     min-width: 90px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
@@ -2004,12 +2004,12 @@ body.account-deleting .dashboard-shell { /* Explicação DevIN: Inicia bloco de 
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* Tema visual compartilhado por todas as páginas do dashboard, inclusive “Sobre nós”.
-   Assim, a troca de rota não altera cores nem escala tipográfica da interface. */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   Assim, a troca de rota não altera cores nem escala tipográfica da interface. */
 /* =========================================================
-   ADMINISTRADOR /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   O administrador utiliza os componentes compartilhados: /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   cards, exclusão de registros e painel de detalhes. /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-========================================================= */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ADMINISTRADOR
+   O administrador utiliza os componentes compartilhados:
+   cards, exclusão de registros e painel de detalhes.
+========================================================= */
 .dashboard-shell { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     grid-template-columns: var(--sidebar-width) minmax(340px, 42%) minmax(420px, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
     background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
@@ -3263,8 +3263,8 @@ body.account-deleting .dashboard-shell { /* Explicação DevIN: Inicia bloco de 
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* =========================================================
-   RESPONSIVIDADE — GERAL /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-========================================================= */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   RESPONSIVIDADE — GERAL
+========================================================= */
 @media (max-width: 980px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
     body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
         overflow: auto; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
@@ -3570,8 +3570,8 @@ body.account-deleting .dashboard-shell { /* Explicação DevIN: Inicia bloco de 
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* =========================================================
-   CAMADA DE UX / ACESSIBILIDADE / MODAIS /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   ========================================================= */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   CAMADA DE UX / ACESSIBILIDADE / MODAIS
+   ========================================================= */
 
 .sr-only { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */

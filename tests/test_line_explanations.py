@@ -86,6 +86,28 @@ class LineExplanationsTest(unittest.TestCase): # Explicação DevIN: Declara cla
         self.assertIn("?>\n", result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_php_templates_switch_comment_syntax_at_php_boundaries.
         self.assertIn("<div>Ready</div> <!-- " + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_php_templates_switch_comment_syntax_at_php_boundaries.
 
+    def test_php_template_starting_with_html_keeps_comments_invisible(self) -> None: # Explicação DevIN: Declara função Python test_php_template_starting_with_html_keeps_comments_invisible, com seus argumentos e lógica.
+        source = "<footer>\n<p>Rodapé</p>\n<?= date('Y') ?>\n</footer>\n" # Explicação DevIN: Atribui resultado à variável Python source.
+        result, _, _ = annotate_source(Path("footer.php"), source) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_php_template_starting_with_html_keeps_comments_invisible.
+        self.assertIn("<footer> <!-- " + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_php_template_starting_with_html_keeps_comments_invisible.
+        self.assertIn("<p>Rodapé</p> <!-- " + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_php_template_starting_with_html_keeps_comments_invisible.
+        self.assertNotIn("<footer> // " + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_php_template_starting_with_html_keeps_comments_invisible.
+        self.assertEqual(annotate_source(Path("footer.php"), result)[0], result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_php_template_starting_with_html_keeps_comments_invisible.
+
+    def test_css_multiline_comments_are_not_closed_by_annotations(self) -> None: # Explicação DevIN: Declara função Python test_css_multiline_comments_are_not_closed_by_annotations, com seus argumentos e lógica.
+        source = "/* Heading\n   Section title\n   ===== */\n.layout {\n  display: flex;\n}\n" # Explicação DevIN: Atribui resultado à variável Python source.
+        result, _, _ = annotate_source(Path("example.css"), source) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_css_multiline_comments_are_not_closed_by_annotations.
+        self.assertIn("/* Heading\n   Section title\n   ===== */\n", result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_css_multiline_comments_are_not_closed_by_annotations.
+        self.assertIn(".layout { /* " + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_css_multiline_comments_are_not_closed_by_annotations.
+        self.assertEqual(annotate_source(Path("example.css"), result)[0], result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_css_multiline_comments_are_not_closed_by_annotations.
+
+    def test_css_comment_state_ignores_quotes_inside_comments_and_markers_in_strings(self) -> None: # Explicação DevIN: Declara função Python test_css_comment_state_ignores_quotes_inside_comments_and_markers_in_strings, com seus argumentos e lógica.
+        source = '/* Header\n "unmatched quote\n */\n.x { content: "/*"; }\n.y { display: flex; }\n' # Explicação DevIN: Atribui resultado à variável Python source.
+        result, _, _ = annotate_source(Path("example.css"), source) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_css_comment_state_ignores_quotes_inside_comments_and_markers_in_strings.
+        self.assertIn('/* Header\n "unmatched quote\n */\n', result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_css_comment_state_ignores_quotes_inside_comments_and_markers_in_strings.
+        self.assertIn('.y { display: flex; } /* ' + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_css_comment_state_ignores_quotes_inside_comments_and_markers_in_strings.
+        self.assertEqual(annotate_source(Path("example.css"), result)[0], result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_css_comment_state_ignores_quotes_inside_comments_and_markers_in_strings.
+
     def test_comment_detection_ignores_url_and_xml_string_contents(self) -> None: # Explicação DevIN: Declara função Python test_comment_detection_ignores_url_and_xml_string_contents, com seus argumentos e lógica.
         self.assertFalse(has_inline_comment("$url = 'https://example.test/a';", "PHP")) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_comment_detection_ignores_url_and_xml_string_contents.
         quote, closes_php = php_line_state("$xml = '<?xml version=\"1.0\"?>';", None) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_comment_detection_ignores_url_and_xml_string_contents.

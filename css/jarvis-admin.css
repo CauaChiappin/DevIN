@@ -126,8 +126,8 @@
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* Correção responsiva: nenhum botão ou campo do widget pode ultrapassar o painel.
-   O textarea pode encolher; o botão de envio mantém largura fixa e só exibe a seta. /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-   Regras locais evitam alterar botões do restante do dashboard DevIN. */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   O textarea pode encolher; o botão de envio mantém largura fixa e só exibe a seta.
+   Regras locais evitam alterar botões do restante do dashboard DevIN. */
 .jarvis-admin__panel{min-width:0} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .jarvis-admin__pane, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .jarvis-admin__composer, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
