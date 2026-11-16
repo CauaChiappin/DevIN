@@ -20,7 +20,7 @@ jobs:
         run: python3 scripts/line_explanations.py --write
       - name: Registrar apenas codigo de Token 2 e testes
         run: |
-          git add php/controllers/Jarvis/Api.php php/admin_security_ai.php php/components/jarvis-admin-widget.php tests/jarvis_admin_mysql.php .github/workflows/jarvis-admin-checks.yml
+          git add php/controllers/Jarvis/Api.php php/admin_security_ai.php php/components/jarvis-admin-widget.php tests/jarvis_admin_mysql.php
           if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
