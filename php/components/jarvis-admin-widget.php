@@ -62,7 +62,7 @@ $toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED'] // Explicação 
             <div class="jarvis-admin__tasks-list" data-jarvis-tasks-list></div> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
         <section class="jarvis-admin__pane jarvis-admin__pane--tools" data-jarvis-pane="lookup" aria-label="Consultas controladas" hidden> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
-            <p class="jarvis-admin__tasks-info">Buscas administrativas limitadas. A IA não exclui nem bloqueia contas.</p> <!-- Explicação DevIN: Declara parágrafo. -->
+            <p class="jarvis-admin__tasks-info">Consultas administrativas, análise com IA e exclusão supervisionada de vagas, candidatos ou empresas quando autorizada no servidor. Toda exclusão exige confirmação humana.</p> <!-- Explicação DevIN: Declara parágrafo. -->
             <form class="jarvis-admin__tool-form" data-jarvis-lookup-form> <!-- Explicação DevIN: Declara formulário de entrada de dados. -->
                 <label>Pesquisar em <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
                     <select data-jarvis-record-kind> <!-- Explicação DevIN: Declara seleção de opções. -->
@@ -106,7 +106,7 @@ $toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED'] // Explicação 
             <div class="jarvis-admin__tool-results" data-jarvis-outbox-list></div> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
         <section class="jarvis-admin__pane jarvis-admin__pane--tools" data-jarvis-pane="audit" aria-label="Histórico de ações" hidden> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
-            <p class="jarvis-admin__tasks-info">Histórico de operações realizadas ou preparadas pelo JARVIS e aprovadas por administradores. Não há comandos automáticos de banimento ou exclusão.</p> <!-- Explicação DevIN: Declara parágrafo. -->
+            <p class="jarvis-admin__tasks-info">Histórico de operações do JARVIS; exclusões supervisionadas possuem auditoria própria no banco. Nenhuma exclusão é decidida automaticamente pela IA.</p> <!-- Explicação DevIN: Declara parágrafo. -->
             <button type="button" class="jarvis-admin__tool-refresh" data-jarvis-audit-refresh>Atualizar histórico</button> <!-- Explicação DevIN: Declara botão de ação. -->
             <p class="jarvis-admin__status" role="status" data-jarvis-audit-status></p> <!-- Explicação DevIN: Declara parágrafo. -->
             <div class="jarvis-admin__tool-results" data-jarvis-audit-list></div> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
