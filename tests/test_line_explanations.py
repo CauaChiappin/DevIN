@@ -1,4 +1,4 @@
-"""Verifica explicações estruturais, cobertura e ausência de valores sensíveis."""
+"""Verifica explicações estruturais, cobertura e ausência de valores sensíveis.""" # Explicação DevIN: Inicia ou encerra bloco de texto/documentação literal Python.
 from __future__ import annotations # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
 
 import unittest # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
@@ -127,6 +127,31 @@ class LineExplanationsTest(unittest.TestCase): # Explicação DevIN: Declara cla
         self.assertEqual(added, 1) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_multiline_template_literals_are_left_unchanged.
         self.assertGreaterEqual(skipped, 2) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_multiline_template_literals_are_left_unchanged.
 
+    def test_python_triple_quotes_inside_string_do_not_hide_following_code(self) -> None: # Explicação DevIN: Declara função Python test_python_triple_quotes_inside_string_do_not_hide_following_code, com seus argumentos e lógica.
+        source = 'pattern = r"(\\"\\"\\"|\'\'\')"\nvalue = 1\n' # Explicação DevIN: Atribui resultado à variável Python source.
+        result, _, _ = annotate_source(Path("example.py"), source) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_triple_quotes_inside_string_do_not_hide_following_code.
+        self.assertIn("value = 1 # " + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_triple_quotes_inside_string_do_not_hide_following_code.
+        self.assertEqual(annotate_source(Path("example.py"), result)[0], result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_triple_quotes_inside_string_do_not_hide_following_code.
+
+    def test_python_multiline_string_contents_remain_unchanged(self) -> None: # Explicação DevIN: Declara função Python test_python_multiline_string_contents_remain_unchanged, com seus argumentos e lógica.
+        source = 'message = """primeira\nsegunda\nterceira"""\nvalue = 1\n' # Explicação DevIN: Atribui resultado à variável Python source.
+        result, _, _ = annotate_source(Path("example.py"), source) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_multiline_string_contents_remain_unchanged.
+        self.assertIn('message = """primeira\nsegunda\nterceira"""\n', result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_multiline_string_contents_remain_unchanged.
+        self.assertIn("value = 1 # " + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_multiline_string_contents_remain_unchanged.
+        self.assertEqual(annotate_source(Path("example.py"), result)[0], result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_multiline_string_contents_remain_unchanged.
+
+    def test_python_multiline_string_retains_annotation_like_text(self) -> None: # Explicação DevIN: Declara função Python test_python_multiline_string_retains_annotation_like_text, com seus argumentos e lógica.
+        source = 'value = f"""first\ncontent # Explicação DevIN: literal\n{1}\n"""\nready = True\n' # Explicação DevIN: Atribui resultado à variável Python source.
+        result, _, _ = annotate_source(Path("example.py"), source) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_multiline_string_retains_annotation_like_text.
+        self.assertIn('value = f"""first\ncontent # Explicação DevIN: literal\n{1}\n"""\n', result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_multiline_string_retains_annotation_like_text.
+        self.assertIn("ready = True # " + ANNOTATION_MARKER, result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_multiline_string_retains_annotation_like_text.
+
+    def test_python_single_line_string_retains_annotation_like_text(self) -> None: # Explicação DevIN: Declara função Python test_python_single_line_string_retains_annotation_like_text, com seus argumentos e lógica.
+        source = 'value = "conteúdo # ' + ANNOTATION_MARKER + ' literal"\n' # Explicação DevIN: Atribui resultado à variável Python source.
+        result, _, _ = annotate_source(Path("example.py"), source) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_single_line_string_retains_annotation_like_text.
+        self.assertIn(source.rstrip(), result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_single_line_string_retains_annotation_like_text.
+        self.assertEqual(annotate_source(Path("example.py"), result)[0], result) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_single_line_string_retains_annotation_like_text.
+
 
 if __name__ == "__main__": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-    unittest.main() # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_multiline_template_literals_are_left_unchanged.
+    unittest.main() # Explicação DevIN: Continua expressão ou bloco Python pertencente a função test_python_single_line_string_retains_annotation_like_text.

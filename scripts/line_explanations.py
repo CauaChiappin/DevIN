@@ -12,10 +12,12 @@ As descrições são comentários nativos e não devem alterar a execução.
 from __future__ import annotations # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
 
 import argparse # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
+import io # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
 import json # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
 import re # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
 import subprocess # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
 import sys # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
+import tokenize # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
 from pathlib import Path # Explicação DevIN: Importa módulo, nome ou função que será utilizado neste script Python.
 
 ROOT = Path(__file__).resolve().parents[1] # Explicação DevIN: Atribui resultado à variável Python ROOT.
@@ -135,13 +137,13 @@ def lang_of(path: Path) -> str: # Explicação DevIN: Declara função Python la
 
 
 def ident(text: str, limit: int = 55) -> str: # Explicação DevIN: Declara função Python ident, com seus argumentos e lógica.
-    """Extrai identificador seguro, sem copiar literais, senhas ou conteúdo da linha."""
+    """Extrai identificador seguro, sem copiar literais, senhas ou conteúdo da linha.""" # Explicação DevIN: Inicia ou encerra bloco de texto/documentação literal Python.
     name = re.search(r"[$]?[A-Za-z_][A-Za-z0-9_.$:-]{0,65}", text) # Explicação DevIN: Atribui resultado à variável Python name.
     return (name.group(0) if name else "instrução atual")[:limit] # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
 
 def line_explanation(raw: str, language: str, previous: str) -> tuple[str, str]: # Explicação DevIN: Declara função Python line_explanation, com seus argumentos e lógica.
-    """Resumir uma linha sem reproduzir valores literais potencialmente sensíveis."""
+    """Resumir uma linha sem reproduzir valores literais potencialmente sensíveis.""" # Explicação DevIN: Inicia ou encerra bloco de texto/documentação literal Python.
     line = raw.strip() # Explicação DevIN: Atribui resultado à variável Python line.
     if not line: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
         return "Linha em branco: separa visualmente trechos do código.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
@@ -325,511 +327,523 @@ def line_explanation(raw: str, language: str, previous: str) -> tuple[str, str]:
         found = re.match(r"([A-Za-z_]\w*)\s*(?::[^=]+)?=", line) # Explicação DevIN: Atribui resultado à variável Python found.
         if found: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
             return "Atribui resultado à variável Python " + found.group(1) + ".", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
-        if line.startswith(("'''", '"""')):
-            return "Inicia ou encerra bloco de texto/documentação literal Python.", previous
-        if line.startswith(("#",)):
-            return "Comentário Python: explica ou organiza o trecho do script.", previous
-        if line.startswith("print("):
-            return "Escreve informação na saída do terminal Python.", previous
-        if line.startswith("subprocess."):
-            return "Invoca utilitário de execução de comandos do sistema por subprocesso.", previous
-        if previous != "trecho principal":
-            return "Continua expressão ou bloco Python pertencente a " + previous + ".", previous
-        return "Executa parte de uma expressão, chamada ou configuração Python.", previous
+        if line.startswith(("'''", '"""')): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            return "Inicia ou encerra bloco de texto/documentação literal Python.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+        if line.startswith(("#",)): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            return "Comentário Python: explica ou organiza o trecho do script.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+        if line.startswith("print("): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            return "Escreve informação na saída do terminal Python.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+        if line.startswith("subprocess."): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            return "Invoca utilitário de execução de comandos do sistema por subprocesso.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+        if previous != "trecho principal": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            return "Continua expressão ou bloco Python pertencente a " + previous + ".", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+        return "Executa parte de uma expressão, chamada ou configuração Python.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
     # PHP/JS/TS e trechos de código com sintaxe de programação
-    if line.startswith("<?php"):
-        return "Abre código PHP interpretado no servidor.", previous
-    if line in ("?>",):
-        return "Encerra trecho PHP e retorna ao conteúdo de marcação.", previous
-    if re.search(r"\bdeclare\s*\(\s*strict_types\s*=\s*1", line):
-        return "Habilita a verificação estrita de tipos no PHP.", previous
-    if re.match(r"^\s*namespace\s+", line):
-        return "Define o namespace para organizar classes e funções PHP.", previous
-    if re.match(r"^\s*(?:use|import|export\s+.*from)\s+", line):
-        return "Importa ou exporta dependência, nome, classe ou módulo.", previous
-    if "require_once" in line or "require " in line or "include_once" in line:
-        return "Inclui dependência PHP necessária à execução do módulo.", previous
-    match = re.search(r"\b(?:final\s+|abstract\s+)?(?:class|interface|trait|enum)\s+([A-Za-z_]\w*)", line)
-    if match:
-        return "Declara o tipo " + match.group(1) + " e inicia sua estrutura.", "tipo " + match.group(1)
-    match = re.search(r"\bfunction\s+([A-Za-z_]\w*)\s*\(", line)
-    if match:
-        return "Declara função/método " + match.group(1) + ", com seus parâmetros e comportamento.", "função " + match.group(1)
-    if re.search(r"\b(?:async\s+)?function\s*\(", line):
-        return "Define função anônima usada como operação ou callback.", "função anônima"
-    if re.search(r"\b(?:if|elseif|else\s+if)\s*\(", line):
-        return "Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.", previous
-    if re.match(r"^(?:else\b|}\s*else\b)", line):
-        return "Define ramo alternativo para condição anterior.", previous
-    if re.search(r"\b(?:for|foreach|while|switch)\s*\(", line):
-        return "Inicia repetição ou seleção de casos a partir de expressão de controle.", previous
-    if re.match(r"^(case\b|default\s*:)", line):
-        return "Define um dos caminhos possíveis de uma seleção de casos.", previous
-    if re.search(r"\btry\s*\{", line):
-        return "Inicia bloco de operação com tratamento de possíveis falhas.", previous
-    if re.search(r"\bcatch\s*\(", line):
-        return "Captura exceção ou erro para tratar a falha de execução.", previous
-    if re.search(r"\bfinally\s*\{", line):
-        return "Declara limpeza ou finalização executada ao encerrar a tentativa.", previous
-    if re.search(r"\bthrow\s+", line):
-        return "Interrompe o fluxo atual levantando exceção ou erro.", previous
-    if re.match(r"^(?:return|yield)\b", line):
-        return "Retorna ou produz resultado da função, conforme a expressão informada.", previous
-    if re.match(r"^(?:break|continue)\s*;?", line):
-        return "Controla a continuação ou saída de laço/seleção.", previous
-    if re.search(r"\.addEventListener\s*\(", line):
-        return "Registra callback para responder a uma interação ou evento do navegador.", previous
-    if re.search(r"\bfetch\s*\(", line):
-        return "Inicia solicitação HTTP assíncrona a um endereço configurado.", previous
-    if re.search(r"\b(?:json_decode|json_encode|JSON\.parse|JSON\.stringify)\s*\(", line):
-        return "Converte dados entre estrutura interna e representação JSON.", previous
-    if re.search(r"\b(?:password_hash|password_verify|hash_equals)\s*\(", line):
-        return "Executa operação criptográfica de senha ou comparação protegida.", previous
-    if re.search(r"\b(?:prepare|bind_param|execute)\s*\(", line):
-        return "Prepara, parametriza ou executa operação SQL por interface do banco.", previous
-    if re.search(r"\b(?:query|fetch_assoc|fetch_all|get_result)\s*\(", line):
-        return "Executa ou lê resultados de uma consulta ao banco.", previous
-    if re.search(r"\b(?:localStorage|sessionStorage)\.", line):
-        return "Lê ou atualiza preferências guardadas no armazenamento local do navegador.", previous
-    if re.search(r"\b(?:document|window)\.", line):
-        return "Interage com a página, elementos visíveis ou eventos do navegador.", previous
-    if re.search(r"\b(?:header|http_response_code|setcookie|session_start)\s*\(", line):
-        return "Ajusta cabeçalho, sessão ou resposta HTTP do servidor.", previous
-    if re.match(r"^(?:echo|print|printf)\b", line):
-        return "Produz saída ou conteúdo da resposta do programa.", previous
-    assign = re.match(r"^(?:const|let|var)\s+([A-Za-z_$][\w$]*)\b", line)
-    if assign:
-        return "Declara variável JavaScript " + assign.group(1) + " para reutilizar valor ou resultado.", previous
-    assign = re.match(r"^(\$[A-Za-z_]\w*)\s*=", line)
-    if assign:
-        return "Atribui um valor à variável PHP " + assign.group(1) + ".", previous
-    if re.search(r"\b(?:public|private|protected)\s+(?:static\s+)?", line):
-        return "Define membro, visibilidade ou método de uma classe.", previous
-    if re.match(r"^[$A-Za-z_.][\w.$\[\]'\"-]*\s*(?:\+?=|=>)", line):
-        return "Atribui propriedade, resultado ou associação de chave e valor.", previous
-    if line.startswith(("<", "</")):
-        return "Combina execução de código com conteúdo HTML gerado dinamicamente.", previous
-    if line in ("{", "};", "}", "})", "});", ");", "]", "],", "},", "},);"):
-        return "Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.", previous
-    if re.match(r"^[\]\}\);,]+$", line):
-        return "Finaliza expressão, lista, função ou bloco sintático.", previous
-    if line.startswith(("'", '"', chr(96))):
-        return "Declara ou continua um valor literal usado pela instrução em andamento.", previous
-    if line.startswith(("&&", "||", "?", ":", ".", "->", "=>")):
-        return "Continua a expressão lógica, encadeamento ou associação do comando anterior.", previous
-    if language == "Shell":
-        return "Executa comando de automação ou configura argumento do shell.", previous
-    if previous != "trecho principal":
-        return "Continua expressão ou bloco pertencente a " + previous + ".", previous
-    return "Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.", previous
+    if line.startswith("<?php"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Abre código PHP interpretado no servidor.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if line in ("?>",): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Encerra trecho PHP e retorna ao conteúdo de marcação.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\bdeclare\s*\(\s*strict_types\s*=\s*1", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Habilita a verificação estrita de tipos no PHP.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^\s*namespace\s+", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Define o namespace para organizar classes e funções PHP.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^\s*(?:use|import|export\s+.*from)\s+", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Importa ou exporta dependência, nome, classe ou módulo.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if "require_once" in line or "require " in line or "include_once" in line: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Inclui dependência PHP necessária à execução do módulo.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    match = re.search(r"\b(?:final\s+|abstract\s+)?(?:class|interface|trait|enum)\s+([A-Za-z_]\w*)", line) # Explicação DevIN: Atribui resultado à variável Python match.
+    if match: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Declara o tipo " + match.group(1) + " e inicia sua estrutura.", "tipo " + match.group(1) # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    match = re.search(r"\bfunction\s+([A-Za-z_]\w*)\s*\(", line) # Explicação DevIN: Atribui resultado à variável Python match.
+    if match: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Declara função/método " + match.group(1) + ", com seus parâmetros e comportamento.", "função " + match.group(1) # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:async\s+)?function\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Define função anônima usada como operação ou callback.", "função anônima" # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:if|elseif|else\s+if)\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^(?:else\b|}\s*else\b)", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Define ramo alternativo para condição anterior.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:for|foreach|while|switch)\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Inicia repetição ou seleção de casos a partir de expressão de controle.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^(case\b|default\s*:)", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Define um dos caminhos possíveis de uma seleção de casos.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\btry\s*\{", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Inicia bloco de operação com tratamento de possíveis falhas.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\bcatch\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Captura exceção ou erro para tratar a falha de execução.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\bfinally\s*\{", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Declara limpeza ou finalização executada ao encerrar a tentativa.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\bthrow\s+", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Interrompe o fluxo atual levantando exceção ou erro.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^(?:return|yield)\b", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Retorna ou produz resultado da função, conforme a expressão informada.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^(?:break|continue)\s*;?", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Controla a continuação ou saída de laço/seleção.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\.addEventListener\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Registra callback para responder a uma interação ou evento do navegador.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\bfetch\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Inicia solicitação HTTP assíncrona a um endereço configurado.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:json_decode|json_encode|JSON\.parse|JSON\.stringify)\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Converte dados entre estrutura interna e representação JSON.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:password_hash|password_verify|hash_equals)\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Executa operação criptográfica de senha ou comparação protegida.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:prepare|bind_param|execute)\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Prepara, parametriza ou executa operação SQL por interface do banco.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:query|fetch_assoc|fetch_all|get_result)\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Executa ou lê resultados de uma consulta ao banco.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:localStorage|sessionStorage)\.", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Lê ou atualiza preferências guardadas no armazenamento local do navegador.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:document|window)\.", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Interage com a página, elementos visíveis ou eventos do navegador.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:header|http_response_code|setcookie|session_start)\s*\(", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Ajusta cabeçalho, sessão ou resposta HTTP do servidor.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^(?:echo|print|printf)\b", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Produz saída ou conteúdo da resposta do programa.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    assign = re.match(r"^(?:const|let|var)\s+([A-Za-z_$][\w$]*)\b", line) # Explicação DevIN: Atribui resultado à variável Python assign.
+    if assign: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Declara variável JavaScript " + assign.group(1) + " para reutilizar valor ou resultado.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    assign = re.match(r"^(\$[A-Za-z_]\w*)\s*=", line) # Explicação DevIN: Atribui resultado à variável Python assign.
+    if assign: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Atribui um valor à variável PHP " + assign.group(1) + ".", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.search(r"\b(?:public|private|protected)\s+(?:static\s+)?", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Define membro, visibilidade ou método de uma classe.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^[$A-Za-z_.][\w.$\[\]'\"-]*\s*(?:\+?=|=>)", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Atribui propriedade, resultado ou associação de chave e valor.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if line.startswith(("<", "</")): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Combina execução de código com conteúdo HTML gerado dinamicamente.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if line in ("{", "};", "}", "})", "});", ");", "]", "],", "},", "},);"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if re.match(r"^[\]\}\);,]+$", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Finaliza expressão, lista, função ou bloco sintático.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if line.startswith(("'", '"', chr(96))): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Declara ou continua um valor literal usado pela instrução em andamento.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if line.startswith(("&&", "||", "?", ":", ".", "->", "=>")): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Continua a expressão lógica, encadeamento ou associação do comando anterior.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if language == "Shell": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Executa comando de automação ou configura argumento do shell.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if previous != "trecho principal": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return "Continua expressão ou bloco pertencente a " + previous + ".", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    return "Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.", previous # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
 
-def comment_for(language: str) -> tuple[str, str] | None:
-    """Retorna delimitadores para comentários válidos na linguagem."""
-    styles = {
-        "PHP": ("// ", ""),
-        "JavaScript": ("// ", ""),
-        "JavaScript/CommonJS": ("// ", ""),
-        "JavaScript/ESM": ("// ", ""),
-        "TypeScript": ("// ", ""),
-        "TypeScript/JSX": ("// ", ""),
-        "CSS": ("/* ", " */"),
-        "HTML": ("<!-- ", " -->"),
-        "SVG/XML": ("<!-- ", " -->"),
-        "XML": ("<!-- ", " -->"),
-        "SQL/MySQL": ("-- ", ""),
-        "YAML": ("# ", ""),
-        "Shell": ("# ", ""),
-        "Python": ("# ", ""),
-        "dotenv": ("# ", ""),
-        "Apache/.htaccess": ("# ", ""),
-        "Dockerfile": ("# ", ""),
-        "Makefile": ("# ", ""),
-    }
-    return styles.get(language)
+def comment_for(language: str) -> tuple[str, str] | None: # Explicação DevIN: Declara função Python comment_for, com seus argumentos e lógica.
+    """Retorna delimitadores para comentários válidos na linguagem.""" # Explicação DevIN: Inicia ou encerra bloco de texto/documentação literal Python.
+    styles = { # Explicação DevIN: Atribui resultado à variável Python styles.
+        "PHP": ("// ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "JavaScript": ("// ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "JavaScript/CommonJS": ("// ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "JavaScript/ESM": ("// ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "TypeScript": ("// ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "TypeScript/JSX": ("// ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "CSS": ("/* ", " */"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "HTML": ("<!-- ", " -->"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "SVG/XML": ("<!-- ", " -->"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "XML": ("<!-- ", " -->"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "SQL/MySQL": ("-- ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "YAML": ("# ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "Shell": ("# ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "Python": ("# ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "dotenv": ("# ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "Apache/.htaccess": ("# ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "Dockerfile": ("# ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+        "Makefile": ("# ", ""), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+    } # Explicação DevIN: Continua expressão ou bloco Python pertencente a função comment_for.
+    return styles.get(language) # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
 
-def strip_annotation(line: str) -> str:
-    patterns = (
-        r" ?// " + re.escape(ANNOTATION_MARKER) + r".*$",
-        r" ?/\* " + re.escape(ANNOTATION_MARKER) + r".*?\*/$",
-        r" ?<!-- " + re.escape(ANNOTATION_MARKER) + r".*? -->$",
-        r" ?-- " + re.escape(ANNOTATION_MARKER) + r".*$",
-        r" ?# " + re.escape(ANNOTATION_MARKER) + r".*$",
-    )
-    result = line.rstrip("\r\n")
-    for pattern in patterns:
-        result = re.sub(pattern, "", result)
-    return result
+def strip_annotation(line: str) -> str: # Explicação DevIN: Declara função Python strip_annotation, com seus argumentos e lógica.
+    patterns = ( # Explicação DevIN: Atribui resultado à variável Python patterns.
+        r" ?// " + re.escape(ANNOTATION_MARKER) + r".*$", # Explicação DevIN: Continua expressão ou bloco Python pertencente a função strip_annotation.
+        r" ?/\* " + re.escape(ANNOTATION_MARKER) + r".*?\*/$", # Explicação DevIN: Continua expressão ou bloco Python pertencente a função strip_annotation.
+        r" ?<!-- " + re.escape(ANNOTATION_MARKER) + r".*? -->$", # Explicação DevIN: Continua expressão ou bloco Python pertencente a função strip_annotation.
+        r" ?-- " + re.escape(ANNOTATION_MARKER) + r".*$", # Explicação DevIN: Continua expressão ou bloco Python pertencente a função strip_annotation.
+        r" ?# " + re.escape(ANNOTATION_MARKER) + r".*$", # Explicação DevIN: Continua expressão ou bloco Python pertencente a função strip_annotation.
+    ) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função strip_annotation.
+    result = line.rstrip("\r\n") # Explicação DevIN: Atribui resultado à variável Python result.
+    for pattern in patterns: # Explicação DevIN: Inicia laço Python para percorrer dados ou repetir enquanto houver condição.
+        result = re.sub(pattern, "", result) # Explicação DevIN: Atribui resultado à variável Python result.
+    return result # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
 
-def is_comment_line(line: str, language: str) -> bool:
-    stripped = line.lstrip()
-    if language in ("PHP", "JavaScript", "JavaScript/CommonJS", "JavaScript/ESM",
-                    "TypeScript", "TypeScript/JSX", "CSS"):
-        return stripped.startswith(("//", "/*", "*", "*/"))
-    if language in ("HTML", "SVG/XML", "XML"):
-        return stripped.startswith(("<!--", "<?xml"))
-    if language == "SQL/MySQL":
-        return stripped.startswith(("--", "/*", "*", "*/"))
-    if language in ("YAML", "Shell", "Python", "dotenv", "Apache/.htaccess",
-                    "Dockerfile", "Makefile"):
-        return stripped.startswith("#")
-    return False
+def is_comment_line(line: str, language: str) -> bool: # Explicação DevIN: Declara função Python is_comment_line, com seus argumentos e lógica.
+    stripped = line.lstrip() # Explicação DevIN: Atribui resultado à variável Python stripped.
+    if language in ("PHP", "JavaScript", "JavaScript/CommonJS", "JavaScript/ESM", # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    "TypeScript", "TypeScript/JSX", "CSS"): # Explicação DevIN: Continua expressão ou bloco Python pertencente a função is_comment_line.
+        return stripped.startswith(("//", "/*", "*", "*/")) # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if language in ("HTML", "SVG/XML", "XML"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return stripped.startswith(("<!--", "<?xml")) # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if language == "SQL/MySQL": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return stripped.startswith(("--", "/*", "*", "*/")) # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    if language in ("YAML", "Shell", "Python", "dotenv", "Apache/.htaccess", # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    "Dockerfile", "Makefile"): # Explicação DevIN: Continua expressão ou bloco Python pertencente a função is_comment_line.
+        return stripped.startswith("#") # Explicação DevIN: Entrega resultado ou encerra a função Python.
+    return False # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
 
-def php_line_state(line: str, quote: str | None) -> tuple[str | None, bool]:
-    """Detecta fechamento PHP fora de literais para não confundir XML/URLs."""
-    index = 0
-    while index < len(line):
-        char = line[index]
-        if quote is not None:
-            if char == "\\":
-                index += 2
-                continue
-            if char == quote:
-                quote = None
-            index += 1
-            continue
-        if line.startswith("//", index) or char == "#":
-            break
-        if line.startswith("/*", index):
-            break
-        if char in ("'", '"'):
-            quote = char
-            index += 1
-            continue
-        if line.startswith("?>", index):
-            return quote, True
-        index += 1
-    return quote, False
+def php_line_state(line: str, quote: str | None) -> tuple[str | None, bool]: # Explicação DevIN: Declara função Python php_line_state, com seus argumentos e lógica.
+    """Detecta fechamento PHP fora de literais para não confundir XML/URLs.""" # Explicação DevIN: Inicia ou encerra bloco de texto/documentação literal Python.
+    index = 0 # Explicação DevIN: Atribui resultado à variável Python index.
+    while index < len(line): # Explicação DevIN: Inicia laço Python para percorrer dados ou repetir enquanto houver condição.
+        char = line[index] # Explicação DevIN: Atribui resultado à variável Python char.
+        if quote is not None: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            if char == "\\": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                index += 2 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função php_line_state.
+                continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            if char == quote: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                quote = None # Explicação DevIN: Atribui resultado à variável Python quote.
+            index += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função php_line_state.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        if line.startswith("//", index) or char == "#": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            break # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        if line.startswith("/*", index): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            break # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        if char in ("'", '"'): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            quote = char # Explicação DevIN: Atribui resultado à variável Python quote.
+            index += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função php_line_state.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        if line.startswith("?>", index): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            return quote, True # Explicação DevIN: Entrega resultado ou encerra a função Python.
+        index += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função php_line_state.
+    return quote, False # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
 
-def has_inline_comment(line: str, language: str) -> bool:
-    """Ignora marcadores de comentário que aparecem dentro de strings."""
-    markers = {
-        "PHP": ("//", "#", "/*"),
-        "JavaScript": ("//", "/*"),
-        "JavaScript/CommonJS": ("//", "/*"),
-        "JavaScript/ESM": ("//", "/*"),
-        "TypeScript": ("//", "/*"),
-        "TypeScript/JSX": ("//", "/*"),
-        "CSS": ("/*",),
-        "SQL/MySQL": ("--", "/*"),
-        "HTML": ("<!--",),
-        "SVG/XML": ("<!--",),
-        "XML": ("<!--",),
-        "YAML": ("#",),
-        "Shell": ("#",),
-        "Python": ("#",),
-        "dotenv": ("#",),
-        "Apache/.htaccess": ("#",),
-        "Dockerfile": ("#",),
-        "Makefile": ("#",),
-    }.get(language, ())
-    quote: str | None = None
-    index = 0
-    while index < len(line):
-        char = line[index]
-        if quote is not None:
-            if char == "\\":
-                index += 2
-                continue
-            if char == quote:
-                quote = None
-            index += 1
-            continue
-        if char in ("'", '"', "`"):
-            quote = char
-            index += 1
-            continue
-        if any(line.startswith(marker, index) for marker in markers):
-            return True
-        index += 1
-    return False
+def has_inline_comment(line: str, language: str) -> bool: # Explicação DevIN: Declara função Python has_inline_comment, com seus argumentos e lógica.
+    """Ignora marcadores de comentário que aparecem dentro de strings.""" # Explicação DevIN: Inicia ou encerra bloco de texto/documentação literal Python.
+    markers = { # Explicação DevIN: Atribui resultado à variável Python markers.
+        "PHP": ("//", "#", "/*"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "JavaScript": ("//", "/*"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "JavaScript/CommonJS": ("//", "/*"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "JavaScript/ESM": ("//", "/*"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "TypeScript": ("//", "/*"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "TypeScript/JSX": ("//", "/*"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "CSS": ("/*",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "SQL/MySQL": ("--", "/*"), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "HTML": ("<!--",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "SVG/XML": ("<!--",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "XML": ("<!--",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "YAML": ("#",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "Shell": ("#",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "Python": ("#",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "dotenv": ("#",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "Apache/.htaccess": ("#",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "Dockerfile": ("#",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+        "Makefile": ("#",), # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+    }.get(language, ()) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+    quote: str | None = None # Explicação DevIN: Atribui resultado à variável Python quote.
+    index = 0 # Explicação DevIN: Atribui resultado à variável Python index.
+    while index < len(line): # Explicação DevIN: Inicia laço Python para percorrer dados ou repetir enquanto houver condição.
+        char = line[index] # Explicação DevIN: Atribui resultado à variável Python char.
+        if quote is not None: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            if char == "\\": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                index += 2 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+                continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            if char == quote: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                quote = None # Explicação DevIN: Atribui resultado à variável Python quote.
+            index += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        if char in ("'", '"', "`"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            quote = char # Explicação DevIN: Atribui resultado à variável Python quote.
+            index += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        if any(line.startswith(marker, index) for marker in markers): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            return True # Explicação DevIN: Entrega resultado ou encerra a função Python.
+        index += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função has_inline_comment.
+    return False # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
 
-def annotate_source(path: Path, source: str) -> tuple[str, int, int]:
-    """Adiciona explicações como comentários, sem tocar em linhas de dados."""
-    language = lang_of(path)
-    base_style = comment_for(language)
-    if base_style is None:
-        return source, 0, 0
+def python_source_regions(source: str) -> tuple[set[int], dict[int, int]]: # Explicação DevIN: Declara função Python python_source_regions, com seus argumentos e lógica.
+    tokens = tokenize.generate_tokens(io.StringIO(source).readline) # Explicação DevIN: Atribui resultado à variável Python tokens.
+    lines: set[int] = set() # Explicação DevIN: Atribui resultado à variável Python lines.
+    annotations: dict[int, int] = {} # Explicação DevIN: Atribui resultado à variável Python annotations.
+    fstring_starts: list[int] = [] # Explicação DevIN: Atribui resultado à variável Python fstring_starts.
+    for token in tokens: # Explicação DevIN: Inicia laço Python para percorrer dados ou repetir enquanto houver condição.
+        if token.type == tokenize.STRING and token.start[0] != token.end[0]: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            lines.update(range(token.start[0], token.end[0] + 1)) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função python_source_regions.
+        elif token.type == getattr(tokenize, "FSTRING_START", -1): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            fstring_starts.append(token.start[0]) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função python_source_regions.
+        elif token.type == getattr(tokenize, "FSTRING_END", -1) and fstring_starts: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            start = fstring_starts.pop() # Explicação DevIN: Atribui resultado à variável Python start.
+            if start != token.end[0]: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                lines.update(range(start, token.end[0] + 1)) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função python_source_regions.
+        elif token.type == tokenize.COMMENT and token.string.startswith("# " + ANNOTATION_MARKER): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            annotations[token.start[0]] = token.start[1] # Explicação DevIN: Continua expressão ou bloco Python pertencente a função python_source_regions.
+    return lines, annotations # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
-    original_lines = source.splitlines(keepends=True)
-    output: list[str] = []
-    previous = "trecho principal"
-    mode = language
-    in_php = False
-    in_script = False
-    in_style = False
-    in_css_comment = False
-    in_rcdata = ""
-    in_tag = False
-    in_template = False
-    in_python_string = ""
-    php_quote: str | None = None
-    in_heredoc = ""
-    yaml_shell_block = False
-    yaml_block_indent: int | None = None
-    added = 0
-    skipped = 0
 
-    for raw in original_lines:
-        ending = "\r\n" if raw.endswith("\r\n") else "\n" if raw.endswith("\n") else ""
-        content = strip_annotation(raw)
-        line = content.rstrip("\r\n")
-        stripped = line.strip()
-        if not stripped:
-            output.append(raw)
-            continue
-        raw = line + ending
+def annotate_source(path: Path, source: str) -> tuple[str, int, int]: # Explicação DevIN: Declara função Python annotate_source, com seus argumentos e lógica.
+    """Adiciona explicações como comentários, sem tocar em linhas de dados.""" # Explicação DevIN: Inicia ou encerra bloco de texto/documentação literal Python.
+    language = lang_of(path) # Explicação DevIN: Atribui resultado à variável Python language.
+    base_style = comment_for(language) # Explicação DevIN: Atribui resultado à variável Python base_style.
+    if base_style is None: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+        return source, 0, 0 # Explicação DevIN: Entrega resultado ou encerra a função Python.
 
-        if path.suffix.lower() in (".html", ".htm", ".svg", ".xml"):
-            if in_rcdata:
-                if re.search(r"</\s*" + re.escape(in_rcdata) + r"\s*>", line, re.I):
-                    in_rcdata = ""
-                output.append(raw)
-                skipped += 1
-                continue
-            if in_script and re.search(r"</\s*script\s*>", line, re.I):
-                in_script = False
-                output.append(raw)
-                skipped += 1
-                continue
-            if in_style and re.search(r"</\s*style\s*>", line, re.I):
-                in_style = False
-                output.append(raw)
-                skipped += 1
-                continue
-            if in_script:
-                mode = "JavaScript"
-            elif in_style:
-                mode = "CSS"
-            else:
-                mode = language
-                if in_tag:
-                    in_tag = ">" not in line
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                if re.search(r"<\s*script\b", line, re.I) and not re.search(r"</\s*script\s*>", line, re.I):
-                    in_script = True
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                if re.search(r"<\s*style\b", line, re.I) and not re.search(r"</\s*style\s*>", line, re.I):
-                    in_style = True
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                rcdata = re.search(r"<\s*(title|textarea)\b", line, re.I)
-                if rcdata and not re.search(r"</\s*" + rcdata.group(1) + r"\s*>", line, re.I):
-                    in_rcdata = rcdata.group(1)
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                if re.search(r"<\s*[A-Za-z][^>]*$", line) and not line.rstrip().endswith("/>"):
-                    in_tag = True
-                    output.append(raw)
-                    skipped += 1
-                    continue
+    original_lines = source.splitlines(keepends=True) # Explicação DevIN: Atribui resultado à variável Python original_lines.
+    output: list[str] = [] # Explicação DevIN: Atribui resultado à variável Python output.
+    previous = "trecho principal" # Explicação DevIN: Atribui resultado à variável Python previous.
+    mode = language # Explicação DevIN: Atribui resultado à variável Python mode.
+    in_php = False # Explicação DevIN: Atribui resultado à variável Python in_php.
+    in_script = False # Explicação DevIN: Atribui resultado à variável Python in_script.
+    in_style = False # Explicação DevIN: Atribui resultado à variável Python in_style.
+    in_css_comment = False # Explicação DevIN: Atribui resultado à variável Python in_css_comment.
+    in_rcdata = "" # Explicação DevIN: Atribui resultado à variável Python in_rcdata.
+    in_tag = False # Explicação DevIN: Atribui resultado à variável Python in_tag.
+    in_template = False # Explicação DevIN: Atribui resultado à variável Python in_template.
+    python_string_lines, python_annotations = python_source_regions(source) if language == "Python" else (set(), {}) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+    php_quote: str | None = None # Explicação DevIN: Atribui resultado à variável Python php_quote.
+    in_heredoc = "" # Explicação DevIN: Atribui resultado à variável Python in_heredoc.
+    yaml_shell_block = False # Explicação DevIN: Atribui resultado à variável Python yaml_shell_block.
+    yaml_block_indent: int | None = None # Explicação DevIN: Atribui resultado à variável Python yaml_block_indent.
+    added = 0 # Explicação DevIN: Atribui resultado à variável Python added.
+    skipped = 0 # Explicação DevIN: Atribui resultado à variável Python skipped.
 
-        elif path.suffix.lower() == ".php":
-            if re.match(r"^\s*<\?(?:php|=)", line):
-                in_php = True
-            mode = "PHP" if in_php else "HTML"
-            if mode == "PHP" and not in_heredoc:
-                php_quote, has_php_close = php_line_state(line, php_quote)
-            else:
-                has_php_close = False
-            if has_php_close:
-                in_php = False
-                php_quote = None
-                output.append(raw)
-                skipped += 1
-                continue
-            if mode == "HTML":
-                if in_rcdata:
-                    if re.search(r"</\s*" + re.escape(in_rcdata) + r"\s*>", line, re.I):
-                        in_rcdata = ""
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                if in_script and re.search(r"</\s*script\s*>", line, re.I):
-                    in_script = False
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                if in_style and re.search(r"</\s*style\s*>", line, re.I):
-                    in_style = False
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                if in_script:
-                    mode = "JavaScript"
-                elif in_style:
-                    mode = "CSS"
-                elif in_tag:
-                    in_tag = ">" not in line
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                elif re.search(r"<\s*script\b", line, re.I) and not re.search(r"</\s*script\s*>", line, re.I):
-                    in_script = True
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                elif re.search(r"<\s*style\b", line, re.I) and not re.search(r"</\s*style\s*>", line, re.I):
-                    in_style = True
-                    output.append(raw)
-                    skipped += 1
-                    continue
-                else:
-                    rcdata = re.search(r"<\s*(title|textarea)\b", line, re.I)
-                    if rcdata and not re.search(r"</\s*" + rcdata.group(1) + r"\s*>", line, re.I):
-                        in_rcdata = rcdata.group(1)
-                        output.append(raw)
-                        skipped += 1
-                        continue
-                    if re.search(r"<\s*[A-Za-z][^>]*$", line) and not line.rstrip().endswith("/>"):
-                        in_tag = True
-                        output.append(raw)
-                        skipped += 1
-                        continue
+    for line_number, raw in enumerate(original_lines, 1): # Explicação DevIN: Inicia laço Python para percorrer dados ou repetir enquanto houver condição.
+        if line_number in python_string_lines: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        ending = "\r\n" if raw.endswith("\r\n") else "\n" if raw.endswith("\n") else "" # Explicação DevIN: Atribui resultado à variável Python ending.
+        if language == "Python": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            annotation_column = python_annotations.get(line_number) # Explicação DevIN: Atribui resultado à variável Python annotation_column.
+            content = raw[:annotation_column].rstrip() if annotation_column is not None else raw # Explicação DevIN: Atribui resultado à variável Python content.
+        else: # Explicação DevIN: Define o caminho alternativo de uma condição anterior.
+            content = strip_annotation(raw) # Explicação DevIN: Atribui resultado à variável Python content.
+        line = content.rstrip("\r\n") # Explicação DevIN: Atribui resultado à variável Python line.
+        stripped = line.strip() # Explicação DevIN: Atribui resultado à variável Python stripped.
+        if not stripped: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        raw = line + ending # Explicação DevIN: Atribui resultado à variável Python raw.
 
-        elif path.suffix.lower() in (".yml", ".yaml"):
-            indent = len(line) - len(line.lstrip())
-            if yaml_block_indent is not None and indent <= yaml_block_indent:
-                yaml_block_indent = None
-                yaml_shell_block = False
-            if yaml_block_indent is not None:
-                if yaml_shell_block and not line.rstrip().endswith("\\"):
-                    mode = "Shell"
-                else:
-                    output.append(raw)
-                    skipped += 1
-                    continue
-            else:
-                block = re.match(r"^(\s*[^#].*?:)\s*[|>][+-]?\s*(?:#.*)?$", line)
-                if block:
-                    yaml_block_indent = len(block.group(1)) - len(block.group(1).lstrip())
-                    yaml_shell_block = bool(re.search(r"\brun\s*:", block.group(1)))
-                mode = "YAML"
+        if path.suffix.lower() in (".html", ".htm", ".svg", ".xml"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            if in_rcdata: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                if re.search(r"</\s*" + re.escape(in_rcdata) + r"\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_rcdata = "" # Explicação DevIN: Atribui resultado à variável Python in_rcdata.
+                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            if in_script and re.search(r"</\s*script\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                in_script = False # Explicação DevIN: Atribui resultado à variável Python in_script.
+                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            if in_style and re.search(r"</\s*style\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                in_style = False # Explicação DevIN: Atribui resultado à variável Python in_style.
+                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            if in_script: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                mode = "JavaScript" # Explicação DevIN: Atribui resultado à variável Python mode.
+            elif in_style: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                mode = "CSS" # Explicação DevIN: Atribui resultado à variável Python mode.
+            else: # Explicação DevIN: Define o caminho alternativo de uma condição anterior.
+                mode = language # Explicação DevIN: Atribui resultado à variável Python mode.
+                if in_tag: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_tag = ">" not in line # Explicação DevIN: Atribui resultado à variável Python in_tag.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                if re.search(r"<\s*script\b", line, re.I) and not re.search(r"</\s*script\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_script = True # Explicação DevIN: Atribui resultado à variável Python in_script.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                if re.search(r"<\s*style\b", line, re.I) and not re.search(r"</\s*style\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_style = True # Explicação DevIN: Atribui resultado à variável Python in_style.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                rcdata = re.search(r"<\s*(title|textarea)\b", line, re.I) # Explicação DevIN: Atribui resultado à variável Python rcdata.
+                if rcdata and not re.search(r"</\s*" + rcdata.group(1) + r"\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_rcdata = rcdata.group(1) # Explicação DevIN: Atribui resultado à variável Python in_rcdata.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                if re.search(r"<\s*[A-Za-z][^>]*$", line) and not line.rstrip().endswith("/>"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_tag = True # Explicação DevIN: Atribui resultado à variável Python in_tag.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
 
-        if mode == "CSS":
-            started_in_comment = in_css_comment
-            position = 0
-            while position < len(line):
-                if in_css_comment:
-                    closing = line.find("*/", position)
-                    if closing < 0:
-                        break
-                    in_css_comment = False
-                    position = closing + 2
-                    continue
-                token = re.search(r""" "(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|/\* """.strip(), line[position:])
-                if token is None:
-                    break
-                position += token.end()
-                if token.group() == "/*":
-                    in_css_comment = True
-            if started_in_comment or in_css_comment:
-                output.append(raw)
-                skipped += 1
-                continue
+        elif path.suffix.lower() == ".php": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            if re.match(r"^\s*<\?(?:php|=)", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                in_php = True # Explicação DevIN: Atribui resultado à variável Python in_php.
+            mode = "PHP" if in_php else "HTML" # Explicação DevIN: Atribui resultado à variável Python mode.
+            if mode == "PHP" and not in_heredoc: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                php_quote, has_php_close = php_line_state(line, php_quote) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            else: # Explicação DevIN: Define o caminho alternativo de uma condição anterior.
+                has_php_close = False # Explicação DevIN: Atribui resultado à variável Python has_php_close.
+            if has_php_close: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                in_php = False # Explicação DevIN: Atribui resultado à variável Python in_php.
+                php_quote = None # Explicação DevIN: Atribui resultado à variável Python php_quote.
+                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            if mode == "HTML": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                if in_rcdata: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    if re.search(r"</\s*" + re.escape(in_rcdata) + r"\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                        in_rcdata = "" # Explicação DevIN: Atribui resultado à variável Python in_rcdata.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                if in_script and re.search(r"</\s*script\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_script = False # Explicação DevIN: Atribui resultado à variável Python in_script.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                if in_style and re.search(r"</\s*style\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_style = False # Explicação DevIN: Atribui resultado à variável Python in_style.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                if in_script: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    mode = "JavaScript" # Explicação DevIN: Atribui resultado à variável Python mode.
+                elif in_style: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    mode = "CSS" # Explicação DevIN: Atribui resultado à variável Python mode.
+                elif in_tag: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_tag = ">" not in line # Explicação DevIN: Atribui resultado à variável Python in_tag.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                elif re.search(r"<\s*script\b", line, re.I) and not re.search(r"</\s*script\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_script = True # Explicação DevIN: Atribui resultado à variável Python in_script.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                elif re.search(r"<\s*style\b", line, re.I) and not re.search(r"</\s*style\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_style = True # Explicação DevIN: Atribui resultado à variável Python in_style.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                else: # Explicação DevIN: Define o caminho alternativo de uma condição anterior.
+                    rcdata = re.search(r"<\s*(title|textarea)\b", line, re.I) # Explicação DevIN: Atribui resultado à variável Python rcdata.
+                    if rcdata and not re.search(r"</\s*" + rcdata.group(1) + r"\s*>", line, re.I): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                        in_rcdata = rcdata.group(1) # Explicação DevIN: Atribui resultado à variável Python in_rcdata.
+                        output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                        skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                        continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                    if re.search(r"<\s*[A-Za-z][^>]*$", line) and not line.rstrip().endswith("/>"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                        in_tag = True # Explicação DevIN: Atribui resultado à variável Python in_tag.
+                        output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                        skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                        continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
 
-        style = comment_for(mode)
-        if style is None:
-            output.append(raw)
-            skipped += 1
-            continue
+        elif path.suffix.lower() in (".yml", ".yaml"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            indent = len(line) - len(line.lstrip()) # Explicação DevIN: Atribui resultado à variável Python indent.
+            if yaml_block_indent is not None and indent <= yaml_block_indent: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                yaml_block_indent = None # Explicação DevIN: Atribui resultado à variável Python yaml_block_indent.
+                yaml_shell_block = False # Explicação DevIN: Atribui resultado à variável Python yaml_shell_block.
+            if yaml_block_indent is not None: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                if yaml_shell_block and not line.rstrip().endswith("\\"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    mode = "Shell" # Explicação DevIN: Atribui resultado à variável Python mode.
+                else: # Explicação DevIN: Define o caminho alternativo de uma condição anterior.
+                    output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            else: # Explicação DevIN: Define o caminho alternativo de uma condição anterior.
+                block = re.match(r"^(\s*[^#].*?:)\s*[|>][+-]?\s*(?:#.*)?$", line) # Explicação DevIN: Atribui resultado à variável Python block.
+                if block: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    yaml_block_indent = len(block.group(1)) - len(block.group(1).lstrip()) # Explicação DevIN: Atribui resultado à variável Python yaml_block_indent.
+                    yaml_shell_block = bool(re.search(r"\brun\s*:", block.group(1))) # Explicação DevIN: Atribui resultado à variável Python yaml_shell_block.
+                mode = "YAML" # Explicação DevIN: Atribui resultado à variável Python mode.
+
+        if mode == "CSS": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            started_in_comment = in_css_comment # Explicação DevIN: Atribui resultado à variável Python started_in_comment.
+            position = 0 # Explicação DevIN: Atribui resultado à variável Python position.
+            while position < len(line): # Explicação DevIN: Inicia laço Python para percorrer dados ou repetir enquanto houver condição.
+                if in_css_comment: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    closing = line.find("*/", position) # Explicação DevIN: Atribui resultado à variável Python closing.
+                    if closing < 0: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                        break # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                    in_css_comment = False # Explicação DevIN: Atribui resultado à variável Python in_css_comment.
+                    position = closing + 2 # Explicação DevIN: Atribui resultado à variável Python position.
+                    continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                token = re.search(r""" "(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|/\* """.strip(), line[position:]) # Explicação DevIN: Atribui resultado à variável Python token.
+                if token is None: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    break # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+                position += token.end() # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                if token.group() == "/*": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_css_comment = True # Explicação DevIN: Atribui resultado à variável Python in_css_comment.
+            if started_in_comment or in_css_comment: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+
+        style = comment_for(mode) # Explicação DevIN: Atribui resultado à variável Python style.
+        if style is None: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
 
         # Literal bodies and continued strings are data, not source statements.
-        if in_heredoc:
-            if stripped == in_heredoc or stripped == in_heredoc + ";":
-                in_heredoc = ""
-            output.append(raw)
-            skipped += 1
-            continue
-        if php_quote is not None:
-            output.append(raw)
-            skipped += 1
-            continue
-        if in_python_string:
-            if in_python_string in line:
-                in_python_string = ""
-            output.append(raw)
-            skipped += 1
-            continue
-        if mode in ("JavaScript", "JavaScript/CommonJS", "JavaScript/ESM",
-                    "TypeScript", "TypeScript/JSX"):
-            tick_count = len(re.findall(r"(?<!\\)`", line))
-            if in_template:
-                if tick_count:
-                    in_template = False
-                output.append(raw)
-                skipped += 1
-                continue
-            if tick_count % 2:
-                in_template = True
-                output.append(raw)
-                skipped += 1
-                continue
-        if mode == "Python":
-            triple = re.search(r"(?<!\\)(\"\"\"|''')", line)
-            if triple: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-                token = triple.group(1) # Explicação DevIN: Atribui resultado à variável Python token.
-                if line.count(token) == 1: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-                    in_python_string = token # Explicação DevIN: Atribui resultado à variável Python in_python_string.
-                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+        if in_heredoc: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            if stripped == in_heredoc or stripped == in_heredoc + ";": # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                in_heredoc = "" # Explicação DevIN: Atribui resultado à variável Python in_heredoc.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        if php_quote is not None: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+        if mode in ("JavaScript", "JavaScript/CommonJS", "JavaScript/ESM", # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    "TypeScript", "TypeScript/JSX"): # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            tick_count = len(re.findall(r"(?<!\\)`", line)) # Explicação DevIN: Atribui resultado à variável Python tick_count.
+            if in_template: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                if tick_count: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                    in_template = False # Explicação DevIN: Atribui resultado à variável Python in_template.
+                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            if tick_count % 2: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+                in_template = True # Explicação DevIN: Atribui resultado à variável Python in_template.
+                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
                 continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
         if mode == "PHP" and "<<<" in line: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
             heredoc = re.search(r"<<<\s*['\"]?([A-Za-z_][A-Za-z0-9_]*)", line) # Explicação DevIN: Atribui resultado à variável Python heredoc.
             if heredoc and not re.search(r"\b" + re.escape(heredoc.group(1)) + r"\b", line[heredoc.end():]): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
                 in_heredoc = heredoc.group(1) # Explicação DevIN: Atribui resultado à variável Python in_heredoc.
-                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+                output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+                skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
                 continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
 
         if is_comment_line(line, mode): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
             continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
         if mode == "Shell" and line.rstrip().endswith("\\"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
             continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
         if mode == "Python" and line.rstrip().endswith("\\"): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
             continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
         if has_inline_comment(line, mode): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-            output.append(raw)  # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-            skipped += 1  # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-            continue  # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
         if mode == "PHP" and re.match(r"^\s*<\?(?:php)?\s*\??\s*$", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-            description, previous = line_explanation(line, mode, previous) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+            description, previous = line_explanation(line, mode, previous) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
             opening = "// " + ANNOTATION_MARKER + " " + description # Explicação DevIN: Atribui resultado à variável Python opening.
-            output.append(line + " " + opening + ending) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-            added += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+            output.append(line + " " + opening + ending) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            added += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
             continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
         if mode in ("HTML", "SVG/XML", "XML") and re.match(r"^\s*<\?xml\b", line): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
             continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
         if mode == "Python" and (line.startswith("#!") or re.match(r"^\s*#.*coding[:=]", line)): # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
-            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+            output.append(raw) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+            skipped += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
             continue # Explicação DevIN: Controla a execução do laço ou define bloco intencionalmente vazio.
 
-        description, previous = line_explanation(line, mode, previous) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-        prefix, suffix = style # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+        description, previous = line_explanation(line, mode, previous) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+        prefix, suffix = style # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
         annotated = line + " " + prefix + ANNOTATION_MARKER + " " + description + suffix # Explicação DevIN: Atribui resultado à variável Python annotated.
-        output.append(annotated + ending) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
-        added += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função line_explanation.
+        output.append(annotated + ending) # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
+        added += 1 # Explicação DevIN: Continua expressão ou bloco Python pertencente a função annotate_source.
 
     return "".join(output), added, skipped # Explicação DevIN: Entrega resultado ou encerra a função Python.
 

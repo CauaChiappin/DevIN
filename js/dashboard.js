@@ -631,7 +631,7 @@
     // Loading para qualquer formulário que realmente será enviado.
     document.querySelectorAll('form').forEach((form) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         form.addEventListener('submit', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-            if (form.matches('[data-chat-form]')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (form.matches('[data-chat-form]') || form.closest('.jarvis-admin')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             const submitter = form.querySelector('button[type="submit"]:focus, button[type="submit"]:last-of-type'); // Explicação DevIN: Declara variável JavaScript submitter para reutilizar valor ou resultado.
             if (!submitter || submitter.dataset.loading === 'true') return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             submitter.dataset.loading = 'true'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.

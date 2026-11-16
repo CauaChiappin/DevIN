@@ -8,6 +8,7 @@ const path = require('node:path'); // Explicação DevIN: Declara variável Java
 const css = fs.readFileSync(path.join(__dirname,'../css/jarvis-admin.css'),'utf8'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
 const html = fs.readFileSync(path.join(__dirname,'../php/components/jarvis-admin-widget.php'),'utf8'); // Explicação DevIN: Declara variável JavaScript html para reutilizar valor ou resultado.
 const js = fs.readFileSync(path.join(__dirname,'../js/jarvis-admin.js'),'utf8'); // Explicação DevIN: Declara variável JavaScript js para reutilizar valor ou resultado.
+const dashboardJs = fs.readFileSync(path.join(__dirname,'../js/dashboard.js'),'utf8'); // Explicação DevIN: Declara variável JavaScript dashboardJs para reutilizar valor ou resultado.
 
 function blocks(selector) { // Explicação DevIN: Declara função/método blocks, com seus parâmetros e comportamento.
   const normalized = selector.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); // Explicação DevIN: Declara variável JavaScript normalized para reutilizar valor ou resultado.
@@ -24,6 +25,10 @@ function hasRule(selector, expression) { // Explicação DevIN: Declara função
 test('envio tem somente um ícone pequeno e descrição acessível', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
   assert.match(html, /<button[^>]*type="submit"[^>]*aria-label="Enviar mensagem"[^>]*data-jarvis-send>➤<\/button>/); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
   assert.ok(js.includes("const send = $('[data-jarvis-send]');")); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('formulários do JARVIS não recebem loading genérico do dashboard', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
+  assert.match(dashboardJs, /form\.closest\(['"]\.jarvis-admin['"]\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 test('textarea encolhe e o botão mantém largura estável', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
@@ -46,6 +51,12 @@ test('seleção de conversa e botões de ação não forçam largura do painel',
   assert.ok(hasRule('.jarvis-admin__quick-actions button',/max-width\s*:\s*100%/)); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
   assert.ok(hasRule('.jarvis-admin__tool-actions button',/max-width\s*:\s*100%/)); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
   assert.match(css,/\.jarvis-admin__tabs\s*\{[^}]*overflow-x\s*:\s*auto/s); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('abas usam grade responsiva sem cortar os títulos', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
+  assert.ok(hasRule('.jarvis-admin__tabs', /grid-template-columns\s*:\s*repeat\(5,\s*minmax\(0,\s*1fr\)\)/)); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
+  assert.ok(hasRule('.jarvis-admin__tabs', /grid-template-columns\s*:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/)); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
+  assert.ok(hasRule('.jarvis-admin__tabs button', /min-width\s*:\s*0/)); // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 test('mobile permanece fullscreen e tem ajuste especial para 320px', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função hasRule.

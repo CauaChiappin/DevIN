@@ -105,6 +105,17 @@
   touch-action:none;-webkit-user-select:none;user-select:none; /* Explicação DevIN: Define tratamento de gestos de toque por meio da propriedade CSS touch-action. */
   cursor:grab;overflow:hidden; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* Ajustes locais de leitura e navegação do painel. */
+.jarvis-admin__panel{user-select:text} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.jarvis-admin__tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding:8px 8px 4px} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.jarvis-admin__tabs button{min-width:0;padding:9px 3px;font-size:12px;white-space:nowrap} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.jarvis-admin__messages{min-height:0} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.jarvis-admin__message{min-width:0} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.jarvis-admin__status:empty{min-height:0;padding:0} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+@media(max-width:400px){ /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+  .jarvis-admin__tabs{grid-template-columns:repeat(3,minmax(0,1fr))} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 .jarvis-admin__launcher>.jarvis-admin__jd-image{ /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
   display:block;width:100%;height:100%;object-fit:cover;object-position:center; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
   border-radius:50%;pointer-events:none;-webkit-user-drag:none; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
@@ -152,7 +163,7 @@
   width:38px;min-width:38px;max-width:38px;height:38px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
   padding:0;margin:0;line-height:1;white-space:nowrap; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
-.jarvis-admin__tabs button{min-width:max-content;min-height:44px} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.jarvis-admin__tabs button{min-width:0;min-height:44px} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .jarvis-admin__tabs button:disabled{opacity:.55;cursor:not-allowed} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .jarvis-admin__quick-actions button{max-width:100%;min-height:40px;white-space:normal;overflow-wrap:anywhere} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .jarvis-admin__tool-actions button{max-width:100%;white-space:normal;overflow-wrap:anywhere} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
