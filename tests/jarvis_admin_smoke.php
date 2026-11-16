@@ -3,7 +3,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 // Smoke checks sem banco, rede ou credenciais.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/AdminSkillManager.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once dirname(__DIR__) . '/php/controllers/Jarvis/ModelRouter.php';
+require_once dirname(__DIR__) . '/php/controllers/Jarvis/ModelRouter.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/JobLanguageAudit.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 function checkJarvis(bool $condition, string $message): void // Explicação DevIN: Declara função/método checkJarvis, com seus parâmetros e comportamento.
@@ -46,31 +46,31 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 } catch (InvalidArgumentException $expected) {} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
 
 
-checkJarvis(
-    JobLanguageAudit::requested('VERIFIQUE SE HA VAGAS COM O LINGUAJAR OFENSIVO/INAPROPRIAO'),
-    'reconhece pedido real do ADM incluindo grafia informal'
-);
-checkJarvis(
-    JobLanguageAudit::requested('Verifique vagas ofensivas'),
-    'reconhece ordem direta de varredura'
-);
-checkJarvis(
-    !JobLanguageAudit::requested('Como escrever uma vaga para desenvolvedor?'),
-    'nao intercepta conversa normal sobre vagas'
-);
-checkJarvis(
-    JobLanguageAudit::reviewText('Vaga para backend', 'Obrigatório saber PHP e MySQL.') === [],
-    'requisitos profissionais não devem ser tratados como ofensa'
-);
-$flagged = JobLanguageAudit::reviewText('Vaga restrita', 'Apenas homens. Candidato idiota não serve.');
-checkJarvis(count($flagged) >= 2, 'sinaliza exclusao explicita e insultos');
-$formatted = JobLanguageAudit::format([
-    'total' => 2, 'analisadas' => 2, 'sinalizadas' => 1,
-    'amostra' => [['id' => 4, 'titulo' => 'Vaga', 'indicadores' => $flagged]],
-    'parcial' => false,
-]);
-checkJarvis(str_contains($formatted, 'Vaga #4')
-    && str_contains($formatted, 'revisão humana')
-    && str_contains($formatted, 'Nenhuma vaga foi editada'),
-    'relatorio com evidencias e aviso de revisao humana');
+checkJarvis( // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    JobLanguageAudit::requested('VERIFIQUE SE HA VAGAS COM O LINGUAJAR OFENSIVO/INAPROPRIAO'), // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    'reconhece pedido real do ADM incluindo grafia informal' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+checkJarvis( // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    JobLanguageAudit::requested('Verifique vagas ofensivas'), // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    'reconhece ordem direta de varredura' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+checkJarvis( // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    !JobLanguageAudit::requested('Como escrever uma vaga para desenvolvedor?'), // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    'nao intercepta conversa normal sobre vagas' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+checkJarvis( // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    JobLanguageAudit::reviewText('Vaga para backend', 'Obrigatório saber PHP e MySQL.') === [], // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    'requisitos profissionais não devem ser tratados como ofensa' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+$flagged = JobLanguageAudit::reviewText('Vaga restrita', 'Apenas homens. Candidato idiota não serve.'); // Explicação DevIN: Atribui um valor à variável PHP $flagged.
+checkJarvis(count($flagged) >= 2, 'sinaliza exclusao explicita e insultos'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+$formatted = JobLanguageAudit::format([ // Explicação DevIN: Atribui um valor à variável PHP $formatted.
+    'total' => 2, 'analisadas' => 2, 'sinalizadas' => 1, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'amostra' => [['id' => 4, 'titulo' => 'Vaga', 'indicadores' => $flagged]], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'parcial' => false, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+checkJarvis(str_contains($formatted, 'Vaga #4') // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+    && str_contains($formatted, 'revisão humana') // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    && str_contains($formatted, 'Nenhuma vaga foi editada'), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    'relatorio com evidencias e aviso de revisao humana'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 echo "JARVIS Admin smoke: OK\\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.

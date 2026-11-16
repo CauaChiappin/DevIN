@@ -4,7 +4,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 require_once __DIR__ . '/../../controllers/Jarvis/Api.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/ConversationRepository.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/../../controllers/Jarvis/JobLanguageAudit.php';
+require_once __DIR__ . '/../../controllers/Jarvis/JobLanguageAudit.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/AdminSkillManager.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -80,32 +80,32 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     jarvisJson(503, ['success' => false, 'message' => 'Histórico indisponível. Execute a migração SQL do JARVIS.']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-$selectedSkills = AdminSkillManager::select(trim($message));
-$useHistory = false;
-$auditRequested = JobLanguageAudit::requested($message);
-if ($auditRequested) {
+$selectedSkills = AdminSkillManager::select(trim($message)); // Explicação DevIN: Atribui um valor à variável PHP $selectedSkills.
+$useHistory = false; // Explicação DevIN: Atribui um valor à variável PHP $useHistory.
+$auditRequested = JobLanguageAudit::requested($message); // Explicação DevIN: Atribui um valor à variável PHP $auditRequested.
+if ($auditRequested) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Leitura de vagas após autenticação ADM, CSRF e limite de uso.
     // Nenhum conteúdo é enviado ao provedor de IA durante esta triagem.
-    try {
-        $db = getDatabaseConnection();
-        try {
-            $audit = JobLanguageAudit::scan($db);
-        } finally {
-            $db->close();
-        }
-        $answer = JobLanguageAudit::format($audit);
-        $modelResult = [
-            'reply' => $answer,
-            'model' => 'triagem-local',
-            'provider' => 'local',
-            'fallback_used' => false,
-            'key_used' => 'nenhuma',
-        ];
-    } catch (Throwable $exception) {
-        error_log('JARVIS vacancy language audit: ' . get_class($exception));
-        jarvisJson(503, ['success' => false, 'message' => 'Não foi possível consultar as vagas agora.']);
-    }
-} else {
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            $audit = JobLanguageAudit::scan($db); // Explicação DevIN: Atribui um valor à variável PHP $audit.
+        } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+            $db->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $answer = JobLanguageAudit::format($audit); // Explicação DevIN: Atribui um valor à variável PHP $answer.
+        $modelResult = [ // Explicação DevIN: Atribui um valor à variável PHP $modelResult.
+            'reply' => $answer, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'model' => 'triagem-local', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'provider' => 'local', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'fallback_used' => false, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'key_used' => 'nenhuma', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+    } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        error_log('JARVIS vacancy language audit: ' . get_class($exception)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        jarvisJson(503, ['success' => false, 'message' => 'Não foi possível consultar as vagas agora.']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+} else { // Explicação DevIN: Define ramo alternativo para condição anterior.
 // Não confie no histórico fornecido pelo navegador: sempre use a memória do MySQL.
 $pages = ['inicio', 'candidatos', 'posts', 'reports', 'sobre', 'perfil']; // Explicação DevIN: Atribui um valor à variável PHP $pages.
 $page = $payload['page'] ?? 'inicio'; // Explicação DevIN: Atribui um valor à variável PHP $page.
@@ -150,9 +150,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         'message' => 'A IA não conseguiu responder. Consulte o log técnico do servidor.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'error_code' => 'unexpected', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
-} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.}
+} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-}
+} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
