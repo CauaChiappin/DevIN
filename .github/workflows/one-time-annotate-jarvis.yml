@@ -1,0 +1,29 @@
+name: DevIN - annotator JARVIS (one-time)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-time-annotate-jarvis.yml'
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Gerar explicacoes usando o script oficial do projeto
+        run: python3 scripts/line_explanations.py --write
+      - name: Registrar somente os 3 arquivos alterados
+        run: |
+          git add php/api/jarvis/chat.php php/controllers/Jarvis/JobLanguageAudit.php tests/jarvis_admin_smoke.php
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(jarvis): sincronizar explicacoes inline da triagem de vagas"
+            git push origin HEAD:main
+          fi
