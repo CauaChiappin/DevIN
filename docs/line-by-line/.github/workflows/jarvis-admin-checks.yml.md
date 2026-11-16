@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/jarvis-admin-checks.yml)  
 **Linguagem:** YAML  
 **Linhas de origem:** 99  
-**SHA-256 da origem:** 36a40b1698db36ca279b215c7422df9747358ced655ebee5c5187649f3039335
+**SHA-256 da origem:** 8755f1741b502df1ee03766844981a05cb29789153dc1b68c60a52d2221ddb61
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

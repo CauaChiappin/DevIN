@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/api/jarvis/conversations.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 53  
-**SHA-256 da origem:** 0368b57685da0c783525a42714d90a89d3a6b85f73d081707b2c4d70c828b846
+**SHA-256 da origem:** 0064bbc099fb588d20ebef037292b4bcb759fd03ea7053e32d8e29de7ab42d7d
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

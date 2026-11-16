@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/html/jogos/pacman.html)  
 **Linguagem:** HTML  
 **Linhas de origem:** 50  
-**SHA-256 da origem:** 08cbe28c7ce76347bf70d76f59dc1338aed756841c05a0e45db4d74a929232cc
+**SHA-256 da origem:** 69141cb603abab35a710ae1515e62e2d425d3d7ad2b085df15ccde710e22d07c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

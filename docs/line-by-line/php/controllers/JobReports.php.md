@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/JobReports.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 259  
-**SHA-256 da origem:** c34c8ca52877113da838870be596f840494327ce997fd0ab0bb942e17e5d90cb
+**SHA-256 da origem:** 98923368043ff411e8b8361ce2627143e37fe95cd784af0392b9da5c10353fab
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

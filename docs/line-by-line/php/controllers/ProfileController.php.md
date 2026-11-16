@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/ProfileController.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 321  
-**SHA-256 da origem:** 401ea8d6a3a22ab5e85a0dd77186d10fa86984b9750af5dcf2b920cfc76c6484
+**SHA-256 da origem:** 6ee21b672cd93dfaf664bf46aa6bb5d890da7b3b9bade923c589238c2f8d46cf
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/dashboard-i18n.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 1699  
-**SHA-256 da origem:** 04df71528f8fe2e71668c30400055609b0a11e308a6152d4bbbf33afc87af378
+**SHA-256 da origem:** 49742d0c84d1aa349071baee0f97bc6ed4bb0baf42d33b001348d954f1c1fc9c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/AuditService.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 91  
-**SHA-256 da origem:** 92bae81bb65a4a899d8b4893b0554d6cf6bbf30be955812d5caa9b4c602576f0
+**SHA-256 da origem:** 7acbfd88571c9a77e302ba7e8774bbc1ae8a93c93dcb008cd234ea21ef06baef
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

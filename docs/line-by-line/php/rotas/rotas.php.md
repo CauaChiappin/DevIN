@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/rotas/rotas.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 105  
-**SHA-256 da origem:** 9b81ee9d27a772233a2a34055c35904ed89aa3345b040e77dee3e97e206ea0b8
+**SHA-256 da origem:** 34f94d941a6ec6e115e7892e67e377ab2e407fb4cab880a6109fc3e2be678583
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

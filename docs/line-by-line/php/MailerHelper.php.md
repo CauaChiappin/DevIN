@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/MailerHelper.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 370  
-**SHA-256 da origem:** 4ffa02472c08c716e7da525c3753887a8e229a99ac113d461cb837ded7882dce
+**SHA-256 da origem:** f86788e38552f4be6d067476c7ce72ab765365e9d476ac7be1edb77e5f0ea963
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

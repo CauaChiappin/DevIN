@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/dashboard.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 4740  
-**SHA-256 da origem:** 70265c10a3d06771cb275b4acf8b9f4debfb85168f699c88cff3e3b9949c9208
+**SHA-256 da origem:** a4fd3e91c85139c2f8864a180b2700ed1c594086193ccff53a2475291e170774
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

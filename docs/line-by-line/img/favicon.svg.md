@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/img/favicon.svg)  
 **Linguagem:** SVG/XML  
 **Linhas de origem:** 6  
-**SHA-256 da origem:** 43bf5160e6a533917212cb52d11848ba6b6c68898a7027f445b90ce36064bc47
+**SHA-256 da origem:** da956b459f00c25aaee498f10c790c2ec95649e15179ce5eda43e6d7a653b11f
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

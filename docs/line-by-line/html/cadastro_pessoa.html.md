@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/html/cadastro_pessoa.html)  
 **Linguagem:** HTML  
 **Linhas de origem:** 129  
-**SHA-256 da origem:** 152083f8ff1ad8132ca8f31ab23415cfe3bcb72a9fffce1ff4c9807bcec896c5
+**SHA-256 da origem:** 37f976a30f7ed63d674b454e653665ff50e97251e50fce6975216a7575caae5b
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

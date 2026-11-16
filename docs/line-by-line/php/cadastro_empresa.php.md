@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/cadastro_empresa.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 346  
-**SHA-256 da origem:** 6e23bee0cf17ee6b3de46a71fc3b65d02f1a2fad4f8bc3fef0c81f8ce9bd5564
+**SHA-256 da origem:** 91c7922129c560b1c32b23cf6d08bcbadfc00ffdac1f1b05298ccd096789b8ca
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

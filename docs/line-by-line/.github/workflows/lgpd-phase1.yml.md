@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/lgpd-phase1.yml)  
 **Linguagem:** YAML  
 **Linhas de origem:** 85  
-**SHA-256 da origem:** 575c8c896056663cb8d7298da21db2fc54b0a0d881587753cbee2ab249432b57
+**SHA-256 da origem:** b0b8697546b7dd488ccb4ec4db4515f9efbedafe264ab829c7178155c3c48b23
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/mensagens_api.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 845  
-**SHA-256 da origem:** d658c2d981fda05e8a2d443e5c3ec7df5dd2b06ed37a5eb25413783f4cfc4b6b
+**SHA-256 da origem:** f0facd0ceb3d83baeec8a89bd1fc2df569c80162be7537fb1cada684871d9912
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

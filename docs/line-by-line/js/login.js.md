@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/login.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 109  
-**SHA-256 da origem:** 6bba5d7be041d01e4f9ba1962b97a3a3648cd44bc687baf1c396e1662a9ce497
+**SHA-256 da origem:** 2a66f0b3ab05998d8ccb0f2f9944340aafaf49252a9dc057e5a2f98df256e1f9
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

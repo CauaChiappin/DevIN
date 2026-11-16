@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/doom.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 263  
-**SHA-256 da origem:** 221cb25be822da96483a93bd5347c1ce97d8f4b0e89d09e361e35ea4a61214ab
+**SHA-256 da origem:** 9a2a84511c2a5ba08ab3d37eff88866e2ec43dea6942ad9f71c6bb3a548741cc
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

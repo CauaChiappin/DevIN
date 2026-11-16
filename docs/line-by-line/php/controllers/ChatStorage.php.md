@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/ChatStorage.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 140  
-**SHA-256 da origem:** 39ce5392d7c2c741d6bb2f863ac01afd8d1633070730e7745f5ccfe46371d80e
+**SHA-256 da origem:** 41db97deefd3fbd8e218f51454ab8104963f79f1da277bda05d73273b06e6d13
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/pacman.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 280  
-**SHA-256 da origem:** e5fb366681c67c60063520badd0008f3dcaa0fe47eb001afe92d415593f3a617
+**SHA-256 da origem:** cf757a8888ffa5b1fc420c1740d42b28d2319383f124e066052937cd8170d369
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/processar.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 444  
-**SHA-256 da origem:** a31f5602e3df929966dccf5bcf615095eb281a50d032a08f5b4b8f138c80ec6c
+**SHA-256 da origem:** 9dd7e86f6f9b58965225f9e282391922043e38bc3fe8e7c7ff0e0eca51b819e5
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/cadastro_pessoa.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 379  
-**SHA-256 da origem:** 11dc1b6cd81cac1d199089c3df4a78faf814d7fd64f2c0022f58e0e98d9d855f
+**SHA-256 da origem:** 73c799b91972ef66595dd3a4662e3b46ea716aa863a28fb4e07f2630a8084a1e
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

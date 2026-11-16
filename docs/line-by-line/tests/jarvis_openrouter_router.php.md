@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/tests/jarvis_openrouter_router.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 94  
-**SHA-256 da origem:** a5fccca9cda75a31a8890603c61c51283ddd454ebc51b73b6c40bed7d48b8d93
+**SHA-256 da origem:** 0680dce50b43b0887241f2adda13d0dceb2ce8695362ff88bcb5a20497f27993
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

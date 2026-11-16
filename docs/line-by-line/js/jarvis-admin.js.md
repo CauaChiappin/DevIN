@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/jarvis-admin.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 625  
-**SHA-256 da origem:** 73e3e76851de678f2b5ba607ce11b3992c39a22fe81898e825dc94ecf76d5273
+**SHA-256 da origem:** 856ee2980cf1587c6a05decc16d24e09dca9eb65b0d42bc36fba88f8491f35c2
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/curriculo.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 575  
-**SHA-256 da origem:** 181beaa5307401b929ae620ad393143179b0351f704b95ba6a78a25f9710c6a8
+**SHA-256 da origem:** 5a7de718412c9723aa02e27e9b1913a2234a03938895da1ac796315ad1137935
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

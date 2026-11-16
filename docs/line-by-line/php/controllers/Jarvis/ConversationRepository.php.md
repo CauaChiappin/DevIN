@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Jarvis/ConversationRepository.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 100  
-**SHA-256 da origem:** 66a436803378699662f075b936727fc340842f06e0c59f6e694be2a0b4f2e18e
+**SHA-256 da origem:** 1d3d98832ced1f1de9b68690fe09c80b369892c179ddbe450de9e8a54c1b699a
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

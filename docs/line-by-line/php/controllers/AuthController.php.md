@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/AuthController.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 199  
-**SHA-256 da origem:** 6efb3e9af9c449047d7066d10f2295a6cdd7d5e328c364fd0f6c66903677d959
+**SHA-256 da origem:** 3467b7b9059faed4e0b07ff32289bf413733d4afa9d0d510c4964420b094f7f2
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

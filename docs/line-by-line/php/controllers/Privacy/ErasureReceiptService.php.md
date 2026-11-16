@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/ErasureReceiptService.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 65  
-**SHA-256 da origem:** 510176b24ef39740102731dcb503ecd90a1cd443c9be0619d9890e20cec4c32d
+**SHA-256 da origem:** 652039afccdc6b605feaa6ed427477312e5fb9098d42d8945d3e0b0af3b00b2a
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

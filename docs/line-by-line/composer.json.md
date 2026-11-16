@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/composer.json)  
 **Linguagem:** JSON  
 **Linhas de origem:** 6  
-**SHA-256 da origem:** efccda6596a55556e1249d08d6e385bf2ebcbb436bbb95c4a282215aef8b6818
+**SHA-256 da origem:** bf2f9e30e7d9de9527c840db41bf1c79ea5460fd4a2c2402ca7772682afca6f1
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

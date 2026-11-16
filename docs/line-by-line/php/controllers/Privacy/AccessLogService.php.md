@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/AccessLogService.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 65  
-**SHA-256 da origem:** f03020e8347c01bd276b99f00860188c37b134244b897c3bf5bb6342a5706e50
+**SHA-256 da origem:** f73c9c13b3745d5860e5e79c94f991a439cad663fb5f90bd377f443d79db410c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Security/AdminGate.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 89  
-**SHA-256 da origem:** cf511136d3f445600505c626de908be38729a319a1fa601f2de81a179ba4ba45
+**SHA-256 da origem:** cdf42b73191170b061d3c4b26212a0c7fee4385b7b8bd88e05dc3f758a6562da
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

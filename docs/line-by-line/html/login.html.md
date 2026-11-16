@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/html/login.html)  
 **Linguagem:** HTML  
 **Linhas de origem:** 73  
-**SHA-256 da origem:** 925fb2fe8995eac45099a184f8ec94c1686b4c69d1f51768b1c7a44c523799dd
+**SHA-256 da origem:** d371b9f6753cfc1bb8ef5ead7e8a012f3f193bf31b9c70c9e04f65384df42419
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/curriculo.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 117  
-**SHA-256 da origem:** 8090dcc128068a65495fc7b0c76e9e5c9f2719d7b07b506e5aa2bc4bbe3942a4
+**SHA-256 da origem:** 9d0f05620fceec5e60a8b351db16b4fdeccec83ce1f160d6bd6af2607874b98d
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

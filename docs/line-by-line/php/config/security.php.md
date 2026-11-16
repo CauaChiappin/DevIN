@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/config/security.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 101  
-**SHA-256 da origem:** f454a9c7204347751759ae32312e8e680000c02947b357fe9fe9ca1d502cd85b
+**SHA-256 da origem:** e91c3327caf2ac75e154bb9d11fae091b7ad47ee6126a0e140768824d88a13ca
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

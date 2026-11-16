@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Jarvis/AdminSkillManager.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 83  
-**SHA-256 da origem:** ce5a4ff6720faf490c66fb301ab8c2835ef0d48b4f825f65fe520bd2e1350274
+**SHA-256 da origem:** 60e7afb62ddb9170eea5727cd8cf799eb5dac3cf1411ef8387bb0c7a50d25aa0
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

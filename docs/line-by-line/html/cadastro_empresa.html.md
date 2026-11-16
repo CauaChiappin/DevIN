@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/html/cadastro_empresa.html)  
 **Linguagem:** HTML  
 **Linhas de origem:** 128  
-**SHA-256 da origem:** 9ebb614fb90f1b79c894b6260327bb13e0e1f9a5f5e3e328fc12a7b865fc9282
+**SHA-256 da origem:** 2f766b595c56c92cbf55f01cd97aa275994626bfa100a6aad3300c5e3d1cb1b9
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

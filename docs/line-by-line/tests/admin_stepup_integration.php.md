@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/tests/admin_stepup_integration.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 106  
-**SHA-256 da origem:** a7a3d99d88fea179341f53fca0a7ca4c22c162b19a8dbd5b7058ce074171e525
+**SHA-256 da origem:** 25575895f2794b6e34b7863710aa9b62da493c29dbfca5cb5a4f4261bfc2acf6
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

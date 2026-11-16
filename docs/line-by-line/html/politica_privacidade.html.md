@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/html/politica_privacidade.html)  
 **Linguagem:** HTML  
 **Linhas de origem:** 111  
-**SHA-256 da origem:** b3e6f0eb34ff50adefc3a977c03d06fafb1687136394e87d0bc1e4b21d3dd05d
+**SHA-256 da origem:** d392580e326ec482ed6683e73b1c06812fead0e10aa79aa80ae6bfca2c2d28e1
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

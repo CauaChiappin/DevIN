@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/jarvis-dock.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 43  
-**SHA-256 da origem:** e235cdddd3b785d2dfcfabd6cb37031a4cad4d9f8a12899049f39fb2f1ef3e0f
+**SHA-256 da origem:** 0123b37d9422241436dc4a074ccf7d38076ce5886481954839525d9168d84f9e
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

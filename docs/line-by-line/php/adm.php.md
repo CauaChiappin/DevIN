@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/adm.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 728  
-**SHA-256 da origem:** 8c424612de5bc55236cdce23b66f12140d8b71b2b680cf6f3a342c6ef92bdbc4
+**SHA-256 da origem:** f8d15be57feca1d7bca1fc628d45b0a91b7ae17dfc4804410b9dacb0b9c2ac0d
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

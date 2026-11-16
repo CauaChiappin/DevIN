@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/denunciar_vaga_api.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 99  
-**SHA-256 da origem:** d0203ed1929acdfe05517cdf25a77dd439976cecac013057117abf2e8afb85b7
+**SHA-256 da origem:** 1ac648a0a959b8bc8d9b2a1332c6c10fe1a7d115673c691fa2a22ae1d469a37d
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/curriculo_onboarding.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 80  
-**SHA-256 da origem:** 5d4104f84012743ad989d6ac9a273418aefa2b18b096a76d4b6fdf800de5bf4c
+**SHA-256 da origem:** da40d009342be389f7eeaac404e760ba84d702cded6c330c5f193d1501113881
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

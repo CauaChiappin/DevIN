@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/jogos.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 233  
-**SHA-256 da origem:** 409888a9590ea95e390a42f96c8fb487f7b7403952ddaa3a23de41914c7bfe2e
+**SHA-256 da origem:** 4e9b3f8e3b0bcf3512a576cd4a6dfcd41d34aa3fb7439194b485cea6f7064a97
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

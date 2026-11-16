@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Jarvis/AdminTaskQueue.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 86  
-**SHA-256 da origem:** 70f2275cf742dea5f3efdba0279dcc92f5ff9b9b33e262f505599bb0532f632a
+**SHA-256 da origem:** 4454fecd14024e4601c0eafeae6b9a21a11ff003ea89a2824ac563010377558a
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

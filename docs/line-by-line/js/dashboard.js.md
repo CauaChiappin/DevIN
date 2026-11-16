@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/dashboard.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 879  
-**SHA-256 da origem:** 1688dfd703045acb6d906df1b662afd65e93b2cd382727ddc2f1e6d439a8f9ef
+**SHA-256 da origem:** 488cc041a67de68100f5a781ff3711adbd447c094043c431dab2fa6e9c475ccb
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/texto-rotativo-index.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 42  
-**SHA-256 da origem:** c19b9b3921e1f50dc9aa562f9b226e53e86e0f1213b9cdf6a1057e07901f9344
+**SHA-256 da origem:** d6485db677e667837a150f56bc6a2bb1383bad9f4d3fbe7e5b8f2f94572b1f20
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/recuperacao.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 63  
-**SHA-256 da origem:** 81deae9bb83cbf804f0b5887f204a49136a707d70c63f152ceb1ae79766ff193
+**SHA-256 da origem:** 62ef6f170d38dad36d41c6a7a37f75b1503ebd3e9a43fbf77e51f618806956cc
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

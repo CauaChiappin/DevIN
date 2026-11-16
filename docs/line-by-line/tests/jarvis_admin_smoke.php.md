@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/tests/jarvis_admin_smoke.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 47  
-**SHA-256 da origem:** 787860c067716971c2a76da185b4f076dc0baaa62490b9629fc9ac3dc3223d11
+**SHA-256 da origem:** 50bb10a11c582f74e627c098aba4421d1d9599b2a2eb1df482b43afa9d685da9
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

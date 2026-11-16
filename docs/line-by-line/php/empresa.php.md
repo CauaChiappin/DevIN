@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/empresa.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 917  
-**SHA-256 da origem:** 8fc7c7c017ace29f23c6666a13f086f5f683834930edb3a975625afaf6141ac1
+**SHA-256 da origem:** 6e69140403ed8a4fc889ac5906c532a764b20fb6fd1124f8083df4df5d7b49a7
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/PrivacyRequestService.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 97  
-**SHA-256 da origem:** b88909f61d517152cd9e83817d25d774ac520c317e1fb4e40c5d142f4fbf9ef6
+**SHA-256 da origem:** 6bcfdef776eb80a3e8593c0c367635142a4dc794aaff06c11554a38e873f9a5a
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

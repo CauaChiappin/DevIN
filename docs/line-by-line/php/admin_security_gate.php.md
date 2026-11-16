@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/admin_security_gate.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 87  
-**SHA-256 da origem:** 31e3b04da215cd3c5e3de8d3ec8c949cc4f8d7f50a5843843bba0e75ae957edb
+**SHA-256 da origem:** 80c6d2cd73556ae18c002db1689ad6b179637520929d310b6922a0ceefc8df56
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

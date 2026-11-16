@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/html/jogos/doom.html)  
 **Linguagem:** HTML  
 **Linhas de origem:** 50  
-**SHA-256 da origem:** 0bce55806d94cdbb0a1aa34ebd58ec08e16c8a245c894cfd3d36b726625233e8
+**SHA-256 da origem:** 5494b70218f3a56e28190bd8a65bbe515c4e7daf8991e24e2effd1247857cce6
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

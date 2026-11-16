@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/lenis-global.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 73  
-**SHA-256 da origem:** 0887bcab46f3b97c9ec7937a735b157fc2a3fb3ed81d8528586290e5a5ab4f95
+**SHA-256 da origem:** aa37f517f56a9fc655230c0bcd82b7afea15ff4ba1e88f4e10f60e3aa2720e38
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

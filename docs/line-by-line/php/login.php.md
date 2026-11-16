@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/login.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 153  
-**SHA-256 da origem:** f0cd20565802b4cd45dd69bf4fc5d94baa9ac81bf88cf1fc68f61333350d2b46
+**SHA-256 da origem:** 988fd4b5c80456dddadc993b3d3f276d5f570202605b79adfd44007def984658
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

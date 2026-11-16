@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/redefinir.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 68  
-**SHA-256 da origem:** 8dd325e8e5454f2aa9fbf88d5db6f703ba936e9d7bf26c7b4debd1d9787c7832
+**SHA-256 da origem:** b596b5dc4fe79001c85dd30b4c16df1416bb89d3db928e30204ce607371cf87b
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

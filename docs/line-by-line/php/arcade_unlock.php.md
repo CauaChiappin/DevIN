@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/arcade_unlock.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 43  
-**SHA-256 da origem:** d25ba598d4b3185ebd62acab5215cbd59abc8ad9e5085e70ba2fb2305b416183
+**SHA-256 da origem:** 0c49edff6f163fd90d1f74d15836cf554934c7ede0720c3bed64bd1095adfb28
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/ProfileLanguagePreference.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 89  
-**SHA-256 da origem:** 3dc23b7cf05a0f036aa9d9b21ff935c84483cbb627d5cd43f8caea57ab6862ac
+**SHA-256 da origem:** 3501e7a3a6f39c534dfb32063b67ffbcb0157bcc9421cd5b4f0e5799110cb0c6
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

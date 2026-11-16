@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/recuperacao.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 309  
-**SHA-256 da origem:** cb58cab3506af15f9e7112d44ca3752d69d8bf475bffd4713347991e0108689a
+**SHA-256 da origem:** 990a3bf404a207f70258f3a952479095d8c404df5e0de65ec12dac06e7db1ca7
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

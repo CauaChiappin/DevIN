@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/.github/workflows/line-documentation.yml)  
 **Linguagem:** YAML  
 **Linhas de origem:** 120  
-**SHA-256 da origem:** d93889c949f1b5f87be2311ee46d40d7426abf69a86916af06e837a996bb8ce0
+**SHA-256 da origem:** a6fd0abd0b056442d6f6ce2df0272e1a35a0d0345b8e3291400a09aa6feee009
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

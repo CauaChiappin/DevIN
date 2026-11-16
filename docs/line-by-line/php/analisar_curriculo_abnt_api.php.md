@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/analisar_curriculo_abnt_api.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 197  
-**SHA-256 da origem:** e5b33956cc86b9f1d991a3b82542300800a03143c082acc9a943ec878a1b8308
+**SHA-256 da origem:** 572db78aaf1fbf705549ce6f12bbd9f363a3c95918cf985c91ea207e58aa118a
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

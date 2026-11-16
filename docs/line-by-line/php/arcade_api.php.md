@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/arcade_api.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 225  
-**SHA-256 da origem:** 0143e26bf98512de97fb72c03ee0f45f09baf7beaa98543c4f90a3188a2725e9
+**SHA-256 da origem:** a5d1e42c223fea5f67adb2eb4da5a18bd3784689842d8e4faf67081c170d08ec
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

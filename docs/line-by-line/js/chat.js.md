@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/chat.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 707  
-**SHA-256 da origem:** 5fec17d33bd505fe322a3cd96234cf81f759ed85474cf62e685893d0c243a02a
+**SHA-256 da origem:** cca9a1a8b4e085531cbc6b5f171360b0323fc137bec289a35c4953da62993d5c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

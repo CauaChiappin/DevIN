@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/PrivacyContext.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 83  
-**SHA-256 da origem:** fe1df5d27e8f06b4bd600c7e379fa6cf3649d40b507940164f19e3bddb0a5240
+**SHA-256 da origem:** c6c5ad74c0d98a5e43b61f0e0afb9ac99b45b91d70561e77e6241a7164ccf6ec
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

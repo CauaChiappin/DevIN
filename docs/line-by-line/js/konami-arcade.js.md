@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/konami-arcade.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 77  
-**SHA-256 da origem:** af23fd6f864b6dea4cfa8c3bf435292b1ccee86dbc4d26897dba5729f1cfe01f
+**SHA-256 da origem:** c96fba038ccb2c1e755cb583060c2aeb2f9c495d77d57ae5d1d441bf4010e5c7
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

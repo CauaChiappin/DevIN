@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/config/database.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 41  
-**SHA-256 da origem:** ef57c03e519a5a720ada441caa0c722038f3deb657986e1bb53173fd3df46cb7
+**SHA-256 da origem:** 70a2941627e312e8c1ae81ce7cf93df4843260535e6b3be4a46b297fe45e5337
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

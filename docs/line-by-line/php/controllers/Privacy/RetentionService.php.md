@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/RetentionService.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 55  
-**SHA-256 da origem:** 7a20cdc7f40365e6c0069403841174a166101a58e242d8f02a61e8eb913111e0
+**SHA-256 da origem:** 505f87c7f4dacbca67ab1642af2cde945ff9d4e26dab66059004e0f2264f95b3
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

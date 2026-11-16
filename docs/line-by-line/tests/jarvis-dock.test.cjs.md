@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/tests/jarvis-dock.test.cjs)  
 **Linguagem:** JavaScript/CommonJS  
 **Linhas de origem:** 54  
-**SHA-256 da origem:** 38477a9d527a8c902320ae4e6aecace86809250184cf29a0edfa9f358791a8ea
+**SHA-256 da origem:** 34e1a5298548d438cfb04b1e3319b6d5acb2fe66b4cd13953bf7c44f311d9e85
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

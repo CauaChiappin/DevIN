@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/ResumeDocument.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 136  
-**SHA-256 da origem:** 87c2edb276e7d4732e89730b2f521965796c7177ce9d026d26e013c8b3f86f23
+**SHA-256 da origem:** 008326b86ad2cbcb6f0f014cac1960781bd3f96265109c21ccdacb0c476141fb
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

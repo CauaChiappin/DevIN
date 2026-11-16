@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/tests/admin_token2_permanent_integration.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 92  
-**SHA-256 da origem:** 26c30453c24774a7231eb7594226eecced4a2de4a237e8f11c87c314dc825a19
+**SHA-256 da origem:** b4c586cff03a9bc839a86c3a21da46e2439ed9deaa729db2fc4fda82c08782af
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

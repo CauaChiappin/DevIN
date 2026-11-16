@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Jarvis/Api.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 94  
-**SHA-256 da origem:** a974665c7b1aa34f1a620537f8ab8dea90ea43d024225b079fe4cc2a328624b2
+**SHA-256 da origem:** 813df67eab708474ee42ab6197e1bcacc2eea69d745f1dcb591cad87a973c179
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

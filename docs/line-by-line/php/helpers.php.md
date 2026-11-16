@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/helpers.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 317  
-**SHA-256 da origem:** 0938e86c9628ef122a2cc40c3b870bdcbfe5957a649e0c64420e7f0724836a89
+**SHA-256 da origem:** d88fae998ac2d139e6f014100a2afd87adcc92a975e80f71082c5e9bb7377bb2
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

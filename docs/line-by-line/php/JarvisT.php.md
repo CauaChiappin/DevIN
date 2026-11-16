@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/JarvisT.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 143  
-**SHA-256 da origem:** f02f1617c754a9ae8ce0bc45cdaf3dfab71f948f4821a8403538234823a0e299
+**SHA-256 da origem:** 18524ec1c14860a2e6e7b96d691ab3033f67e13c2ca390f4dbf38cd45816593c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

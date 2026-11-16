@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/codigo-senha.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 174  
-**SHA-256 da origem:** ea912d3fcad35fca77e72fa9a34892f36392095b62a4172fc9346b723128239b
+**SHA-256 da origem:** efb21e324b0eff5b078a3ccce2566df9a2cf414d06b8d3c10d94e01cbd43fdd1
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

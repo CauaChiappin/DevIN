@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/admin_token2.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 13  
-**SHA-256 da origem:** 2feb7af1de18a68c18d3ffed9f8a7823f16a92860369f732844ed5600cdd280b
+**SHA-256 da origem:** 5a292fae74d7feba506cba0e6a839335df4cebd5b315e6c7d7bc6ec45cf82f34
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

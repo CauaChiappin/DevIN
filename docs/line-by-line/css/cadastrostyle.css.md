@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/cadastrostyle.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 565  
-**SHA-256 da origem:** e999a82c594510b25e4eb63fbe6112f4b8a52fed7f341bc9f933739d4c3efe04
+**SHA-256 da origem:** 1f7a837e996fd014f894d1d5f073a80ab5a0961b5aa8b459465c860f84b5ca7a
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

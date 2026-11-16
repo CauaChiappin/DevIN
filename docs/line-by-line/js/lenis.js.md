@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/lenis.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 245  
-**SHA-256 da origem:** 4b82efa1e298a825f7a10df59cc6e6e5719c4df365a398c3be928206ebc35a16
+**SHA-256 da origem:** c0064b3549a20bffba40dfa034f78284506a6b5d3ccc0a871d69190d2fa2f92c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/components/jarvis-admin-widget.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 111  
-**SHA-256 da origem:** 5e7b8ca0f9d74fccc3fcdecb88956bd83597e891b19460d86ab05e7694d682b0
+**SHA-256 da origem:** 14a136ccfaa6bde5796c84c0f4498d959442eb2c07244d850fe2e8ac3267c101
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

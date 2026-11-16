@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/politica_privacidade.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 3  
-**SHA-256 da origem:** 4d87592d80b0669843abab7ec256e7530f1bd063dcbdad2384d3129e33a29680
+**SHA-256 da origem:** 61a10399dd07c1bc0b143297fa2e3f6ef9b0382bf929d0922984fa7ff0466e63
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

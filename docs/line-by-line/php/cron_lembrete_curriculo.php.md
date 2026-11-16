@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/cron_lembrete_curriculo.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 91  
-**SHA-256 da origem:** 28eb7b9538ec9e2caf1dd507bad767f194b5449a8b1db034acf40c799848dc9d
+**SHA-256 da origem:** 5f515208b6e36cc9434b398dd0cd699c89316eb10fa534c73464c9c8f3a18ed1
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

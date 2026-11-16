@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Jarvis/ModelProvider.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 210  
-**SHA-256 da origem:** ac4246fc37921b5e312bd4c92edffc70e854ebd1247e4d23030a2338d9b32ab7
+**SHA-256 da origem:** 696c025c4aafd4da36a26d88a82a7831aa5266e2987630ef460d4752e9aac869
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

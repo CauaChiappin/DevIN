@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Security/AdminToken2Enrollment.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 169  
-**SHA-256 da origem:** fe8513d5a56d273d6c75f8299b711912663c6af219260f6d5857b5a76850ce29
+**SHA-256 da origem:** 9236c1145d5f695b99b27ea97450c2b217cdf6a698b56b42c698b75c37bf8bdb
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

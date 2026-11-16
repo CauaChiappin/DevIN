@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/cadastrar_curriculo.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 242  
-**SHA-256 da origem:** 9d9be439b0fe71d471c60ed480975276b8c7ed5a8d258e24de0501f5e723270a
+**SHA-256 da origem:** 120828aedabfacbc0b34b3bfe847d74e620c631bf3e44903e5d87de194d786a5
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

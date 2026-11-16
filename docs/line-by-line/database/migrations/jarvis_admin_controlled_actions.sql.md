@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/database/migrations/jarvis_admin_controlled_actions.sql)  
 **Linguagem:** SQL/MySQL  
 **Linhas de origem:** 35  
-**SHA-256 da origem:** c54ae30b017d747eab4be482a52c84132d63fcfd729fd3aafaf59620dd87bf06
+**SHA-256 da origem:** 8498ae821a7a1ee8fa7594028e20c1d1cca8abfdcf816175d554de14ac260137
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/scripts/line_explanations.py)  
 **Linguagem:** Python  
 **Linhas de origem:** 557  
-**SHA-256 da origem:** 973b0521d6a2de00cf22271911f4fa5ca67e0047653effe74508bd6c862de6bb
+**SHA-256 da origem:** 55b432b7d1bd46daf25c54357e60381f0fc16525e82b38f681d2bb939dd87704
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

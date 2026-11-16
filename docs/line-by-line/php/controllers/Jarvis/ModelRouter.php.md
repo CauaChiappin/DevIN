@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Jarvis/ModelRouter.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 89  
-**SHA-256 da origem:** 62918b9faefe526a63a8d3f4bb52e6cdf066bfd0574c8a1cd8f542d632d862cc
+**SHA-256 da origem:** 6c85a4aefafe5ff4dacbb046080ab7c62e1a14f6aceb206af92458184f81a7c8
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

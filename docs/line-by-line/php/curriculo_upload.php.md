@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/curriculo_upload.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 212  
-**SHA-256 da origem:** 0df0c3efeec823e46e07760a965f5a128997a095f9622caad4fb63e6f7a6269b
+**SHA-256 da origem:** e3fb5ab9aaff9c2d4a58650e0fd4063990ab1a8b465df0a98206494451c71458
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/auth/Jwt.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 161  
-**SHA-256 da origem:** a93560712f8e0112a89dd2cb335471b061ad1a3ecfd6f7156bc40764d4b6d5f1
+**SHA-256 da origem:** f60415a1f53c356901f3d5e85d533ae0e95d8cff93ef2a27bd3ffa059a18e2a1
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

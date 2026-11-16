@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/redefinir.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 88  
-**SHA-256 da origem:** 0450e8d9d01465588682763a0d07ede5bc9ac55d36b52900931ade402af1e061
+**SHA-256 da origem:** 724f8759525839c36d22ce274c979288bcc3fcc01c4a616592d15e75ef213cba
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

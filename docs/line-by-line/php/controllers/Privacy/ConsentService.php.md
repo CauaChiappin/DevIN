@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/ConsentService.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 134  
-**SHA-256 da origem:** 44a57334f1cb3d9abae48d8304bc398cb1a5c51c99a11debb1dc417736e601cc
+**SHA-256 da origem:** a6c06d9a7f17000181fd2a0b70346172798b88ff852e7813ecadd91c8690c071
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

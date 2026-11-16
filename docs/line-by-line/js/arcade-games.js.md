@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/arcade-games.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 853  
-**SHA-256 da origem:** a273672b19b2acb8890aea8a539839f7505aae967b93d8dba9cac1d601275794
+**SHA-256 da origem:** eacd60cb4086a014f618f18abaea37ee55aa093377aec9f48a881967e8b76665
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

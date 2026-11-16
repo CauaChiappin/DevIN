@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/curriculo_visualizar.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 101  
-**SHA-256 da origem:** 7d08955bc32b7cdcf005b93b8451f4afc0c79f04550e88c95f68024149074def
+**SHA-256 da origem:** d99fb81c6589225efbd7e181a864dadf062150b4bc5621bcfd4d75eef41f6e70
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

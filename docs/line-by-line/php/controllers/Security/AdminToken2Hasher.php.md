@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Security/AdminToken2Hasher.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 36  
-**SHA-256 da origem:** c462a0325f0238f0ac3f5b09187519a61142163f94f2300c90123c54b35d0a5b
+**SHA-256 da origem:** 86f4f8b0a92357a67bbced0aa5892adbfa3e9c8998e752aa5f230014adfed749
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

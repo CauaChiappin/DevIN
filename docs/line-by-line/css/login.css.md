@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/login.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 252  
-**SHA-256 da origem:** 57f03e6eb245e14e09233e513985257c54b944d7705a0a9bdda5e57603f0c9b9
+**SHA-256 da origem:** 8a7d871bf79c06b2531cbd2153d64bf4b3d038792d36fc22c5a251a2c5d9ceae
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

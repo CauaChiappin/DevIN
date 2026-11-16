@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/.env.example)  
 **Linguagem:** dotenv  
 **Linhas de origem:** 110  
-**SHA-256 da origem:** 594e0a384a0e0585c07707d85661c2fe6b8a950278c6b0e9e3819aa7aa6b6160
+**SHA-256 da origem:** 91823d4636a9b9120bcbf9bfbdeb936b26a337195cf503c9c76322f047fc1c2f
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

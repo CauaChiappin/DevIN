@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/gerar_curriculo_api.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 230  
-**SHA-256 da origem:** 8ffba35fd50d168368c924a339c596a96a8b2279a21dbae82df126ca106c9983
+**SHA-256 da origem:** d3e8a490c83bb5db118039f3688a327042a214f9afd6bacf13e4c6b4c006157b
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

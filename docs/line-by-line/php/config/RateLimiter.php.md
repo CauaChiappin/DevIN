@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/config/RateLimiter.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 81  
-**SHA-256 da origem:** c328a28837ae339d34f48a6cdf0e4d5ea02287dd83a995a01d7c412770d320e2
+**SHA-256 da origem:** 197659523c4daf2c89ab3dcb8cb56cdb4bb0a265fa79ca2b61e20dbac8ff264c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

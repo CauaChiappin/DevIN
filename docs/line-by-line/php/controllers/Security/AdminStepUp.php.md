@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Security/AdminStepUp.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 243  
-**SHA-256 da origem:** 07fd816f0d8bed96ace00d5ab5d8e27f381575152ff5a8f418f2dad106a988b1
+**SHA-256 da origem:** e0c92709c58b5ac11b770677a552274c2e562697a9f83791c367d20b333d9d8c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

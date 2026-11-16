@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Jarvis/JarvisAdminRecords.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 115  
-**SHA-256 da origem:** 536fc234290dbd6e0b1dea5be5de9afad908cf9f3154f0f3377a9ded4b4e7054
+**SHA-256 da origem:** b049503ecba5681fcecca305d7e20d347b66b158d31bfd80fe2210eebb99353e
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

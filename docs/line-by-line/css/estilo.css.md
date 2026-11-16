@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/estilo.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 109  
-**SHA-256 da origem:** 3eb975027d50fa6fb6f4f7a66d02852e0e3d440b4cd3a0eaa44f08c2df55e699
+**SHA-256 da origem:** 148bdf9d280dd295c3302a8af248be0b57095c282014a74a788e8e0bbd932350
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

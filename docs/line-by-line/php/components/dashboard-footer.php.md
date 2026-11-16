@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/components/dashboard-footer.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 42  
-**SHA-256 da origem:** 513b3d0dbde0b369c1cd90b6d63b8501cd14d06a28cb15234d50c125bf30e370
+**SHA-256 da origem:** c9d7b6778bdabac37b92f3beba503d13d243cbbac32421bdabcfa683f4aaa4c0
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

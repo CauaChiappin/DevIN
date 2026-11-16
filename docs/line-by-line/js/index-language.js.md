@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/index-language.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 141  
-**SHA-256 da origem:** 7d3f6748764eb4074b9f13beb84dc125cd6327b4a6989a9515c5967c867fbcc8
+**SHA-256 da origem:** 0506e3b9c2205093f3332c309ddc14724f6eac88fc737116b34aa4969618d466
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/api/jarvis/chat.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 159  
-**SHA-256 da origem:** bc16caf574eab1f6ec4a5e9b1e8f5b37ca7201e748e35e716b07263f0b4e0b0e
+**SHA-256 da origem:** a6f2b07c1cf1035627709ad585d099fa5218ec680aa80806dcbfd9d43903357a
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

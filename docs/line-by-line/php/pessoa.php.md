@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/pessoa.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 863  
-**SHA-256 da origem:** 25f91eeb10ade04b15dfab88f5f0f3da489f1fc18d262b46bc1f0dac7de770ed
+**SHA-256 da origem:** e347d0db438e20ed9f966a786a473f260a85359ae2b6f169f35c1e5fcbf1466f
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

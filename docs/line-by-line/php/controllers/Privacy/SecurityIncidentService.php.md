@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/SecurityIncidentService.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 38  
-**SHA-256 da origem:** b9be5ad84c5e6c0b859f320839257aecf98eedfc5d092b5323dd40015a3c050d
+**SHA-256 da origem:** fffe90d9b2d15b40dd1596e6ef8ed9b7828e915f30272ac5d724335d55c533bb
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

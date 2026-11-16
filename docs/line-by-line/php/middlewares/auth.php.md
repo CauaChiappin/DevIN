@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/middlewares/auth.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 162  
-**SHA-256 da origem:** 159a4e4180244c8c808294002833475159c4fd4cdf81e91f24f778354a783da5
+**SHA-256 da origem:** f70c3064cddfb3251bed89f08066ee9ae910455e0241a35f149c8e9a68a414e0
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/api/jarvis/tasks.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 53  
-**SHA-256 da origem:** 5356ab999ec3e7e06736917da52666a23c0538c748eaabeb7248d2df72be99ad
+**SHA-256 da origem:** ca4b0917dce46a14a4b7c706b9fd25d5a2b50cf70425628f1e0070b5283a3b96
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

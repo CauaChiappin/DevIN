@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/chat.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 969  
-**SHA-256 da origem:** 1abf51897fd3e9e3b42e10abdd695086275fffe92f919075313012f64544eb0c
+**SHA-256 da origem:** 0fb939c9431ea3604c702c2123491a6c0acd8f63c6c26d13b149d2486c30a6a1
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

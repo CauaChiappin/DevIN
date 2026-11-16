@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/cadastro.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 149  
-**SHA-256 da origem:** 82ebb067603664ff83bde302258292c3ec639f9885f0eb52da31ceb9a9576c62
+**SHA-256 da origem:** 385c5b54426d6eead634b7fee49e8a2e8d647e135d87c264ba3bed0af7d96b62
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

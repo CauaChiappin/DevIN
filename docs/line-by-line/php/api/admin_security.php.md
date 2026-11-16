@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/api/admin_security.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 83  
-**SHA-256 da origem:** 838228cb176c3a9296dc979f1555807bec327bd6669b748c01522e31f8536ce1
+**SHA-256 da origem:** 24b4d89e0aa6b10de1b0cab0c1befcacb4bfc11ce35d84078f74627e9f8ec5e2
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

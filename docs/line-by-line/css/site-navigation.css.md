@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/site-navigation.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 68  
-**SHA-256 da origem:** 1cdcf6e88f05627bfbd16e9bdb1dd002282e7c67ae9a5ba1508df8e144730949
+**SHA-256 da origem:** 6dc8a19828cc5c0e277f5b3fceb84d1e4c63db1f6c28837011b2ff2b655db650
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/scripts/provision-admin-token2.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 13  
-**SHA-256 da origem:** de45ea48b40ac9637d093ad266c3af4656e61a3492aed7a36ab79663b8b8970c
+**SHA-256 da origem:** 11f968e6a6f4ff5b849183276cf1f645f59f299b438d872dd48dfebb3b14761d
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/css/jarvis-admin.css)  
 **Linguagem:** CSS  
 **Linhas de origem:** 170  
-**SHA-256 da origem:** 642326c44e8100c643749a82ef751af1e1912873893986230e3ad038ba2c1e60
+**SHA-256 da origem:** 1a5cc151267a719c58e9f4fb05fc2779f1bf51fdd7f2bf6cc40aaa186a1f1dc0
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

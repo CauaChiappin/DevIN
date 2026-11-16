@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/lenis-smooth.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 18  
-**SHA-256 da origem:** 956adef89a9349eb19557e19efa8559c3ea90b42fd4ed9c0ab904062839f3d1b
+**SHA-256 da origem:** 00385b501eecd28f98c4b03a9c9eb44fa8a1135829dae2d28d1cce47c1bc670b
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/Privacy/LegalDocumentService.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 76  
-**SHA-256 da origem:** ba26f58442ff0fb44d61b46f73bc22b91ff44f0bba1188a8aba1290f4c4ad8f7
+**SHA-256 da origem:** 990ddfc31a8d10c3fbaa81d08a2c8ee14b256dd3abcc63a00401aa3504127909
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

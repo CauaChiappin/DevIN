@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/config/auth.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 50  
-**SHA-256 da origem:** 38c588005da061ce502422056c4086a76d7f00fa3c81a511bb8c38176ea859f7
+**SHA-256 da origem:** 5fce9c050427f081eb922f3c6dd23625b54e840160170302da0a1ca874a9c9ec
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

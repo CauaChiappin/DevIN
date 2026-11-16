@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/JobSchema.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 172  
-**SHA-256 da origem:** 0c6a38474b9b924b4a63a3714fb3657159a4fcb7187eac25984d36081dd1199a
+**SHA-256 da origem:** ed8614280a95568c32f79c6a0452e30388ba7ae4b165dc32ee173f2a0e01e2f4
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

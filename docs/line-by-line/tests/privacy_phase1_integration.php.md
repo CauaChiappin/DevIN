@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/tests/privacy_phase1_integration.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 103  
-**SHA-256 da origem:** 35ac5a1e35a1a8de91945b43ba672111c5e1fe876ab951d4074f533c374a05c1
+**SHA-256 da origem:** fa93b231968ef1401ce5dcee3c7af3b8c2ce31a728ed7c2182700dd8c9bf402c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

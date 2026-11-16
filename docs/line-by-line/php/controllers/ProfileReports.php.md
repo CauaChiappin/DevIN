@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/controllers/ProfileReports.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 271  
-**SHA-256 da origem:** 1e9bc6e04a4124a60bec2b83ad4927680f81c5964a71eb07ce33f5dd47e9cc6f
+**SHA-256 da origem:** f168cc5434bd367b80145e0be4d401ae0b07251064c9eecff2d3c5aa2fe66959
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

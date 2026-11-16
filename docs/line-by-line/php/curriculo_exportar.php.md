@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/curriculo_exportar.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 119  
-**SHA-256 da origem:** 648c5d072bc7cb60e6cbdd627275b91ea748b4f070b7ebf92c65f6313fb548d9
+**SHA-256 da origem:** 628a31d01267c79a2e075599835e48ce7285cd8d3dbbde800424a98425e5eddc
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

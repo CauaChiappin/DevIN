@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/recuperacao.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 83  
-**SHA-256 da origem:** 61d99eb513817e37de18191758a56a9bc999364419f6e14391bf5950e671a1ce
+**SHA-256 da origem:** aafa9ac923bf7f1914592e0e343c4331101aa70103f764485b9680c4dee3725e
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

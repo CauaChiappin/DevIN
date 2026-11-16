@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/csrf.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 24  
-**SHA-256 da origem:** e1099d4219d61c81e3db4895862de511d592f64f9e45d0a15887658f61a9c5b4
+**SHA-256 da origem:** a730acd7a901106e2f9d30956d3fb37d5d1c9121c599778b472c09b3b97f3c3c
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

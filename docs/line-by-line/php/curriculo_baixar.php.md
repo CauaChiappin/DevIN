@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/curriculo_baixar.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 30  
-**SHA-256 da origem:** dee5e53838c516f0576a2857a78ba18bff0162dbec5155132a3f34f3bb7783cf
+**SHA-256 da origem:** 9b32a65096f836559cb9afab2ec730681eeecf7b886f2812e17047f400fc82b6
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

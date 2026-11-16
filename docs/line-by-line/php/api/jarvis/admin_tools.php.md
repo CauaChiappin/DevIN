@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/api/jarvis/admin_tools.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 157  
-**SHA-256 da origem:** fe9fa36fdf8430063ec2177afd759f215d364cc42d932297aa94b6978106a3ac
+**SHA-256 da origem:** 4ea060c2a660af973a8dd85de41b20ae829496019edfe4af3f25256abe4d1ef1
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

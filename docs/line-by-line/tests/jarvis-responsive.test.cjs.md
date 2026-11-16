@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/tests/jarvis-responsive.test.cjs)  
 **Linguagem:** JavaScript/CommonJS  
 **Linhas de origem:** 56  
-**SHA-256 da origem:** 448015f786ad5ed35d99c165311ab432ed676e58589bb3eeec8352df3dbbe6bf
+**SHA-256 da origem:** a842711f78c38c9dee715312141a3f8538260794b9ecf1c04e3c64c67cb672eb
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

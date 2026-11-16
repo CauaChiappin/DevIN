@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/database/migrations/2026_11_09_001_lgpd_foundation.sql)  
 **Linguagem:** SQL/MySQL  
 **Linhas de origem:** 151  
-**SHA-256 da origem:** a605409a66be9a78404b7335feceb5995bdc488ce93dc411442048d8189119e1
+**SHA-256 da origem:** 3f737b7add30893e4ae5cd7eaee7c5242866d1470b9205a57581dd59c1503820
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/site-navigation.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 75  
-**SHA-256 da origem:** eb805077299a36f07aba34ab230a53e07fab04df648f1728bdf56cf12493d459
+**SHA-256 da origem:** aec5869fbac8dbfe00de52558b9eb180027e877252551a26a9932fddafd87b75
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/js/curriculo-abnt.js)  
 **Linguagem:** JavaScript  
 **Linhas de origem:** 67  
-**SHA-256 da origem:** f33837aa9a4a951c9ab27670b10a832877ad2b46c4353cd57f9da5ed4b7755d8
+**SHA-256 da origem:** df7ac4be91424143dd955816178c9ba1017ae07c2781d34f886336c820c01277
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.

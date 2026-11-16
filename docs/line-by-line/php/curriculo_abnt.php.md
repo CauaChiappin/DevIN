@@ -3,7 +3,7 @@
 **Arquivo original:** [abrir código no GitHub](https://github.com/CauaChiappin/DevIN/blob/main/php/curriculo_abnt.php)  
 **Linguagem:** PHP  
 **Linhas de origem:** 46  
-**SHA-256 da origem:** 1cce376d9d3a45058dacb1a342d2096dd881c4687379f210199e06f84dad98f5
+**SHA-256 da origem:** cc0c655a721507faf56286e289613b10a1b3581fe2db890534887415775a1843
 
 > Descrições iniciais produzidas automaticamente, linha a linha, por regras de sintaxe.
 > Explicações de comportamento complexo ou ambíguo exigem revisão técnica humana.
