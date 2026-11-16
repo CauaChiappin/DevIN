@@ -1,65 +1,65 @@
-:root { --bg: #f8f7f2; --blue: #004a94; --text: #111827; --muted: #4b5563; --white: #ffffff; --line: #e3e1d9; }
+:root { --bg: #f8f7f2; --blue: #004a94; --text: #111827; --muted: #4b5563; --white: #ffffff; --line: #e3e1d9; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-html, body { max-width: 100%; overflow-x: hidden; }
-body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', Arial, sans-serif; }
-a { text-decoration: none; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+html, body { max-width: 100%; overflow-x: hidden; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', Arial, sans-serif; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+a { text-decoration: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.cabecalho-site { width: min(1160px, calc(100% - 48px)); height: 83px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-.marca { color: var(--text); font-size: 28px; font-weight: 700; }
-.marca span, footer span { color: var(--blue); }
-.cabecalho-site .site-menu { display: flex; align-items: center; gap: 12px; }
-.language-picker { display: inline-flex; }
-.voltar { min-height: 40px; display: inline-flex; align-items: center; padding: 0 20px; border: 1px solid rgba(0, 74, 148, .3); border-radius: 999px; color: var(--blue); font-size: 14px; font-weight: 600; transition: .2s ease; }
-.voltar:hover { color: var(--white); background: var(--blue); border-color: var(--blue); }
+.cabecalho-site { width: min(1160px, calc(100% - 48px)); height: 83px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.marca { color: var(--text); font-size: 28px; font-weight: 700; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.marca span, footer span { color: var(--blue); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.cabecalho-site .site-menu { display: flex; align-items: center; gap: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.language-picker { display: inline-flex; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.voltar { min-height: 40px; display: inline-flex; align-items: center; padding: 0 20px; border: 1px solid rgba(0, 74, 148, .3); border-radius: 999px; color: var(--blue); font-size: 14px; font-weight: 600; transition: .2s ease; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.voltar:hover { color: var(--white); background: var(--blue); border-color: var(--blue); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.pagina-politica { width: min(1160px, calc(100% - 48px)); margin: 24px auto 96px; }
+.pagina-politica { width: min(1160px, calc(100% - 48px)); margin: 24px auto 96px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.hero-politica { position: relative; overflow: hidden; padding: 64px 56px; border-radius: 32px; color: var(--white); background: linear-gradient(125deg, #003a76 0%, #0a5cb5 100%); box-shadow: 0 24px 50px rgba(0, 74, 148, .22); }
-.hero-politica::before, .hero-politica::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .14); pointer-events: none; }
-.hero-politica::before { width: 380px; height: 380px; right: -90px; top: -150px; }
-.hero-politica::after { width: 240px; height: 240px; right: 120px; bottom: -150px; }
-.eyebrow { display: inline-block; margin: 0 0 16px; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, .14); font-size: 12px; font-weight: 700; letter-spacing: .12em; }
-h1 { margin: 0; font-size: clamp(34px, 5vw, 54px); line-height: 1.1; font-weight: 600; }
-.hero-politica > p:not(.eyebrow) { max-width: 640px; margin: 20px 0 22px; font-size: 18px; line-height: 1.6; opacity: .92; }
-.hero-politica small { display: inline-block; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .22); opacity: .85; font-size: 13px; }
+.hero-politica { position: relative; overflow: hidden; padding: 64px 56px; border-radius: 32px; color: var(--white); background: linear-gradient(125deg, #003a76 0%, #0a5cb5 100%); box-shadow: 0 24px 50px rgba(0, 74, 148, .22); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.hero-politica::before, .hero-politica::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .14); pointer-events: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.hero-politica::before { width: 380px; height: 380px; right: -90px; top: -150px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.hero-politica::after { width: 240px; height: 240px; right: 120px; bottom: -150px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.eyebrow { display: inline-block; margin: 0 0 16px; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, .14); font-size: 12px; font-weight: 700; letter-spacing: .12em; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+h1 { margin: 0; font-size: clamp(34px, 5vw, 54px); line-height: 1.1; font-weight: 600; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.hero-politica > p:not(.eyebrow) { max-width: 640px; margin: 20px 0 22px; font-size: 18px; line-height: 1.6; opacity: .92; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.hero-politica small { display: inline-block; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .22); opacity: .85; font-size: 13px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.politica-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 32px; margin-top: 32px; align-items: start; }
+.politica-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 32px; margin-top: 32px; align-items: start; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.indice-politica { position: sticky; top: 24px; display: grid; gap: 4px; padding: 22px; border: 1px solid var(--line); border-radius: 24px; background: var(--white); }
-.indice-politica h2 { margin: 0 0 10px; color: var(--muted); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
-.indice-politica a { padding: 10px 12px; border-radius: 12px; color: var(--text); font-size: 14px; font-weight: 500; transition: .2s ease; }
-.indice-politica a:hover { background: rgba(0, 74, 148, .08); color: var(--blue); }
+.indice-politica { position: sticky; top: 24px; display: grid; gap: 4px; padding: 22px; border: 1px solid var(--line); border-radius: 24px; background: var(--white); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.indice-politica h2 { margin: 0 0 10px; color: var(--muted); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.indice-politica a { padding: 10px 12px; border-radius: 12px; color: var(--text); font-size: 14px; font-weight: 500; transition: .2s ease; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.indice-politica a:hover { background: rgba(0, 74, 148, .08); color: var(--blue); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.conteudo-politica { display: grid; gap: 16px; }
-.conteudo-politica section { display: grid; grid-template-columns: auto 1fr; gap: 24px; padding: 32px 36px; border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 22px; background: var(--white); transition: box-shadow .2s ease, transform .2s ease; }
-.conteudo-politica section:hover { box-shadow: 0 16px 34px rgba(0, 74, 148, .1); transform: translateY(-2px); }
-.numero { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: rgba(0, 74, 148, .09); color: var(--blue); font-size: 15px; font-weight: 700; }
-.conteudo-politica h2 { margin: 2px 0 10px; color: var(--text); font-size: 20px; font-weight: 600; }
-.conteudo-politica p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
+.conteudo-politica { display: grid; gap: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.conteudo-politica section { display: grid; grid-template-columns: auto 1fr; gap: 24px; padding: 32px 36px; border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 22px; background: var(--white); transition: box-shadow .2s ease, transform .2s ease; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.conteudo-politica section:hover { box-shadow: 0 16px 34px rgba(0, 74, 148, .1); transform: translateY(-2px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.numero { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: rgba(0, 74, 148, .09); color: var(--blue); font-size: 15px; font-weight: 700; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.conteudo-politica h2 { margin: 2px 0 10px; color: var(--text); font-size: 20px; font-weight: 600; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.conteudo-politica p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.8; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.aviso-lgpd { margin-top: 8px; padding: 24px 28px; border: 1px solid rgba(0, 74, 148, .18); border-radius: 22px; background: #edf5ff; }
-.aviso-lgpd strong { color: var(--blue); font-size: 15px; }
-.aviso-lgpd p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.aviso-lgpd { margin-top: 8px; padding: 24px 28px; border: 1px solid rgba(0, 74, 148, .18); border-radius: 22px; background: #edf5ff; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.aviso-lgpd strong { color: var(--blue); font-size: 15px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.aviso-lgpd p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-footer { padding: 28px 24px; border-top: 1px solid var(--line); color: #555; font-size: 13px; text-align: center; }
+footer { padding: 28px 24px; border-top: 1px solid var(--line); color: #555; font-size: 13px; text-align: center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-@media (max-width: 960px) {
-    .politica-layout { grid-template-columns: 1fr; }
-    .indice-politica { position: static; grid-template-columns: 1fr 1fr; }
-    .indice-politica h2 { grid-column: 1 / -1; }
-}
+@media (max-width: 960px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .politica-layout { grid-template-columns: 1fr; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .indice-politica { position: static; grid-template-columns: 1fr 1fr; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .indice-politica h2 { grid-column: 1 / -1; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (max-width: 720px) {
-    .cabecalho-site { display: grid; grid-template-columns: 1fr auto; gap: 10px; height: 72px; width: calc(100% - 32px); }
-    .marca { font-size: 25px; }
-    .cabecalho-site .site-menu-toggle { justify-self: end; }
-    .cabecalho-site .site-menu { display: none; grid-column: 1 / -1; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 0 0 16px 16px; background: var(--bg); position: relative; z-index: 20; }
-    .cabecalho-site .site-menu.is-open { display: grid; }
-    .cabecalho-site .voltar { justify-content: center; width: 100%; }
-    .pagina-politica { width: calc(100% - 28px); margin-top: 16px; }
-    .hero-politica { padding: 40px 26px; border-radius: 24px; }
-    .hero-politica > p:not(.eyebrow) { font-size: 16px; }
-    .indice-politica { grid-template-columns: 1fr; }
-    .conteudo-politica section { grid-template-columns: 1fr; gap: 14px; padding: 24px 22px; }
-}
+@media (max-width: 720px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .cabecalho-site { display: grid; grid-template-columns: 1fr auto; gap: 10px; height: 72px; width: calc(100% - 32px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .marca { font-size: 25px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cabecalho-site .site-menu-toggle { justify-self: end; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cabecalho-site .site-menu { display: none; grid-column: 1 / -1; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 0 0 16px 16px; background: var(--bg); position: relative; z-index: 20; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cabecalho-site .site-menu.is-open { display: grid; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cabecalho-site .voltar { justify-content: center; width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .pagina-politica { width: calc(100% - 28px); margin-top: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .hero-politica { padding: 40px 26px; border-radius: 24px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .hero-politica > p:not(.eyebrow) { font-size: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .indice-politica { grid-template-columns: 1fr; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .conteudo-politica section { grid-template-columns: 1fr; gap: 14px; padding: 24px 22px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */

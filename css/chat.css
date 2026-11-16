@@ -1,969 +1,969 @@
-.dashboard-shell.page-mensagens {
-    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-}
-
-.dashboard-shell.page-mensagens .lista-area {
-    display: flex;
-    height: 100vh;
-    min-height: 0;
-    padding: 0;
-    overflow: hidden;
-    background: #f7f5f0;
-}
-
-.page-mensagens .detalhe-area {
-    display: none;
-}
-
-.chat-app {
-    display: grid;
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
-    grid-template-columns: minmax(250px, 31%) minmax(0, 1fr);
-    overflow: hidden;
-    border: 1px solid #d8dedf;
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(11, 20, 26, .08);
-}
-
-.chat-contacts {
-    display: flex;
-    min-width: 0;
-    min-height: 0;
-    flex-direction: column;
-    padding: 16px 0 8px;
-    border-right: 1px solid #e5e8e9;
-    background: #fff;
-}
-
-.chat-contacts h1 {
-    margin: 0;
-    color: var(--blue);
-    font-family: Georgia, serif;
-    font-size: 22px;
-}
-
-.chat-contacts-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin: 0 16px 14px;
-}
-
-.chat-unread-total,
-.chat-contact-unread {
-    display: inline-grid;
-    min-width: 21px;
-    height: 21px;
-    flex: 0 0 auto;
-    place-items: center;
-    padding: 0 6px;
-    border-radius: 999px;
-    background: var(--blue);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.chat-notification {
-    min-height: 0;
-    margin: 0;
-    color: #b4232d;
-    font-size: 11px;
-    line-height: 1.4;
-}
-
-.chat-notification:empty {
-    display: none;
-}
-
-.chat-unread-total[hidden] {
-    display: none;
-}
-
-.chat-search {
-    display: block;
-    margin: 0 12px 8px;
-}
-
-.chat-search input {
-    width: 100%;
-    height: 36px;
-    padding: 0 14px;
-    border: 0;
-    border-radius: 8px;
-    outline-color: var(--blue);
-    background: #f3f6fa;
-    font-size: 13px;
-}
-
-.chat-status {
-    min-height: 17px;
-    margin: 0;
-    color: #738091;
-    font-size: 12px;
-}
-
-.chat-contacts > .chat-status {
-    padding: 0 14px;
-}
-
-.chat-contact-list {
-    display: grid;
-    align-content: start;
-    gap: 0;
-    min-height: 0;
-    overflow-y: auto;
-}
-
-.chat-contact-list,
-.chat-messages {
-    scrollbar-color: #b8cde0 #f7f5f0;
-    scrollbar-width: thin;
-}
-
-.chat-contact-list::-webkit-scrollbar,
-.chat-messages::-webkit-scrollbar {
-    width: 10px;
-}
-
-.chat-contact-list::-webkit-scrollbar-track,
-.chat-messages::-webkit-scrollbar-track {
-    background: #f7f5f0;
-}
-
-.chat-contact-list::-webkit-scrollbar-thumb,
-.chat-messages::-webkit-scrollbar-thumb {
-    border: 2px solid #f7f5f0;
-    border-radius: 999px;
-    background: #b8cde0;
-}
-
-.chat-contact-list::-webkit-scrollbar-thumb:hover,
-.chat-messages::-webkit-scrollbar-thumb:hover {
-    background: var(--blue);
-}
-
-.chat-contact {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border: 0;
-    border-bottom: 1px solid #f0f2f5;
-    border-radius: 0;
-    background: transparent;
-    color: #24394b;
-    text-align: left;
-    cursor: pointer;
-}
-
-.chat-contact:hover,
-.chat-contact[aria-pressed="true"] {
-    background: #f0f2f5;
-}
-
-.chat-contact-avatar {
-    display: grid;
-    width: 46px;
-    height: 46px;
-    flex: 0 0 auto;
-    place-items: center;
-    border-radius: 50%;
-    background: var(--blue-soft);
-    color: var(--blue);
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.chat-contact-avatar img,
-.chat-header-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    object-fit: contain;
-}
-
-.chat-contact-copy {
-    display: grid;
-    min-width: 0;
-    gap: 5px;
-    flex: 1;
-}
-
-.chat-contact-copy strong,
-.chat-contact-copy small {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.chat-contact-copy strong {
-    color: #111b21;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.chat-contact-copy small {
-    color: #667781;
-    font-size: 11px;
-}
-
-.chat-contact-unread[hidden] {
-    display: none;
-}
-
-.chat-conversation {
-    display: grid;
-    min-width: 0;
-    min-height: 0;
-    grid-template-rows: auto minmax(0, 1fr) auto auto;
-    background: #f7f5f0;
-}
-
-.chat-conversation-header {
-    display: grid;
-    min-height: 66px;
-    align-content: center;
-    grid-template-columns: minmax(0, 1fr) auto;
-    padding: 10px 18px;
-    border-bottom: 1px solid #e5e8e9;
-    background: #f8fbff;
-}
-
-.chat-header-contact {
-    display: flex;
-    min-width: 0;
-    grid-column: 1;
-    align-items: center;
-    gap: 10px;
-}
-
-.chat-back-to-contacts {
-    display: none;
-}
-
-.chat-header-avatar {
-    display: grid;
-    width: 40px;
-    height: 40px;
-    flex: 0 0 auto;
-    place-items: center;
-    overflow: hidden;
-    border-radius: 50%;
-    background: var(--blue-soft);
-    color: var(--blue);
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.chat-header-copy {
-    display: grid;
-    min-width: 0;
-    gap: 3px;
-}
-
-.chat-header-copy strong,
-.chat-header-copy .chat-profile-trigger {
-    overflow: hidden;
-    color: #111b21;
-    font-size: 15px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.chat-profile-trigger {
-    display: block;
-    max-width: 100%;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    font: inherit;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-}
-
-.chat-profile-trigger:not(:disabled):hover {
-    color: var(--blue);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.chat-profile-trigger:disabled {
-    cursor: default;
-}
-
-.chat-header-copy > span {
-    overflow: hidden;
-    color: #667781;
-    font-size: 11px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.chat-conversation-menu {
-    position: relative;
-    grid-column: 2;
-    grid-row: 1;
-    align-self: center;
-}
-
-.chat-conversation-menu > summary {
-    display: grid;
-    width: 36px;
-    height: 36px;
-    place-items: center;
-    border-radius: 50%;
-    color: #54656f;
-    font-size: 22px;
-    line-height: 1;
-    list-style: none;
-    cursor: pointer;
-}
-
-.chat-conversation-menu > summary::-webkit-details-marker {
-    display: none;
-}
-
-.chat-conversation-menu > summary:hover,
-.chat-conversation-menu[open] > summary {
-    background: #e4e6e7;
-}
-
-.chat-conversation-menu-items {
-    position: absolute;
-    top: calc(100% + 4px);
-    right: 0;
-    z-index: 5;
-    min-width: 168px;
-    padding: 5px;
-    border: 1px solid #e5e8e9;
-    border-radius: 10px;
-    background: #fff;
-    box-shadow: 0 6px 20px rgba(11, 20, 26, .16);
-}
-
-.chat-delete-conversation {
-    width: 100%;
-    padding: 9px 10px;
-    border: 0;
-    border-radius: 7px;
-    background: transparent;
-    color: #b4232d;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-}
-
-.chat-delete-conversation:not(:disabled):hover {
-    background: #fff1f2;
-}
-
-.chat-delete-conversation:disabled {
-    color: #8a949c;
-    cursor: not-allowed;
-}
-
-.chat-messages {
-    display: flex;
-    min-height: 0;
-    flex-direction: column;
-    gap: 8px;
-    padding: 24px clamp(14px, 5vw, 72px);
-    overflow-y: auto;
-    background-color: #f7f5f0;
-    background-image:
-        radial-gradient(circle at 18% 25%, rgba(0, 84, 159, .035) 0 1px, transparent 2px),
-        radial-gradient(circle at 78% 68%, rgba(0, 84, 159, .025) 0 1px, transparent 2px);
-    background-size: 34px 34px, 48px 48px;
-}
-
-.chat-empty {
-    margin: auto;
-    padding: 8px 14px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .88);
-    color: #667781;
-    font-size: 13px;
-    text-align: center;
-    box-shadow: 0 1px 1px rgba(11, 20, 26, .08);
-}
-
-.chat-day-separator {
-    display: flex;
-    justify-content: center;
-    align-self: center;
-    margin: 10px 0 4px;
-}
-
-.chat-day-separator span {
-    padding: 4px 12px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .92);
-    color: #54656f;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: capitalize;
-    box-shadow: 0 1px 1px rgba(11, 20, 26, .1);
-}
-
-.chat-bubble {
-    position: relative;
-    display: grid;
-    max-width: min(78%, 620px);
-    gap: 2px;
-    align-self: flex-start;
-    padding: 7px 9px 5px;
-    border-radius: 8px;
-    background: #fff;
-    color: #111b21;
-    overflow-wrap: anywhere;
-    box-shadow: 0 1px 1px rgba(11, 20, 26, .13);
-}
-
-.chat-bubble--mine {
-    align-self: flex-end;
-    border-radius: 8px;
-    background: var(--blue-soft);
-}
-
-.chat-bubble--menu-open {
-    z-index: 3;
-}
-
-.chat-bubble p {
-    margin: 0;
-    padding-right: 24px;
-    font-size: 14px;
-    line-height: 1.45;
-    white-space: pre-wrap;
-}
-
-.chat-translation {
-    grid-column: 1 / -1;
-    margin-top: 5px;
-    padding-top: 6px;
-    border-top: 1px solid rgba(84, 101, 111, .2);
-}
-
-.chat-translation[hidden] {
-    display: none;
-}
-
-.chat-translation strong {
-    display: block;
-    margin-bottom: 3px;
-    color: #54656f;
-    font-size: 10px;
-    font-weight: 700;
-}
-
-.chat-translation p {
-    padding: 0;
-    color: inherit;
-    font-size: 13px;
-}
-
-.chat-bubble time {
-    color: #667781;
-    font-size: 10px;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.chat-bubble--deleted p {
-    color: #667781;
-    font-style: italic;
-}
-
-.chat-message-menu {
-    position: absolute;
-    top: 3px;
-    right: 3px;
-    z-index: 2;
-}
-
-.chat-message-menu summary {
-    display: grid;
-    width: 24px;
-    height: 24px;
-    place-items: center;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    color: #54656f;
-    font-size: 19px;
-    line-height: 1;
-    list-style: none;
-    cursor: pointer;
-}
-
-.chat-message-menu summary::-webkit-details-marker {
-    display: none;
-}
-
-.chat-message-menu summary:hover,
-.chat-message-menu[open] summary {
-    background: rgba(17, 27, 33, .09);
-}
-
-.chat-message-menu-items {
-    position: absolute;
-    top: 26px;
-    right: 0;
-    display: grid;
-    min-width: 160px;
-    padding: 5px 0;
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 4px 16px rgba(11, 20, 26, .2);
-}
-
-.chat-bubble:not(.chat-bubble--mine) .chat-message-menu-items {
-    right: auto;
-    left: 0;
-}
-
-.chat-message-menu-items button {
-    padding: 10px 14px;
-    border: 0;
-    background: transparent;
-    color: #111b21;
-    font-size: 12px;
-    text-align: left;
-    white-space: nowrap;
-    cursor: pointer;
-}
-
-.chat-message-menu-items button:hover {
-    background: #f0f2f5;
-}
-
-.chat-message-menu-items button:last-child:not(:first-child) {
-    color: #b4232d;
-}
-
-.chat-delete-conversation:not(:disabled):hover {
-    text-decoration: underline;
-}
-
-.chat-composer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-top: 1px solid #e5e8e9;
-    background: #f0f2f5;
-}
-
-.chat-composer textarea {
-    width: 100%;
-    min-height: 44px;
-    max-height: 120px;
-    overflow-y: hidden;
-    resize: none;
-    padding: 12px 16px;
-    border: 0;
-    border-radius: 22px;
-    outline: 2px solid transparent;
-    outline-offset: 1px;
-    font-size: 13px;
-}
-
-.chat-composer textarea:focus {
-    outline-color: rgba(0, 84, 159, .35);
-}
-
-.chat-composer button {
-    min-width: 72px;
-    min-height: 44px;
-    border: 0;
-    border-radius: 22px;
-    background: var(--blue);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.chat-composer button:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-}
-
-.chat-send-status {
-    padding: 0 16px 8px;
-}
-
-.chat-send-status:empty {
-    display: none;
-}
-
-@media (max-width: 980px) {
-    .dashboard-shell.page-mensagens {
-        height: 100vh;
-        min-height: 0;
-        grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-        overflow: hidden;
-    }
-
-    .dashboard-shell.page-mensagens .lista-area {
-        height: auto;
-        min-height: 0;
-    }
-}
-
-@media (max-width: 720px) {
-    .dashboard-shell.page-mensagens {
-        height: 100vh;
-        height: 100dvh;
-        min-height: 0;
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto minmax(0, 1fr);
-        overflow: hidden;
-    }
-
-    .dashboard-shell.page-mensagens .sidebar {
-        display: block;
-        height: auto;
-        min-height: 76px;
-        padding: 12px 16px;
-    }
-
-    .dashboard-shell.page-mensagens .lista-area {
-        height: auto;
-        min-height: 0;
-        padding: 0;
-    }
-
-    .chat-app {
-        flex: 1;
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: minmax(0, 1fr);
-        border-radius: 8px;
-    }
-
-    .chat-contacts {
-        border-right: 0;
-    }
-
-    .chat-conversation {
-        display: none;
-    }
-
-    .chat-app.chat-conversation-open .chat-contacts {
-        display: none;
-    }
-
-    .chat-app.chat-conversation-open .chat-conversation {
-        display: grid;
-    }
-
-    .chat-back-to-contacts {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        grid-column: 1;
-        grid-row: 1 / span 2;
-        min-width: 34px;
-        min-height: 36px;
-        padding: 0 8px;
-        border: 0;
-        border-radius: 8px;
-        background: transparent;
-        color: var(--blue);
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    .chat-contacts {
-        padding: 12px 0 6px;
-    }
-
-    .chat-contacts h1 {
-        font-size: 18px;
-    }
-
-    .chat-contacts-heading {
-        margin: 0 8px 10px;
-    }
-
-    .chat-search {
-        margin: 0 6px 8px;
-    }
-
-    .chat-contact {
-        gap: 6px;
-        padding: 8px 5px;
-    }
-
-    .chat-contact-avatar {
-        width: 34px;
-        height: 34px;
-        font-size: 11px;
-    }
-
-    .chat-contact-copy strong {
-        font-size: 12px;
-    }
-
-    .chat-contact-copy small {
-        font-size: 10px;
-    }
-
-    .chat-conversation-header {
-        min-height: 58px;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        align-items: center;
-        column-gap: 6px;
-        padding: 6px 8px;
-    }
-
-    .chat-back-to-contacts {
-        grid-column: 1;
-        min-width: 28px;
-        min-height: 36px;
-        padding: 0 4px;
-    }
-
-    .chat-header-contact {
-        grid-column: 2;
-        gap: 8px;
-    }
-
-    .chat-header-avatar {
-        width: 34px;
-        height: 34px;
-    }
-
-    .chat-header-copy {
-        display: block;
-    }
-
-    .chat-header-copy strong,
-    .chat-header-copy .chat-profile-trigger {
-        display: block;
-        font-size: 14px;
-    }
-
-    .chat-header-copy > span {
-        display: none;
-    }
-
-    .chat-conversation-menu {
-        grid-column: 3;
-        grid-row: 1;
-    }
-
-    .chat-conversation-menu > summary {
-        width: 32px;
-        height: 36px;
-    }
-
-    .chat-conversation-menu-items {
-        min-width: 158px;
-    }
-
-    .chat-messages {
-        gap: 7px;
-        padding: 12px 8px;
-    }
-
-    .chat-bubble {
-        max-width: 92%;
-        padding: 7px 8px 5px;
-    }
-
-    .chat-bubble p {
-        font-size: 13px;
-    }
-
-    .chat-composer {
-        gap: 6px;
-        padding: 7px 6px;
-    }
-
-    .chat-composer textarea {
-        min-height: 40px;
-        padding: 10px 12px;
-    }
-
-    .chat-composer button {
-        min-width: 58px;
-        min-height: 40px;
-        padding: 0 10px;
-        font-size: 12px;
-    }
-
-    .chat-send-status {
-        padding: 0 8px 6px;
-    }
-}
-
-.chat-profile-dialog {
-    width: min(440px, calc(100% - 32px));
-    max-width: 440px;
-    padding: 0;
-    border: 1px solid #dce5ec;
-    border-radius: 16px;
-    color: #24394b;
-    box-shadow: 0 18px 56px rgba(11, 20, 26, .24);
-}
-
-.chat-profile-dialog::backdrop {
-    background: rgba(15, 31, 44, .48);
-    backdrop-filter: blur(2px);
-}
-
-.chat-profile-dialog__content {
-    position: relative;
-    display: grid;
-    gap: 18px;
-    padding: 28px;
-}
-
-.chat-profile-dialog__close {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    width: 34px;
-    height: 34px;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    color: #667781;
-    font-size: 24px;
-    line-height: 1;
-    cursor: pointer;
-}
-
-.chat-profile-dialog__close:hover {
-    background: #f0f3f5;
-}
-
-.chat-profile-dialog__identity {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding-right: 28px;
-}
-
-.chat-profile-dialog__avatar {
-    display: grid;
-    width: 54px;
-    height: 54px;
-    flex: 0 0 auto;
-    place-items: center;
-    border-radius: 50%;
-    background: var(--blue-soft);
-    color: var(--blue);
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.chat-profile-dialog__identity h2 {
-    margin: 0 0 4px;
-    color: #173d5b;
-    font-size: 18px;
-    overflow-wrap: anywhere;
-}
-
-.chat-profile-dialog__identity p,
-.chat-profile-dialog__privacy {
-    margin: 0;
-    color: #667781;
-    font-size: 12px;
-    line-height: 1.5;
-}
-
-.chat-profile-dialog__report-button,
-.chat-profile-report-form__actions button {
-    min-height: 40px;
-    padding: 8px 14px;
-    border: 1px solid #e8cfd2;
-    border-radius: 9px;
-    background: #fff;
-    color: #9f3540;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.chat-profile-dialog__report-button:hover,
-.chat-profile-report-form__actions button:hover {
-    background: #fff0f1;
-}
-
-.chat-profile-report-form {
-    display: grid;
-    gap: 8px;
-}
-
-.chat-profile-report-form[hidden],
-.chat-profile-dialog__report-button[hidden] {
-    display: none;
-}
-
-.chat-profile-report-form label {
-    margin-top: 5px;
-    color: #40596c;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.chat-profile-report-form select,
-.chat-profile-report-form textarea {
-    width: 100%;
-    min-height: 42px;
-    padding: 10px 12px;
-    border: 1px solid #d5dfe6;
-    border-radius: 9px;
-    background: #fff;
-    color: #24394b;
-    font: inherit;
-    font-size: 13px;
-}
-
-.chat-profile-report-form textarea {
-    min-height: 96px;
-    resize: vertical;
-}
-
-.chat-profile-dialog__status {
-    min-height: 0;
-    margin: 0;
-    color: #a12e38;
-    font-size: 12px;
-    line-height: 1.45;
-}
-
-.chat-profile-dialog__status:empty {
-    display: none;
-}
-
-.chat-profile-report-form__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 4px;
-}
-
-.chat-profile-report-form__actions button[type="submit"],
-.chat-profile-report-form__actions button:last-child {
-    border-color: var(--blue);
-    background: var(--blue);
-    color: #fff;
-}
-
-.chat-profile-report-form__actions button:disabled {
-    opacity: .65;
-    cursor: wait;
-}
+.dashboard-shell.page-mensagens { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.dashboard-shell.page-mensagens .lista-area { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    height: 100vh; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    background: #f7f5f0; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.page-mensagens .detalhe-area { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-app { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    grid-template-columns: minmax(250px, 31%) minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    border: 1px solid #d8dedf; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    box-shadow: 0 2px 8px rgba(11, 20, 26, .08); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contacts { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    padding: 16px 0 8px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-right: 1px solid #e5e8e9; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-right. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contacts h1 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    color: var(--blue); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-family: Georgia, serif; /* Explicação DevIN: Define família tipográfica por meio da propriedade CSS font-family. */
+    font-size: 22px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contacts-heading { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    margin: 0 16px 14px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-unread-total, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-contact-unread { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: inline-grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-width: 21px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    height: 21px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    flex: 0 0 auto; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    place-items: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS place-items. */
+    padding: 0 6px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 999px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: var(--blue); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #fff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 11px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-notification { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    color: #b4232d; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 11px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.4; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-notification:empty { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-unread-total[hidden] { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-search { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    margin: 0 12px 8px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-search input { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 36px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    padding: 0 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    outline-color: var(--blue); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline-color. */
+    background: #f3f6fa; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-status { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-height: 17px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    color: #738091; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contacts > .chat-status { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding: 0 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-list { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-content: start; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS align-content. */
+    gap: 0; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    overflow-y: auto; /* Explicação DevIN: Define transbordamento vertical por meio da propriedade CSS overflow-y. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-list, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-messages { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    scrollbar-color: #b8cde0 #f7f5f0; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS scrollbar-color. */
+    scrollbar-width: thin; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS scrollbar-width. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-list::-webkit-scrollbar, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-messages::-webkit-scrollbar { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 10px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-list::-webkit-scrollbar-track, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-messages::-webkit-scrollbar-track { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #f7f5f0; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-list::-webkit-scrollbar-thumb, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-messages::-webkit-scrollbar-thumb { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border: 2px solid #f7f5f0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 999px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #b8cde0; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-list::-webkit-scrollbar-thumb:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-messages::-webkit-scrollbar-thumb:hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: var(--blue); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    gap: 12px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    padding: 12px 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-bottom: 1px solid #f0f2f5; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-bottom. */
+    border-radius: 0; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #24394b; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    text-align: left; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-contact[aria-pressed="true"] { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #f0f2f5; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-avatar { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    width: 46px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 46px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    flex: 0 0 auto; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    place-items: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS place-items. */
+    border-radius: 50%; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: var(--blue-soft); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: var(--blue); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-avatar img, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-header-avatar img { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 100%; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    border-radius: inherit; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    object-fit: contain; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS object-fit. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-copy { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    gap: 5px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    flex: 1; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-copy strong, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-contact-copy small { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    text-overflow: ellipsis; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-overflow. */
+    white-space: nowrap; /* Explicação DevIN: Define tratamento de espaços e quebras de linha por meio da propriedade CSS white-space. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-copy strong { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #111b21; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 500; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-copy small { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #667781; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 11px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-contact-unread[hidden] { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-conversation { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    grid-template-rows: auto minmax(0, 1fr) auto auto; /* Explicação DevIN: Define linhas da grade por meio da propriedade CSS grid-template-rows. */
+    background: #f7f5f0; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-conversation-header { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-height: 66px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    align-content: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS align-content. */
+    grid-template-columns: minmax(0, 1fr) auto; /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    padding: 10px 18px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-bottom: 1px solid #e5e8e9; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-bottom. */
+    background: #f8fbff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-header-contact { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    grid-column: 1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    gap: 10px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-back-to-contacts { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-header-avatar { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    width: 40px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 40px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    flex: 0 0 auto; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    place-items: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS place-items. */
+    overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    border-radius: 50%; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: var(--blue-soft); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: var(--blue); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-header-copy { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    gap: 3px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-header-copy strong, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-header-copy .chat-profile-trigger { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    color: #111b21; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 15px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    text-overflow: ellipsis; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-overflow. */
+    white-space: nowrap; /* Explicação DevIN: Define tratamento de espaços e quebras de linha por meio da propriedade CSS white-space. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-trigger { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    font: inherit; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font. */
+    font-weight: 600; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    text-align: left; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-trigger:not(:disabled):hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: var(--blue); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    text-decoration: underline; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+    text-underline-offset: 3px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-underline-offset. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-trigger:disabled { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    cursor: default; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-header-copy > span { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    color: #667781; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 11px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    text-overflow: ellipsis; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-overflow. */
+    white-space: nowrap; /* Explicação DevIN: Define tratamento de espaços e quebras de linha por meio da propriedade CSS white-space. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-conversation-menu { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: relative; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    grid-column: 2; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+    grid-row: 1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-row. */
+    align-self: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS align-self. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-conversation-menu > summary { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    width: 36px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 36px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    place-items: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS place-items. */
+    border-radius: 50%; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: #54656f; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 22px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    list-style: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS list-style. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-conversation-menu > summary::-webkit-details-marker { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-conversation-menu > summary:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-conversation-menu[open] > summary { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #e4e6e7; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-conversation-menu-items { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    top: calc(100% + 4px); /* Explicação DevIN: Define distância em relação à borda superior por meio da propriedade CSS top. */
+    right: 0; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+    z-index: 5; /* Explicação DevIN: Define ordem de sobreposição por meio da propriedade CSS z-index. */
+    min-width: 168px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    padding: 5px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 1px solid #e5e8e9; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 10px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    box-shadow: 0 6px 20px rgba(11, 20, 26, .16); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-delete-conversation { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    padding: 9px 10px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 7px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #b4232d; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 600; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    text-align: left; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-delete-conversation:not(:disabled):hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #fff1f2; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-delete-conversation:disabled { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #8a949c; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    cursor: not-allowed; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-messages { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    padding: 24px clamp(14px, 5vw, 72px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    overflow-y: auto; /* Explicação DevIN: Define transbordamento vertical por meio da propriedade CSS overflow-y. */
+    background-color: #f7f5f0; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    background-image: /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+        radial-gradient(circle at 18% 25%, rgba(0, 84, 159, .035) 0 1px, transparent 2px), /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+        radial-gradient(circle at 78% 68%, rgba(0, 84, 159, .025) 0 1px, transparent 2px); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    background-size: 34px 34px, 48px 48px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS background-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-empty { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: auto; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    padding: 8px 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: rgba(255, 255, 255, .88); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #667781; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    text-align: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    box-shadow: 0 1px 1px rgba(11, 20, 26, .08); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-day-separator { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    align-self: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS align-self. */
+    margin: 10px 0 4px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-day-separator span { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding: 4px 12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: rgba(255, 255, 255, .92); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #54656f; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    text-transform: capitalize; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-transform. */
+    box-shadow: 0 1px 1px rgba(11, 20, 26, .1); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-bubble { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: relative; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    max-width: min(78%, 620px); /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    gap: 2px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    align-self: flex-start; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS align-self. */
+    padding: 7px 9px 5px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #111b21; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    overflow-wrap: anywhere; /* Explicação DevIN: Define quebra de texto longo por meio da propriedade CSS overflow-wrap. */
+    box-shadow: 0 1px 1px rgba(11, 20, 26, .13); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-bubble--mine { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    align-self: flex-end; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS align-self. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: var(--blue-soft); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-bubble--menu-open { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    z-index: 3; /* Explicação DevIN: Define ordem de sobreposição por meio da propriedade CSS z-index. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-bubble p { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    padding-right: 24px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS padding-right. */
+    font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.45; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    white-space: pre-wrap; /* Explicação DevIN: Define tratamento de espaços e quebras de linha por meio da propriedade CSS white-space. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-translation { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    grid-column: 1 / -1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+    margin-top: 5px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+    padding-top: 6px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS padding-top. */
+    border-top: 1px solid rgba(84, 101, 111, .2); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-top. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-translation[hidden] { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-translation strong { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    margin-bottom: 3px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-bottom. */
+    color: #54656f; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 10px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-translation p { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    color: inherit; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-bubble time { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #667781; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 10px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    text-align: right; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    white-space: nowrap; /* Explicação DevIN: Define tratamento de espaços e quebras de linha por meio da propriedade CSS white-space. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-bubble--deleted p { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #667781; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-style: italic; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font-style. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-message-menu { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    top: 3px; /* Explicação DevIN: Define distância em relação à borda superior por meio da propriedade CSS top. */
+    right: 3px; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+    z-index: 2; /* Explicação DevIN: Define ordem de sobreposição por meio da propriedade CSS z-index. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-message-menu summary { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    width: 24px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 24px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    place-items: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS place-items. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 50%; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #54656f; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 19px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    list-style: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS list-style. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-message-menu summary::-webkit-details-marker { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-message-menu summary:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-message-menu[open] summary { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: rgba(17, 27, 33, .09); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-message-menu-items { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    top: 26px; /* Explicação DevIN: Define distância em relação à borda superior por meio da propriedade CSS top. */
+    right: 0; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    min-width: 160px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    padding: 5px 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    box-shadow: 0 4px 16px rgba(11, 20, 26, .2); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-bubble:not(.chat-bubble--mine) .chat-message-menu-items { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    right: auto; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+    left: 0; /* Explicação DevIN: Define distância em relação à borda esquerda por meio da propriedade CSS left. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-message-menu-items button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding: 10px 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #111b21; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    text-align: left; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    white-space: nowrap; /* Explicação DevIN: Define tratamento de espaços e quebras de linha por meio da propriedade CSS white-space. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-message-menu-items button:hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #f0f2f5; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-message-menu-items button:last-child:not(:first-child) { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #b4232d; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-delete-conversation:not(:disabled):hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    text-decoration: underline; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-composer { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    padding: 10px 16px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-top: 1px solid #e5e8e9; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-top. */
+    background: #f0f2f5; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-composer textarea { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    max-height: 120px; /* Explicação DevIN: Define altura máxima por meio da propriedade CSS max-height. */
+    overflow-y: hidden; /* Explicação DevIN: Define transbordamento vertical por meio da propriedade CSS overflow-y. */
+    resize: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS resize. */
+    padding: 12px 16px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 22px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    outline: 2px solid transparent; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline. */
+    outline-offset: 1px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline-offset. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-composer textarea:focus { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    outline-color: rgba(0, 84, 159, .35); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline-color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-composer button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-width: 72px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 22px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: var(--blue); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #fff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-composer button:disabled { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    opacity: .5; /* Explicação DevIN: Define opacidade por meio da propriedade CSS opacity. */
+    cursor: not-allowed; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-send-status { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding: 0 16px 8px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-send-status:empty { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+@media (max-width: 980px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .dashboard-shell.page-mensagens { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        height: 100vh; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        grid-template-columns: var(--sidebar-width) minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+        overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .dashboard-shell.page-mensagens .lista-area { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        height: auto; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+@media (max-width: 720px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .dashboard-shell.page-mensagens { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        height: 100vh; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        height: 100dvh; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        grid-template-columns: minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+        grid-template-rows: auto minmax(0, 1fr); /* Explicação DevIN: Define linhas da grade por meio da propriedade CSS grid-template-rows. */
+        overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .dashboard-shell.page-mensagens .sidebar { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+        height: auto; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        min-height: 76px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 12px 16px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .dashboard-shell.page-mensagens .lista-area { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        height: auto; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-app { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        flex: 1; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+        grid-template-columns: minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+        grid-template-rows: minmax(0, 1fr); /* Explicação DevIN: Define linhas da grade por meio da propriedade CSS grid-template-rows. */
+        border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-contacts { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        border-right: 0; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-right. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-conversation { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-app.chat-conversation-open .chat-contacts { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-app.chat-conversation-open .chat-conversation { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-back-to-contacts { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: inline-flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+        align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+        justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+        grid-column: 1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+        grid-row: 1 / span 2; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-row. */
+        min-width: 34px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+        min-height: 36px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 0 8px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+        border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+        background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+        color: var(--blue); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+        font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+        font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+        cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-contacts { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        padding: 12px 0 6px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-contacts h1 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: 18px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-contacts-heading { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        margin: 0 8px 10px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-search { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        margin: 0 6px 8px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-contact { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        gap: 6px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+        padding: 8px 5px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-contact-avatar { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        width: 34px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        height: 34px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        font-size: 11px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-contact-copy strong { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-contact-copy small { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: 10px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-conversation-header { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        min-height: 58px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        grid-template-columns: auto minmax(0, 1fr) auto; /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+        align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+        column-gap: 6px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS column-gap. */
+        padding: 6px 8px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-back-to-contacts { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-column: 1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+        min-width: 28px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+        min-height: 36px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 0 4px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-header-contact { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-column: 2; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+        gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-header-avatar { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        width: 34px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        height: 34px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-header-copy { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-header-copy strong, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .chat-header-copy .chat-profile-trigger { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+        font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-header-copy > span { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-conversation-menu { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-column: 3; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+        grid-row: 1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-row. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-conversation-menu > summary { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        width: 32px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        height: 36px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-conversation-menu-items { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        min-width: 158px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-messages { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        gap: 7px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+        padding: 12px 8px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-bubble { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        max-width: 92%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+        padding: 7px 8px 5px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-bubble p { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-composer { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        gap: 6px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+        padding: 7px 6px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-composer textarea { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        min-height: 40px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 10px 12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-composer button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        min-width: 58px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+        min-height: 40px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 0 10px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+    .chat-send-status { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        padding: 0 8px 6px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: min(440px, calc(100% - 32px)); /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    max-width: 440px; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 1px solid #dce5ec; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 16px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: #24394b; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    box-shadow: 0 18px 56px rgba(11, 20, 26, .24); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog::backdrop { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: rgba(15, 31, 44, .48); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    backdrop-filter: blur(2px); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS backdrop-filter. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__content { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: relative; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    gap: 18px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    padding: 28px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__close { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    top: 10px; /* Explicação DevIN: Define distância em relação à borda superior por meio da propriedade CSS top. */
+    right: 12px; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+    width: 34px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 34px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 50%; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #667781; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 24px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__close:hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #f0f3f5; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__identity { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    gap: 14px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    padding-right: 28px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS padding-right. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__avatar { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    width: 54px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 54px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    flex: 0 0 auto; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    place-items: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS place-items. */
+    border-radius: 50%; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: var(--blue-soft); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: var(--blue); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 15px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__identity h2 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: 0 0 4px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    color: #173d5b; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 18px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    overflow-wrap: anywhere; /* Explicação DevIN: Define quebra de texto longo por meio da propriedade CSS overflow-wrap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__identity p, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-profile-dialog__privacy { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    color: #667781; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.5; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__report-button, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-profile-report-form__actions button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-height: 40px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    padding: 8px 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 1px solid #e8cfd2; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 9px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #9f3540; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font: inherit; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__report-button:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-profile-report-form__actions button:hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #fff0f1; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-report-form { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-report-form[hidden], /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-profile-dialog__report-button[hidden] { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-report-form label { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin-top: 5px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+    color: #40596c; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-report-form select, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-profile-report-form textarea { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    min-height: 42px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    padding: 10px 12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 1px solid #d5dfe6; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 9px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #24394b; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font: inherit; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-report-form textarea { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-height: 96px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    resize: vertical; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS resize. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__status { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    color: #a12e38; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.45; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-dialog__status:empty { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-report-form__actions { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    justify-content: flex-end; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    margin-top: 4px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-report-form__actions button[type="submit"], /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-profile-report-form__actions button:last-child { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border-color: var(--blue); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+    background: var(--blue); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #fff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.chat-profile-report-form__actions button:disabled { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    opacity: .65; /* Explicação DevIN: Define opacidade por meio da propriedade CSS opacity. */
+    cursor: wait; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */

@@ -1,99 +1,119 @@
-name: JARVIS Admin — syntax checks
-on:
-  pull_request:
-    paths:
-      - 'php/api/jarvis/**'
-      - 'php/controllers/Jarvis/**'
-      - 'php/components/jarvis-admin-widget.php'
-      - 'js/jarvis-admin.js'
-      - 'js/jarvis-dock.js'
-      - 'css/jarvis-admin.css'
-      - 'img/jarvisdevin-jd.webp'
-      - 'tests/jarvis-dock.test.cjs'
-      - 'tests/jarvis-responsive.test.cjs'
-      - 'php/adm.php'
-      - '.github/workflows/jarvis-admin-checks.yml'
-      - 'tests/jarvis_admin_smoke.php'
-      - 'tests/jarvis_openrouter_router.php'
-      - 'tests/jarvis_admin_mysql.php'
-      - 'database/migrations/jarvis_admin.sql'
-      - 'database/migrations/jarvis_admin_controlled_actions.sql'
-      - 'tests/jarvis_controlled_actions_mysql.php'
-  push:
-    branches:
-      - 'feature/jarvis-admin'
-      - 'fix/jarvis-openrouter-dual-key-model-fallback'
-      - 'feat/jarvis-controlled-actions-and-platform-messages'
-      - 'feat/jarvis-jd-draggable-dock'
-      - 'fix/jarvis-composer-responsive-buttons'
-      - 'main'
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - name: PHP syntax
-        run: |
-          php -v
-          php -l php/adm.php
-          php -l php/components/jarvis-admin-widget.php
-          php -l tests/jarvis_admin_mysql.php
-          php -l tests/jarvis_controlled_actions_mysql.php
-          php -l tests/jarvis_openrouter_router.php
-          for f in php/api/jarvis/*.php php/controllers/Jarvis/*.php; do php -l "$f"; done
-      - name: JavaScript syntax
-        run: |
-          node --check js/jarvis-dock.js
-          node --check js/jarvis-admin.js
-          node --test tests/jarvis-dock.test.cjs tests/jarvis-responsive.test.cjs
-      - name: Skill manager and model routing smoke tests
-        run: |
-          php tests/jarvis_admin_smoke.php
-          php tests/jarvis_openrouter_router.php
+name: JARVIS Admin — syntax checks # Explicação DevIN: Configura nome identificador (campo name).
+on: # Explicação DevIN: Configura acionadores do workflow (campo on).
+  pull_request: # Explicação DevIN: Configura propriedade YAML (campo pull_request).
+    paths: # Explicação DevIN: Configura filtro de caminhos (campo paths).
+      - 'php/api/jarvis/**' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/Jarvis/**' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/components/jarvis-admin-widget.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'js/jarvis-admin.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'js/jarvis-dock.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'css/jarvis-admin.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'img/jarvisdevin-jd.webp' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis-dock.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis-responsive.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/adm.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '.github/workflows/jarvis-admin-checks.yml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis_admin_smoke.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis_openrouter_router.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis_admin_mysql.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'database/migrations/jarvis_admin.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'database/migrations/jarvis_admin_controlled_actions.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis_controlled_actions_mysql.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'composer.json' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'composer.lock' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/Security/**' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+  push: # Explicação DevIN: Configura propriedade YAML (campo push).
+    branches: # Explicação DevIN: Configura filtro de branches (campo branches).
+      - 'feature/jarvis-admin' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'fix/jarvis-openrouter-dual-key-model-fallback' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'feat/jarvis-controlled-actions-and-platform-messages' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'feat/jarvis-jd-draggable-dock' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'fix/jarvis-composer-responsive-buttons' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'feature/lgpd-phase1-foundation' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'main' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo jobs).
+  lint: # Explicação DevIN: Configura propriedade YAML (campo lint).
+    runs-on: ubuntu-latest # Explicação DevIN: Configura ambiente executor (campo runs-on).
+    strategy: # Explicação DevIN: Configura propriedade YAML (campo strategy).
+      matrix: # Explicação DevIN: Configura propriedade YAML (campo matrix).
+        php-version: ['8.1', '8.5'] # Explicação DevIN: Configura propriedade YAML (campo php-version).
+    permissions: # Explicação DevIN: Configura permissões do workflow (campo permissions).
+      contents: read # Explicação DevIN: Configura propriedade YAML (campo contents).
+    steps: # Explicação DevIN: Configura sequência de etapas (campo steps).
+      - uses: actions/checkout@v4 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - name: Set up supported PHP # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        uses: shivammathur/setup-php@v2 # Explicação DevIN: Configura ação reutilizável (campo uses).
+        with: # Explicação DevIN: Configura propriedade YAML (campo with).
+          php-version: ${{ matrix.php-version }} # Explicação DevIN: Configura propriedade YAML (campo php-version).
+          extensions: curl, mbstring, mysqli # Explicação DevIN: Configura propriedade YAML (campo extensions).
+      - name: PHP syntax # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          php -v # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/adm.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/components/jarvis-admin-widget.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/jarvis_admin_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/jarvis_controlled_actions_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/jarvis_openrouter_router.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          for f in php/api/jarvis/*.php php/controllers/Jarvis/*.php; do php -l "$f"; done # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+      - name: JavaScript syntax # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          node --check js/jarvis-dock.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --check js/jarvis-admin.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/jarvis-dock.test.cjs tests/jarvis-responsive.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+      - name: Skill manager and model routing smoke tests # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          php tests/jarvis_admin_smoke.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/jarvis_openrouter_router.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
-  mysql:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: jarvis-ci-only
-          MYSQL_DATABASE: devin_jarvis_ci
-        ports:
-          - 3306:3306
-        options: >-
+  mysql: # Explicação DevIN: Configura propriedade YAML (campo mysql).
+    runs-on: ubuntu-latest # Explicação DevIN: Configura ambiente executor (campo runs-on).
+    strategy: # Explicação DevIN: Configura propriedade YAML (campo strategy).
+      matrix: # Explicação DevIN: Configura propriedade YAML (campo matrix).
+        php-version: ['8.1', '8.5'] # Explicação DevIN: Configura propriedade YAML (campo php-version).
+    permissions: # Explicação DevIN: Configura permissões do workflow (campo permissions).
+      contents: read # Explicação DevIN: Configura propriedade YAML (campo contents).
+    services: # Explicação DevIN: Configura serviços auxiliares (campo services).
+      mysql: # Explicação DevIN: Configura propriedade YAML (campo mysql).
+        image: mysql:8.0 # Explicação DevIN: Configura propriedade YAML (campo image).
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          MYSQL_ROOT_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_ROOT_PASSWORD).
+          MYSQL_DATABASE: devin_jarvis_ci # Explicação DevIN: Configura propriedade YAML (campo MYSQL_DATABASE).
+        ports: # Explicação DevIN: Configura propriedade YAML (campo ports).
+          - 3306:3306 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        options: >- # Explicação DevIN: Configura propriedade YAML (campo options).
           --health-cmd="mysqladmin ping -h 127.0.0.1 -pjarvis-ci-only"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=12
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install MySQL and PHP extensions for isolated tests
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y php-cli php-mysql php-mbstring default-mysql-client
-      - name: Migrate disposable MySQL database
-        env:
-          MYSQL_PWD: jarvis-ci-only
-        run: |
-          mysql -h 127.0.0.1 -u root devin_jarvis_ci < database/migrations/jarvis_admin.sql
-          mysql -h 127.0.0.1 -u root devin_jarvis_ci < database/migrations/jarvis_admin_controlled_actions.sql
-          test "$(mysql -h 127.0.0.1 -u root -N -s devin_jarvis_ci -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='devin_jarvis_ci'")" -eq 6
-      - name: Persistence, access control and no-2FA integration
-        env:
-          JARVIS_TEST_HOST: 127.0.0.1
-          JARVIS_TEST_DB: devin_jarvis_ci
-          JARVIS_TEST_USER: root
-          JARVIS_TEST_PASSWORD: jarvis-ci-only
-        run: php tests/jarvis_admin_mysql.php
-      - name: Controlled admin investigations and message approval tests
-        env:
-          JARVIS_TEST_HOST: 127.0.0.1
-          JARVIS_TEST_DB: devin_jarvis_ci
-          JARVIS_TEST_USER: root
-          JARVIS_TEST_PASSWORD: jarvis-ci-only
-        run: php tests/jarvis_controlled_actions_mysql.php
+    steps: # Explicação DevIN: Configura sequência de etapas (campo steps).
+      - uses: actions/checkout@v4 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - name: Set up supported PHP # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        uses: shivammathur/setup-php@v2 # Explicação DevIN: Configura ação reutilizável (campo uses).
+        with: # Explicação DevIN: Configura propriedade YAML (campo with).
+          php-version: ${{ matrix.php-version }} # Explicação DevIN: Configura propriedade YAML (campo php-version).
+          extensions: curl, mbstring, mysqli # Explicação DevIN: Configura propriedade YAML (campo extensions).
+      - name: Install MySQL client for isolated tests # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          sudo apt-get update -qq # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          sudo apt-get install -y default-mysql-client # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+      - name: Migrate disposable MySQL database # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_PWD).
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          mysql -h 127.0.0.1 -u root devin_jarvis_ci < database/migrations/jarvis_admin.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          mysql -h 127.0.0.1 -u root devin_jarvis_ci < database/migrations/jarvis_admin_controlled_actions.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          test "$(mysql -h 127.0.0.1 -u root -N -s devin_jarvis_ci -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='devin_jarvis_ci'")" -eq 6 # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+      - name: Persistence, access control and no-2FA integration # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          JARVIS_TEST_HOST: 127.0.0.1 # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_HOST).
+          JARVIS_TEST_DB: devin_jarvis_ci # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_DB).
+          JARVIS_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_USER).
+          JARVIS_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_PASSWORD).
+        run: php tests/jarvis_admin_mysql.php # Explicação DevIN: Configura comando de execução (campo run).
+      - name: Controlled admin investigations and message approval tests # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          JARVIS_TEST_HOST: 127.0.0.1 # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_HOST).
+          JARVIS_TEST_DB: devin_jarvis_ci # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_DB).
+          JARVIS_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_USER).
+          JARVIS_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_PASSWORD).
+        run: php tests/jarvis_controlled_actions_mysql.php # Explicação DevIN: Configura comando de execução (campo run).

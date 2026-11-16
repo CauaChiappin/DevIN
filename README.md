@@ -30,9 +30,12 @@ São rotas PHP do **próprio projeto**, acessadas pelo frontend com `fetch()` ou
 | `php/analisar_curriculo_abnt_api.php` | Solicitar análise de currículo via Gemini |
 | `php/arcade_unlock.php` | Liberar o arcade após verificação da sequência no dashboard |
 | `php/arcade_api.php` | Iniciar partidas, consultar/salvar progresso e administrar pontuações |
-| `php/api/jarvis/chat.php` | **Branch `feature/jarvis-admin`**: chat ADM com memória MySQL por administrador e resumo de indicadores agregados |\n| `php/api/jarvis/conversations.php` | Recuperar, pesquisar e excluir conversas do JARVIS isoladas por ADM |\n| `php/api/jarvis/tasks.php` | Central de atividades: criar tarefas, registrar andamento e cancelamento com trilha de auditoria |
+| `php/api/jarvis/chat.php` | Chat do ADM com memória MySQL por administrador e resumo de indicadores agregados |
+| `php/api/jarvis/conversations.php` | Recuperar, pesquisar e excluir conversas do JARVIS isoladas por ADM |
+| `php/api/jarvis/tasks.php` | Central de atividades: criar tarefas, registrar andamento e cancelamento com trilha de auditoria |
+| `php/api/jarvis/admin_tools.php` | Ferramentas supervisionadas de consulta/análise e rascunhos de mensagens; opt-in e dependentes de migration |
 
-**Ainda planejados, não implementados:** `action-confirm.php` e `action-cancel.php` para ações **reais** do painel; ferramentas de consulta detalhada, busca semântica e execução de ações com confirmação e auditoria. A memória e a fila de atividades agora utilizam tabelas próprias do MySQL. Mudar o estado de uma tarefa não modifica contas, vagas ou denúncias. Consulte `docs/jarvis-admin.md` para o escopo e as limitações desta fase.
+**Ainda não implementados:** ações destrutivas/reais no painel, busca semântica, workers em segundo plano, anexos e streaming. As ferramentas supervisionadas existentes são limitadas e não banem, excluem ou alteram contas, vagas ou denúncias. A memória e a fila de atividades usam tabelas próprias do MySQL; mudar o estado de uma tarefa só altera o registro da tarefa. Consulte `docs/jarvis-admin.md` e `docs/jarvis-controlled-actions.md` para requisitos e limitações.
 
 ### Outras integrações e tecnologias (não são APIs REST externas)
 
@@ -57,13 +60,15 @@ DEVIN_JARVIS_MODEL=
 DEVIN_JARVIS_API_KEY=
 ```
 
-Para habilitar a memória e a central de atividades, aplique primeiro `database/migrations/jarvis_admin.sql` em um banco de desenvolvimento (com backup). O ID de exemplo GLM gratuito é do OpenRouter, sujeito a cotas e mudanças. Veja `docs/jarvis-admin.md` para instalação e testes.\n\nAntes de usar dados reais com um provedor de IA, revise os termos de uso, os limites do plano e a política de privacidade. Evite enviar CPF, credenciais e outros dados pessoais desnecessários. As APIs internas devem permanecer protegidas mesmo que um usuário descubra seus endereços.
+Para habilitar a memória e a central de atividades, aplique primeiro `database/migrations/jarvis_admin.sql` em um banco de desenvolvimento (com backup). O ID de exemplo GLM gratuito é do OpenRouter, sujeito a cotas e mudanças. Veja `docs/jarvis-admin.md` para instalação e testes.
+
+Antes de usar dados reais com um provedor de IA, revise os termos de uso, os limites do plano e a política de privacidade. Evite enviar CPF, credenciais e outros dados pessoais desnecessários. As APIs internas devem permanecer protegidas mesmo que um usuário descubra seus endereços.
 
 ---
 
 ## Adaptações recentes do JARVIS Code para o JARVIS Admin
 
-No PR #7 (`feature/jarvis-admin`) o módulo incorpora somente conceitos úteis ao DevIN: **gerenciador de habilidades administrativas** (até duas orientações por mensagem para reports, vagas, usuários e indicadores); **contexto anterior enviado ao modelo somente com opt-in** (mas conversas continuam salvas no MySQL); **identificação do modelo utilizado** nas respostas novas; **fallback opcional para modelo explicitamente configurado com sufixo `:free` no mesmo provedor OpenRouter**; e **exemplos de atividades** na interface. Não executa habilidades de terceiros ou ações administrativas.
+O módulo JARVIS incorpora somente conceitos úteis ao DevIN: **gerenciador de habilidades administrativas** (até duas orientações por mensagem para reports, vagas, usuários e indicadores); **contexto anterior enviado ao modelo somente com opt-in** (mas conversas continuam salvas no MySQL); **identificação do modelo utilizado** nas respostas novas; **fallback opcional para modelos gratuitos configurados no OpenRouter**; e **exemplos de atividades** na interface. Não executa habilidades de terceiros nem ações destrutivas.
 
 O programa Android, voz, Shizuku, comandos de shell, skills genéricas e agentes autônomos não fazem parte do DevIN. Veja `docs/jarvis-admin.md` para escopo, configuração, testes e limitações.
 
@@ -149,8 +154,8 @@ A nova camada opcional do JARVIS adiciona abas **Consultar**, **Mensagens** e **
 
 **Atenção:** novas funções **desativadas por padrão** com `DEVIN_JARVIS_ACTIONS_ENABLED=0`. Antes de ativar, aplicar `database/migrations/jarvis_admin_controlled_actions.sql` em desenvolvimento após backup e realizar homologação. Essa migration não muda as tabelas originais. A entrega utiliza o armazenamento de mensagens existente (temporário); confira as limitações de persistência e privacidade em `docs/jarvis-controlled-actions.md`.
 
-## Entendendo cada linha do código
+## Explicações no código
 
-O projeto mantém uma [documentação linha por linha de todos os arquivos de código e configuração](docs/line-by-line/INDEX.md). Cada linha possui uma explicação, link direto para sua localização no GitHub e conferência da versão do arquivo por SHA-256. Use o [guia do sistema de documentação](docs/line-by-line/README.md) para saber como navegar, gerar, revisar e verificar as explicações.
+As explicações ficam como comentários no próprio arquivo de código e não são exibidas na interface. Ao corrigir ou adicionar código, atualize e confira os comentários com `python3 scripts/line_explanations.py --write` e `python3 scripts/line_explanations.py --check`; o GitHub Actions verifica a cobertura no push e no pull request.
 
-Ao corrigir ou adicionar código, o desenvolvedor deve atualizar as explicações com `python3 scripts/line_explanations.py --write`. O GitHub Actions automatiza esse processo nas branches e confere a atualização em pull requests. A primeira camada é gerada por regras sintáticas e **não substitui revisão humana** de regras de negócio, autenticação, segurança e acesso ao banco. Fotos e arquivos binários não são código-fonte e ficam fora do índice.
+O gerador não altera dependências em `vendor/`, arquivos `.env` reais, JSON estrito ou `.gitignore`, pois esses formatos não aceitam comentários sem risco de invalidar seu uso. Linhas em branco, comentários existentes, literais multilinha e contextos nos quais um comentário não é seguro também permanecem intactos. As descrições automáticas são auxiliares e **não substituem revisão humana** de regras de negócio, autenticação, segurança ou acesso ao banco.

@@ -1,128 +1,128 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevIN | Criar Conta</title>
-    <link rel="stylesheet" href="../css/cadastrostyle.css?v=20261024-mobile">
-    <link rel="stylesheet" href="../css/site-navigation.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-</head>
-<body class="cadastro-page">
+<!DOCTYPE html> <!-- Explicação DevIN: Continua atributos ou conteúdo do elemento de marcação aberto anteriormente. -->
+<html lang="pt-br"> <!-- Explicação DevIN: Declara elemento raiz do documento HTML. -->
+<head> <!-- Explicação DevIN: Declara metadados e dependências do documento. -->
+    <meta charset="UTF-8"> <!-- Explicação DevIN: Declara metadado de navegação. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Explicação DevIN: Declara metadado de navegação. -->
+    <title>DevIN | Criar Conta</title> <!-- Explicação DevIN: Declara elemento de marcação. -->
+    <link rel="stylesheet" href="../css/cadastrostyle.css?v=20261024-mobile"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="stylesheet" href="../css/site-navigation.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+</head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
+<body class="cadastro-page"> <!-- Explicação DevIN: Declara corpo visível da página. -->
 
-    <div class="main-container">
+    <div class="main-container"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         
         <!-- Mantém os campos da empresa na coluna principal e a ilustração na coluna lateral. -->
-        <section class="left-side">
+        <section class="left-side"> <!-- Explicação DevIN: Declara seção temática. -->
             
-            <header class="cadastro-header">
-                <a class="brand-logo" href="index.html">Dev<span>IN</span></a>
-                <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
-                    <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-                </button>
-                <div class="site-menu" id="site-menu" data-site-menu>
-                    <a href="login.html" class="header-action">Login</a>
-                </div>
-            </header>
+            <header class="cadastro-header"> <!-- Explicação DevIN: Declara cabeçalho da seção ou página. -->
+                <a class="brand-logo" href="index.html">Dev<span>IN</span></a> <!-- Explicação DevIN: Declara link de navegação. A linha reúne múltiplos elementos. -->
+                <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+                    <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span> <!-- Explicação DevIN: Declara trecho em linha. Inclui atributos de acessibilidade. A linha reúne múltiplos elementos. -->
+                </button> <!-- Explicação DevIN: Fecha elemento button do documento. -->
+                <div class="site-menu" id="site-menu" data-site-menu> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <a href="login.html" class="header-action">Login</a> <!-- Explicação DevIN: Declara link de navegação. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+            </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
 
-            <div class="toggle-container">
-                <a href="cadastro_pessoa.html" class="toggle-btn pessoal">Pessoal</a>
-                <span class="toggle-divider">OU</span>
-                <a href="cadastro_empresa.html" class="toggle-btn empresa active">Empresa</a>
-            </div>
+            <div class="toggle-container"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                <a href="cadastro_pessoa.html" class="toggle-btn pessoal">Pessoal</a> <!-- Explicação DevIN: Declara link de navegação. -->
+                <span class="toggle-divider">OU</span> <!-- Explicação DevIN: Declara trecho em linha. -->
+                <a href="cadastro_empresa.html" class="toggle-btn empresa active">Empresa</a> <!-- Explicação DevIN: Declara link de navegação. -->
+            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-            <h1 class="page-title">Criar conta</h1>
+            <h1 class="page-title">Criar conta</h1> <!-- Explicação DevIN: Declara título principal. -->
 
             <!-- Envia os dados ao PHP para validar CNPJ, e-mail e senha antes da gravação. -->
-            <form action="../php/cadastro_empresa.php" method="POST" class="register-form" id="formCadastro">
+            <form action="../php/cadastro_empresa.php" method="POST" class="register-form" id="formCadastro"> <!-- Explicação DevIN: Declara formulário de entrada de dados. -->
                 
-                <div class="form-columns">
-                    <div class="form-column">
-                        <div class="input-group mobile-order-1">
-                            <label for="nome">Nome:*</label>
-                            <input type="text" id="nome" name="nome" required>
-                        </div>
+                <div class="form-columns"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <div class="form-column"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                        <div class="input-group mobile-order-1"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                            <label for="nome">Nome:*</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                            <input type="text" id="nome" name="nome" required> <!-- Explicação DevIN: Declara campo de entrada. -->
+                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                        <div class="input-group mobile-order-3">
-                            <label for="cnpj">CNPJ:*</label>
-                            <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" required>
-                        </div>
+                        <div class="input-group mobile-order-3"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                            <label for="cnpj">CNPJ:*</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                            <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" required> <!-- Explicação DevIN: Declara campo de entrada. -->
+                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                        <div class="input-group mobile-order-5">
-                            <label for="cep">CEP:*</label>
-                            <input type="text" id="cep" name="cep" placeholder="00000-000" required>
-                        </div>
+                        <div class="input-group mobile-order-5"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                            <label for="cep">CEP:*</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                            <input type="text" id="cep" name="cep" placeholder="00000-000" required> <!-- Explicação DevIN: Declara campo de entrada. -->
+                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                        <div class="input-group password-wrapper mobile-order-8">
-                            <label for="confirme_senha">Confirme a sua senha:*</label>
-                            <div class="input-icon-container">
-                                <input type="password" id="confirme_senha" name="confirme_senha" required minlength="12">
-                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Mostrar senha">
-                            </div>
-                            <span id="error-match" class="error-message-text">Senhas não coincidem</span>
-                        </div>
-                    </div>
+                        <div class="input-group password-wrapper mobile-order-8"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                            <label for="confirme_senha">Confirme a sua senha:*</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                            <div class="input-icon-container"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                                <input type="password" id="confirme_senha" name="confirme_senha" required minlength="12"> <!-- Explicação DevIN: Declara campo de entrada. -->
+                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('confirme_senha', this)" alt="Mostrar senha"> <!-- Explicação DevIN: Declara imagem na interface. Vincula um evento da interface. -->
+                            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                            <span id="error-match" class="error-message-text">Senhas não coincidem</span> <!-- Explicação DevIN: Declara trecho em linha. -->
+                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                    </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                    <div class="form-column">
-                        <div class="input-group mobile-order-2">
-                            <label for="email">E-mail:*</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
+                    <div class="form-column"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                        <div class="input-group mobile-order-2"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                            <label for="email">E-mail:*</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                            <input type="email" id="email" name="email" required> <!-- Explicação DevIN: Declara campo de entrada. -->
+                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                        <div class="input-group mobile-order-4">
-                            <label for="telefone">Telefone:*</label>
-                            <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
-                        </div>
+                        <div class="input-group mobile-order-4"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                            <label for="telefone">Telefone:*</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                            <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required> <!-- Explicação DevIN: Declara campo de entrada. -->
+                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                        <div class="input-group password-wrapper mobile-order-6">
-                            <label for="senha">Senha:*</label>
-                            <div class="input-icon-container">
-                                <input type="password" id="senha" name="senha" required minlength="12">
-                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Mostrar senha">
-                            </div>
-                        </div>
+                        <div class="input-group password-wrapper mobile-order-6"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                            <label for="senha">Senha:*</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                            <div class="input-icon-container"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                                <input type="password" id="senha" name="senha" required minlength="12"> <!-- Explicação DevIN: Declara campo de entrada. -->
+                                <img src="../img/olho_fechado.png" class="toggle-password-eye" onclick="togglePasswordVisibility('senha', this)" alt="Mostrar senha"> <!-- Explicação DevIN: Declara imagem na interface. Vincula um evento da interface. -->
+                            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                        <div class="password-requirements mobile-order-7">
-                            <div class="requirement-item req-invalid" id="req-length">
-                                <span class="req-icon">⚠️</span> No mínimo 12 caracteres
-                            </div>
-                            <div class="requirement-item req-invalid" id="req-upper">
-                                <span class="req-icon">⚠️</span> Pelo menos 1 letra maiúscula (A-Z)
-                            </div>
-                            <div class="requirement-item req-invalid" id="req-special">
-                                <span class="req-icon">⚠️</span> Pelo menos 1 caracter especial (como ! @ # $)
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        <div class="password-requirements mobile-order-7"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                            <div class="requirement-item req-invalid" id="req-length"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                                <span class="req-icon">⚠️</span> No mínimo 12 caracteres <!-- Explicação DevIN: Declara trecho em linha. -->
+                            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                            <div class="requirement-item req-invalid" id="req-upper"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                                <span class="req-icon">⚠️</span> Pelo menos 1 letra maiúscula (A-Z) <!-- Explicação DevIN: Declara trecho em linha. -->
+                            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                            <div class="requirement-item req-invalid" id="req-special"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                                <span class="req-icon">⚠️</span> Pelo menos 1 caracter especial (como ! @ # $) <!-- Explicação DevIN: Declara trecho em linha. -->
+                            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                    </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                <div class="form-footer-action">
-                    <button type="submit" class="btn-submit">Cadastrar</button>
-                    <p class="login-redirect">Já tem conta? <a href="login.html">Faça login</a></p>
-                </div>
+                <div class="form-footer-action"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <button type="submit" class="btn-submit">Cadastrar</button> <!-- Explicação DevIN: Declara botão de ação. -->
+                    <p class="login-redirect">Já tem conta? <a href="login.html">Faça login</a></p> <!-- Explicação DevIN: Declara parágrafo. A linha reúne múltiplos elementos. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-            </form>
+            </form> <!-- Explicação DevIN: Fecha elemento form do documento. -->
 
-            <footer class="page-footer">
-                Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados.
-            </footer>
+            <footer class="page-footer"> <!-- Explicação DevIN: Declara rodapé. -->
+                Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados. <!-- Explicação DevIN: Declara trecho em linha. -->
+            </footer> <!-- Explicação DevIN: Fecha elemento footer do documento. -->
 
-        </section>
+        </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
 
-   <section class="right-side">
-            <div class="mascot-container">
-                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img">
-            </div>
-        </section>
+   <section class="right-side"> <!-- Explicação DevIN: Declara seção temática. -->
+            <div class="mascot-container"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img"> <!-- Explicação DevIN: Declara imagem na interface. -->
+            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+        </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
 
-    </div>
+    </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-    <div id="status-alert-container"></div>
-<script src="../js/cadastro.js"></script>
-<script src="../js/site-navigation.js"></script>
-<script src="../js/lenis-global.js"></script>
-</body>
-</html>
+    <div id="status-alert-container"></div> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+<script src="../js/cadastro.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+<script src="../js/site-navigation.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+<script src="../js/lenis-global.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+</body> <!-- Explicação DevIN: Fecha elemento body do documento. -->
+</html> <!-- Explicação DevIN: Fecha elemento html do documento. -->

@@ -1,120 +1,74 @@
-name: DevIN — explicações linha por linha
+name: DevIN — comentários explicativos inline # Explicação DevIN: Configura nome identificador (campo name).
 
-on:
-  push:
-    branches:
-      - '**'
-    paths:
-      - '**/*.php'
-      - '**/*.js'
-      - '**/*.cjs'
-      - '**/*.mjs'
-      - '**/*.css'
-      - '**/*.html'
-      - '**/*.htm'
-      - '**/*.sql'
-      - '**/*.json'
-      - '**/*.yml'
-      - '**/*.yaml'
-      - '**/*.svg'
-      - '**/*.xml'
-      - '**/*.sh'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.py'
-      - '.env.example'
-      - '.gitignore'
-      - '.htaccess'
-      - '**/.htaccess'
-      - 'Dockerfile'
-      - 'Makefile'
-      - 'scripts/line_explanations.py'
-      - '.github/workflows/line-documentation.yml'
-  pull_request:
-    paths:
-      - '**/*.php'
-      - '**/*.js'
-      - '**/*.cjs'
-      - '**/*.mjs'
-      - '**/*.css'
-      - '**/*.html'
-      - '**/*.htm'
-      - '**/*.sql'
-      - '**/*.json'
-      - '**/*.yml'
-      - '**/*.yaml'
-      - '**/*.svg'
-      - '**/*.xml'
-      - '**/*.sh'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.py'
-      - '.env.example'
-      - '.gitignore'
-      - '.htaccess'
-      - '**/.htaccess'
-      - 'Dockerfile'
-      - 'Makefile'
-      - 'scripts/line_explanations.py'
-      - 'docs/line-by-line/**'
-      - '.github/workflows/line-documentation.yml'
-  workflow_dispatch:
+on: # Explicação DevIN: Configura acionadores do workflow (campo on).
+  push: # Explicação DevIN: Configura propriedade YAML (campo push).
+    branches: # Explicação DevIN: Configura filtro de branches (campo branches).
+      - '**' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+    paths: # Explicação DevIN: Configura filtro de caminhos (campo paths).
+      - '**/*.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.mjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.html' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.htm' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.yml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.yaml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.svg' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.xml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.sh' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.ts' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.tsx' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.py' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '.env.example' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '.htaccess' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/.htaccess' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'Dockerfile' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'Makefile' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'scripts/line_explanations.py' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/test_line_explanations.py' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '.github/workflows/line-documentation.yml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+  pull_request: # Explicação DevIN: Configura propriedade YAML (campo pull_request).
+    paths: # Explicação DevIN: Configura filtro de caminhos (campo paths).
+      - '**/*.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.mjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.html' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.htm' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.yml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.yaml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.svg' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.xml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.sh' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.ts' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.tsx' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/*.py' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '.env.example' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '.htaccess' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '**/.htaccess' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'Dockerfile' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'Makefile' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'scripts/line_explanations.py' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/test_line_explanations.py' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '.github/workflows/line-documentation.yml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+  workflow_dispatch: # Explicação DevIN: Configura propriedade YAML (campo workflow_dispatch).
 
-permissions:
-  contents: read
+permissions: # Explicação DevIN: Configura permissões do workflow (campo permissions).
+  contents: read # Explicação DevIN: Configura propriedade YAML (campo contents).
 
-jobs:
-  auto-document:
-    if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Generate an explanation for every source line
-        run: python3 scripts/line_explanations.py --write
-      - name: Verify generated documents
-        run: python3 scripts/line_explanations.py --check
-      - name: Unit tests for explanation coverage and credentials
-        run: python3 -m unittest discover -s tests -p 'test_line_explanations.py'
-      - name: Commit synced line documentation to current branch
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A docs/line-by-line
-          if ! git diff --cached --quiet; then
-            git commit -m "docs: sincronizar explicações por linha [skip ci]"
-            git push origin HEAD:"$GITHUB_REF_NAME"
-          fi
-
-  verify-pr:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Require updated explanation for every source line
-        run: python3 scripts/line_explanations.py --check
-      - name: Unit tests for explanation coverage and credentials
-        run: python3 -m unittest discover -s tests -p 'test_line_explanations.py'
-
-  verify-manual:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Inspect line-by-line coverage
-        run: python3 scripts/line_explanations.py --check
+jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo jobs).
+  verify-inline: # Explicação DevIN: Configura propriedade YAML (campo verify-inline).
+    runs-on: ubuntu-latest # Explicação DevIN: Configura ambiente executor (campo runs-on).
+    steps: # Explicação DevIN: Configura sequência de etapas (campo steps).
+      - uses: actions/checkout@v4 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - uses: actions/setup-python@v5 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        with: # Explicação DevIN: Configura propriedade YAML (campo with).
+          python-version: '3.12' # Explicação DevIN: Configura propriedade YAML (campo python-version).
+      - name: Check inline explanations # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        run: python3 scripts/line_explanations.py --check # Explicação DevIN: Configura comando de execução (campo run).
+      - name: Test explanation generation # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        run: python3 -m unittest discover -s tests -p 'test_line_explanations.py' # Explicação DevIN: Configura comando de execução (campo run).

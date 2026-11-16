@@ -1,7 +1,6 @@
 # DevIN — Token 2 permanente dos ADMs (Fase 1 LGPD)
 
-> Branch de desenvolvimento: feature/lgpd-phase1-foundation, PR #8 (draft).
-> O banco da hospedagem NÃO foi alterado. Realizar testes e backup antes do deploy.
+> A migration ainda não deve ser aplicada à hospedagem sem revisão do schema, backup e homologação em ambiente de desenvolvimento.
 
 ## Comportamento
 
@@ -71,8 +70,8 @@ adicionar autenticação independente (passkey/WebAuthn ou TOTP).
 
 - Ações críticas no painel: Token 2 obrigatório antes do primeiro POST;
   autorização por sessão (site).
-- JARVIS Admin do PR #7: Token 1, depois Token 2, obrigatoriamente nessa ordem;
-  sem tokens no histórico/modelo.
+- JARVIS Admin: login ADM obrigatório; Token 2 adicional somente quando
+  `DEVIN_ADMIN_STEPUP_ENABLED=1`, sem enviar tokens ao histórico/modelo.
 - A senha é permanente, **mas** as autorizações de sessão expiram após
   30 minutos de inatividade ou 8 horas da validação. O logout revoga a sessão.
 - AdminStepUp.php verifica a versão/hash atuais no banco a cada acesso protegido.
@@ -90,10 +89,10 @@ adicionar autenticação independente (passkey/WebAuthn ou TOTP).
 - .github/workflows/lgpd-phase1.yml executa PHP lint e MySQL 8.0
   descartável, sem conexão com o banco de produção.
 
-Ordem: backup/validação do schema real → migração 001 (LGPD) e 002
-(administrador) em desenvolvimento → pré-cadastro dos quatro ADMs em
-JarvisT.php → ativar a flag em desenvolvimento → testar painel/JARVIS →
-revisão do PR #8. O JARVIS Admin já está na `main` atual; mantenha a
-proteção desligada até concluir a revisão, o provisionamento e os testes.
+Ordem: backup/validação do schema real → testar as migrações em uma cópia de
+desenvolvimento → migração 001 (LGPD) e 002 (administrador) nesse ambiente →
+pré-cadastro dos quatro ADMs em `JarvisT.php` → ativar a flag em desenvolvimento
+→ testar painel/JARVIS. Mantenha a proteção desligada na hospedagem até concluir
+a revisão, o provisionamento dos quatro administradores e os testes.
 
 Não há garantia de conformidade LGPD apenas por implementar essas rotas.

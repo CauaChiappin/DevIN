@@ -1,73 +1,73 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/login.css?v=20261109-visual">
-    <link rel="stylesheet" href="../css/site-navigation.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
-    <title>Devin|Login</title>
-</head>
-<body>
+<!DOCTYPE html> <!-- Explicação DevIN: Continua atributos ou conteúdo do elemento de marcação aberto anteriormente. -->
+<html lang="pt-br"> <!-- Explicação DevIN: Declara elemento raiz do documento HTML. -->
+<head> <!-- Explicação DevIN: Declara metadados e dependências do documento. -->
+    <meta charset="UTF-8"> <!-- Explicação DevIN: Declara metadado de navegação. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Explicação DevIN: Declara metadado de navegação. -->
+    <link rel="stylesheet" href="../css/login.css?v=20261109-visual"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="stylesheet" href="../css/site-navigation.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <title>Devin|Login</title> <!-- Explicação DevIN: Declara elemento de marcação. -->
+</head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
+<body> <!-- Explicação DevIN: Declara corpo visível da página. -->
 
-    <header class="cabecalho-site">
-        <a class="marca" href="index.html">Dev<span>IN</span></a>
-        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
-            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-        </button>
+    <header class="cabecalho-site"> <!-- Explicação DevIN: Declara cabeçalho da seção ou página. -->
+        <a class="marca" href="index.html">Dev<span>IN</span></a> <!-- Explicação DevIN: Declara link de navegação. A linha reúne múltiplos elementos. -->
+        <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span> <!-- Explicação DevIN: Declara trecho em linha. Inclui atributos de acessibilidade. A linha reúne múltiplos elementos. -->
+        </button> <!-- Explicação DevIN: Fecha elemento button do documento. -->
 
-        <nav class="navegacao" aria-label="Navegação principal">
-            <a href="index.html#conheca">Conheça o DevIN</a>
-            <a href="index.html#etapas">Etapas</a>
-            <a href="index.html#contato">Contato</a>
-        </nav>
+        <nav class="navegacao" aria-label="Navegação principal"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
+            <a href="index.html#conheca">Conheça o DevIN</a> <!-- Explicação DevIN: Declara link de navegação. -->
+            <a href="index.html#etapas">Etapas</a> <!-- Explicação DevIN: Declara link de navegação. -->
+            <a href="index.html#contato">Contato</a> <!-- Explicação DevIN: Declara link de navegação. -->
+        </nav> <!-- Explicação DevIN: Fecha elemento nav do documento. -->
 
-        <div class="acoes">
-            <a class="botao botao-branco" href="cadastro_pessoa.html">Cadastrar-se</a>
-        </div>
-    </header>
+        <div class="acoes"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+            <a class="botao botao-branco" href="cadastro_pessoa.html">Cadastrar-se</a> <!-- Explicação DevIN: Declara link de navegação. -->
+        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+    </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
 
     <!-- Área principal combina a ilustração da plataforma com o formulário de autenticação. -->
-    <main class="conteudo-login">
+    <main class="conteudo-login"> <!-- Explicação DevIN: Declara conteúdo principal da página. -->
         
-        <div class="robo-area">
-            <img class="gif-robo" src="../img/robologin.gif" alt="Robô DevIN">
-        </div>
+        <div class="robo-area"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+            <img class="gif-robo" src="../img/robologin.gif" alt="Robô DevIN"> <!-- Explicação DevIN: Declara imagem na interface. -->
+        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-        <div class="area-login">
-            <h1>Login</h1>
+        <div class="area-login"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+            <h1>Login</h1> <!-- Explicação DevIN: Declara título principal. -->
             <!-- As credenciais são enviadas ao backend por POST para validação e criação da sessão. -->
-            <form action="../php/login.php" method="POST">
-                <div class="grupo-campo">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Seu email..." required>
-                </div>
+            <form action="../php/login.php" method="POST"> <!-- Explicação DevIN: Declara formulário de entrada de dados. -->
+                <div class="grupo-campo"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <label for="email">Email:</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                    <input type="email" id="email" name="email" placeholder="Seu email..." required> <!-- Explicação DevIN: Declara campo de entrada. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
                 
-                <div class="grupo-campo campo-senha input-container">
-                    <label for="senha">Senha:</label>
-                    <input type="password" id="senha" name="senha" placeholder="Sua senha..." required>
+                <div class="grupo-campo campo-senha input-container"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <label for="senha">Senha:</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+                    <input type="password" id="senha" name="senha" placeholder="Sua senha..." required> <!-- Explicação DevIN: Declara campo de entrada. -->
                     
-                    <button type="button" id="btn-mostrar">
-                        <img id="img-olho" src="../img/olho_fechado.png" alt="Mostrar Senha">
-                    </button>
-                </div>
+                    <button type="button" id="btn-mostrar"> <!-- Explicação DevIN: Declara botão de ação. -->
+                        <img id="img-olho" src="../img/olho_fechado.png" alt="Mostrar Senha"> <!-- Explicação DevIN: Declara imagem na interface. -->
+                    </button> <!-- Explicação DevIN: Fecha elemento button do documento. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-                <a href="../php/recuperacao.php" class="link-esqueceu">Esqueceu a Senha?</a>
+                <a href="../php/recuperacao.php" class="link-esqueceu">Esqueceu a Senha?</a> <!-- Explicação DevIN: Declara link de navegação. -->
 
-                <button type="submit" class="botao-entrar">Entrar</button>
-            </form>
+                <button type="submit" class="botao-entrar">Entrar</button> <!-- Explicação DevIN: Declara botão de ação. -->
+            </form> <!-- Explicação DevIN: Fecha elemento form do documento. -->
             
-            <p class="texto-politica">
-                Ao continuar, você reconhece a <a href="politica_privacidade.html">Política de Privacidade</a> do DevIN.
-            </p>
-        </div>
-<script src="../js/login.js"></script>
-<script src="../js/site-navigation.js"></script>
-    </main>
+            <p class="texto-politica"> <!-- Explicação DevIN: Declara parágrafo. -->
+                Ao continuar, você reconhece a <a href="politica_privacidade.html">Política de Privacidade</a> do DevIN. <!-- Explicação DevIN: Declara link de navegação. -->
+            </p> <!-- Explicação DevIN: Fecha elemento p do documento. -->
+        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+<script src="../js/login.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+<script src="../js/site-navigation.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+    </main> <!-- Explicação DevIN: Fecha elemento main do documento. -->
 
-<script src="../js/lenis-global.js"></script>
-</body>
-</html>
+<script src="../js/lenis-global.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+</body> <!-- Explicação DevIN: Fecha elemento body do documento. -->
+</html> <!-- Explicação DevIN: Fecha elemento html do documento. -->

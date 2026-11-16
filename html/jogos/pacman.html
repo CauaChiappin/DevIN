@@ -1,50 +1,50 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="../../">
-    <title>DevIN Arcade - Labirinto</title>
-    <link rel="stylesheet" href="css/jogos.css">
-    <link rel="stylesheet" href="css/site-navigation.css">
-    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-</head>
-<body class="game-page" data-game-mode="public-maze">
-    <div class="arcade-shell">
-        <header class="arcade-header">
-            <a class="arcade-logo" href="html/index.html">Dev<span>IN</span> Arcade</a>
-            <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle>
-                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-            </button>
-            <div class="site-menu" id="site-menu" data-site-menu>
-                <nav class="arcade-nav" aria-label="Jogos">
-                    <a class="arcade-button" href="html/index.html">Voltar ao site</a>
-                    <a class="arcade-button" href="html/jogos/doom.html">DOOM</a>
-                </nav>
-            </div>
-        </header>
+<!DOCTYPE html> <!-- Explicação DevIN: Continua atributos ou conteúdo do elemento de marcação aberto anteriormente. -->
+<html lang="pt-BR"> <!-- Explicação DevIN: Declara elemento raiz do documento HTML. -->
+<head> <!-- Explicação DevIN: Declara metadados e dependências do documento. -->
+    <meta charset="UTF-8"> <!-- Explicação DevIN: Declara metadado de navegação. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Explicação DevIN: Declara metadado de navegação. -->
+    <base href="../../"> <!-- Explicação DevIN: Declara elemento de marcação. -->
+    <title>DevIN Arcade - Labirinto</title> <!-- Explicação DevIN: Declara elemento de marcação. -->
+    <link rel="stylesheet" href="css/jogos.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="stylesheet" href="css/site-navigation.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+</head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
+<body class="game-page" data-game-mode="public-maze"> <!-- Explicação DevIN: Declara corpo visível da página. -->
+    <div class="arcade-shell"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+        <header class="arcade-header"> <!-- Explicação DevIN: Declara cabeçalho da seção ou página. -->
+            <a class="arcade-logo" href="html/index.html">Dev<span>IN</span> Arcade</a> <!-- Explicação DevIN: Declara link de navegação. A linha reúne múltiplos elementos. -->
+            <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span> <!-- Explicação DevIN: Declara trecho em linha. Inclui atributos de acessibilidade. A linha reúne múltiplos elementos. -->
+            </button> <!-- Explicação DevIN: Fecha elemento button do documento. -->
+            <div class="site-menu" id="site-menu" data-site-menu> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                <nav class="arcade-nav" aria-label="Jogos"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
+                    <a class="arcade-button" href="html/index.html">Voltar ao site</a> <!-- Explicação DevIN: Declara link de navegação. -->
+                    <a class="arcade-button" href="html/jogos/doom.html">DOOM</a> <!-- Explicação DevIN: Declara link de navegação. -->
+                </nav> <!-- Explicação DevIN: Fecha elemento nav do documento. -->
+            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+        </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
 
-        <main class="maze-stage">
-            <section class="score-panel" aria-label="Informações do jogo">
-                <div class="score-row"><strong>Jogo</strong><span>Labirinto DevIN</span></div>
-                <p class="hint">Colete todos os cristais para avançar. Cristais grandes permitem escapar dos perseguidores por alguns segundos. Esta versão pública não salva progresso.</p>
-                <p class="hint">Controles: setas ou W, A, S, D.</p>
-            </section>
-            <div class="arcade-canvas-wrap">
-                <canvas id="public-maze-canvas" width="640" height="480" aria-label="Jogo de labirinto"></canvas>
-                <div class="arcade-overlay" data-game-overlay hidden></div>
-            </div>
-            <div class="arcade-live-stats" aria-live="polite">
-                <span>Pontos: <strong data-game-score>0</strong></span>
-                <span>Fase: <strong data-game-level>1</strong></span>
-                <button class="arcade-button" type="button" data-restart-game>Reiniciar</button>
-            </div>
-        </main>
+        <main class="maze-stage"> <!-- Explicação DevIN: Declara conteúdo principal da página. -->
+            <section class="score-panel" aria-label="Informações do jogo"> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
+                <div class="score-row"><strong>Jogo</strong><span>Labirinto DevIN</span></div> <!-- Explicação DevIN: Declara agrupamento de elementos. A linha reúne múltiplos elementos. -->
+                <p class="hint">Colete todos os cristais para avançar. Cristais grandes permitem escapar dos perseguidores por alguns segundos. Esta versão pública não salva progresso.</p> <!-- Explicação DevIN: Declara parágrafo. -->
+                <p class="hint">Controles: setas ou W, A, S, D.</p> <!-- Explicação DevIN: Declara parágrafo. -->
+            </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
+            <div class="arcade-canvas-wrap"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                <canvas id="public-maze-canvas" width="640" height="480" aria-label="Jogo de labirinto"></canvas> <!-- Explicação DevIN: Declara elemento de marcação. Inclui atributos de acessibilidade. -->
+                <div class="arcade-overlay" data-game-overlay hidden></div> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+            <div class="arcade-live-stats" aria-live="polite"> <!-- Explicação DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
+                <span>Pontos: <strong data-game-score>0</strong></span> <!-- Explicação DevIN: Declara trecho em linha. A linha reúne múltiplos elementos. -->
+                <span>Fase: <strong data-game-level>1</strong></span> <!-- Explicação DevIN: Declara trecho em linha. A linha reúne múltiplos elementos. -->
+                <button class="arcade-button" type="button" data-restart-game>Reiniciar</button> <!-- Explicação DevIN: Declara botão de ação. -->
+            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+        </main> <!-- Explicação DevIN: Fecha elemento main do documento. -->
 
-        <footer class="arcade-footer"><span>DevIN | Escola Profa. Alcina Dantas Feijão | 2026</span></footer>
-    </div>
-    <script src="js/arcade-games.js"></script>
-    <script src="js/site-navigation.js"></script>
-    <script src="../../js/lenis-global.js"></script>
-</body>
-</html>
+        <footer class="arcade-footer"><span>DevIN | Escola Profa. Alcina Dantas Feijão | 2026</span></footer> <!-- Explicação DevIN: Declara rodapé. A linha reúne múltiplos elementos. -->
+    </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+    <script src="js/arcade-games.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+    <script src="js/site-navigation.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+    <script src="../../js/lenis-global.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+</body> <!-- Explicação DevIN: Fecha elemento body do documento. -->
+</html> <!-- Explicação DevIN: Fecha elemento html do documento. -->

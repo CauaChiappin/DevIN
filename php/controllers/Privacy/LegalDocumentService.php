@@ -1,76 +1,76 @@
-<?php
-declare(strict_types=1);
+<?php // Explicação DevIN: Abre código PHP interpretado no servidor.
+declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 
-require_once __DIR__ . '/PrivacyContext.php';
+require_once __DIR__ . '/PrivacyContext.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 /**
  * Versões aprovadas devem ser publicadas em processo jurídico/editorial.
  * Esta classe NUNCA cria documentos legais ou inventa aceites.
  */
-final class LegalDocumentService
-{
-    private const TYPES = ['terms', 'privacy', 'cookies'];
+final class LegalDocumentService // Explicação DevIN: Declara o tipo LegalDocumentService e inicia sua estrutura.
+{ // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    private const TYPES = ['terms', 'privacy', 'cookies']; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
 
     /** @return array{version_code:string,content_sha256:string} */
-    public static function active(mysqli $db, string $type): array
-    {
-        if (!in_array($type, self::TYPES, true)) {
-            throw new InvalidArgumentException('Tipo de documento inválido.');
-        }
-        $stmt = $db->prepare(
-            'SELECT version_code, HEX(content_sha256) AS content_sha256 '
-            . 'FROM legal_document_versions WHERE document_type = ? '
-            . 'AND is_active = 1 AND published_at <= UTC_TIMESTAMP(6) LIMIT 2'
-        );
-        $stmt->bind_param('s', $type);
-        $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-        if (count($rows) !== 1) {
+    public static function active(mysqli $db, string $type): array // Explicação DevIN: Declara função/método active, com seus parâmetros e comportamento.
+    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (!in_array($type, self::TYPES, true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            throw new InvalidArgumentException('Tipo de documento inválido.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            'SELECT version_code, HEX(content_sha256) AS content_sha256 ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            . 'FROM legal_document_versions WHERE document_type = ? ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            . 'AND is_active = 1 AND published_at <= UTC_TIMESTAMP(6) LIMIT 2' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $stmt->bind_param('s', $type); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+        $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função active.
+        if (count($rows) !== 1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // Falha fechada quando não há documento aprovado ou dois foram ativados.
-            throw new RuntimeException('Documento legal ativo não configurado de modo único.');
-        }
-        return $rows[0];
-    }
+            throw new RuntimeException('Documento legal ativo não configurado de modo único.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        return $rows[0]; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Requer dados pré-aprovados; operação transacional de publicação manual. */
-    public static function publishApproved(mysqli $db, string $type, string $version, string $sha256Hex): void
-    {
-        if (!in_array($type, self::TYPES, true)
-            || preg_match('/^[A-Za-z0-9._-]{1,40}$/D', $version) !== 1
-            || preg_match('/^[a-fA-F0-9]{64}$/D', $sha256Hex) !== 1) {
-            throw new InvalidArgumentException('Versão ou hash do documento inválidos.');
-        }
-        $db->begin_transaction();
-        try {
-            $stmt = $db->prepare(
-                'SELECT LOWER(HEX(content_sha256)) AS sha FROM legal_document_versions '
-                . 'WHERE document_type = ? AND version_code = ? FOR UPDATE'
-            );
-            $stmt->bind_param('ss', $type, $version);
-            $stmt->execute();
-            $existing = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
-            if ($existing !== null && !hash_equals($existing['sha'], strtolower($sha256Hex))) {
-                throw new DomainException('Não é permitido alterar o conteúdo de versão legal publicada.');
-            }
-            $stmt = $db->prepare('UPDATE legal_document_versions SET is_active = 0 WHERE document_type = ?');
-            $stmt->bind_param('s', $type);
-            $stmt->execute();
-            $stmt->close();
+    public static function publishApproved(mysqli $db, string $type, string $version, string $sha256Hex): void // Explicação DevIN: Declara função/método publishApproved, com seus parâmetros e comportamento.
+    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (!in_array($type, self::TYPES, true) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            || preg_match('/^[A-Za-z0-9._-]{1,40}$/D', $version) !== 1 // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            || preg_match('/^[a-fA-F0-9]{64}$/D', $sha256Hex) !== 1) { // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            throw new InvalidArgumentException('Versão ou hash do documento inválidos.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função publishApproved.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+                'SELECT LOWER(HEX(content_sha256)) AS sha FROM legal_document_versions ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                . 'WHERE document_type = ? AND version_code = ? FOR UPDATE' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $stmt->bind_param('ss', $type, $version); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $existing = $stmt->get_result()->fetch_assoc(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+            $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função publishApproved.
+            if ($existing !== null && !hash_equals($existing['sha'], strtolower($sha256Hex))) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                throw new DomainException('Não é permitido alterar o conteúdo de versão legal publicada.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $stmt = $db->prepare('UPDATE legal_document_versions SET is_active = 0 WHERE document_type = ?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmt->bind_param('s', $type); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função publishApproved.
 
-            $stmt = $db->prepare(
-                'INSERT INTO legal_document_versions (document_type,version_code,content_sha256,published_at,is_active) '
-                . 'VALUES (?, ?, UNHEX(?), UTC_TIMESTAMP(6), 1) '
-                . 'ON DUPLICATE KEY UPDATE is_active = 1'
-            );
-            $stmt->bind_param('sss', $type, $version, $sha256Hex);
-            $stmt->execute();
-            $stmt->close();
-            $db->commit();
-        } catch (Throwable $exception) {
-            $db->rollback();
-            throw $exception;
-        }
-    }
-}
+            $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+                'INSERT INTO legal_document_versions (document_type,version_code,content_sha256,published_at,is_active) ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                . 'VALUES (?, ?, UNHEX(?), UTC_TIMESTAMP(6), 1) ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                . 'ON DUPLICATE KEY UPDATE is_active = 1' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $stmt->bind_param('sss', $type, $version, $sha256Hex); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função publishApproved.
+            $db->commit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função publishApproved.
+        } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            $db->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função publishApproved.
+            throw $exception; // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

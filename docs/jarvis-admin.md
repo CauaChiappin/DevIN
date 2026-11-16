@@ -1,6 +1,6 @@
 # JARVIS Admin — Fases 1 a 3 (experimental)
 
-Implementação do PR #7, preparada para integração à `main` **sem verificação adicional de dois tokens**.
+O chat JARVIS requer uma sessão ADM válida. A verificação adicional Token 2 é opcional e permanece desligada por padrão até que migração, cadastro dos administradores e homologação sejam concluídos.
 
 ## Recursos implementados
 - Widget flutuante e responsivo em todas as páginas do painel ADM.
@@ -13,11 +13,11 @@ Implementação do PR #7, preparada para integração à `main` **sem verificaç
 - **Modelo usado visível nas respostas novas:** provedor, ID de modelo e sinalização de uso do fallback (se ocorrer). O modo Resumo usa somente dados locais.
 - Resumo agregado de candidatos, empresas, vagas e denúncias pendentes (sem dados pessoais enviados ao modelo).
 - Autenticação ADM com conferência da conta no banco, CSRF nas escritas, limites, SQL preparado, IDs restritos por administrador e endpoint HTTPS de provedor fixo.
-- O chat **não** executa ações administrativas. Concluir uma atividade não apaga vagas, empresas ou contas.
+- O chat não executa ações destrutivas. Ferramentas separadas permitem consultas limitadas e rascunhos de mensagens, com revisão e aprovação humana; concluir uma atividade não apaga vagas, empresas ou contas.
 
 ## Instalação
-1. Crie ou use um banco MySQL do DevIN e **faça backup antes de executar migrações**.
-2. Execute `database/migrations/jarvis_admin.sql` uma vez. A migração cria **apenas** as quatro tabelas JARVIS: `jarvis_conversations`, `jarvis_messages`, `jarvis_tasks`, `jarvis_task_audit`.
+1. Use o banco MySQL já configurado para o DevIN; **não crie um banco local novo nem execute migrations na hospedagem sem comparar o schema e fazer backup**. Primeiro valide as migrations em uma cópia de desenvolvimento e confirme se as tabelas JARVIS já existem.
+2. Se as tabelas ainda não existirem, aplique `database/migrations/jarvis_admin.sql` uma vez, pelo procedimento aprovado para o ambiente. Ela cria **apenas** as quatro tabelas JARVIS: `jarvis_conversations`, `jarvis_messages`, `jarvis_tasks`, `jarvis_task_audit`.
 3. Configure o `.env` real no servidor (não faça commit):
    ```dotenv
    DEVIN_JARVIS_PROVIDER=openrouter
@@ -25,7 +25,7 @@ Implementação do PR #7, preparada para integração à `main` **sem verificaç
    DEVIN_JARVIS_API_KEY=
    ```
    Sem a chave, o **Resumo do DevIN**, a memória e a fila continuam locais, mas o chat retorna uma mensagem de configuração. Não reutilize a chave do Gemini dos currículos.
-4. Verifique a extensão cURL e `mbstring` do PHP, as dependências Composer do DevIN, e se a hospedagem permite conexões HTTPS com o provedor.
+4. Use PHP 8.1 ou superior com as extensões cURL, `mbstring` e `mysqli`; verifique as dependências Composer e se a hospedagem permite conexões HTTPS com o provedor.
 5. Acesse `php/adm.php` com sessão ADM válida, abra o ícone JARVIS e teste as abas **Conversas** e **Atividades**.
 
 > O ID `z-ai/glm-5.3-flash:free` é um exemplo encontrado no OpenRouter em novembro de 2026. Modelos e cotas podem mudar. A variante gratuita tem limite de uso; revise disponibilidade, termos de dados e custos antes de colocá-la em produção. Alternativamente, escolha outro ID suportado. O roteador OpenRouter usa até **10 modelos gratuitos reserva**, configuráveis em `DEVIN_JARVIS_FALLBACK_MODELS` (lista separada por vírgulas), com defaults no código e último recurso `openrouter/free`. Envia a cadeia no campo `models` em uma chamada, sem tentar cada modelo com requisições separadas. `DEVIN_JARVIS_API_KEY` é a chave principal e `DEVIN_JARVIS_BACKUP_API_KEY` é uma segunda chave opcional usada quando a principal falha por credencial, cota, rede ou indisponibilidade. Duas chaves da mesma conta podem compartilhar cota. A variável antiga `DEVIN_JARVIS_FALLBACK_MODEL` continua aceitando **somente ID de modelo**, nunca chave de API. Consulte `docs/jarvis-openrouter-dual-key.md`.
@@ -36,7 +36,7 @@ Implementação do PR #7, preparada para integração à `main` **sem verificaç
 - `DEVIN_JARVIS_FALLBACK_MODELS` aceita até dez IDs gratuitos priorizados; se ficar vazia, usa dez reservas padrão.
 - Erros do modelo agora informam `error_code` e `provider_http_status` seguros, sem chave, prompt ou resposta bruta.
 - Metadados das respostas incluem `model`, `fallback_used` e `key_used` (nível `primary` ou `backup`).
-- A lógica do 2FA continua **fora** desta versão; o login normal ADM ainda é obrigatório.
+- O login normal ADM continua obrigatório; Token 2 é opcional e segue a seção de acesso abaixo.
 - Instalação e diagnóstico: `docs/jarvis-openrouter-dual-key.md`.
 
 ## Endpoints
@@ -52,7 +52,7 @@ As escritas exigem cabeçalho `X-CSRF-Token`. Uma sessão inexistente retorna JS
 - Mensagens são armazenadas sem criptografia em nível de coluna no MySQL; proteja backups e acesso ao banco e defina uma política de retenção antes de uso real.
 - O conteúdo digitado no chat é enviado ao provedor selecionado. Até 12 mensagens anteriores só são incluídas no pedido quando o administrador ativa **Usar mensagens anteriores como contexto da IA**. O MySQL continua guardando o histórico independentemente dessa escolha. Evite CPF, credenciais, dados pessoais de candidatos e conteúdo sensível de denúncias.
 - O chat depende da disponibilidade da API e não garante precisão. A pesquisa atual divide a consulta em palavras e usa `LIKE`; não equivale a recuperação semântica.
-- No momento não há buscas de entidades administrativas pelo modelo, workers em segundo plano, ferramenta de ações destrutivas, anexos ou streaming.
+- Consultas de entidades só estão disponíveis pelas ferramentas controladas, com seleção humana e campos limitados; não há workers em segundo plano, ações destrutivas, anexos ou streaming.
 
 ## Roteiro de testes de homologação
 1. Executar `php -l` nos endpoints, controllers e widget; `node --check js/jarvis-admin.js` (workflow automático incluído).
@@ -64,8 +64,8 @@ As escritas exigem cabeçalho `X-CSRF-Token`. Uma sessão inexistente retorna JS
 7. Certificar que HTML fornecido por mensagem ou descrição de tarefa não seja interpretado como código pelo navegador.
 8. Verificar que a migração SQL ocorre apenas no banco de desenvolvimento e que não há chaves em commits.
 
-## Próxima fase
-Revisar arquitetura e testes reais no servidor. Depois: consultas administrativas limitadas por ferramentas; propostas de ações com confirmação transacional e auditoria detalhada, sem jamais permitir SQL/execução arbitrária do modelo. Persistência e tarefas desta fase não autorizam o modelo a editar registros reais.
+## Próximos passos
+Homologar a arquitetura no servidor, revisar privacidade e testar as ferramentas supervisionadas em ambiente de desenvolvimento. Busca semântica, workers e ações que alterem registros exigem implementação e revisão de segurança separadas; nunca permitir SQL ou execução arbitrária pelo modelo.
 
 ## Mudanças adaptadas do JarvisCode V3 (escopo limitado)
 
@@ -89,13 +89,13 @@ node --check js/jarvis-admin.js
 
 A CI executa testes de sintaxe e habilidades sem chaves de API, além de integração MySQL isolada para memória, tarefas e isolamento dos administradores. O uso real do provedor externo e a UI mobile ainda exigem testes na hospedagem.
 
-## Acesso administrativo sem 2FA interna
+## Acesso administrativo e Token 2
 
-O JARVIS Admin abre após o **login normal do ADM** no DevIN. Não exige Token 1, Token 2, `AdminStepUp`, `DEVIN_ADMIN_STEPUP_ENABLED`, nem a migração de segurança do PR #8.
+O JARVIS Admin sempre exige **login normal do ADM** e valida a conta no banco. Com `DEVIN_ADMIN_STEPUP_ENABLED=0` (padrão), não solicita Token 2. Para ativar a etapa adicional, aplique primeiro `database/migrations/2026_11_09_002_admin_stepup.sql`, faça backup e homologue em desenvolvimento; os quatro ADMs precisam cadastrar o Token 2 individualmente em `php/JarvisT.php` **antes** de definir a variável como `1`. A etapa protege endpoints críticos e não deve ser ligada sem esse preparo. Consulte `docs/admin-stepup-security.md`.
 
-Os endpoints `chat.php`, `tasks.php` e `conversations.php` continuam obrigatoriamente autenticados como ADM (sessão válida e existência da conta no MySQL). O servidor usa validação de CSRF nas escritas, limites de uso, separação de dados por ID de ADM, e mensagens de erro sem expor segredos. Nenhum endpoint JARVIS executa alterações em usuários, vagas ou denúncias.
+Os endpoints JARVIS exigem autenticação ADM (sessão válida e existência da conta no MySQL). O servidor usa validação de CSRF nas escritas, limites de uso, separação de dados por ID de ADM quando aplicável e mensagens de erro sem expor segredos. As ferramentas de mensagens exigem revisão e aprovação explícitas; não há endpoints JARVIS para banir, excluir ou moderar automaticamente.
 
-**Não confundir com publicação:** merge na `main` não aplica automaticamente o esquema MySQL nem define chaves de IA na hospedagem. O JARVIS depende apenas de `database/migrations/jarvis_admin.sql` e da configuração do provedor para gerar respostas. O resumo agregado não usa API de modelo.
+**Não confundir com publicação:** merge na `main` não aplica automaticamente migrations nem configura chaves de IA na hospedagem. O chat depende de `database/migrations/jarvis_admin.sql` para histórico e de uma chave válida do provedor para gerar respostas. Ferramentas supervisionadas exigem também `database/migrations/jarvis_admin_controlled_actions.sql`; Token 2 exige a migration própria e cadastro prévio. O resumo agregado não usa API de modelo.
 
 
 ## Ferramentas administrativas supervisionadas

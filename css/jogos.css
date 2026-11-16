@@ -1,233 +1,233 @@
-:root {
-    --arcade-bg: #070914;
-    --arcade-panel: #111827;
-    --arcade-panel-2: #0b1220;
-    --arcade-blue: #1d4ed8;
-    --arcade-cyan: #22d3ee;
-    --arcade-yellow: #ffd43b;
-    --arcade-pink: #ff4fd8;
-    --arcade-red: #ff3b30;
-    --arcade-text: #f8fafc;
-    --arcade-muted: #94a3b8;
-}
+:root { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    --arcade-bg: #070914; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-panel: #111827; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-panel-2: #0b1220; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-blue: #1d4ed8; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-cyan: #22d3ee; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-yellow: #ffd43b; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-pink: #ff4fd8; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-red: #ff3b30; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-text: #f8fafc; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-muted: #94a3b8; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-body.game-page {
-    min-height: 100vh;
-    background: var(--arcade-bg);
-    color: var(--arcade-text);
-    font-family: "Poppins", "Segoe UI", Arial, sans-serif;
-}
+body.game-page { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-height: 100vh; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    background: var(--arcade-bg); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: var(--arcade-text); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-family: "Poppins", "Segoe UI", Arial, sans-serif; /* Explicação DevIN: Define família tipográfica por meio da propriedade CSS font-family. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.arcade-shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0; }
-.arcade-header, .arcade-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.arcade-logo { color: #fff; font-size: clamp(24px, 4vw, 38px); font-weight: 800; text-decoration: none; }
-.arcade-logo span { color: var(--arcade-cyan); }
-.arcade-nav { display: flex; flex-wrap: wrap; gap: 10px; }
+.arcade-shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-header, .arcade-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-logo { color: #fff; font-size: clamp(24px, 4vw, 38px); font-weight: 800; text-decoration: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-logo span { color: var(--arcade-cyan); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-nav { display: flex; flex-wrap: wrap; gap: 10px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.arcade-button {
-    border: 1px solid rgba(255, 255, 255, .18);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .08);
-    color: #fff;
-    cursor: pointer;
-    font: inherit;
-    font-weight: 700;
-    padding: 10px 14px;
-    text-decoration: none;
-}
+.arcade-button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border: 1px solid rgba(255, 255, 255, .18); /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: rgba(255, 255, 255, .08); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #fff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    font: inherit; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    padding: 10px 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    text-decoration: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.arcade-button:hover, .arcade-button:focus-visible { border-color: var(--arcade-cyan); outline: 0; }
+.arcade-button:hover, .arcade-button:focus-visible { border-color: var(--arcade-cyan); outline: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 /* No arcade próprio, o palco cresce e o placar mantém largura fixa ao lado. */
-.arcade-main { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; margin-top: 24px; }
+.arcade-main { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; margin-top: 24px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.game-stage, .score-panel, .doom-stage, .emulator-stage {
-    background: linear-gradient(180deg, rgba(17, 24, 39, .96), rgba(11, 18, 32, .96));
-    border: 1px solid rgba(148, 163, 184, .28);
-    border-radius: 8px;
-    box-shadow: 0 18px 60px rgba(0, 0, 0, .35);
-}
+.game-stage, .score-panel, .doom-stage, .emulator-stage { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: linear-gradient(180deg, rgba(17, 24, 39, .96), rgba(11, 18, 32, .96)); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid rgba(148, 163, 184, .28); /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    box-shadow: 0 18px 60px rgba(0, 0, 0, .35); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.game-stage { display: grid; min-height: 620px; padding: 18px; place-items: center; }
-.score-panel { align-self: start; display: grid; gap: 14px; padding: 18px; }
-.score-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(148, 163, 184, .18); padding-bottom: 12px; }
-.score-row strong { color: var(--arcade-muted); font-size: 13px; text-transform: uppercase; }
-.score-row span { color: #fff; font-size: 24px; font-weight: 800; }
-.hint { color: var(--arcade-muted); font-size: 13px; line-height: 1.5; }
+.game-stage { display: grid; min-height: 620px; padding: 18px; place-items: center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.score-panel { align-self: start; display: grid; gap: 14px; padding: 18px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.score-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(148, 163, 184, .18); padding-bottom: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.score-row strong { color: var(--arcade-muted); font-size: 13px; text-transform: uppercase; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.score-row span { color: #fff; font-size: 24px; font-weight: 800; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.hint { color: var(--arcade-muted); font-size: 13px; line-height: 1.5; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 /* O tabuleiro usa células fixas para que paredes e personagens coincidam com o mapa do jogo. */
-#pacman-board {
-    display: grid;
-    grid-template-columns: repeat(21, 24px);
-    grid-template-rows: repeat(var(--board-rows, 22), 24px);
-    background: #020617;
-    border: 3px solid #172554;
-    border-radius: 8px;
-    padding: 8px;
-    position: relative;
-}
+#pacman-board { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    grid-template-columns: repeat(21, 24px); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    grid-template-rows: repeat(var(--board-rows, 22), 24px); /* Explicação DevIN: Define linhas da grade por meio da propriedade CSS grid-template-rows. */
+    background: #020617; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 3px solid #172554; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    padding: 8px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    position: relative; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.cell { align-items: center; display: flex; height: 24px; justify-content: center; position: relative; width: 24px; }
-.wall { background: #1d4ed8; box-shadow: inset 0 0 0 2px #60a5fa; }
-.pellet::after { background: #ffe8a3; border-radius: 50%; content: ""; height: 5px; width: 5px; }
-.power::after { animation: pulse .8s infinite alternate; background: var(--arcade-yellow); border-radius: 50%; content: ""; height: 12px; width: 12px; }
+.cell { align-items: center; display: flex; height: 24px; justify-content: center; position: relative; width: 24px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.wall { background: #1d4ed8; box-shadow: inset 0 0 0 2px #60a5fa; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.pellet::after { background: #ffe8a3; border-radius: 50%; content: ""; height: 5px; width: 5px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.power::after { animation: pulse .8s infinite alternate; background: var(--arcade-yellow); border-radius: 50%; content: ""; height: 12px; width: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.pacman, .ghost { border-radius: 50%; height: 20px; position: absolute; transition: transform .12s linear; width: 20px; z-index: 3; }
-.pacman { background: conic-gradient(from 35deg, transparent 0 75deg, var(--arcade-yellow) 75deg 360deg); filter: drop-shadow(0 0 8px rgba(255, 212, 59, .5)); }
-.ghost { border-radius: 10px 10px 4px 4px; filter: drop-shadow(0 0 8px rgba(255, 255, 255, .24)); }
-.ghost::before, .ghost::after { background: #fff; border-radius: 50%; content: ""; height: 5px; position: absolute; top: 6px; width: 5px; }
-.ghost::before { left: 5px; }
-.ghost::after { right: 5px; }
-.ghost.blinky { background: var(--arcade-red); }
-.ghost.pinky { background: var(--arcade-pink); }
-.ghost.inky { background: var(--arcade-cyan); }
-.ghost.clyde { background: #f97316; }
-.ghost.scared { background: #2563eb; }
+.pacman, .ghost { border-radius: 50%; height: 20px; position: absolute; transition: transform .12s linear; width: 20px; z-index: 3; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.pacman { background: conic-gradient(from 35deg, transparent 0 75deg, var(--arcade-yellow) 75deg 360deg); filter: drop-shadow(0 0 8px rgba(255, 212, 59, .5)); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost { border-radius: 10px 10px 4px 4px; filter: drop-shadow(0 0 8px rgba(255, 255, 255, .24)); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost::before, .ghost::after { background: #fff; border-radius: 50%; content: ""; height: 5px; position: absolute; top: 6px; width: 5px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost::before { left: 5px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost::after { right: 5px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost.blinky { background: var(--arcade-red); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost.pinky { background: var(--arcade-pink); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost.inky { background: var(--arcade-cyan); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost.clyde { background: #f97316; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.ghost.scared { background: #2563eb; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.game-message {
-    background: rgba(2, 6, 23, .9);
-    border: 1px solid rgba(255, 255, 255, .2);
-    border-radius: 8px;
-    color: #fff;
-    display: none;
-    font-size: clamp(18px, 4vw, 34px);
-    font-weight: 800;
-    left: 50%;
-    padding: 18px 24px;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 5;
-}
+.game-message { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: rgba(2, 6, 23, .9); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid rgba(255, 255, 255, .2); /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 8px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: #fff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    font-size: clamp(18px, 4vw, 34px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 800; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    left: 50%; /* Explicação DevIN: Define distância em relação à borda esquerda por meio da propriedade CSS left. */
+    padding: 18px 24px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    text-align: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    top: 50%; /* Explicação DevIN: Define distância em relação à borda superior por meio da propriedade CSS top. */
+    transform: translate(-50%, -50%); /* Explicação DevIN: Define transformação geométrica por meio da propriedade CSS transform. */
+    z-index: 5; /* Explicação DevIN: Define ordem de sobreposição por meio da propriedade CSS z-index. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.doom-stage { display: grid; gap: 16px; margin-top: 24px; overflow: hidden; padding: 16px; }
-.doom-frame { position: relative; aspect-ratio: 16 / 10; background: #030303; border: 1px solid rgba(255, 255, 255, .16); border-radius: 8px; overflow: hidden; width: 100%; }
-.doom-canvas { display: block; height: 100%; image-rendering: pixelated; outline: none; width: 100%; }
-.doom-hud { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; gap: 12px; pointer-events: none; }
-.doom-hud span { background: rgba(0, 0, 0, .72); border: 1px solid rgba(255, 255, 255, .18); border-radius: 6px; color: #fff; font-size: 12px; font-weight: 700; padding: 7px 10px; }
-.doom-hud strong { color: var(--arcade-yellow); }
-.doom-controls { display: flex; flex-wrap: wrap; gap: 8px; color: var(--arcade-muted); font-size: 13px; line-height: 1.5; }
-.doom-controls kbd { border: 1px solid rgba(255, 255, 255, .24); border-radius: 4px; color: #fff; padding: 1px 5px; }
-.doom-message { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, .66); color: #fff; font-size: clamp(20px, 4vw, 36px); font-weight: 800; pointer-events: none; text-align: center; }
-.doom-message[hidden] { display: none; }
-.emulator-stage { display: grid; gap: 16px; margin-top: 24px; padding: 16px; }
-.emulator-frame { aspect-ratio: 16 / 10; background: #000; border: 1px solid rgba(255, 255, 255, .16); border-radius: 8px; overflow: hidden; width: 100%; }
-.emulator-frame iframe { border: 0; display: block; height: 100%; width: 100%; }
-.doom-emulator-frame { aspect-ratio: 4 / 3; }
-.doom-emulator-frame iframe { height: 62.5%; transform: scale(1.6); transform-origin: top left; width: 62.5%; }
-.maze-stage { display: grid; gap: 16px; margin-top: 24px; overflow: hidden; padding: 16px; }
-#public-maze-canvas, #arcade-canvas { display: block; height: auto; max-width: 100%; outline: none; width: 100%; }
-.arcade-portal .portal-content { display: grid; gap: 24px; margin-top: 24px; }
-.portal-intro, .portal-games, .arcade-play-panel, .admin-progress { background: linear-gradient(180deg, rgba(17, 24, 39, .96), rgba(11, 18, 32, .96)); border: 1px solid rgba(148, 163, 184, .28); border-radius: 12px; padding: 20px; }
-.portal-intro h1 { font-size: clamp(30px, 5vw, 48px); margin: 4px 0 8px; }
-.portal-intro p { color: var(--arcade-muted); line-height: 1.6; }
-.portal-intro .portal-eyebrow { color: var(--arcade-cyan); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
-.portal-layout { align-items: start; display: grid; gap: 18px; grid-template-columns: minmax(240px, .7fr) minmax(0, 1.3fr); }
-.portal-games { display: grid; gap: 10px; padding: 12px; }
-.portal-game-card { background: #0b1220; border: 1px solid rgba(148, 163, 184, .24); border-radius: 10px; color: var(--arcade-text); cursor: pointer; display: grid; gap: 5px; grid-template-columns: 34px 1fr; padding: 13px; text-align: left; }
-.portal-game-card:hover, .portal-game-card:focus-visible { border-color: var(--arcade-cyan); outline: none; }
-.portal-game-card strong, .portal-game-card span:not(.portal-game-icon) { grid-column: 2; }
-.portal-game-card span:not(.portal-game-icon) { color: var(--arcade-muted); font-size: 12px; line-height: 1.45; }
-.portal-game-icon { color: var(--arcade-cyan); font-size: 24px; grid-row: span 2; }
-.arcade-play-panel { display: grid; gap: 12px; min-width: 0; }
-.arcade-play-heading { align-items: center; display: flex; gap: 12px; justify-content: space-between; }
-.arcade-play-heading p, .admin-progress p { color: var(--arcade-muted); font-size: 13px; line-height: 1.5; margin-top: 4px; }
-.arcade-canvas-wrap { background: #020617; border: 1px solid rgba(96, 165, 250, .35); border-radius: 8px; overflow: hidden; position: relative; }
-.arcade-overlay { align-items: center; background: rgba(2, 6, 23, .92); color: #fff; display: flex; font-size: clamp(17px, 3vw, 25px); font-weight: 800; inset: 0; justify-content: center; padding: 24px; position: absolute; text-align: center; }
-.arcade-overlay[hidden] { display: none; }
-.game-start-card { background: rgba(17, 24, 39, .96); border: 1px solid rgba(34, 211, 238, .45); border-radius: 12px; display: grid; gap: 12px; max-width: 460px; padding: clamp(18px, 4vw, 30px); width: 100%; }
-.game-start-card[hidden] { display: none; }
-.game-start-card .portal-eyebrow { color: var(--arcade-cyan); font-size: 11px; font-weight: 800; letter-spacing: .12em; }
-.game-start-card h2 { font-size: clamp(22px, 4vw, 30px); }
-.game-start-card > p:not(.portal-eyebrow) { color: var(--arcade-muted); font-size: 14px; font-weight: 400; line-height: 1.55; }
-.game-start-card .game-start-controls { color: var(--arcade-cyan); }
-.game-start-button { justify-self: center; margin-top: 4px; }
-.game-start-button:disabled { cursor: wait; opacity: .65; }
-.game-over-card { background: rgba(17, 24, 39, .97); border: 1px solid rgba(34, 211, 238, .45); border-radius: 12px; display: grid; gap: 10px; max-height: 100%; max-width: 500px; overflow-y: auto; padding: clamp(16px, 3vw, 24px); width: 100%; }
-.game-over-card[hidden] { display: none; }
-.game-over-card .portal-eyebrow { color: var(--arcade-cyan); font-size: 11px; font-weight: 800; letter-spacing: .12em; }
-.game-over-card h2 { font-size: clamp(22px, 4vw, 30px); }
-.game-over-card h3 { color: var(--arcade-cyan); font-size: 15px; margin-top: 4px; }
-.game-over-card > p:not(.portal-eyebrow) { color: var(--arcade-muted); font-size: 13px; font-weight: 400; line-height: 1.45; }
-.game-leaderboard { display: grid; gap: 4px; list-style: none; }
-.game-leaderboard li { align-items: center; border-bottom: 1px solid rgba(148, 163, 184, .16); display: flex; font-size: 12px; gap: 12px; justify-content: space-between; padding: 6px 0; text-align: left; }
-.game-leaderboard li strong { color: var(--arcade-yellow); flex: 0 0 auto; font-size: 11px; }
-.game-over-card > .arcade-button { justify-self: center; margin-top: 4px; }
-.arcade-live-stats { color: var(--arcade-muted); display: flex; flex-wrap: wrap; gap: 20px; }
-.arcade-live-stats strong { color: var(--arcade-yellow); }
-.arcade-feedback { color: var(--arcade-cyan); font-size: 13px; min-height: 1.4em; }
-.admin-progress h2 { margin-bottom: 5px; }
-.admin-progress-table { margin-top: 14px; overflow-x: auto; }
-.admin-progress-grid { border-collapse: collapse; min-width: 720px; width: 100%; }
-.admin-progress-grid th, .admin-progress-grid td { border-bottom: 1px solid rgba(148, 163, 184, .2); padding: 10px; text-align: left; }
-.admin-progress-grid th { color: var(--arcade-cyan); font-size: 12px; }
-.admin-progress-grid td { font-size: 13px; }
-.danger-button { color: #fecaca; }
-.arcade-unlock-status { background: #111827; border: 1px solid var(--arcade-cyan); border-radius: 8px; bottom: 16px; color: var(--arcade-text); padding: 12px 16px; position: fixed; right: 16px; z-index: 20; }
-.arcade-footer { color: var(--arcade-muted); font-size: 12px; margin-top: 22px; }
+.doom-stage { display: grid; gap: 16px; margin-top: 24px; overflow: hidden; padding: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-frame { position: relative; aspect-ratio: 16 / 10; background: #030303; border: 1px solid rgba(255, 255, 255, .16); border-radius: 8px; overflow: hidden; width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-canvas { display: block; height: 100%; image-rendering: pixelated; outline: none; width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-hud { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; gap: 12px; pointer-events: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-hud span { background: rgba(0, 0, 0, .72); border: 1px solid rgba(255, 255, 255, .18); border-radius: 6px; color: #fff; font-size: 12px; font-weight: 700; padding: 7px 10px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-hud strong { color: var(--arcade-yellow); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-controls { display: flex; flex-wrap: wrap; gap: 8px; color: var(--arcade-muted); font-size: 13px; line-height: 1.5; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-controls kbd { border: 1px solid rgba(255, 255, 255, .24); border-radius: 4px; color: #fff; padding: 1px 5px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-message { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, .66); color: #fff; font-size: clamp(20px, 4vw, 36px); font-weight: 800; pointer-events: none; text-align: center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-message[hidden] { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.emulator-stage { display: grid; gap: 16px; margin-top: 24px; padding: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.emulator-frame { aspect-ratio: 16 / 10; background: #000; border: 1px solid rgba(255, 255, 255, .16); border-radius: 8px; overflow: hidden; width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.emulator-frame iframe { border: 0; display: block; height: 100%; width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-emulator-frame { aspect-ratio: 4 / 3; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.doom-emulator-frame iframe { height: 62.5%; transform: scale(1.6); transform-origin: top left; width: 62.5%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.maze-stage { display: grid; gap: 16px; margin-top: 24px; overflow: hidden; padding: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+#public-maze-canvas, #arcade-canvas { display: block; height: auto; max-width: 100%; outline: none; width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .portal-content { display: grid; gap: 24px; margin-top: 24px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-intro, .portal-games, .arcade-play-panel, .admin-progress { background: linear-gradient(180deg, rgba(17, 24, 39, .96), rgba(11, 18, 32, .96)); border: 1px solid rgba(148, 163, 184, .28); border-radius: 12px; padding: 20px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-intro h1 { font-size: clamp(30px, 5vw, 48px); margin: 4px 0 8px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-intro p { color: var(--arcade-muted); line-height: 1.6; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-intro .portal-eyebrow { color: var(--arcade-cyan); font-size: 12px; font-weight: 800; letter-spacing: .12em; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-layout { align-items: start; display: grid; gap: 18px; grid-template-columns: minmax(240px, .7fr) minmax(0, 1.3fr); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-games { display: grid; gap: 10px; padding: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-game-card { background: #0b1220; border: 1px solid rgba(148, 163, 184, .24); border-radius: 10px; color: var(--arcade-text); cursor: pointer; display: grid; gap: 5px; grid-template-columns: 34px 1fr; padding: 13px; text-align: left; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-game-card:hover, .portal-game-card:focus-visible { border-color: var(--arcade-cyan); outline: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-game-card strong, .portal-game-card span:not(.portal-game-icon) { grid-column: 2; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-game-card span:not(.portal-game-icon) { color: var(--arcade-muted); font-size: 12px; line-height: 1.45; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.portal-game-icon { color: var(--arcade-cyan); font-size: 24px; grid-row: span 2; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-play-panel { display: grid; gap: 12px; min-width: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-play-heading { align-items: center; display: flex; gap: 12px; justify-content: space-between; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-play-heading p, .admin-progress p { color: var(--arcade-muted); font-size: 13px; line-height: 1.5; margin-top: 4px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-canvas-wrap { background: #020617; border: 1px solid rgba(96, 165, 250, .35); border-radius: 8px; overflow: hidden; position: relative; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-overlay { align-items: center; background: rgba(2, 6, 23, .92); color: #fff; display: flex; font-size: clamp(17px, 3vw, 25px); font-weight: 800; inset: 0; justify-content: center; padding: 24px; position: absolute; text-align: center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-overlay[hidden] { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-start-card { background: rgba(17, 24, 39, .96); border: 1px solid rgba(34, 211, 238, .45); border-radius: 12px; display: grid; gap: 12px; max-width: 460px; padding: clamp(18px, 4vw, 30px); width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-start-card[hidden] { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-start-card .portal-eyebrow { color: var(--arcade-cyan); font-size: 11px; font-weight: 800; letter-spacing: .12em; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-start-card h2 { font-size: clamp(22px, 4vw, 30px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-start-card > p:not(.portal-eyebrow) { color: var(--arcade-muted); font-size: 14px; font-weight: 400; line-height: 1.55; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-start-card .game-start-controls { color: var(--arcade-cyan); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-start-button { justify-self: center; margin-top: 4px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-start-button:disabled { cursor: wait; opacity: .65; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-over-card { background: rgba(17, 24, 39, .97); border: 1px solid rgba(34, 211, 238, .45); border-radius: 12px; display: grid; gap: 10px; max-height: 100%; max-width: 500px; overflow-y: auto; padding: clamp(16px, 3vw, 24px); width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-over-card[hidden] { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-over-card .portal-eyebrow { color: var(--arcade-cyan); font-size: 11px; font-weight: 800; letter-spacing: .12em; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-over-card h2 { font-size: clamp(22px, 4vw, 30px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-over-card h3 { color: var(--arcade-cyan); font-size: 15px; margin-top: 4px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-over-card > p:not(.portal-eyebrow) { color: var(--arcade-muted); font-size: 13px; font-weight: 400; line-height: 1.45; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-leaderboard { display: grid; gap: 4px; list-style: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-leaderboard li { align-items: center; border-bottom: 1px solid rgba(148, 163, 184, .16); display: flex; font-size: 12px; gap: 12px; justify-content: space-between; padding: 6px 0; text-align: left; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-leaderboard li strong { color: var(--arcade-yellow); flex: 0 0 auto; font-size: 11px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.game-over-card > .arcade-button { justify-self: center; margin-top: 4px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-live-stats { color: var(--arcade-muted); display: flex; flex-wrap: wrap; gap: 20px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-live-stats strong { color: var(--arcade-yellow); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-feedback { color: var(--arcade-cyan); font-size: 13px; min-height: 1.4em; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-progress h2 { margin-bottom: 5px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-progress-table { margin-top: 14px; overflow-x: auto; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-progress-grid { border-collapse: collapse; min-width: 720px; width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-progress-grid th, .admin-progress-grid td { border-bottom: 1px solid rgba(148, 163, 184, .2); padding: 10px; text-align: left; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-progress-grid th { color: var(--arcade-cyan); font-size: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-progress-grid td { font-size: 13px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.danger-button { color: #fecaca; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-unlock-status { background: #111827; border: 1px solid var(--arcade-cyan); border-radius: 8px; bottom: 16px; color: var(--arcade-text); padding: 12px 16px; position: fixed; right: 16px; z-index: 20; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-footer { color: var(--arcade-muted); font-size: 12px; margin-top: 22px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-@keyframes pulse {
-    from { transform: scale(.8); }
-    to { transform: scale(1.15); }
-}
+@keyframes pulse { /* Explicação DevIN: Define sequência de quadros de uma animação CSS. */
+    from { transform: scale(.8); } /* Explicação DevIN: Declara etapa de uma animação ou transição CSS. */
+    to { transform: scale(1.15); } /* Explicação DevIN: Declara etapa de uma animação ou transição CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (max-width: 860px) {
-    .arcade-header, .arcade-footer { align-items: flex-start; flex-direction: column; }
-    .arcade-main { grid-template-columns: 1fr; }
-    .game-stage { min-height: auto; overflow-x: auto; place-items: start center; }
-    .score-panel { grid-template-columns: repeat(3, 1fr); }
-    .portal-layout { grid-template-columns: 1fr; }
-}
+@media (max-width: 860px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .arcade-header, .arcade-footer { align-items: flex-start; flex-direction: column; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-main { grid-template-columns: 1fr; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .game-stage { min-height: auto; overflow-x: auto; place-items: start center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .score-panel { grid-template-columns: repeat(3, 1fr); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .portal-layout { grid-template-columns: 1fr; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (max-width: 560px) {
-    .arcade-shell { width: min(100% - 20px, 1180px); padding: 16px 0; }
-    #pacman-board { grid-template-columns: repeat(21, 18px); grid-template-rows: repeat(var(--board-rows, 22), 18px); padding: 6px; }
-    .cell { height: 18px; width: 18px; }
-    .pacman, .ghost { height: 15px; width: 15px; }
-    .score-panel { grid-template-columns: 1fr; }
-    .portal-intro, .arcade-play-panel, .admin-progress { padding: 14px; }
-    .arcade-play-heading { align-items: flex-start; flex-direction: column; }
-    .arcade-live-stats { gap: 8px 14px; }
-}
+@media (max-width: 560px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .arcade-shell { width: min(100% - 20px, 1180px); padding: 16px 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    #pacman-board { grid-template-columns: repeat(21, 18px); grid-template-rows: repeat(var(--board-rows, 22), 18px); padding: 6px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cell { height: 18px; width: 18px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .pacman, .ghost { height: 15px; width: 15px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .score-panel { grid-template-columns: 1fr; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .portal-intro, .arcade-play-panel, .admin-progress { padding: 14px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-play-heading { align-items: flex-start; flex-direction: column; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-live-stats { gap: 8px 14px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-html,
-body.game-page {
-    max-width: 100%;
-    overflow-x: hidden;
-}
+html, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+body.game-page { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    overflow-x: hidden; /* Explicação DevIN: Define transbordamento horizontal por meio da propriedade CSS overflow-x. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (max-width: 720px) {
-    .arcade-shell { width: min(100% - 20px, 1180px); padding-top: 14px; }
+@media (max-width: 720px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .arcade-shell { width: min(100% - 20px, 1180px); padding-top: 14px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-    .arcade-header {
-        align-items: center;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px;
-    }
+    .arcade-header { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+        display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+        grid-template-columns: minmax(0, 1fr) auto; /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+        gap: 10px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .arcade-header .site-menu-toggle { display: inline-flex; justify-self: end; }
-    .arcade-logo { min-width: 0; font-size: clamp(21px, 7vw, 30px); }
+    .arcade-header .site-menu-toggle { display: inline-flex; justify-self: end; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-logo { min-width: 0; font-size: clamp(21px, 7vw, 30px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-    .arcade-header .site-menu {
-        background: var(--arcade-panel);
-        border: 1px solid rgba(148, 163, 184, .28);
-        border-radius: 0 0 12px 12px;
-        display: none;
-        grid-column: 1 / -1;
-        padding: 12px;
-    }
+    .arcade-header .site-menu { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        background: var(--arcade-panel); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+        border: 1px solid rgba(148, 163, 184, .28); /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+        border-radius: 0 0 12px 12px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+        display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+        grid-column: 1 / -1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+        padding: 12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .arcade-header .site-menu.is-open { display: grid; }
-    .arcade-nav { flex-direction: column; }
-    .arcade-button { min-height: 44px; text-align: center; }
-    .score-row span { font-size: clamp(17px, 5vw, 24px); text-align: right; }
-    .emulator-stage { padding: 10px; }
-}
+    .arcade-header .site-menu.is-open { display: grid; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-nav { flex-direction: column; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-button { min-height: 44px; text-align: center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .score-row span { font-size: clamp(17px, 5vw, 24px); text-align: right; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .emulator-stage { padding: 10px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (prefers-reduced-motion: reduce) {
-    .marquee-trilho,
-    .power::after { animation: none; }
-}
+@media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .marquee-trilho, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .power::after { animation: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */

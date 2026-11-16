@@ -1,11 +1,11 @@
 # JARVIS Admin — OpenRouter com duas chaves e 10 modelos reserva
 
-Atualização do módulo na branch `fix/jarvis-openrouter-dual-key-model-fallback`.
+Configuração do provedor OpenRouter para o JARVIS Admin.
 
 ## Configuração correta do .env na raiz do projeto
 
 ```dotenv
-# Login padrão do ADM continua igual; sem Token 1/Token 2.
+# Login normal do ADM continua obrigatório; Token 2 depende da configuração separada.
 DEVIN_JARVIS_PROVIDER=openrouter
 
 # Um dos modelos gratuitos válidos, ou openrouter/free.
@@ -120,8 +120,10 @@ chave. Não registram prompts, nomes de usuários ou tokens.
     atividades. A migration do JARVIS precisa estar aplicada ao
     MySQL para gravar essas informações.
 
-Este PR não executa ações administrativas destrutivas, não altera
-o esquema SQL e não depende do 2FA do PR #8.
+A configuração do OpenRouter não ativa ações administrativas nem Token 2.
+O chat requer somente a sessão ADM enquanto `DEVIN_ADMIN_STEPUP_ENABLED=0`;
+para habilitar a etapa adicional, siga `docs/admin-stepup-security.md` e
+cadastre os Tokens 2 antes de ligar a variável.
 
 ## Testes offline (nenhuma chave de verdade)
 

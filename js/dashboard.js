@@ -1,879 +1,879 @@
-(() => {
-    'use strict';
+(() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 
-    const dashboardShell = document.querySelector('.dashboard-shell');
-    const menuToggle = document.querySelector('[data-toggle-menu]');
-    const detailText = document.querySelector('#detailText');
-    const detailTitle = document.querySelector('#detailTitle');
-    const settingsModal = document.querySelector('#settingsModal');
-    const profileModal = document.querySelector('#profileModal');
-    const jobReportDialog = document.querySelector('[data-job-report-dialog]');
-    const jobReportForm = jobReportDialog?.querySelector('[data-job-report-form]');
-    const jobReportButton = document.querySelector('[data-report-job]');
-    const jobReportStatus = jobReportDialog?.querySelector('[data-job-report-status]');
-    const jobReportSubmit = jobReportDialog?.querySelector('[data-job-report-submit]');
-    const reportConfirmDialog = document.querySelector('[data-report-confirm-dialog]');
-    let pendingReportExclusionForm = null;
-    const rotatingWord = document.querySelector('[data-rotating-word]');
-    const interfaceLocale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR';
-    const translate = (value) => window.DevINTranslate?.(value) ?? value;
-    const toastTimers = new WeakMap();
-    const dismissToast = (toast) => {
-        const timer = toastTimers.get(toast);
-        if (timer) window.clearTimeout(timer);
-        toastTimers.delete(toast);
-        toast.hidden = true;
-    };
-    const showToast = (toast, message, variant = 'success') => {
-        if (!toast) return;
-        const messageElement = toast.querySelector('[data-feedback-message], .dashboard-toast__msg');
-        if (messageElement) {
-            messageElement.textContent = message;
-            messageElement.classList.remove('dashboard-toast__msg--success', 'dashboard-toast__msg--error', 'dashboard-toast__msg--warning');
-            messageElement.classList.add(`dashboard-toast__msg--${variant}`);
-        }
-        toast.hidden = false;
-        const previousTimer = toastTimers.get(toast);
-        if (previousTimer) window.clearTimeout(previousTimer);
-        toastTimers.set(toast, window.setTimeout(() => dismissToast(toast), 5000));
-    };
-    document.querySelectorAll('[data-auto-dismiss-toast]').forEach((toast) => {
-        toastTimers.set(toast, window.setTimeout(() => dismissToast(toast), 5000));
-    });
-    document.addEventListener('click', (event) => {
-        if (!(event.target instanceof Element)) return;
-        const closeButton = event.target.closest('[data-toast-close]');
-        const toast = closeButton?.closest('[data-auto-dismiss-toast], [data-feedback-toast]');
-        if (toast) dismissToast(toast);
-    });
-    window.DevINShowToast = showToast;
+    const dashboardShell = document.querySelector('.dashboard-shell'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const menuToggle = document.querySelector('[data-toggle-menu]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const detailText = document.querySelector('#detailText'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const detailTitle = document.querySelector('#detailTitle'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const settingsModal = document.querySelector('#settingsModal'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const profileModal = document.querySelector('#profileModal'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const jobReportDialog = document.querySelector('[data-job-report-dialog]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const jobReportForm = jobReportDialog?.querySelector('[data-job-report-form]'); // Explicação DevIN: Declara variável JavaScript jobReportForm para reutilizar valor ou resultado.
+    const jobReportButton = document.querySelector('[data-report-job]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const jobReportStatus = jobReportDialog?.querySelector('[data-job-report-status]'); // Explicação DevIN: Declara variável JavaScript jobReportStatus para reutilizar valor ou resultado.
+    const jobReportSubmit = jobReportDialog?.querySelector('[data-job-report-submit]'); // Explicação DevIN: Declara variável JavaScript jobReportSubmit para reutilizar valor ou resultado.
+    const reportConfirmDialog = document.querySelector('[data-report-confirm-dialog]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    let pendingReportExclusionForm = null; // Explicação DevIN: Declara variável JavaScript pendingReportExclusionForm para reutilizar valor ou resultado.
+    const rotatingWord = document.querySelector('[data-rotating-word]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const interfaceLocale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR'; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const translate = (value) => window.DevINTranslate?.(value) ?? value; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const toastTimers = new WeakMap(); // Explicação DevIN: Declara variável JavaScript toastTimers para reutilizar valor ou resultado.
+    const dismissToast = (toast) => { // Explicação DevIN: Declara variável JavaScript dismissToast para reutilizar valor ou resultado.
+        const timer = toastTimers.get(toast); // Explicação DevIN: Declara variável JavaScript timer para reutilizar valor ou resultado.
+        if (timer) window.clearTimeout(timer); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        toastTimers.delete(toast); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        toast.hidden = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    const showToast = (toast, message, variant = 'success') => { // Explicação DevIN: Declara variável JavaScript showToast para reutilizar valor ou resultado.
+        if (!toast) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const messageElement = toast.querySelector('[data-feedback-message], .dashboard-toast__msg'); // Explicação DevIN: Declara variável JavaScript messageElement para reutilizar valor ou resultado.
+        if (messageElement) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            messageElement.textContent = message; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            messageElement.classList.remove('dashboard-toast__msg--success', 'dashboard-toast__msg--error', 'dashboard-toast__msg--warning'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            messageElement.classList.add(`dashboard-toast__msg--${variant}`); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        toast.hidden = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        const previousTimer = toastTimers.get(toast); // Explicação DevIN: Declara variável JavaScript previousTimer para reutilizar valor ou resultado.
+        if (previousTimer) window.clearTimeout(previousTimer); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        toastTimers.set(toast, window.setTimeout(() => dismissToast(toast), 5000)); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    document.querySelectorAll('[data-auto-dismiss-toast]').forEach((toast) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        toastTimers.set(toast, window.setTimeout(() => dismissToast(toast), 5000)); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    document.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (!(event.target instanceof Element)) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const closeButton = event.target.closest('[data-toast-close]'); // Explicação DevIN: Declara variável JavaScript closeButton para reutilizar valor ou resultado.
+        const toast = closeButton?.closest('[data-auto-dismiss-toast], [data-feedback-toast]'); // Explicação DevIN: Declara variável JavaScript toast para reutilizar valor ou resultado.
+        if (toast) dismissToast(toast); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    window.DevINShowToast = showToast; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
 
-    document.querySelectorAll('[data-job-closure-mode]').forEach((modeSelect) => {
-        const form = modeSelect.closest('form');
-        const dateInput = form?.querySelector('[data-job-closure-date]');
-        const approvedLimit = form?.querySelector('[data-job-approved-limit]');
-        if (!form || !dateInput || !approvedLimit) return;
+    document.querySelectorAll('[data-job-closure-mode]').forEach((modeSelect) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        const form = modeSelect.closest('form'); // Explicação DevIN: Declara variável JavaScript form para reutilizar valor ou resultado.
+        const dateInput = form?.querySelector('[data-job-closure-date]'); // Explicação DevIN: Declara variável JavaScript dateInput para reutilizar valor ou resultado.
+        const approvedLimit = form?.querySelector('[data-job-approved-limit]'); // Explicação DevIN: Declara variável JavaScript approvedLimit para reutilizar valor ou resultado.
+        if (!form || !dateInput || !approvedLimit) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-        const updateClosureFields = () => {
-            const requiresDate = ['prazo', 'qualquer'].includes(modeSelect.value);
-            dateInput.required = requiresDate;
-            const dateLabel = dateInput.closest('label');
-            if (dateLabel) dateLabel.hidden = !requiresDate;
-            approvedLimit.min = ['limite', 'qualquer'].includes(modeSelect.value) ? '1' : '0';
-        };
+        const updateClosureFields = () => { // Explicação DevIN: Declara variável JavaScript updateClosureFields para reutilizar valor ou resultado.
+            const requiresDate = ['prazo', 'qualquer'].includes(modeSelect.value); // Explicação DevIN: Declara variável JavaScript requiresDate para reutilizar valor ou resultado.
+            dateInput.required = requiresDate; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            const dateLabel = dateInput.closest('label'); // Explicação DevIN: Declara variável JavaScript dateLabel para reutilizar valor ou resultado.
+            if (dateLabel) dateLabel.hidden = !requiresDate; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            approvedLimit.min = ['limite', 'qualquer'].includes(modeSelect.value) ? '1' : '0'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        modeSelect.addEventListener('change', updateClosureFields);
-        updateClosureFields();
-    });
+        modeSelect.addEventListener('change', updateClosureFields); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        updateClosureFields(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const messagesLink = document.querySelector('[data-messages-api]');
-    const unreadBadge = messagesLink?.querySelector('[data-message-unread-badge]');
-    const refreshMessageCount = async () => {
-        if (!messagesLink || !unreadBadge) return;
-        const url = new URL(messagesLink.dataset.messagesApi, window.location.href);
-        url.searchParams.set('acao', 'nao_lidas');
-        const response = await fetch(url, { credentials: 'same-origin' });
-        const data = await response.json();
-        if (!response.ok || data.sucesso !== true) {
-            throw new Error(translate(data.mensagem || 'Não foi possível atualizar as mensagens não lidas.'));
-        }
+    const messagesLink = document.querySelector('[data-messages-api]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const unreadBadge = messagesLink?.querySelector('[data-message-unread-badge]'); // Explicação DevIN: Declara variável JavaScript unreadBadge para reutilizar valor ou resultado.
+    const refreshMessageCount = async () => { // Explicação DevIN: Declara variável JavaScript refreshMessageCount para reutilizar valor ou resultado.
+        if (!messagesLink || !unreadBadge) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const url = new URL(messagesLink.dataset.messagesApi, window.location.href); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        url.searchParams.set('acao', 'nao_lidas'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        const response = await fetch(url, { credentials: 'same-origin' }); // Explicação DevIN: Inicia solicitação HTTP assíncrona a um endereço configurado.
+        const data = await response.json(); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+        if (!response.ok || data.sucesso !== true) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            throw new Error(translate(data.mensagem || 'Não foi possível atualizar as mensagens não lidas.')); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        unreadBadge.hidden = data.nao_lidas === 0;
-        unreadBadge.textContent = String(data.nao_lidas);
-        unreadBadge.setAttribute('aria-label', translate(`${data.nao_lidas} mensagens não lidas`));
-    };
-    if (messagesLink) {
-        refreshMessageCount().catch((error) => console.error(error));
-        window.setInterval(() => {
-            if (document.visibilityState === 'visible') {
-                refreshMessageCount().catch((error) => console.error(error));
-            }
-        }, 15000);
-    }
+        unreadBadge.hidden = data.nao_lidas === 0; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        unreadBadge.textContent = String(data.nao_lidas); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        unreadBadge.setAttribute('aria-label', translate(`${data.nao_lidas} mensagens não lidas`)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    if (messagesLink) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        refreshMessageCount().catch((error) => console.error(error)); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        window.setInterval(() => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            if (document.visibilityState === 'visible') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                refreshMessageCount().catch((error) => console.error(error)); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        }, 15000); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelectorAll('[data-report-exclusion-form]').forEach((form) => {
-        form.addEventListener('submit', (event) => {
-            if (form.dataset.confirmed === 'true') {
-                delete form.dataset.confirmed;
-                return;
-            }
+    document.querySelectorAll('[data-report-exclusion-form]').forEach((form) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        form.addEventListener('submit', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (form.dataset.confirmed === 'true') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                delete form.dataset.confirmed; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            event.preventDefault();
-            pendingReportExclusionForm = form;
-            reportConfirmDialog?.showModal();
-        });
-    });
+            event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            pendingReportExclusionForm = form; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            reportConfirmDialog?.showModal(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelector('[data-cancel-report-exclusion]')?.addEventListener('click', () => {
-        reportConfirmDialog?.close();
-        pendingReportExclusionForm = null;
-    });
+    document.querySelector('[data-cancel-report-exclusion]')?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        reportConfirmDialog?.close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        pendingReportExclusionForm = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelector('[data-confirm-report-exclusion]')?.addEventListener('click', () => {
-        if (!pendingReportExclusionForm) return;
-        const form = pendingReportExclusionForm;
-        pendingReportExclusionForm = null;
-        form.dataset.confirmed = 'true';
-        reportConfirmDialog?.close();
-        form.requestSubmit();
-    });
+    document.querySelector('[data-confirm-report-exclusion]')?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (!pendingReportExclusionForm) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const form = pendingReportExclusionForm; // Explicação DevIN: Declara variável JavaScript form para reutilizar valor ou resultado.
+        pendingReportExclusionForm = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        form.dataset.confirmed = 'true'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        reportConfirmDialog?.close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        form.requestSubmit(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    reportConfirmDialog?.addEventListener('click', (event) => {
-        if (event.target === reportConfirmDialog) {
-            reportConfirmDialog.close();
-            pendingReportExclusionForm = null;
-        }
-    });
-    reportConfirmDialog?.addEventListener('close', () => {
-        pendingReportExclusionForm = null;
-    });
+    reportConfirmDialog?.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (event.target === reportConfirmDialog) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            reportConfirmDialog.close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            pendingReportExclusionForm = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    reportConfirmDialog?.addEventListener('close', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        pendingReportExclusionForm = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Sidebar: preferência fica salva somente no navegador deste usuário.
-    if (dashboardShell && menuToggle) {
-        const fechado = localStorage.getItem('devin-menu-fechado') === 'true';
-        const mobileMenu = window.DevINDashboardMenu?.init({
-            shell: dashboardShell,
-            toggle: menuToggle,
-            windowRef: window,
-        });
-        const isMobile = () => mobileMenu?.isMobile?.() === true;
-        const syncLayout = () => {
-            if (isMobile()) {
-                dashboardShell.classList.remove('menu-fechado');
-                menuToggle.setAttribute('aria-expanded', String(dashboardShell.classList.contains('mobile-menu-open')));
-                return;
-            }
+    if (dashboardShell && menuToggle) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const fechado = localStorage.getItem('devin-menu-fechado') === 'true'; // Explicação DevIN: Lê ou atualiza preferências guardadas no armazenamento local do navegador.
+        const mobileMenu = window.DevINDashboardMenu?.init({ // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            shell: dashboardShell, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            toggle: menuToggle, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            windowRef: window, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        const isMobile = () => mobileMenu?.isMobile?.() === true; // Explicação DevIN: Declara variável JavaScript isMobile para reutilizar valor ou resultado.
+        const syncLayout = () => { // Explicação DevIN: Declara variável JavaScript syncLayout para reutilizar valor ou resultado.
+            if (isMobile()) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                dashboardShell.classList.remove('menu-fechado'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                menuToggle.setAttribute('aria-expanded', String(dashboardShell.classList.contains('mobile-menu-open'))); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            dashboardShell.classList.remove('mobile-menu-open');
-            dashboardShell.classList.toggle('menu-fechado', fechado);
-            menuToggle.setAttribute('aria-expanded', String(!fechado));
-        };
+            dashboardShell.classList.remove('mobile-menu-open'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            dashboardShell.classList.toggle('menu-fechado', fechado); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            menuToggle.setAttribute('aria-expanded', String(!fechado)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        syncLayout();
-        window.addEventListener('resize', syncLayout);
+        syncLayout(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        window.addEventListener('resize', syncLayout); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
 
-        menuToggle.addEventListener('click', () => {
-            if (isMobile()) {
-                document.querySelector('.perfil-dropdown')?.removeAttribute('open');
-                return;
-            }
+        menuToggle.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (isMobile()) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                document.querySelector('.perfil-dropdown')?.removeAttribute('open'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            const novoEstado = dashboardShell.classList.toggle('menu-fechado');
-            menuToggle.setAttribute('aria-expanded', String(!novoEstado));
-            localStorage.setItem('devin-menu-fechado', String(novoEstado));
-        });
-    }
+            const novoEstado = dashboardShell.classList.toggle('menu-fechado'); // Explicação DevIN: Declara variável JavaScript novoEstado para reutilizar valor ou resultado.
+            menuToggle.setAttribute('aria-expanded', String(!novoEstado)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            localStorage.setItem('devin-menu-fechado', String(novoEstado)); // Explicação DevIN: Lê ou atualiza preferências guardadas no armazenamento local do navegador.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Cards: impede que botões/formulários internos sejam tratados como seleção do card.
-    const detailPanel = document.querySelector('.profile-detail-panel');
-    const detailCards = [...document.querySelectorAll('.item-card[data-detail]')];
-    let selectedActionTarget = null;
+    const detailPanel = document.querySelector('.profile-detail-panel'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const detailCards = [...document.querySelectorAll('.item-card[data-detail]')]; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    let selectedActionTarget = null; // Explicação DevIN: Declara variável JavaScript selectedActionTarget para reutilizar valor ou resultado.
 
-    const splitItems = (value, fallback) => {
-        const items = String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
-        return items.length ? items : fallback;
-    };
+    const splitItems = (value, fallback) => { // Explicação DevIN: Declara variável JavaScript splitItems para reutilizar valor ou resultado.
+        const items = String(value || '').split('|').map((item) => item.trim()).filter(Boolean); // Explicação DevIN: Declara variável JavaScript items para reutilizar valor ou resultado.
+        return items.length ? items : fallback; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const getInitials = (value) => value.split(/\s+/).filter(Boolean).slice(0, 2)
-        .map((word) => word[0]).join('').toUpperCase() || 'DI';
+    const getInitials = (value) => value.split(/\s+/).filter(Boolean).slice(0, 2) // Explicação DevIN: Declara variável JavaScript getInitials para reutilizar valor ou resultado.
+        .map((word) => word[0]).join('').toUpperCase() || 'DI'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
 
-    const jobReportSummary = (card) => {
-        if (!card.hasAttribute('data-job-report-card')) return '';
-        return card.dataset.reportJobDescription || translate('Sem descrição informada.');
-    };
+    const jobReportSummary = (card) => { // Explicação DevIN: Declara variável JavaScript jobReportSummary para reutilizar valor ou resultado.
+        if (!card.hasAttribute('data-job-report-card')) return ''; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        return card.dataset.reportJobDescription || translate('Sem descrição informada.'); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const renderList = (element, items, timeline = false) => {
+    const renderList = (element, items, timeline = false) => { // Explicação DevIN: Declara variável JavaScript renderList para reutilizar valor ou resultado.
         /* Reconstrói listas a partir dos atributos do card. Usa textContent e nós de texto,
          * não innerHTML, para que nomes e descrições sejam exibidos como texto literal. */
-        if (!element) return;
-        element.replaceChildren();
-        items.forEach((item) => {
-            const row = document.createElement('li');
-            if (timeline) {
-                const [title, description] = typeof item === 'string'
-                    ? item.split('::').map((part) => part.trim())
-                    : [item.title, item.description];
-                const heading = document.createElement('strong');
-                heading.textContent = translate(title || 'DevIN');
-                row.appendChild(heading);
-                if (description) row.append(document.createTextNode(translate(description)));
-            } else {
-                row.textContent = item;
-            }
-            element.appendChild(row);
-        });
-    };
+        if (!element) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        element.replaceChildren(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        items.forEach((item) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            const row = document.createElement('li'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            if (timeline) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                const [title, description] = typeof item === 'string' // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    ? item.split('::').map((part) => part.trim()) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    : [item.title, item.description]; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                const heading = document.createElement('strong'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                heading.textContent = translate(title || 'DevIN'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                row.appendChild(heading); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                if (description) row.append(document.createTextNode(translate(description))); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
+                row.textContent = item; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            element.appendChild(row); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const renderDetail = (card) => {
+    const renderDetail = (card) => { // Explicação DevIN: Declara variável JavaScript renderDetail para reutilizar valor ou resultado.
         /* O card concentra resumo, etiquetas e experiência em data-*. Ao selecioná-lo, estes valores
          * preenchem o painel lateral sem uma nova consulta ao servidor. */
-        const content = detailPanel?.querySelector('[data-detail-content]');
-        if (!detailPanel || !content) return;
+        const content = detailPanel?.querySelector('[data-detail-content]'); // Explicação DevIN: Declara variável JavaScript content para reutilizar valor ou resultado.
+        if (!detailPanel || !content) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-        const title = card.querySelector('h2')?.textContent?.trim() || translate('Detalhes do registro');
-        const subtitle = card.querySelector('p')?.textContent?.trim() || translate('Informacoes da plataforma');
-        const name = card.dataset.detailName || card.dataset.jobTitle || title;
-        const jobReport = card.hasAttribute('data-job-report-card');
-        const profileReport = card.hasAttribute('data-profile-report-card');
-        const role = jobReport
-            ? `${translate('Empresa:')} ${card.dataset.reportCompany || ''}`
-            : profileReport
-                ? `${translate('Perfil denunciado')} · ${translate(card.dataset.profileReportRole || '')}`
-            : card.dataset.detailRole || subtitle;
-        const summary = jobReportSummary(card) || card.dataset.detailSummary || card.dataset.detail || subtitle;
-        const tags = splitItems(card.dataset.detailTags, ['DevIN', translate('Informacao disponivel')]).map(translate);
-        const experience = profileReport
-            ? [
-                { title: 'Denúncia #', description: card.dataset.reportId || '' },
-                { title: 'Enviada em', description: card.dataset.reportCreatedAt || '' },
-                {
-                    title: 'Denunciante',
-                    description: `${card.dataset.profileReportReporter || ''} (${translate(card.dataset.profileReportReporterType || '')} #${card.dataset.profileReportReporterId || ''})`
-                },
-                ...(card.dataset.profileReportTargetEmail
-                    ? [{ title: 'E-mail do perfil', description: card.dataset.profileReportTargetEmail }]
-                    : []),
-                ...(card.dataset.profileReportTargetCnpj
-                    ? [{ title: 'CNPJ', description: card.dataset.profileReportTargetCnpj }]
-                    : []),
-                ...(card.dataset.profileReportReporterEmail
-                    ? [{ title: 'E-mail do denunciante', description: card.dataset.profileReportReporterEmail }]
-                    : []),
-                { title: 'Motivo', description: translate(card.dataset.profileReportReason || '') },
-                { title: 'Análise', description: translate(card.dataset.profileReportAnalysis || '') }
-            ]
-            : jobReport
-                ? [
-                    { title: 'Denúncia #', description: card.dataset.reportId || '' },
-                    { title: 'Vaga #', description: card.dataset.reportTargetId || '' },
-                    { title: 'Enviada em', description: card.dataset.reportCreatedAt || '' },
-                    {
-                        title: 'Denunciante',
-                        description: `${card.dataset.reportReporter || ''} (${translate(card.dataset.reportReporterType || '')} #${card.dataset.reportReporterId || ''})`
-                    },
-                    ...(card.dataset.reportReporterEmail
-                        ? [{ title: 'E-mail do denunciante', description: card.dataset.reportReporterEmail }]
-                        : []),
-                    ...(card.dataset.reportCompanyEmail
-                        ? [{ title: 'E-mail da empresa', description: card.dataset.reportCompanyEmail }]
-                        : []),
-                    {
-                        title: 'Mensagem da denúncia',
-                        description: `${translate('Motivo:')} ${translate(card.dataset.reportReason || '')}\n${card.dataset.reportMessage || ''}`
-                    },
-                    { title: 'Análise', description: translate(card.dataset.reportAnalysis || '') }
-                ]
-                : splitItems(card.dataset.detailExperience, [`${translate('Registro selecionado')}::${role}`]);
+        const title = card.querySelector('h2')?.textContent?.trim() || translate('Detalhes do registro'); // Explicação DevIN: Declara variável JavaScript title para reutilizar valor ou resultado.
+        const subtitle = card.querySelector('p')?.textContent?.trim() || translate('Informacoes da plataforma'); // Explicação DevIN: Declara variável JavaScript subtitle para reutilizar valor ou resultado.
+        const name = card.dataset.detailName || card.dataset.jobTitle || title; // Explicação DevIN: Declara variável JavaScript name para reutilizar valor ou resultado.
+        const jobReport = card.hasAttribute('data-job-report-card'); // Explicação DevIN: Declara variável JavaScript jobReport para reutilizar valor ou resultado.
+        const profileReport = card.hasAttribute('data-profile-report-card'); // Explicação DevIN: Declara variável JavaScript profileReport para reutilizar valor ou resultado.
+        const role = jobReport // Explicação DevIN: Declara variável JavaScript role para reutilizar valor ou resultado.
+            ? `${translate('Empresa:')} ${card.dataset.reportCompany || ''}` // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            : profileReport // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                ? `${translate('Perfil denunciado')} · ${translate(card.dataset.profileReportRole || '')}` // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            : card.dataset.detailRole || subtitle; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        const summary = jobReportSummary(card) || card.dataset.detailSummary || card.dataset.detail || subtitle; // Explicação DevIN: Declara variável JavaScript summary para reutilizar valor ou resultado.
+        const tags = splitItems(card.dataset.detailTags, ['DevIN', translate('Informacao disponivel')]).map(translate); // Explicação DevIN: Declara variável JavaScript tags para reutilizar valor ou resultado.
+        const experience = profileReport // Explicação DevIN: Declara variável JavaScript experience para reutilizar valor ou resultado.
+            ? [ // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                { title: 'Denúncia #', description: card.dataset.reportId || '' }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                { title: 'Enviada em', description: card.dataset.reportCreatedAt || '' }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                    title: 'Denunciante', // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    description: `${card.dataset.profileReportReporter || ''} (${translate(card.dataset.profileReportReporterType || '')} #${card.dataset.profileReportReporterId || ''})` // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                ...(card.dataset.profileReportTargetEmail // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    ? [{ title: 'E-mail do perfil', description: card.dataset.profileReportTargetEmail }] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    : []), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                ...(card.dataset.profileReportTargetCnpj // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    ? [{ title: 'CNPJ', description: card.dataset.profileReportTargetCnpj }] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    : []), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                ...(card.dataset.profileReportReporterEmail // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    ? [{ title: 'E-mail do denunciante', description: card.dataset.profileReportReporterEmail }] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    : []), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                { title: 'Motivo', description: translate(card.dataset.profileReportReason || '') }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                { title: 'Análise', description: translate(card.dataset.profileReportAnalysis || '') } // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            ] // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            : jobReport // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                ? [ // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    { title: 'Denúncia #', description: card.dataset.reportId || '' }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    { title: 'Vaga #', description: card.dataset.reportTargetId || '' }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    { title: 'Enviada em', description: card.dataset.reportCreatedAt || '' }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                        title: 'Denunciante', // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                        description: `${card.dataset.reportReporter || ''} (${translate(card.dataset.reportReporterType || '')} #${card.dataset.reportReporterId || ''})` // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                    ...(card.dataset.reportReporterEmail // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                        ? [{ title: 'E-mail do denunciante', description: card.dataset.reportReporterEmail }] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                        : []), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    ...(card.dataset.reportCompanyEmail // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                        ? [{ title: 'E-mail da empresa', description: card.dataset.reportCompanyEmail }] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                        : []), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                        title: 'Mensagem da denúncia', // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                        description: `${translate('Motivo:')} ${translate(card.dataset.reportReason || '')}\n${card.dataset.reportMessage || ''}` // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                    { title: 'Análise', description: translate(card.dataset.reportAnalysis || '') } // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                ] // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                : splitItems(card.dataset.detailExperience, [`${translate('Registro selecionado')}::${role}`]); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
 
-        detailPanel.querySelector('[data-detail-placeholder]')?.setAttribute('hidden', '');
-        content.hidden = false;
-        const avatar = detailPanel.querySelector('[data-detail-avatar]');
-        const nameElement = detailPanel.querySelector('[data-detail-name]');
-        const roleElement = detailPanel.querySelector('[data-detail-role]');
-        const metaElement = detailPanel.querySelector('[data-detail-meta]');
-        const summaryElement = detailPanel.querySelector('[data-detail-summary]');
-        const experienceList = detailPanel.querySelector('[data-detail-experience]');
-        const reportJobFacts = detailPanel.querySelector('[data-report-job-facts]');
-        const decisionBlock = detailPanel.querySelector('[data-report-decision-block]');
-        const applicationSummary = card.dataset.applicationSummary === 'true';
-        const experienceHeading = detailPanel.querySelector('[data-detail-experience-heading]');
+        detailPanel.querySelector('[data-detail-placeholder]')?.setAttribute('hidden', ''); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        content.hidden = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        const avatar = detailPanel.querySelector('[data-detail-avatar]'); // Explicação DevIN: Declara variável JavaScript avatar para reutilizar valor ou resultado.
+        const nameElement = detailPanel.querySelector('[data-detail-name]'); // Explicação DevIN: Declara variável JavaScript nameElement para reutilizar valor ou resultado.
+        const roleElement = detailPanel.querySelector('[data-detail-role]'); // Explicação DevIN: Declara variável JavaScript roleElement para reutilizar valor ou resultado.
+        const metaElement = detailPanel.querySelector('[data-detail-meta]'); // Explicação DevIN: Declara variável JavaScript metaElement para reutilizar valor ou resultado.
+        const summaryElement = detailPanel.querySelector('[data-detail-summary]'); // Explicação DevIN: Declara variável JavaScript summaryElement para reutilizar valor ou resultado.
+        const experienceList = detailPanel.querySelector('[data-detail-experience]'); // Explicação DevIN: Declara variável JavaScript experienceList para reutilizar valor ou resultado.
+        const reportJobFacts = detailPanel.querySelector('[data-report-job-facts]'); // Explicação DevIN: Declara variável JavaScript reportJobFacts para reutilizar valor ou resultado.
+        const decisionBlock = detailPanel.querySelector('[data-report-decision-block]'); // Explicação DevIN: Declara variável JavaScript decisionBlock para reutilizar valor ou resultado.
+        const applicationSummary = card.dataset.applicationSummary === 'true'; // Explicação DevIN: Declara variável JavaScript applicationSummary para reutilizar valor ou resultado.
+        const experienceHeading = detailPanel.querySelector('[data-detail-experience-heading]'); // Explicação DevIN: Declara variável JavaScript experienceHeading para reutilizar valor ou resultado.
 
-        if (avatar) avatar.textContent = getInitials(name);
-        if (nameElement) nameElement.textContent = name;
-        if (roleElement) roleElement.textContent = role;
-        if (metaElement) {
-            metaElement.textContent = jobReport
-                ? `${translate('Denúncia #')}${card.dataset.reportId || ''} · ${translate('Enviada em').toLocaleLowerCase(interfaceLocale)} ${card.dataset.reportCreatedAt || ''}`
-                : profileReport
-                    ? `${translate('Denúncia #')}${card.dataset.reportId || ''} · ${translate('Enviada em').toLocaleLowerCase(interfaceLocale)} ${card.dataset.reportCreatedAt || ''}`
-                : card.dataset.detailMeta || translate('Disponivel na plataforma');
-        }
-        if (summaryElement) summaryElement.textContent = summary;
-        if (reportJobFacts) {
-            reportJobFacts.hidden = !jobReport;
-            reportJobFacts.querySelector('[data-report-job-salary]').textContent =
-                card.dataset.reportJobSalary || translate('A combinar');
-            reportJobFacts.querySelector('[data-report-job-limit]').textContent =
-                card.dataset.reportJobLimit || translate('Sem limite');
-        }
-        if (decisionBlock) {
-            const shouldShowDecision = card.dataset.reportDecision === 'true';
-            decisionBlock.hidden = !shouldShowDecision;
-        }
-        const summaryLabel = detailPanel.querySelector('[data-detail-summary-label]');
-        if (summaryLabel) {
-            summaryLabel.textContent = translate(jobReport
-                ? 'Detalhes da vaga denunciada'
-                : profileReport ? 'Relato da denúncia' : 'Sobre');
-        }
-        if (experienceHeading) {
-            experienceHeading.textContent = translate(jobReport
-                ? 'Detalhes da denúncia'
-                : profileReport ? 'Dados da denúncia'
-                    : applicationSummary ? 'Informações da vaga' : 'Experiência');
-        }
-        detailPanel.querySelector('[data-detail-tags-section]')?.toggleAttribute('hidden', jobReport);
-        renderList(detailPanel.querySelector('[data-detail-tags]'), tags);
-        renderList(experienceList, experience, true);
-        detailPanel.classList.toggle('has-application-summary', applicationSummary);
-        experienceList?.classList.toggle('application-summary', applicationSummary);
-        experienceList?.closest('.detail-section')?.classList.toggle('application-summary-section', applicationSummary);
+        if (avatar) avatar.textContent = getInitials(name); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (nameElement) nameElement.textContent = name; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (roleElement) roleElement.textContent = role; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (metaElement) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            metaElement.textContent = jobReport // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                ? `${translate('Denúncia #')}${card.dataset.reportId || ''} · ${translate('Enviada em').toLocaleLowerCase(interfaceLocale)} ${card.dataset.reportCreatedAt || ''}` // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : profileReport // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    ? `${translate('Denúncia #')}${card.dataset.reportId || ''} · ${translate('Enviada em').toLocaleLowerCase(interfaceLocale)} ${card.dataset.reportCreatedAt || ''}` // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : card.dataset.detailMeta || translate('Disponivel na plataforma'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (summaryElement) summaryElement.textContent = summary; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (reportJobFacts) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            reportJobFacts.hidden = !jobReport; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            reportJobFacts.querySelector('[data-report-job-salary]').textContent = // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.reportJobSalary || translate('A combinar'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            reportJobFacts.querySelector('[data-report-job-limit]').textContent = // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.reportJobLimit || translate('Sem limite'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (decisionBlock) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            const shouldShowDecision = card.dataset.reportDecision === 'true'; // Explicação DevIN: Declara variável JavaScript shouldShowDecision para reutilizar valor ou resultado.
+            decisionBlock.hidden = !shouldShowDecision; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        const summaryLabel = detailPanel.querySelector('[data-detail-summary-label]'); // Explicação DevIN: Declara variável JavaScript summaryLabel para reutilizar valor ou resultado.
+        if (summaryLabel) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            summaryLabel.textContent = translate(jobReport // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                ? 'Detalhes da vaga denunciada' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : profileReport ? 'Relato da denúncia' : 'Sobre'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (experienceHeading) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            experienceHeading.textContent = translate(jobReport // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                ? 'Detalhes da denúncia' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : profileReport ? 'Dados da denúncia' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    : applicationSummary ? 'Informações da vaga' : 'Experiência'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        detailPanel.querySelector('[data-detail-tags-section]')?.toggleAttribute('hidden', jobReport); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        renderList(detailPanel.querySelector('[data-detail-tags]'), tags); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        renderList(experienceList, experience, true); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        detailPanel.classList.toggle('has-application-summary', applicationSummary); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        experienceList?.classList.toggle('application-summary', applicationSummary); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        experienceList?.closest('.detail-section')?.classList.toggle('application-summary-section', applicationSummary); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
-        selectedActionTarget = card.querySelector('[data-detail-action-target]');
-        const action = detailPanel.querySelector('[data-detail-action]');
-        if (action) {
-            action.hidden = !selectedActionTarget;
-            if (selectedActionTarget) action.textContent = translate(card.dataset.detailActionLabel || selectedActionTarget.textContent.trim());
-        }
+        selectedActionTarget = card.querySelector('[data-detail-action-target]'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        const action = detailPanel.querySelector('[data-detail-action]'); // Explicação DevIN: Declara variável JavaScript action para reutilizar valor ou resultado.
+        if (action) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            action.hidden = !selectedActionTarget; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            if (selectedActionTarget) action.textContent = translate(card.dataset.detailActionLabel || selectedActionTarget.textContent.trim()); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        const chatAction = detailPanel.querySelector('[data-start-chat]');
-        if (chatAction) {
-            chatAction.hidden = !card.dataset.chatType || !card.dataset.chatId;
-            chatAction.dataset.chatType = card.dataset.chatType || '';
-            chatAction.dataset.chatId = card.dataset.chatId || '';
-        }
-        if (jobReportButton) {
-            const canReportJob = Boolean(card.dataset.reportJobId);
-            detailPanel.querySelector('[data-report-job-section]')?.toggleAttribute('hidden', !canReportJob);
-            jobReportButton.disabled = card.dataset.reportSubmitted === 'true';
-            jobReportButton.dataset.jobId = card.dataset.reportJobId || '';
-            jobReportButton.textContent = translate(card.dataset.reportSubmitted === 'true'
-                ? 'Denúncia enviada'
-                : 'Denunciar esta vaga');
-        }
-    };
+        const chatAction = detailPanel.querySelector('[data-start-chat]'); // Explicação DevIN: Declara variável JavaScript chatAction para reutilizar valor ou resultado.
+        if (chatAction) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            chatAction.hidden = !card.dataset.chatType || !card.dataset.chatId; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            chatAction.dataset.chatType = card.dataset.chatType || ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            chatAction.dataset.chatId = card.dataset.chatId || ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (jobReportButton) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            const canReportJob = Boolean(card.dataset.reportJobId); // Explicação DevIN: Declara variável JavaScript canReportJob para reutilizar valor ou resultado.
+            detailPanel.querySelector('[data-report-job-section]')?.toggleAttribute('hidden', !canReportJob); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            jobReportButton.disabled = card.dataset.reportSubmitted === 'true'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            jobReportButton.dataset.jobId = card.dataset.reportJobId || ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            jobReportButton.textContent = translate(card.dataset.reportSubmitted === 'true' // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                ? 'Denúncia enviada' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : 'Denunciar esta vaga'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    detailPanel?.querySelectorAll('[data-report-decision]').forEach((button) => {
-        button.addEventListener('click', () => {
-            const selectedCard = document.querySelector('.item-card.selecionado');
-            if (!selectedCard) return;
+    detailPanel?.querySelectorAll('[data-report-decision]').forEach((button) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        button.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            const selectedCard = document.querySelector('.item-card.selecionado'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            if (!selectedCard) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-            const verdict = button.dataset.reportDecision;
-            const form = selectedCard.querySelector(verdict === 'manter' ? '[data-report-keep-form]' : '[data-report-delete-form]');
-            if (!form) return;
-            form.requestSubmit?.();
-            if (!form.requestSubmit) form.submit();
-        });
-    });
+            const verdict = button.dataset.reportDecision; // Explicação DevIN: Declara variável JavaScript verdict para reutilizar valor ou resultado.
+            const form = selectedCard.querySelector(verdict === 'manter' ? '[data-report-keep-form]' : '[data-report-delete-form]'); // Explicação DevIN: Declara variável JavaScript form para reutilizar valor ou resultado.
+            if (!form) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            form.requestSubmit?.(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            if (!form.requestSubmit) form.submit(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    detailPanel?.querySelector('[data-detail-action]')?.addEventListener('click', () => selectedActionTarget?.click());
-    document.addEventListener('click', (event) => {
-        if (!(event.target instanceof Element)) return;
-        const button = event.target.closest('[data-start-chat]:not([hidden])');
-        if (!button || !button.dataset.chatType || !button.dataset.chatId) return;
-        const destination = new URL(window.location.href);
-        destination.searchParams.set('pagina', 'mensagens');
-        destination.searchParams.set('contato_tipo', button.dataset.chatType);
-        destination.searchParams.set('contato_id', button.dataset.chatId);
-        window.location.assign(destination);
-    });
+    detailPanel?.querySelector('[data-detail-action]')?.addEventListener('click', () => selectedActionTarget?.click()); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    document.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (!(event.target instanceof Element)) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const button = event.target.closest('[data-start-chat]:not([hidden])'); // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
+        if (!button || !button.dataset.chatType || !button.dataset.chatId) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const destination = new URL(window.location.href); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        destination.searchParams.set('pagina', 'mensagens'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        destination.searchParams.set('contato_tipo', button.dataset.chatType); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        destination.searchParams.set('contato_id', button.dataset.chatId); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        window.location.assign(destination); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const clearDetail = () => {
-        detailCards.forEach((card) => card.classList.remove('selecionado'));
-        selectedActionTarget = null;
+    const clearDetail = () => { // Explicação DevIN: Declara variável JavaScript clearDetail para reutilizar valor ou resultado.
+        detailCards.forEach((card) => card.classList.remove('selecionado')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        selectedActionTarget = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 
-        if (!detailPanel) return;
+        if (!detailPanel) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-        detailPanel.querySelector('[data-detail-content]')?.setAttribute('hidden', '');
-        detailPanel.querySelector('[data-detail-placeholder]')?.removeAttribute('hidden');
-        detailPanel.querySelector('[data-detail-action]')?.setAttribute('hidden', '');
-        detailPanel.querySelector('[data-start-chat]')?.setAttribute('hidden', '');
-        detailPanel.querySelector('[data-report-decision-block]')?.setAttribute('hidden', '');
-    };
+        detailPanel.querySelector('[data-detail-content]')?.setAttribute('hidden', ''); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        detailPanel.querySelector('[data-detail-placeholder]')?.removeAttribute('hidden'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        detailPanel.querySelector('[data-detail-action]')?.setAttribute('hidden', ''); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        detailPanel.querySelector('[data-start-chat]')?.setAttribute('hidden', ''); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        detailPanel.querySelector('[data-report-decision-block]')?.setAttribute('hidden', ''); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const mobileDetailMedia = window.matchMedia('(max-width: 720px)');
-    const closeMobileDetail = () => {
-        if (!detailPanel) return;
-        const selectedCard = detailCards.find((card) => card.classList.contains('selecionado'));
-        detailPanel.classList.remove('mobile-detail-open');
-        detailPanel.removeAttribute('role');
-        detailPanel.removeAttribute('aria-modal');
-        clearDetail();
-        if (selectedCard) {
-            selectedCard.setAttribute('tabindex', '-1');
-            selectedCard.focus({ preventScroll: true });
-        }
-    };
+    const mobileDetailMedia = window.matchMedia('(max-width: 720px)'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const closeMobileDetail = () => { // Explicação DevIN: Declara variável JavaScript closeMobileDetail para reutilizar valor ou resultado.
+        if (!detailPanel) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const selectedCard = detailCards.find((card) => card.classList.contains('selecionado')); // Explicação DevIN: Declara variável JavaScript selectedCard para reutilizar valor ou resultado.
+        detailPanel.classList.remove('mobile-detail-open'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        detailPanel.removeAttribute('role'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        detailPanel.removeAttribute('aria-modal'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        clearDetail(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        if (selectedCard) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            selectedCard.setAttribute('tabindex', '-1'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            selectedCard.focus({ preventScroll: true }); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    detailPanel?.querySelector('[data-close-detail]')?.addEventListener('click', closeMobileDetail);
-    detailPanel?.addEventListener('click', (event) => {
-        if (event.target === detailPanel) closeMobileDetail();
-    });
-    document.addEventListener('keydown', (event) => {
-        if (!detailPanel?.classList.contains('mobile-detail-open')) return;
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            closeMobileDetail();
-            return;
-        }
-        if (event.key !== 'Tab') return;
+    detailPanel?.querySelector('[data-close-detail]')?.addEventListener('click', closeMobileDetail); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    detailPanel?.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (event.target === detailPanel) closeMobileDetail(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    document.addEventListener('keydown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (!detailPanel?.classList.contains('mobile-detail-open')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (event.key === 'Escape') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            closeMobileDetail(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (event.key !== 'Tab') return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-        const focusableElements = [...detailPanel.querySelectorAll('button:not([hidden]):not(:disabled), a[href]')]
-            .filter((element) => element.getClientRects().length > 0);
-        if (!focusableElements.length) return;
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-        if (event.shiftKey && document.activeElement === firstElement) {
-            event.preventDefault();
-            lastElement.focus();
-        } else if (!event.shiftKey && document.activeElement === lastElement) {
-            event.preventDefault();
-            firstElement.focus();
-        }
-    });
-    mobileDetailMedia.addEventListener?.('change', (event) => {
-        if (!event.matches && detailPanel?.classList.contains('mobile-detail-open')) closeMobileDetail();
-    });
+        const focusableElements = [...detailPanel.querySelectorAll('button:not([hidden]):not(:disabled), a[href]')] // Explicação DevIN: Declara variável JavaScript focusableElements para reutilizar valor ou resultado.
+            .filter((element) => element.getClientRects().length > 0); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        if (!focusableElements.length) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const firstElement = focusableElements[0]; // Explicação DevIN: Declara variável JavaScript firstElement para reutilizar valor ou resultado.
+        const lastElement = focusableElements[focusableElements.length - 1]; // Explicação DevIN: Declara variável JavaScript lastElement para reutilizar valor ou resultado.
+        if (event.shiftKey && document.activeElement === firstElement) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            lastElement.focus(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } else if (!event.shiftKey && document.activeElement === lastElement) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            firstElement.focus(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    mobileDetailMedia.addEventListener?.('change', (event) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        if (!event.matches && detailPanel?.classList.contains('mobile-detail-open')) closeMobileDetail(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelectorAll('[data-open-report-analysis]').forEach((button) => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            const card = button.closest('.item-card[data-detail]');
-            if (!card) return;
+    document.querySelectorAll('[data-open-report-analysis]').forEach((button) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        button.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            event.stopPropagation(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            const card = button.closest('.item-card[data-detail]'); // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
+            if (!card) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-            document.querySelectorAll('.item-card[data-detail]').forEach((item) => {
-                item.classList.remove('selecionado');
-            });
+            document.querySelectorAll('.item-card[data-detail]').forEach((item) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                item.classList.remove('selecionado'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            card.classList.add('selecionado');
-            renderDetail(card);
+            card.classList.add('selecionado'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            renderDetail(card); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
-            if (detailPanel && mobileDetailMedia.matches) {
-                detailPanel.classList.add('mobile-detail-open');
-                detailPanel.setAttribute('role', 'dialog');
-                detailPanel.setAttribute('aria-modal', 'true');
-                detailPanel.querySelector('[data-close-detail]')?.focus({ preventScroll: true });
-            }
-        });
-    });
+            if (detailPanel && mobileDetailMedia.matches) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                detailPanel.classList.add('mobile-detail-open'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                detailPanel.setAttribute('role', 'dialog'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                detailPanel.setAttribute('aria-modal', 'true'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                detailPanel.querySelector('[data-close-detail]')?.focus({ preventScroll: true }); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelectorAll('.item-card[data-detail]').forEach((card) => {
-        card.addEventListener('click', (event) => {
+    document.querySelectorAll('.item-card[data-detail]').forEach((card) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        card.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
             // Cliques em controles internos executam sua ação própria e não trocam a seleção do card.
-            if (event.target.closest('button, a, form, summary, input, textarea, select')) return;
+            if (event.target.closest('button, a, form, summary, input, textarea, select')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-            document.querySelectorAll('.item-card[data-detail]').forEach((item) => {
-                item.classList.remove('selecionado');
-            });
+            document.querySelectorAll('.item-card[data-detail]').forEach((item) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                item.classList.remove('selecionado'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            card.classList.add('selecionado');
-            renderDetail(card);
+            card.classList.add('selecionado'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            renderDetail(card); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
-            if (detailPanel && mobileDetailMedia.matches) {
-                detailPanel.classList.add('mobile-detail-open');
-                detailPanel.setAttribute('role', 'dialog');
-                detailPanel.setAttribute('aria-modal', 'true');
-                detailPanel.querySelector('[data-close-detail]')?.focus({ preventScroll: true });
-            }
+            if (detailPanel && mobileDetailMedia.matches) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                detailPanel.classList.add('mobile-detail-open'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                detailPanel.setAttribute('role', 'dialog'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                detailPanel.setAttribute('aria-modal', 'true'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                detailPanel.querySelector('[data-close-detail]')?.focus({ preventScroll: true }); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            if (detailText) detailText.textContent = card.dataset.detail || 'Sem detalhes disponíveis.';
-            if (detailTitle && card.dataset.jobTitle) detailTitle.textContent = card.dataset.jobTitle;
-        });
-    });
+            if (detailText) detailText.textContent = card.dataset.detail || 'Sem detalhes disponíveis.'; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (detailTitle && card.dataset.jobTitle) detailTitle.textContent = card.dataset.jobTitle; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Confirmação de saída para pessoa, empresa e administrador.
-    document.querySelector('.lista-area')?.addEventListener('click', (event) => {
-        if (event.target.closest('.item-card[data-detail], button, a, form, summary, input, textarea, select, label')) return;
-        clearDetail();
-    });
+    document.querySelector('.lista-area')?.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (event.target.closest('.item-card[data-detail], button, a, form, summary, input, textarea, select, label')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        clearDetail(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelectorAll('[data-confirm-logout]').forEach((link) => {
-        link.addEventListener('click', (event) => {
-            const message = link.dataset.confirmLogout || translate('Tem certeza que deseja sair da sua conta?');
-            if (!window.confirm(message)) event.preventDefault();
-        });
-    });
+    document.querySelectorAll('[data-confirm-logout]').forEach((link) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        link.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            const message = link.dataset.confirmLogout || translate('Tem certeza que deseja sair da sua conta?'); // Explicação DevIN: Declara variável JavaScript message para reutilizar valor ou resultado.
+            if (!window.confirm(message)) event.preventDefault(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const deleteForms = new Set([...document.querySelectorAll('[data-delete-account]')]
-        .map((button) => button.closest('form'))
-        .filter(Boolean));
-    deleteForms.forEach((form) => {
-        form.addEventListener('submit', (event) => {
-            if (form.dataset.deleteConfirmed === 'true') return;
-            if (!window.confirm(translate('Tem certeza? Esta ação exclui sua conta permanentemente.'))) {
-                event.preventDefault();
-                return;
-            }
+    const deleteForms = new Set([...document.querySelectorAll('[data-delete-account]')] // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        .map((button) => button.closest('form')) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        .filter(Boolean)); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    deleteForms.forEach((form) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        form.addEventListener('submit', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (form.dataset.deleteConfirmed === 'true') return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (!window.confirm(translate('Tem certeza? Esta ação exclui sua conta permanentemente.'))) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            event.preventDefault();
-            form.closest('dialog')?.close();
-            document.body.classList.add('account-deleting');
-            const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 150 : 380;
-            window.setTimeout(() => HTMLFormElement.prototype.submit.call(form), delay);
-        });
-    });
+            event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            form.closest('dialog')?.close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            document.body.classList.add('account-deleting'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 150 : 380; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            window.setTimeout(() => HTMLFormElement.prototype.submit.call(form), delay); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Fecha dialogs sem depender de IDs específicos.
-    document.querySelectorAll('[data-close-modal]').forEach((button) => {
-        button.addEventListener('click', () => button.closest('dialog')?.close());
-    });
+    document.querySelectorAll('[data-close-modal]').forEach((button) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        button.addEventListener('click', () => button.closest('dialog')?.close()); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelector('[data-close-job-report]')?.addEventListener('click', () => jobReportDialog?.close());
-    jobReportDialog?.addEventListener('click', (event) => {
-        if (event.target === jobReportDialog) jobReportDialog.close();
-    });
-    jobReportButton?.addEventListener('click', () => {
-        const reportId = jobReportButton.dataset.jobId;
-        if (!reportId || !jobReportForm || !jobReportDialog) return;
-        jobReportForm.reset();
-        jobReportForm.querySelectorAll('select, textarea').forEach((field) => { field.disabled = false; });
-        jobReportForm.querySelector('[data-job-report-id]').value = reportId;
-        jobReportStatus.closest('[data-feedback-toast]').hidden = true;
-        jobReportStatus.classList.remove('form-success');
-        jobReportStatus.textContent = '';
-        jobReportSubmit.disabled = false;
-        jobReportSubmit.textContent = translate('Enviar denúncia');
-        jobReportDialog.showModal();
-    });
+    document.querySelector('[data-close-job-report]')?.addEventListener('click', () => jobReportDialog?.close()); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    jobReportDialog?.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (event.target === jobReportDialog) jobReportDialog.close(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    jobReportButton?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        const reportId = jobReportButton.dataset.jobId; // Explicação DevIN: Declara variável JavaScript reportId para reutilizar valor ou resultado.
+        if (!reportId || !jobReportForm || !jobReportDialog) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        jobReportForm.reset(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        jobReportForm.querySelectorAll('select, textarea').forEach((field) => { field.disabled = false; }); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        jobReportForm.querySelector('[data-job-report-id]').value = reportId; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        jobReportStatus.closest('[data-feedback-toast]').hidden = true; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        jobReportStatus.classList.remove('form-success'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        jobReportStatus.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        jobReportSubmit.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        jobReportSubmit.textContent = translate('Enviar denúncia'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        jobReportDialog.showModal(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    jobReportForm?.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        if (!jobReportSubmit || !jobReportStatus) return;
+    jobReportForm?.addEventListener('submit', async (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        if (!jobReportSubmit || !jobReportStatus) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-        jobReportSubmit.disabled = true;
-        jobReportSubmit.textContent = translate('Enviando...');
-        jobReportStatus.closest('[data-feedback-toast]').hidden = true;
-        jobReportStatus.classList.remove('form-success');
-        try {
-            const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
-            const response = await fetch(new URL('../php/denunciar_vaga_api.php', window.location.href), {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken,
-                },
-                body: JSON.stringify({
-                    id_vaga: jobReportForm.querySelector('[data-job-report-id]').value,
-                    motivo: jobReportForm.querySelector('[name="motivo"]').value,
-                    detalhes: jobReportForm.querySelector('[name="detalhes"]').value.trim(),
-                }),
-            });
-            const data = await response.json();
-            if (!response.ok || data.sucesso !== true) {
-                throw new Error(translate(data.mensagem || 'Não foi possível enviar a denúncia.'));
-            }
+        jobReportSubmit.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        jobReportSubmit.textContent = translate('Enviando...'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        jobReportStatus.closest('[data-feedback-toast]').hidden = true; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        jobReportStatus.classList.remove('form-success'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || ''; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            const response = await fetch(new URL('../php/denunciar_vaga_api.php', window.location.href), { // Explicação DevIN: Inicia solicitação HTTP assíncrona a um endereço configurado.
+                method: 'POST', // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                credentials: 'same-origin', // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                headers: { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    'Content-Type': 'application/json', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'X-CSRF-Token': csrfToken, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                body: JSON.stringify({ // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
+                    id_vaga: jobReportForm.querySelector('[data-job-report-id]').value, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    motivo: jobReportForm.querySelector('[name="motivo"]').value, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    detalhes: jobReportForm.querySelector('[name="detalhes"]').value.trim(), // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                }), // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            const data = await response.json(); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+            if (!response.ok || data.sucesso !== true) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                throw new Error(translate(data.mensagem || 'Não foi possível enviar a denúncia.')); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            const warnings = Array.isArray(data.avisos) ? data.avisos.map(translate) : [];
-            showToast(
-                jobReportStatus.closest('[data-feedback-toast]'),
-                [translate(data.mensagem), ...warnings].join(' '),
-                warnings.length > 0 ? 'warning' : 'success'
-            );
-            jobReportSubmit.textContent = translate('Denúncia enviada');
-            jobReportForm.querySelectorAll('select, textarea').forEach((field) => { field.disabled = true; });
-            const reportedCard = detailCards.find((card) => card.dataset.reportJobId === jobReportButton.dataset.jobId);
-            if (reportedCard) reportedCard.dataset.reportSubmitted = 'true';
-            jobReportButton.disabled = true;
-            jobReportButton.textContent = translate('Denúncia enviada');
-        } catch (error) {
-            showToast(jobReportStatus.closest('[data-feedback-toast]'), error.message, 'error');
-            jobReportSubmit.disabled = false;
-            jobReportSubmit.textContent = translate('Enviar denúncia');
-        }
-    });
+            const warnings = Array.isArray(data.avisos) ? data.avisos.map(translate) : []; // Explicação DevIN: Declara variável JavaScript warnings para reutilizar valor ou resultado.
+            showToast( // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                jobReportStatus.closest('[data-feedback-toast]'), // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                [translate(data.mensagem), ...warnings].join(' '), // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                warnings.length > 0 ? 'warning' : 'success' // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            jobReportSubmit.textContent = translate('Denúncia enviada'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            jobReportForm.querySelectorAll('select, textarea').forEach((field) => { field.disabled = true; }); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            const reportedCard = detailCards.find((card) => card.dataset.reportJobId === jobReportButton.dataset.jobId); // Explicação DevIN: Declara variável JavaScript reportedCard para reutilizar valor ou resultado.
+            if (reportedCard) reportedCard.dataset.reportSubmitted = 'true'; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            jobReportButton.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            jobReportButton.textContent = translate('Denúncia enviada'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            showToast(jobReportStatus.closest('[data-feedback-toast]'), error.message, 'error'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            jobReportSubmit.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            jobReportSubmit.textContent = translate('Enviar denúncia'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    profileModal?.addEventListener('click', (event) => {
-        if (event.target === profileModal) profileModal.close();
-    });
+    profileModal?.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (event.target === profileModal) profileModal.close(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    settingsModal?.addEventListener('click', (event) => {
-        if (event.target === settingsModal) settingsModal.close();
-    });
+    settingsModal?.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (event.target === settingsModal) settingsModal.close(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelectorAll('[data-open-settings]').forEach((button) => {
-        button.addEventListener('click', () => {
-            document.querySelector('.perfil-dropdown')?.removeAttribute('open');
-            if (settingsModal?.showModal) settingsModal.showModal();
-        });
-    });
+    document.querySelectorAll('[data-open-settings]').forEach((button) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        button.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            document.querySelector('.perfil-dropdown')?.removeAttribute('open'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            if (settingsModal?.showModal) settingsModal.showModal(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelectorAll('[data-open-profile]').forEach((button) => {
-        button.addEventListener('click', () => {
-            document.querySelector('.perfil-dropdown')?.removeAttribute('open');
-            if (profileModal?.showModal) profileModal.showModal();
-        });
-    });
+    document.querySelectorAll('[data-open-profile]').forEach((button) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        button.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            document.querySelector('.perfil-dropdown')?.removeAttribute('open'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            if (profileModal?.showModal) profileModal.showModal(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    document.querySelectorAll('.perfil-dropdown').forEach((dropdown) => {
-        document.addEventListener('click', (event) => {
-            if (event.target instanceof Node && !dropdown.contains(event.target)) {
-                dropdown.removeAttribute('open');
-            }
-        });
-    });
+    document.querySelectorAll('.perfil-dropdown').forEach((dropdown) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        document.addEventListener('click', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (event.target instanceof Node && !dropdown.contains(event.target)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                dropdown.removeAttribute('open'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Pré-visualização segura da foto.
-    document.querySelectorAll(".profile-photo input[type='file']").forEach((input) => {
-        input.addEventListener('change', (event) => {
-            const photo = event.currentTarget.files?.[0];
-            if (!photo) return;
+    document.querySelectorAll(".profile-photo input[type='file']").forEach((input) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        input.addEventListener('change', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            const photo = event.currentTarget.files?.[0]; // Explicação DevIN: Declara variável JavaScript photo para reutilizar valor ou resultado.
+            if (!photo) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-            const allowed = ['image/jpeg', 'image/png', 'image/webp'];
-            if (!allowed.includes(photo.type) || photo.size > 5 * 1024 * 1024) {
-                event.currentTarget.value = '';
-                window.alert(translate('Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.'));
-                return;
-            }
+            const allowed = ['image/jpeg', 'image/png', 'image/webp']; // Explicação DevIN: Declara variável JavaScript allowed para reutilizar valor ou resultado.
+            if (!allowed.includes(photo.type) || photo.size > 5 * 1024 * 1024) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                event.currentTarget.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                window.alert(translate('Selecione uma imagem JPG, PNG ou WEBP de até 5 MB.')); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            const previewUrl = URL.createObjectURL(photo);
-            document.querySelectorAll('.current-user-avatar').forEach((preview) => {
-                preview.replaceChildren();
-                const image = document.createElement('img');
-                image.src = previewUrl;
-                image.alt = translate('Prévia da foto de perfil');
-                preview.appendChild(image);
-            });
-        });
-    });
+            const previewUrl = URL.createObjectURL(photo); // Explicação DevIN: Declara variável JavaScript previewUrl para reutilizar valor ou resultado.
+            document.querySelectorAll('.current-user-avatar').forEach((preview) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                preview.replaceChildren(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                const image = document.createElement('img'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                image.src = previewUrl; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                image.alt = translate('Prévia da foto de perfil'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                preview.appendChild(image); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Loading para qualquer formulário que realmente será enviado.
-    document.querySelectorAll('form').forEach((form) => {
-        form.addEventListener('submit', () => {
-            if (form.matches('[data-chat-form]')) return;
-            const submitter = form.querySelector('button[type="submit"]:focus, button[type="submit"]:last-of-type');
-            if (!submitter || submitter.dataset.loading === 'true') return;
-            submitter.dataset.loading = 'true';
-            submitter.disabled = true;
-            submitter.dataset.originalText = submitter.textContent;
-            submitter.textContent = translate('Processando...');
-        });
-    });
+    document.querySelectorAll('form').forEach((form) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        form.addEventListener('submit', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (form.matches('[data-chat-form]')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            const submitter = form.querySelector('button[type="submit"]:focus, button[type="submit"]:last-of-type'); // Explicação DevIN: Declara variável JavaScript submitter para reutilizar valor ou resultado.
+            if (!submitter || submitter.dataset.loading === 'true') return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            submitter.dataset.loading = 'true'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            submitter.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            submitter.dataset.originalText = submitter.textContent; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            submitter.textContent = translate('Processando...'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Busca local sem enviar uma nova requisição a cada tecla.
-    const searchInput = document.querySelector('.busca input[type="search"]');
-    const filterButton = document.querySelector('[data-toggle-filters]');
-    const filterMenu = document.querySelector('[data-filter-menu]');
-    const filterSelect = document.querySelector('[data-card-filter]');
-    const candidateListSearch = searchInput?.hasAttribute('data-candidate-list-search') === true;
-    const globalEducationFilter = document.querySelector('[data-candidate-global-education]');
-    const globalCurriculumFilter = document.querySelector('[data-candidate-global-curriculum]');
-    const candidatePanels = [...document.querySelectorAll('.candidate-vacancy-panel')];
-    const searchEmptyState = detailCards.length
-        ? document.createElement('p')
-        : null;
-    if (searchEmptyState) {
-        searchEmptyState.className = 'empty-state search-empty-state';
-        searchEmptyState.setAttribute('role', 'status');
-        searchEmptyState.setAttribute('aria-live', 'polite');
-        searchEmptyState.textContent = translate('Nenhum resultado encontrado.');
-        searchEmptyState.hidden = true;
-        (candidatePanels[0] || detailCards[0]).before(searchEmptyState);
-    }
-    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale)
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    const splitCandidateFilterItems = (value) => String(value || '')
-        .split(/[\r\n,;|]+/).map((item) => item.trim()).filter(Boolean);
-    const cardTags = (card) => String(card.dataset.detailTags || '')
-        .split('|').map((tag) => tag.trim()).filter(Boolean);
-    const updateCardVisibility = () => {
+    const searchInput = document.querySelector('.busca input[type="search"]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const filterButton = document.querySelector('[data-toggle-filters]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const filterMenu = document.querySelector('[data-filter-menu]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const filterSelect = document.querySelector('[data-card-filter]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const candidateListSearch = searchInput?.hasAttribute('data-candidate-list-search') === true; // Explicação DevIN: Declara variável JavaScript candidateListSearch para reutilizar valor ou resultado.
+    const globalEducationFilter = document.querySelector('[data-candidate-global-education]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const globalCurriculumFilter = document.querySelector('[data-candidate-global-curriculum]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const candidatePanels = [...document.querySelectorAll('.candidate-vacancy-panel')]; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const searchEmptyState = detailCards.length // Explicação DevIN: Declara variável JavaScript searchEmptyState para reutilizar valor ou resultado.
+        ? document.createElement('p') // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        : null; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    if (searchEmptyState) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        searchEmptyState.className = 'empty-state search-empty-state'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        searchEmptyState.setAttribute('role', 'status'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        searchEmptyState.setAttribute('aria-live', 'polite'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        searchEmptyState.textContent = translate('Nenhum resultado encontrado.'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        searchEmptyState.hidden = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        (candidatePanels[0] || detailCards[0]).before(searchEmptyState); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    const normalizeSearch = (value) => String(value || '').trim().toLocaleLowerCase(interfaceLocale) // Explicação DevIN: Declara variável JavaScript normalizeSearch para reutilizar valor ou resultado.
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    const splitCandidateFilterItems = (value) => String(value || '') // Explicação DevIN: Declara variável JavaScript splitCandidateFilterItems para reutilizar valor ou resultado.
+        .split(/[\r\n,;|]+/).map((item) => item.trim()).filter(Boolean); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    const cardTags = (card) => String(card.dataset.detailTags || '') // Explicação DevIN: Declara variável JavaScript cardTags para reutilizar valor ou resultado.
+        .split('|').map((tag) => tag.trim()).filter(Boolean); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    const updateCardVisibility = () => { // Explicação DevIN: Declara variável JavaScript updateCardVisibility para reutilizar valor ou resultado.
         /* Compara o termo com texto visível e metadados do card, além da categoria selecionada.
          * A busca é local: não faz uma requisição a cada tecla nem altera dados armazenados. */
-        const term = normalizeSearch(searchInput?.value);
-        const activeFilter = filterSelect?.value || '';
-        const globalCurriculumTerm = normalizeSearch(globalCurriculumFilter?.value);
-        const globalEducation = normalizeSearch(globalEducationFilter?.value);
-        const hasGlobalCandidateFilters = candidateListSearch
-            && (term !== '' || activeFilter !== '' || globalCurriculumTerm !== '' || globalEducation !== '');
+        const term = normalizeSearch(searchInput?.value); // Explicação DevIN: Declara variável JavaScript term para reutilizar valor ou resultado.
+        const activeFilter = filterSelect?.value || ''; // Explicação DevIN: Declara variável JavaScript activeFilter para reutilizar valor ou resultado.
+        const globalCurriculumTerm = normalizeSearch(globalCurriculumFilter?.value); // Explicação DevIN: Declara variável JavaScript globalCurriculumTerm para reutilizar valor ou resultado.
+        const globalEducation = normalizeSearch(globalEducationFilter?.value); // Explicação DevIN: Declara variável JavaScript globalEducation para reutilizar valor ou resultado.
+        const hasGlobalCandidateFilters = candidateListSearch // Explicação DevIN: Declara variável JavaScript hasGlobalCandidateFilters para reutilizar valor ou resultado.
+            && (term !== '' || activeFilter !== '' || globalCurriculumTerm !== '' || globalEducation !== ''); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
 
-        detailCards.forEach((card) => {
-            const searchableContent = [
-                card.textContent,
-                card.dataset.detailName,
-                card.dataset.detailSummary,
-                card.dataset.detailRole,
-                card.dataset.detailTags,
-                card.dataset.detailExperience,
-                card.dataset.candidateNameEmail,
-                card.dataset.candidateCurriculum,
-            ].join(' ');
-            const candidateNameEmail = normalizeSearch(card.dataset.candidateNameEmail);
-            const normalizedSearchableContent = normalizeSearch(searchableContent);
-            const matchesSearch = term === '' || (candidateListSearch
-                ? candidateNameEmail.includes(term)
-                : normalizedSearchableContent.includes(term));
-            const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter);
-            const matchesGlobalCurriculum = globalCurriculumTerm === ''
-                || normalizeSearch(card.dataset.candidateCurriculum).includes(globalCurriculumTerm);
-            const matchesGlobalEducation = globalEducation === ''
-                || normalizeSearch(card.dataset.candidateEducation) === globalEducation;
-            const panel = card.closest('.candidate-vacancy-panel');
-            const candidateTerm = normalizeSearch(panel?.querySelector('[data-candidate-search]')?.value);
-            const education = normalizeSearch(panel?.querySelector('[data-candidate-education]')?.value);
-            const matchesCandidateSearch = candidateTerm === ''
-                || candidateNameEmail.includes(candidateTerm);
-            const matchesEducation = education === ''
-                || normalizeSearch(card.dataset.candidateEducation) === education;
-            const course = normalizeSearch(panel?.querySelector('[data-candidate-course]')?.value);
-            const skill = normalizeSearch(panel?.querySelector('[data-candidate-skill]')?.value);
-            const experience = normalizeSearch(panel?.querySelector('[data-candidate-experience]')?.value);
-            const matchesCourse = course === ''
-                || splitCandidateFilterItems(card.dataset.candidateCourses).some((item) => normalizeSearch(item) === course);
-            const matchesSkill = skill === ''
-                || splitCandidateFilterItems(card.dataset.candidateSkills).some((item) => normalizeSearch(item) === skill);
-            const matchesExperience = experience === ''
-                || splitCandidateFilterItems(card.dataset.candidateExperiences).some((item) => normalizeSearch(item) === experience);
-            card.hidden = !matchesSearch || !matchesFilter
-                || !matchesGlobalCurriculum || !matchesGlobalEducation
-                || !matchesCandidateSearch || !matchesEducation
-                || !matchesCourse || !matchesSkill || !matchesExperience;
-        });
+        detailCards.forEach((card) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            const searchableContent = [ // Explicação DevIN: Declara variável JavaScript searchableContent para reutilizar valor ou resultado.
+                card.textContent, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.detailName, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.detailSummary, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.detailRole, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.detailTags, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.detailExperience, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.candidateNameEmail, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                card.dataset.candidateCurriculum, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            ].join(' '); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            const candidateNameEmail = normalizeSearch(card.dataset.candidateNameEmail); // Explicação DevIN: Declara variável JavaScript candidateNameEmail para reutilizar valor ou resultado.
+            const normalizedSearchableContent = normalizeSearch(searchableContent); // Explicação DevIN: Declara variável JavaScript normalizedSearchableContent para reutilizar valor ou resultado.
+            const matchesSearch = term === '' || (candidateListSearch // Explicação DevIN: Declara variável JavaScript matchesSearch para reutilizar valor ou resultado.
+                ? candidateNameEmail.includes(term) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : normalizedSearchableContent.includes(term)); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const matchesFilter = activeFilter === '' || cardTags(card).includes(activeFilter); // Explicação DevIN: Declara variável JavaScript matchesFilter para reutilizar valor ou resultado.
+            const matchesGlobalCurriculum = globalCurriculumTerm === '' // Explicação DevIN: Declara variável JavaScript matchesGlobalCurriculum para reutilizar valor ou resultado.
+                || normalizeSearch(card.dataset.candidateCurriculum).includes(globalCurriculumTerm); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const matchesGlobalEducation = globalEducation === '' // Explicação DevIN: Declara variável JavaScript matchesGlobalEducation para reutilizar valor ou resultado.
+                || normalizeSearch(card.dataset.candidateEducation) === globalEducation; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const panel = card.closest('.candidate-vacancy-panel'); // Explicação DevIN: Declara variável JavaScript panel para reutilizar valor ou resultado.
+            const candidateTerm = normalizeSearch(panel?.querySelector('[data-candidate-search]')?.value); // Explicação DevIN: Declara variável JavaScript candidateTerm para reutilizar valor ou resultado.
+            const education = normalizeSearch(panel?.querySelector('[data-candidate-education]')?.value); // Explicação DevIN: Declara variável JavaScript education para reutilizar valor ou resultado.
+            const matchesCandidateSearch = candidateTerm === '' // Explicação DevIN: Declara variável JavaScript matchesCandidateSearch para reutilizar valor ou resultado.
+                || candidateNameEmail.includes(candidateTerm); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const matchesEducation = education === '' // Explicação DevIN: Declara variável JavaScript matchesEducation para reutilizar valor ou resultado.
+                || normalizeSearch(card.dataset.candidateEducation) === education; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const course = normalizeSearch(panel?.querySelector('[data-candidate-course]')?.value); // Explicação DevIN: Declara variável JavaScript course para reutilizar valor ou resultado.
+            const skill = normalizeSearch(panel?.querySelector('[data-candidate-skill]')?.value); // Explicação DevIN: Declara variável JavaScript skill para reutilizar valor ou resultado.
+            const experience = normalizeSearch(panel?.querySelector('[data-candidate-experience]')?.value); // Explicação DevIN: Declara variável JavaScript experience para reutilizar valor ou resultado.
+            const matchesCourse = course === '' // Explicação DevIN: Declara variável JavaScript matchesCourse para reutilizar valor ou resultado.
+                || splitCandidateFilterItems(card.dataset.candidateCourses).some((item) => normalizeSearch(item) === course); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const matchesSkill = skill === '' // Explicação DevIN: Declara variável JavaScript matchesSkill para reutilizar valor ou resultado.
+                || splitCandidateFilterItems(card.dataset.candidateSkills).some((item) => normalizeSearch(item) === skill); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const matchesExperience = experience === '' // Explicação DevIN: Declara variável JavaScript matchesExperience para reutilizar valor ou resultado.
+                || splitCandidateFilterItems(card.dataset.candidateExperiences).some((item) => normalizeSearch(item) === experience); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            card.hidden = !matchesSearch || !matchesFilter // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                || !matchesGlobalCurriculum || !matchesGlobalEducation // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                || !matchesCandidateSearch || !matchesEducation // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                || !matchesCourse || !matchesSkill || !matchesExperience; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        const hasActiveSearch = hasGlobalCandidateFilters || (!candidateListSearch && (term !== '' || activeFilter !== ''));
-        const hasVisibleCards = detailCards.some((card) => !card.hidden);
-        if (searchEmptyState) searchEmptyState.hidden = !hasActiveSearch || hasVisibleCards;
-        candidatePanels.forEach((panel) => {
-            const candidateCards = [...panel.querySelectorAll('.item-card[data-candidate-name-email]')];
-            const localSearch = normalizeSearch(panel.querySelector('[data-candidate-search]')?.value);
-            const education = normalizeSearch(panel.querySelector('[data-candidate-education]')?.value);
-            const course = normalizeSearch(panel.querySelector('[data-candidate-course]')?.value);
-            const skill = normalizeSearch(panel.querySelector('[data-candidate-skill]')?.value);
-            const experience = normalizeSearch(panel.querySelector('[data-candidate-experience]')?.value);
-            const hasLocalFilter = localSearch !== '' || education !== ''
-                || course !== '' || skill !== '' || experience !== '';
-            const hasVisibleCandidates = candidateCards.some((card) => !card.hidden);
-            const emptyState = panel.querySelector('[data-candidate-filter-empty]');
-            if (emptyState) emptyState.hidden = !hasLocalFilter || hasVisibleCandidates;
+        const hasActiveSearch = hasGlobalCandidateFilters || (!candidateListSearch && (term !== '' || activeFilter !== '')); // Explicação DevIN: Declara variável JavaScript hasActiveSearch para reutilizar valor ou resultado.
+        const hasVisibleCards = detailCards.some((card) => !card.hidden); // Explicação DevIN: Declara variável JavaScript hasVisibleCards para reutilizar valor ou resultado.
+        if (searchEmptyState) searchEmptyState.hidden = !hasActiveSearch || hasVisibleCards; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        candidatePanels.forEach((panel) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            const candidateCards = [...panel.querySelectorAll('.item-card[data-candidate-name-email]')]; // Explicação DevIN: Declara variável JavaScript candidateCards para reutilizar valor ou resultado.
+            const localSearch = normalizeSearch(panel.querySelector('[data-candidate-search]')?.value); // Explicação DevIN: Declara variável JavaScript localSearch para reutilizar valor ou resultado.
+            const education = normalizeSearch(panel.querySelector('[data-candidate-education]')?.value); // Explicação DevIN: Declara variável JavaScript education para reutilizar valor ou resultado.
+            const course = normalizeSearch(panel.querySelector('[data-candidate-course]')?.value); // Explicação DevIN: Declara variável JavaScript course para reutilizar valor ou resultado.
+            const skill = normalizeSearch(panel.querySelector('[data-candidate-skill]')?.value); // Explicação DevIN: Declara variável JavaScript skill para reutilizar valor ou resultado.
+            const experience = normalizeSearch(panel.querySelector('[data-candidate-experience]')?.value); // Explicação DevIN: Declara variável JavaScript experience para reutilizar valor ou resultado.
+            const hasLocalFilter = localSearch !== '' || education !== '' // Explicação DevIN: Declara variável JavaScript hasLocalFilter para reutilizar valor ou resultado.
+                || course !== '' || skill !== '' || experience !== ''; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const hasVisibleCandidates = candidateCards.some((card) => !card.hidden); // Explicação DevIN: Declara variável JavaScript hasVisibleCandidates para reutilizar valor ou resultado.
+            const emptyState = panel.querySelector('[data-candidate-filter-empty]'); // Explicação DevIN: Declara variável JavaScript emptyState para reutilizar valor ou resultado.
+            if (emptyState) emptyState.hidden = !hasLocalFilter || hasVisibleCandidates; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-            if (hasGlobalCandidateFilters) {
-                if (!Object.prototype.hasOwnProperty.call(panel.dataset, 'filterPreviousOpen')) {
-                    panel.dataset.filterPreviousOpen = String(panel.open);
-                }
-                panel.open = hasVisibleCandidates;
-            } else if (Object.prototype.hasOwnProperty.call(panel.dataset, 'filterPreviousOpen')) {
-                panel.open = panel.dataset.filterPreviousOpen === 'true';
-                delete panel.dataset.filterPreviousOpen;
-            }
-        });
-    };
+            if (hasGlobalCandidateFilters) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                if (!Object.prototype.hasOwnProperty.call(panel.dataset, 'filterPreviousOpen')) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                    panel.dataset.filterPreviousOpen = String(panel.open); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                panel.open = hasVisibleCandidates; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            } else if (Object.prototype.hasOwnProperty.call(panel.dataset, 'filterPreviousOpen')) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                panel.open = panel.dataset.filterPreviousOpen === 'true'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                delete panel.dataset.filterPreviousOpen; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    candidatePanels.forEach((panel) => {
-        panel.querySelectorAll('input[data-candidate-search]')
-            .forEach((input) => input.addEventListener('input', updateCardVisibility));
-        const candidateCards = [...panel.querySelectorAll('.item-card[data-candidate-name-email]')];
-        const filterDefinitions = [
-            { selector: '[data-candidate-course]', attribute: 'candidateCourses', emptyLabel: 'Todos os cursos' },
-            { selector: '[data-candidate-skill]', attribute: 'candidateSkills', emptyLabel: 'Todas as habilidades' },
-            { selector: '[data-candidate-experience]', attribute: 'candidateExperiences', emptyLabel: 'Todas as experiências' },
-        ];
+    candidatePanels.forEach((panel) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        panel.querySelectorAll('input[data-candidate-search]') // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            .forEach((input) => input.addEventListener('input', updateCardVisibility)); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        const candidateCards = [...panel.querySelectorAll('.item-card[data-candidate-name-email]')]; // Explicação DevIN: Declara variável JavaScript candidateCards para reutilizar valor ou resultado.
+        const filterDefinitions = [ // Explicação DevIN: Declara variável JavaScript filterDefinitions para reutilizar valor ou resultado.
+            { selector: '[data-candidate-course]', attribute: 'candidateCourses', emptyLabel: 'Todos os cursos' }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            { selector: '[data-candidate-skill]', attribute: 'candidateSkills', emptyLabel: 'Todas as habilidades' }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            { selector: '[data-candidate-experience]', attribute: 'candidateExperiences', emptyLabel: 'Todas as experiências' }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
-        filterDefinitions.forEach(({ selector, attribute, emptyLabel }) => {
-            const select = panel.querySelector(selector);
-            if (!select) return;
+        filterDefinitions.forEach(({ selector, attribute, emptyLabel }) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            const select = panel.querySelector(selector); // Explicação DevIN: Declara variável JavaScript select para reutilizar valor ou resultado.
+            if (!select) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
-            const items = [...new Set(candidateCards.flatMap((card) => splitCandidateFilterItems(card.dataset[attribute])))]
-                .sort((first, second) => first.localeCompare(second, interfaceLocale));
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = emptyLabel;
-            select.replaceChildren(defaultOption, ...items.map((item) => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                return option;
-            }));
-            select.addEventListener('change', updateCardVisibility);
-        });
+            const items = [...new Set(candidateCards.flatMap((card) => splitCandidateFilterItems(card.dataset[attribute])))] // Explicação DevIN: Declara variável JavaScript items para reutilizar valor ou resultado.
+                .sort((first, second) => first.localeCompare(second, interfaceLocale)); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            const defaultOption = document.createElement('option'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            defaultOption.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            defaultOption.textContent = emptyLabel; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            select.replaceChildren(defaultOption, ...items.map((item) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                const option = document.createElement('option'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                option.value = item; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                option.textContent = item; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                return option; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+            })); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+            select.addEventListener('change', updateCardVisibility); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        panel.querySelector('[data-candidate-education]')?.addEventListener('change', updateCardVisibility);
-    });
+        panel.querySelector('[data-candidate-education]')?.addEventListener('change', updateCardVisibility); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    if (filterSelect) {
+    if (filterSelect) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         // Monta as opções de filtro com as tags existentes nos cartões renderizados.
-        const tags = [...new Set(detailCards.flatMap(cardTags))]
-            .filter((tag) => !candidateListSearch || tag !== 'Candidatura')
-            .sort((first, second) => first.localeCompare(second, 'pt-BR'));
-        const options = ['', ...tags].map((tag) => {
-            const option = document.createElement('option');
-            option.value = tag;
-            option.textContent = translate(tag || 'Todos');
-            return option;
-        });
-        filterSelect.replaceChildren(...options);
-        filterSelect.addEventListener('change', updateCardVisibility);
-    }
+        const tags = [...new Set(detailCards.flatMap(cardTags))] // Explicação DevIN: Declara variável JavaScript tags para reutilizar valor ou resultado.
+            .filter((tag) => !candidateListSearch || tag !== 'Candidatura') // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            .sort((first, second) => first.localeCompare(second, 'pt-BR')); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        const options = ['', ...tags].map((tag) => { // Explicação DevIN: Declara variável JavaScript options para reutilizar valor ou resultado.
+            const option = document.createElement('option'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            option.value = tag; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            option.textContent = translate(tag || 'Todos'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            return option; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        filterSelect.replaceChildren(...options); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        filterSelect.addEventListener('change', updateCardVisibility); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    if (globalEducationFilter) {
-        const educationLevels = [...new Set(detailCards
-            .map((card) => card.dataset.candidateEducation?.trim())
-            .filter(Boolean))]
-            .sort((first, second) => first.localeCompare(second, 'pt-BR'));
-        const options = educationLevels.map((education) => {
-            const option = document.createElement('option');
-            option.value = education;
-            option.textContent = education;
-            return option;
-        });
-        globalEducationFilter.append(...options);
-        globalEducationFilter.addEventListener('change', updateCardVisibility);
-    }
+    if (globalEducationFilter) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const educationLevels = [...new Set(detailCards // Explicação DevIN: Declara variável JavaScript educationLevels para reutilizar valor ou resultado.
+            .map((card) => card.dataset.candidateEducation?.trim()) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            .filter(Boolean))] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            .sort((first, second) => first.localeCompare(second, 'pt-BR')); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        const options = educationLevels.map((education) => { // Explicação DevIN: Declara variável JavaScript options para reutilizar valor ou resultado.
+            const option = document.createElement('option'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            option.value = education; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            option.textContent = education; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            return option; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        globalEducationFilter.append(...options); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        globalEducationFilter.addEventListener('change', updateCardVisibility); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    globalCurriculumFilter?.addEventListener('input', updateCardVisibility);
-    filterButton?.addEventListener('click', () => {
-        const isOpen = filterMenu?.hidden !== false;
-        if (filterMenu) filterMenu.hidden = !isOpen;
-        filterButton.setAttribute('aria-expanded', String(isOpen));
-    });
+    globalCurriculumFilter?.addEventListener('input', updateCardVisibility); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    filterButton?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        const isOpen = filterMenu?.hidden !== false; // Explicação DevIN: Declara variável JavaScript isOpen para reutilizar valor ou resultado.
+        if (filterMenu) filterMenu.hidden = !isOpen; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        filterButton.setAttribute('aria-expanded', String(isOpen)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    searchInput?.addEventListener('input', updateCardVisibility);
-    updateCardVisibility();
+    searchInput?.addEventListener('input', updateCardVisibility); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    updateCardVisibility(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
-    document.querySelector('.busca')?.addEventListener('submit', (event) => event.preventDefault());
+    document.querySelector('.busca')?.addEventListener('submit', (event) => event.preventDefault()); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
 
     // Palavra animada da página institucional.
-    if (rotatingWord) {
-        const words = document.documentElement.lang === 'en'
-            ? ['future', 'world', 'universe', 'progress', 'market', 'tomorrow']
-            : document.documentElement.lang === 'es'
-                ? ['futuro', 'mundo', 'universo', 'progreso', 'mercado', 'mañana']
-                : ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã'];
-        let currentWord = 0;
-        let changing = false;
+    if (rotatingWord) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const words = document.documentElement.lang === 'en' // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            ? ['future', 'world', 'universe', 'progress', 'market', 'tomorrow'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            : document.documentElement.lang === 'es' // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                ? ['futuro', 'mundo', 'universo', 'progreso', 'mercado', 'mañana'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : ['futuro', 'mundo', 'universo', 'avanço', 'mercado', 'amanhã']; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        let currentWord = 0; // Explicação DevIN: Declara variável JavaScript currentWord para reutilizar valor ou resultado.
+        let changing = false; // Explicação DevIN: Declara variável JavaScript changing para reutilizar valor ou resultado.
 
-        const showWord = (word, entering = false) => {
-            rotatingWord.replaceChildren();
-            [...word].forEach((character, index) => {
-                const letter = document.createElement('span');
-                const distance = index - (word.length - 1) / 2;
-                letter.className = 'palavra-letra';
-                letter.textContent = character;
-                letter.style.setProperty('--rotacao', `${distance * 12}deg`);
-                letter.style.setProperty('--queda', `${28 + (index % 3) * 7}px`);
-                letter.style.setProperty('--atraso', `${index * 38}ms`);
-                if (entering) letter.classList.add('entrando');
-                rotatingWord.appendChild(letter);
-            });
+        const showWord = (word, entering = false) => { // Explicação DevIN: Declara variável JavaScript showWord para reutilizar valor ou resultado.
+            rotatingWord.replaceChildren(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            [...word].forEach((character, index) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                const letter = document.createElement('span'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                const distance = index - (word.length - 1) / 2; // Explicação DevIN: Declara variável JavaScript distance para reutilizar valor ou resultado.
+                letter.className = 'palavra-letra'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                letter.textContent = character; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                letter.style.setProperty('--rotacao', `${distance * 12}deg`); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                letter.style.setProperty('--queda', `${28 + (index % 3) * 7}px`); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                letter.style.setProperty('--atraso', `${index * 38}ms`); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                if (entering) letter.classList.add('entrando'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                rotatingWord.appendChild(letter); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-            if (entering) {
-                requestAnimationFrame(() => requestAnimationFrame(() => {
-                    rotatingWord.querySelectorAll('.palavra-letra').forEach((letter) => letter.classList.remove('entrando'));
-                }));
-            }
-        };
+            if (entering) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                requestAnimationFrame(() => requestAnimationFrame(() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    rotatingWord.querySelectorAll('.palavra-letra').forEach((letter) => letter.classList.remove('entrando')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                })); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        showWord(words[currentWord]);
+        showWord(words[currentWord]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
-        window.setInterval(() => {
-            if (changing) return;
-            changing = true;
-            rotatingWord.querySelectorAll('.palavra-letra').forEach((letter) => letter.classList.add('saindo'));
-            window.setTimeout(() => {
-                currentWord = (currentWord + 1) % words.length;
-                showWord(words[currentWord], true);
-                changing = false;
-            }, 800);
-        }, 3000);
-    }
+        window.setInterval(() => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            if (changing) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            changing = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            rotatingWord.querySelectorAll('.palavra-letra').forEach((letter) => letter.classList.add('saindo')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            window.setTimeout(() => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                currentWord = (currentWord + 1) % words.length; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                showWord(words[currentWord], true); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                changing = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            }, 800); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        }, 3000); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const url = new URL(window.location.href);
-    if (url.searchParams.get('configuracoes') === '1' && settingsModal?.showModal) {
-        settingsModal.showModal();
-        url.searchParams.delete('configuracoes');
-        window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
-    }
+    const url = new URL(window.location.href); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    if (url.searchParams.get('configuracoes') === '1' && settingsModal?.showModal) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        settingsModal.showModal(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        url.searchParams.delete('configuracoes'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    if (new URLSearchParams(window.location.search).get('perfil') === 'meu' && profileModal?.showModal) {
-        profileModal.showModal();
-    }
-})();
+    if (new URLSearchParams(window.location.search).get('perfil') === 'meu' && profileModal?.showModal) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        profileModal.showModal(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+})(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.

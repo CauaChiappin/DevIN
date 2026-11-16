@@ -1,68 +1,68 @@
-.site-menu-toggle {
-    align-items: center;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 12px;
-    color: currentColor;
-    cursor: pointer;
-    display: none;
-    gap: 4px;
-    justify-content: center;
-    min-height: 44px;
-    min-width: 44px;
-    padding: 8px;
-}
+.site-menu-toggle { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid transparent; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 12px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: currentColor; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    gap: 4px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    min-width: 44px; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    padding: 8px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.site-menu-toggle:hover,
-.site-menu-toggle:focus-visible {
-    background: rgba(0, 74, 148, .08);
-    border-color: rgba(0, 74, 148, .18);
-}
+.site-menu-toggle:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.site-menu-toggle:focus-visible { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: rgba(0, 74, 148, .08); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border-color: rgba(0, 74, 148, .18); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.site-menu-toggle:focus-visible {
-    outline: 3px solid rgba(0, 74, 148, .25);
-    outline-offset: 2px;
-}
+.site-menu-toggle:focus-visible { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    outline: 3px solid rgba(0, 74, 148, .25); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline. */
+    outline-offset: 2px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline-offset. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.site-menu-toggle span {
-    background: currentColor;
-    border-radius: 999px;
-    display: block;
-    height: 2px;
-    transition: transform .2s ease, opacity .2s ease;
-    width: 22px;
-}
+.site-menu-toggle span { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: currentColor; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border-radius: 999px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    height: 2px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    transition: transform .2s ease, opacity .2s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+    width: 22px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.site-menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.site-menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-.site-menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.site-menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.site-menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.site-menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-[data-site-menu] a:focus-visible {
+[data-site-menu] a:focus-visible { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     /* Preserva um foco visível ao navegar pelo menu usando teclado. */
-    outline: 3px solid rgba(0, 74, 148, .25);
-    outline-offset: 4px;
-}
+    outline: 3px solid rgba(0, 74, 148, .25); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline. */
+    outline-offset: 4px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline-offset. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (max-width: 720px) {
+@media (max-width: 720px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
     /* Em celulares, o botão controla a visibilidade do menu expansível. */
-    .site-menu-toggle { display: inline-flex; }
+    .site-menu-toggle { display: inline-flex; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-    [data-site-menu] {
-        display: none;
-    }
+    [data-site-menu] { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    [data-site-menu].is-open {
-        display: grid;
-    }
-}
+    [data-site-menu].is-open { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (min-width: 721px) {
+@media (min-width: 721px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
     /* Em telas maiores, os links voltam ao fluxo normal do cabeçalho. */
-    [data-site-menu] {
-        display: contents;
-    }
-}
+    [data-site-menu] { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: contents; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (prefers-reduced-motion: reduce) {
-    .site-menu-toggle span { transition: none; }
-}
+@media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .site-menu-toggle span { transition: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */

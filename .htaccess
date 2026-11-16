@@ -1,38 +1,38 @@
-<FilesMatch "(?i)^(\.env(?:\..*)?|composer\.(?:json|lock)|phpunit\.xml(?:\.dist)?|.*\.(?:sql|sqlite3?|log|bak|old|swp))$">
+<FilesMatch "(?i)^(\.env(?:\..*)?|composer\.(?:json|lock)|phpunit\.xml(?:\.dist)?|.*\.(?:sql|sqlite3?|log|bak|old|swp))$"> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
     # Evita que arquivos de configuração, banco e cópias de segurança sejam servidos pela web.
-    Require all denied
-</FilesMatch>
+    Require all denied # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+</FilesMatch> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
 
-<IfModule mod_rewrite.c>
-    RewriteEngine On
+<IfModule mod_rewrite.c> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
+    RewriteEngine On # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
     # Mantém exceção para .well-known e bloqueia acesso a diretórios internos do projeto.
-    RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
-    RewriteRule ^(?:storage|vendor|\.git)(?:/|$) - [F,L,NC]
+    RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L] # Explicação DevIN: Aplica regra de reescrita ou redirecionamento de URL no Apache.
+    RewriteRule ^(?:storage|vendor|\.git)(?:/|$) - [F,L,NC] # Explicação DevIN: Aplica regra de reescrita ou redirecionamento de URL no Apache.
 
     # Encaminha URLs amigáveis ao roteador, preservando parâmetros da query string.
-    RewriteRule ^$ php/rotas/rotas.php [QSA,L]
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
-    RewriteRule ^ php/rotas/rotas.php [QSA,L]
-</IfModule>
+    RewriteRule ^$ php/rotas/rotas.php [QSA,L] # Explicação DevIN: Aplica regra de reescrita ou redirecionamento de URL no Apache.
+    RewriteCond %{REQUEST_FILENAME} -f [OR] # Explicação DevIN: Define condição necessária para uma regra Apache de reescrita.
+    RewriteCond %{REQUEST_FILENAME} -d # Explicação DevIN: Define condição necessária para uma regra Apache de reescrita.
+    RewriteRule ^ - [L] # Explicação DevIN: Aplica regra de reescrita ou redirecionamento de URL no Apache.
+    RewriteRule ^ php/rotas/rotas.php [QSA,L] # Explicação DevIN: Aplica regra de reescrita ou redirecionamento de URL no Apache.
+</IfModule> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
 
-<IfModule mod_headers.c>
+<IfModule mod_headers.c> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
     # Reduz execução de conteúdo inesperado, enquadramento externo e permissões desnecessárias.
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header always set X-Content-Type-Options "nosniff" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+    Header always set X-Frame-Options "SAMEORIGIN" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+    Header always set Referrer-Policy "strict-origin-when-cross-origin" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
 
     # Obriga o navegador a buscar novamente páginas e validar assets antes de reutilizar o cache.
-    <FilesMatch "(?i)\.(?:html?|php)$">
-        Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
-        Header always set Pragma "no-cache"
-        Header always set Expires "0"
-    </FilesMatch>
-    <FilesMatch "(?i)\.(?:css|js|mjs|svg|png|jpe?g|gif|webp|ico|woff2?|ttf|otf)$">
-        Header always set Cache-Control "no-cache, must-revalidate, max-age=0"
-        Header always set Pragma "no-cache"
-        Header always set Expires "0"
-    </FilesMatch>
-</IfModule>
+    <FilesMatch "(?i)\.(?:html?|php)$"> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
+        Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+        Header always set Pragma "no-cache" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+        Header always set Expires "0" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+    </FilesMatch> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
+    <FilesMatch "(?i)\.(?:css|js|mjs|svg|png|jpe?g|gif|webp|ico|woff2?|ttf|otf)$"> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
+        Header always set Cache-Control "no-cache, must-revalidate, max-age=0" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+        Header always set Pragma "no-cache" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+        Header always set Expires "0" # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+    </FilesMatch> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
+</IfModule> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.

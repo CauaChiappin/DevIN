@@ -1,565 +1,565 @@
 /* ==========================================
-   RESET GLOBAL E ESTILOS BASE
-   ========================================== */
+   RESET GLOBAL E ESTILOS BASE /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-}
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; /* Explicação DevIN: Define família tipográfica por meio da propriedade CSS font-family. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-html,
-body {
-    max-width: 100%;
-    overflow-x: hidden;
-}
+html, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    overflow-x: hidden; /* Explicação DevIN: Define transbordamento horizontal por meio da propriedade CSS overflow-x. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-body {
-    background-color: #004aad;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+body { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background-color: #004aad; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    min-height: 100vh; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   CONTAINER PRINCIPAL (LAYOUT TELA DIVIDIDA)
-   ========================================== */
-.main-container {
+   CONTAINER PRINCIPAL (LAYOUT TELA DIVIDIDA) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.main-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     /* Divide a tela entre formulário e área ilustrada do cadastro. */
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    background-color: #004aad;
-    overflow: hidden;
-}
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    width: 100vw; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 100vh; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    background-color: #004aad; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* LADO ESQUERDO: FORMULÁRIO BRANCO */
-.left-side {
-    flex: 1.1;
-    background-color: #ffffff;
-    border-top-right-radius: 40px;
-    border-bottom-right-radius: 40px;
-    padding: 40px 60px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow-y: auto;
-    max-height: 100vh;
-}
+.left-side { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    flex: 1.1; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    background-color: #ffffff; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    border-top-right-radius: 40px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-top-right-radius. */
+    border-bottom-right-radius: 40px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-bottom-right-radius. */
+    padding: 40px 60px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    overflow-y: auto; /* Explicação DevIN: Define transbordamento vertical por meio da propriedade CSS overflow-y. */
+    max-height: 100vh; /* Explicação DevIN: Define altura máxima por meio da propriedade CSS max-height. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* LADO DIREITO: AZUL CORPORATIVO */
-.right-side {
-    flex: 0.9;
-    background-color: #004aad;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+.right-side { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    flex: 0.9; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    background-color: #004aad; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    position: relative; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   CABEÇALHO E BRANDING
-   ========================================== */
-.cadastro-header {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    min-height: 44px;
-    gap: 12px;
-}
+   CABEÇALHO E BRANDING /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.cadastro-header { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    gap: 12px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.brand-logo {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #000000;
-    letter-spacing: -1px;
-}
+.brand-logo { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 2.2rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 800; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    color: #000000; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    letter-spacing: -1px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.brand-logo a { 
-    text-decoration: none;
-    color: #000000;
-}
+.brand-logo a {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    text-decoration: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+    color: #000000; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.brand-logo span { 
-    color: #004aad; 
-}
+.brand-logo span {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #004aad;  /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.cadastro-header .site-menu { 
-    align-items: center; 
-    display: flex;
-    gap: 10px;
-    margin-left: auto; 
-}
+.cadastro-header .site-menu {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    align-items: center;  /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    gap: 10px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    margin-left: auto;  /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-left. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.cadastro-header .language-picker { display: inline-flex; }
-.cadastro-header .language-picker span { display: none; }
+.cadastro-header .language-picker { display: inline-flex; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.cadastro-header .language-picker span { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-.cadastro-header .language-picker select {
-    min-height: 44px;
-    padding: 0 14px;
-    border: 1px solid #c9d8ea;
-    border-radius: 30px;
-    background: #ffffff;
-    color: #004aad;
-    font: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-}
+.cadastro-header .language-picker select { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    padding: 0 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 1px solid #c9d8ea; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 30px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #ffffff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #004aad; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font: inherit; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font. */
+    font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 600; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.cadastro-header .language-picker select:hover,
-.cadastro-header .language-picker select:focus-visible {
-    border-color: #004aad;
-    outline: none;
-}
+.cadastro-header .language-picker select:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.cadastro-header .language-picker select:focus-visible { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border-color: #004aad; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+    outline: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.cadastro-header .header-action {
-    align-items: center;
-    background: #004aad;
-    border-radius: 30px;
-    color: #ffffff;
-    display: inline-flex;
-    font-weight: 700;
-    justify-content: center;
-    min-height: 44px;
-    padding: 8px 28px;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-}
+.cadastro-header .header-action { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    background: #004aad; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border-radius: 30px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: #ffffff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    display: inline-flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    padding: 8px 28px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    text-decoration: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+    transition: background-color 0.2s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.cadastro-header .header-action:hover,
-.cadastro-header .header-action:focus-visible { 
-    background: #00357a; 
-}
-
-/* ==========================================
-   ALTERNADOR (PESSOAL / EMPRESA)
-   ========================================== */
-.toggle-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.toggle-btn {
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 10px 35px;
-    border-radius: 30px;
-    transition: all 0.2s ease;
-    color: #004aad;
-    border: 2px solid #004aad;
-    background-color: transparent;
-}
-
-.toggle-btn.active {
-    color: #ffffff;
-    background-color: #004aad;
-    border: 2px solid #004aad;
-}
-
-.toggle-divider {
-    color: #a0aec0;
-    font-weight: 600;
-    letter-spacing: 2px;
-}
+.cadastro-header .header-action:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.cadastro-header .header-action:focus-visible {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #00357a;  /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   FORMULÁRIO E INPUTS EM FORMATO DE PÍLULA
-   ========================================== */
-.page-title {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #004aad;
-    margin-bottom: 10px;
-}
+   ALTERNADOR (PESSOAL / EMPRESA) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.toggle-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    gap: 15px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    margin: 20px 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.register-form {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
+.toggle-btn { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    text-decoration: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    font-size: 1rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    padding: 10px 35px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 30px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    transition: all 0.2s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+    color: #004aad; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    border: 2px solid #004aad; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    background-color: transparent; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.form-columns {
+.toggle-btn.active { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #ffffff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    background-color: #004aad; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    border: 2px solid #004aad; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.toggle-divider { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #a0aec0; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-weight: 600; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    letter-spacing: 2px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* ==========================================
+   FORMULÁRIO E INPUTS EM FORMATO DE PÍLULA /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.page-title { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 1.8rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 800; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    color: #004aad; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    margin-bottom: 10px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-bottom. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.register-form { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    flex: 1; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+.form-columns { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     /* Distribui campos em colunas iguais sem deixar conteúdo longo estourar a largura. */
-    display: flex;
-    gap: 40px;
-}
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    gap: 40px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.form-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
+.form-column { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    flex: 1; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    gap: 18px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    position: relative;
-}
+.input-group { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    gap: 6px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    position: relative; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.input-group label {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #000000;
-}
+.input-group label { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 0.95rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    color: #000000; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.input-group input,
-.input-group select,
-.input-group textarea {
-    width: 100%;
-    padding: 12px 20px;
-    border: 1.5px solid #000000;
-    border-radius: 30px;
-    font-size: 1rem;
-    outline: none;
-    background-color: #ffffff;
-    transition: all 0.2s ease;
-}
+.input-group input, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.input-group select, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.input-group textarea { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    padding: 12px 20px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 1.5px solid #000000; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 30px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    font-size: 1rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    outline: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline. */
+    background-color: #ffffff; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    transition: all 0.2s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.input-group select,
-.input-group textarea {
-    border-radius: 20px;
-}
+.input-group select, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.input-group textarea { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border-radius: 20px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.input-group textarea {
-    resize: vertical;
-    min-height: 90px;
-    font-family: inherit;
-}
+.input-group textarea { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    resize: vertical; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS resize. */
+    min-height: 90px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    font-family: inherit; /* Explicação DevIN: Define família tipográfica por meio da propriedade CSS font-family. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.input-group input:focus,
-.input-group select:focus,
-.input-group textarea:focus {
-    border-color: #004aad;
-    box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
-}
+.input-group input:focus, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.input-group select:focus, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.input-group textarea:focus { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border-color: #004aad; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+    box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* Ícone do Olho (Senha) */
-.input-icon-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
+.input-icon-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: relative; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.toggle-password-eye {
-    position: absolute;
-    right: 20px;
-    cursor: pointer;
-    user-select: none;
-    width: 22px;
-    height: auto;
-    opacity: 0.55;
-    transition: opacity 0.2s ease, transform 0.1s ease;
-}
+.toggle-password-eye { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    right: 20px; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    user-select: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS user-select. */
+    width: 22px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: auto; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    opacity: 0.55; /* Explicação DevIN: Define opacidade por meio da propriedade CSS opacity. */
+    transition: opacity 0.2s ease, transform 0.1s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.toggle-password-eye:hover {
-    opacity: 0.9;
-    transform: scale(1.05);
-}
+.toggle-password-eye:hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    opacity: 0.9; /* Explicação DevIN: Define opacidade por meio da propriedade CSS opacity. */
+    transform: scale(1.05); /* Explicação DevIN: Define transformação geométrica por meio da propriedade CSS transform. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* Requisitos de Senha e Validações */
-.error-message-text {
-    color: #ef4444;
-    font-size: 0.85rem;
-    font-weight: 700;
-    margin-top: 4px;
-    padding-left: 10px;
-    display: none;
-}
+.error-message-text { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #ef4444; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 0.85rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    margin-top: 4px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+    padding-left: 10px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS padding-left. */
+    display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.error-message-text.visible {
-    display: block;
-}
+.error-message-text.visible { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.password-requirements {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 5px;
-    padding-left: 5px;
-}
+.password-requirements { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    gap: 6px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    margin-top: 5px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+    padding-left: 5px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS padding-left. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.requirement-item {
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: color 0.2s ease;
-}
+.requirement-item { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 0.85rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 600; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    transition: color 0.2s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.requirement-item.req-invalid { color: #ef4444; }
-.requirement-item.req-valid   { color: #10b981; }
+.requirement-item.req-invalid { color: #ef4444; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.requirement-item.req-valid   { color: #10b981; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 /* Titulo da tela de Currículo */
-.title-curriculo {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #004aad;
-    margin-bottom: 25px;
-    text-align: center;
-}
+.title-curriculo { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 1.6rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 800; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    color: #004aad; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    margin-bottom: 25px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-bottom. */
+    text-align: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   AÇÃO DO FORMULÁRIO E BOTÃO ENVIAR
-   ========================================== */
-.form-footer-action {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 35px;
-    gap: 15px;
-}
+   AÇÃO DO FORMULÁRIO E BOTÃO ENVIAR /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.form-footer-action { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    margin-top: 35px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+    gap: 15px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.btn-submit {
-    background-color: #004aad;
-    color: #ffffff;
-    border: none;
-    padding: 12px 60px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
+.btn-submit { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background-color: #004aad; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    color: #ffffff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    border: none; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    padding: 12px 60px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    font-size: 1.1rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    border-radius: 30px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    transition: background-color 0.2s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.btn-submit:hover { 
-    background-color: #00357a; 
-}
+.btn-submit:hover {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background-color: #00357a;  /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.btn-submit:disabled {
-    opacity: .7;
-    cursor: wait;
-}
+.btn-submit:disabled { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    opacity: .7; /* Explicação DevIN: Define opacidade por meio da propriedade CSS opacity. */
+    cursor: wait; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.login-redirect { 
-    font-size: 0.9rem; 
-    color: #000000; 
-}
+.login-redirect {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 0.9rem;  /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    color: #000000;  /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.login-redirect a { 
-    color: #004aad; 
-    font-weight: 700; 
-    text-decoration: none; 
-}
+.login-redirect a {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #004aad;  /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-weight: 700;  /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    text-decoration: none;  /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.login-redirect a:hover { 
-    text-decoration: underline; 
-}
+.login-redirect a:hover {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    text-decoration: underline;  /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* Botão de Login Superior Direito (Mascote Side) */
-.btn-top-login {
-    position: absolute;
-    top: 40px;
-    right: 60px;
-    text-decoration: none;
-    color: #004aad;
-    background-color: #ffffff;
-    padding: 8px 35px;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-}
+.btn-top-login { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    top: 40px; /* Explicação DevIN: Define distância em relação à borda superior por meio da propriedade CSS top. */
+    right: 60px; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+    text-decoration: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+    color: #004aad; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    background-color: #ffffff; /* Explicação DevIN: Define cor de fundo por meio da propriedade CSS background-color. */
+    padding: 8px 35px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 30px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    font-size: 1rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    transition: transform 0.2s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.btn-top-login:hover { 
-    transform: scale(1.03); 
-}
+.btn-top-login:hover {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    transform: scale(1.03);  /* Explicação DevIN: Define transformação geométrica por meio da propriedade CSS transform. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* Container e Animação do Mascote (Robô) */
-.mascot-container {
-    width: 90%;
-    height: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-left: -81px;
-    z-index: 1;
-}
+.mascot-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 90%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 80%; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: flex-start; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    margin-left: -81px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-left. */
+    z-index: 1; /* Explicação DevIN: Define ordem de sobreposição por meio da propriedade CSS z-index. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.mascot-img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
+.mascot-img { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    max-height: 100%; /* Explicação DevIN: Define altura máxima por meio da propriedade CSS max-height. */
+    object-fit: contain; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS object-fit. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   RODAPÉ E NOTIFICAÇÕES (TOAST)
-   ========================================== */
-.page-footer {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #000000;
-    font-weight: 600;
-    margin-top: 20px;
-}
+   RODAPÉ E NOTIFICAÇÕES (TOAST) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.page-footer { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    text-align: center; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    font-size: 0.8rem; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    color: #000000; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-weight: 600; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    margin-top: 20px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.page-footer span { 
-    color: #004aad; 
-}
+.page-footer span {  /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #004aad;  /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.php-toast {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    padding: 15px 30px;
-    border-radius: 30px;
-    font-weight: 700;
-    color: #ffffff;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-}
+.php-toast { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: fixed; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    bottom: 30px; /* Explicação DevIN: Define distância em relação à borda inferior por meio da propriedade CSS bottom. */
+    right: 30px; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+    padding: 15px 30px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 30px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    color: #ffffff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    z-index: 1000; /* Explicação DevIN: Define ordem de sobreposição por meio da propriedade CSS z-index. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-.error-toast   { background-color: #ef4444; }
-.success-toast { background-color: #10b981; }
+.error-toast   { background-color: #ef4444; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.success-toast { background-color: #10b981; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 /* Easter Egg: Ponto secreto Doom */
-.secret-doom{
-    color: #000000 !important;
-    text-decoration: none !important;
-    background: transparent !important;
-    border: 0 !important;
-    outline: none !important;
-    box-shadow: none !important;
-    filter: none !important;
-    transform: none !important;
-    transition: none !important;
-    cursor: default !important;
-}
+.secret-doom{ /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #000000 !important; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    text-decoration: none !important; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+    background: transparent !important; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 0 !important; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    outline: none !important; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline. */
+    box-shadow: none !important; /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    filter: none !important; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS filter. */
+    transform: none !important; /* Explicação DevIN: Define transformação geométrica por meio da propriedade CSS transform. */
+    transition: none !important; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+    cursor: default !important; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* Mantém os formulários de cadastro em duas metades sem rolagem interna no desktop. */
-@media (min-width: 951px) {
-    body.cadastro-page {
-        align-items: stretch;
-        justify-content: flex-start;
-        overflow: hidden;
-    }
+@media (min-width: 951px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    body.cadastro-page { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        align-items: stretch; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+        justify-content: flex-start; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+        overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .cadastro-page .main-container {
-        width: 100%;
-        min-height: 0;
-    }
+    .cadastro-page .main-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .cadastro-page .left-side {
-        flex: 0 0 56%;
-        max-width: 56%;
-        border-radius: 0 40px 40px 0;
-        padding: clamp(16px, 3.2vh, 28px) clamp(24px, 3vw, 48px);
-        overflow: hidden;
-    }
+    .cadastro-page .left-side { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        flex: 0 0 56%; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+        max-width: 56%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+        border-radius: 0 40px 40px 0; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+        padding: clamp(16px, 3.2vh, 28px) clamp(24px, 3vw, 48px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .cadastro-page .right-side {
-        flex: 0 0 44%;
-        min-width: 0;
-    }
+    .cadastro-page .right-side { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        flex: 0 0 44%; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+        min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .cadastro-page .toggle-container {
-        margin-block: 12px;
-    }
+    .cadastro-page .toggle-container { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        margin-block: 12px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-block. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .cadastro-page .form-columns {
-        gap: 24px;
-    }
+    .cadastro-page .form-columns { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        gap: 24px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .cadastro-page .form-column {
-        gap: 12px;
-    }
+    .cadastro-page .form-column { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        gap: 12px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .cadastro-page .form-footer-action {
-        margin-top: 16px;
-        gap: 10px;
-    }
+    .cadastro-page .form-footer-action { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        margin-top: 16px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+        gap: 10px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-    .cadastro-page .page-footer {
-        margin-top: 12px;
-    }
-}
+    .cadastro-page .page-footer { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        margin-top: 12px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* ==========================================
-   RESPONSIVIDADE (MEDIA QUERIES)
-   ========================================== */
-@media (max-width: 950px) {
-    .main-container { flex-direction: column; height: auto; overflow: visible; }
-    .right-side { display: none; }
-    .left-side { border-radius: 0; padding: 32px 20px; min-height: 100vh; max-height: none; }
-    .form-columns { flex-direction: column; gap: 14px; }
-    .form-column { display: contents; }
-    .register-form { flex: initial; }
-    .mobile-order-1 { order: 1; }
-    .mobile-order-2 { order: 2; }
-    .mobile-order-3 { order: 3; }
-    .mobile-order-4 { order: 4; }
-    .mobile-order-5 { order: 5; }
-    .mobile-order-6 { order: 6; }
-    .mobile-order-7 { order: 7; }
-    .mobile-order-8 { order: 8; }
-    .toggle-container { gap: 8px; }
-    .toggle-btn { padding: 10px 18px; }
-    .btn-submit { width: 100%; padding-inline: 20px; }
-}
+   RESPONSIVIDADE (MEDIA QUERIES) /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+   ========================================== */ /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+@media (max-width: 950px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .main-container { flex-direction: column; height: auto; overflow: visible; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .right-side { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .left-side { border-radius: 0; padding: 32px 20px; min-height: 100vh; max-height: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .form-columns { flex-direction: column; gap: 14px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .form-column { display: contents; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .register-form { flex: initial; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .mobile-order-1 { order: 1; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .mobile-order-2 { order: 2; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .mobile-order-3 { order: 3; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .mobile-order-4 { order: 4; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .mobile-order-5 { order: 5; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .mobile-order-6 { order: 6; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .mobile-order-7 { order: 7; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .mobile-order-8 { order: 8; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .toggle-container { gap: 8px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .toggle-btn { padding: 10px 18px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .btn-submit { width: 100%; padding-inline: 20px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (max-width: 720px) {
-    .left-side {
-        min-height: 100vh;
-        min-height: 100svh;
-        padding: 22px 16px 28px;
-        justify-content: flex-start;
-        gap: 16px;
-    }
-    .toggle-container { margin: 0; }
-    .page-title { margin-bottom: 0; }
-    .form-columns { gap: 14px; }
-    .input-group input,
-    .input-group select { min-height: 48px; font-size: 16px; }
-    .toggle-btn { min-height: 44px; display: inline-flex; align-items: center; }
-    .form-footer-action { margin-top: 18px; gap: 12px; }
-    .btn-submit { min-height: 48px; }
-    .toggle-password-eye {
-        width: 44px;
-        height: 44px;
-        padding: 10px;
-        right: 4px;
-        object-fit: contain;
-    }
-    .input-icon-container input { padding-right: 56px; }
-    .cadastro-header { position: relative; }
-    .cadastro-header .site-menu-toggle { display: inline-flex; }
-    .cadastro-header .site-menu {
-        background: #ffffff;
-        border: 1px solid #e1e8f0;
-        border-radius: 0 0 16px 16px;
-        box-shadow: 0 14px 28px rgba(0, 74, 173, .12);
-        display: none;
-        left: 0;
-        padding: 12px;
-        position: absolute;
-        right: 0;
-        top: calc(100% + 8px);
-        z-index: 4;
-    }
-    .cadastro-header .site-menu { display: none; }
-    .cadastro-header .site-menu.is-open { display: grid; }
-    .cadastro-header .header-action { width: 100%; }
-    .cadastro-header .language-picker { width: 100%; }
-    .cadastro-header .lang-dd, .cadastro-header .lang-dd-btn { width: 100%; }
-    .input-group input,
-    .input-group select,
-    .input-group textarea { max-width: 100%; }
-}
+@media (max-width: 720px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .left-side { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        min-height: 100vh; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        min-height: 100svh; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 22px 16px 28px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        justify-content: flex-start; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+        gap: 16px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .toggle-container { margin: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .page-title { margin-bottom: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .form-columns { gap: 14px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .input-group input, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .input-group select { min-height: 48px; font-size: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .toggle-btn { min-height: 44px; display: inline-flex; align-items: center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .form-footer-action { margin-top: 18px; gap: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .btn-submit { min-height: 48px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .toggle-password-eye { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        width: 44px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        height: 44px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        padding: 10px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        right: 4px; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+        object-fit: contain; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS object-fit. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .input-icon-container input { padding-right: 56px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cadastro-header { position: relative; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cadastro-header .site-menu-toggle { display: inline-flex; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cadastro-header .site-menu { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        background: #ffffff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+        border: 1px solid #e1e8f0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+        border-radius: 0 0 16px 16px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+        box-shadow: 0 14px 28px rgba(0, 74, 173, .12); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+        display: none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+        left: 0; /* Explicação DevIN: Define distância em relação à borda esquerda por meio da propriedade CSS left. */
+        padding: 12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        position: absolute; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+        right: 0; /* Explicação DevIN: Define distância em relação à borda direita por meio da propriedade CSS right. */
+        top: calc(100% + 8px); /* Explicação DevIN: Define distância em relação à borda superior por meio da propriedade CSS top. */
+        z-index: 4; /* Explicação DevIN: Define ordem de sobreposição por meio da propriedade CSS z-index. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .cadastro-header .site-menu { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cadastro-header .site-menu.is-open { display: grid; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cadastro-header .header-action { width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cadastro-header .language-picker { width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .cadastro-header .lang-dd, .cadastro-header .lang-dd-btn { width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .input-group input, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .input-group select, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .input-group textarea { max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (max-width: 480px) {
-    .brand-logo { font-size: 1.9rem; }
-    .toggle-btn { font-size: 0.9rem; padding-inline: 12px; }
-    .toggle-divider { letter-spacing: 0; }
-    .php-toast { left: 20px; right: 20px; bottom: 20px; text-align: center; }
-}
+@media (max-width: 480px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .brand-logo { font-size: 1.9rem; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .toggle-btn { font-size: 0.9rem; padding-inline: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .toggle-divider { letter-spacing: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .php-toast { left: 20px; right: 20px; bottom: 20px; text-align: center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */

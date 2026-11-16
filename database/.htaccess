@@ -1,7 +1,7 @@
 # O diretório contém somente recursos de manutenção e não deve ser servido via HTTP.
-<IfModule mod_authz_core.c>
-    Require all denied
-</IfModule>
-<IfModule !mod_authz_core.c>
-    Deny from all
-</IfModule>
+<IfModule mod_authz_core.c> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
+    Require all denied # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+</IfModule> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
+<IfModule !mod_authz_core.c> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
+    Deny from all # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
+</IfModule> # Explicação DevIN: Abre ou fecha bloco de regras Apache para limitar acesso ou reescrever solicitações.
