@@ -4,7 +4,8 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 require_once __DIR__ . '/../../controllers/Jarvis/Api.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisAdminRecords.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisAdminActions.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php';
+require_once __DIR__ . '/../../controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 $method=$_SERVER['REQUEST_METHOD'] ?? ''; // Explicação DevIN: Atribui um valor à variável PHP $method.
 if (!in_array($method,['GET','POST'],true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -56,7 +57,25 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 
     $payload=jarvisBody(14000); // Explicação DevIN: Atribui um valor à variável PHP $payload.
     $action=$payload['action'] ?? null; // Explicação DevIN: Atribui um valor à variável PHP $action.
-    if (!is_string($action)) throw new InvalidArgumentException('Ação inválida.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    if (!is_string($action)) throw new InvalidArgumentException('Ação inválida.');
+    // Autorização avaliada no PHP para cada operação, sem confiar na IA.
+    // O módulo de consultas GET permanece disponível aos ADMs autenticados.
+    if (AdminRolePolicy::enabled()) {
+        $permission = in_array($action, ['manual_draft', 'generate', 'revise', 'cancel'], true)
+            ? 'jarvis_draft'
+            : ($action === 'analyze' ? 'jarvis_analyze'
+                : ($action === 'send' ? 'jarvis_send' : ''));
+        if ($permission === '') {
+            throw new DomainException('Operação não autorizada.');
+        }
+        $authDb = getDatabaseConnection();
+        try {
+            AdminRolePolicy::requireAction($authDb, $adminId, $permission);
+        } finally {
+            $authDb->close();
+        }
+    }
+ // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     $db=getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         if (in_array($action,['manual_draft','generate'],true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
