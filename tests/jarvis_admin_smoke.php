@@ -80,6 +80,10 @@ checkJarvis(AdminRolePolicy::can('moderacao','admin_delete_vaga'), 'moderacao de
 checkJarvis(!AdminRolePolicy::can('moderacao','admin_delete_empresa'), 'moderador nao exclui empresa');
 checkJarvis(AdminRolePolicy::can('gestao','admin_delete_empresa'), 'gestao pode excluir empresa');
 checkJarvis(!AdminRolePolicy::can('desconhecido','admin_delete_vaga'), 'cargo desconhecido sem acesso');
+checkJarvis(AdminRolePolicy::can('moderacao','jarvis_analyze'), 'moderador pode analisar');
+checkJarvis(!AdminRolePolicy::can('moderacao','jarvis_send'), 'moderador nao envia comunicacao');
+checkJarvis(AdminRolePolicy::can('gestao','jarvis_send'), 'gestor pode aprovar comunicacao');
+
 checkJarvis(AdminRolePolicy::can('consulta','update_profile'), 'ADM altera somente perfil proprio');
 
 echo "JARVIS Admin smoke: OK\\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.
