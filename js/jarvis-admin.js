@@ -482,43 +482,43 @@
           } catch (error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
           finally {button.disabled=false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
         }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        if (['vaga','pessoa','empresa'].includes(kind)) {
-          const remove=document.createElement('button');
-          remove.type='button';
-          remove.textContent='Solicitar exclusão';
-          remove.addEventListener('click',async()=>{
-            if (remove.disabled) return;
-            remove.disabled=true;
-            try {
-              const result=await api(toolUrl,{
-                action:'preview_delete',kind,id:Number(record.id)
-              });
-              const proposal=result.proposal;
-              const label=proposal.record.kind+' #'+proposal.record.id+' — '+proposal.record.title;
-              const agreed=window.confirm('Confirme o registro que deseja excluir:\n'+label+
-                '\n\nEsta exclusão é definitiva e pode afetar dados relacionados. Continuar?');
-              if (!agreed) {
-                toolNotice(lookupStatus,'Exclusão cancelada; nenhuma alteração realizada.');
-                return;
-              }
-              const typed=window.prompt('Para excluir '+label+', digite EXCLUIR:');
-              if (typed !== 'EXCLUIR') {
-                toolNotice(lookupStatus,'Confirmação recusada. Nenhuma alteração realizada.');
-                return;
-              }
-              const done=await api(toolUrl,{
-                action:'confirm_delete',kind,id:Number(record.id),
-                confirmation:proposal.confirmation,approval:typed
-              });
-              toolNotice(lookupStatus,done.message);
-              card.remove();
-            } catch(error) {toolNotice(lookupStatus,error.message);}
-            finally {remove.disabled=false;}
-          });
-          card.append(title,subtitle,button,remove);
-        } else {
-          card.append(title,subtitle,button);
-        } // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        if (['vaga','pessoa','empresa'].includes(kind)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          const remove=document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          remove.type='button'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          remove.textContent='Solicitar exclusão'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          remove.addEventListener('click',async()=>{ // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (remove.disabled) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            remove.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+              const result=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
+                action:'preview_delete',kind,id:Number(record.id) // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+              }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+              const proposal=result.proposal; // Explicação DevIN: Declara variável JavaScript proposal para reutilizar valor ou resultado.
+              const label=proposal.record.kind+' #'+proposal.record.id+' — '+proposal.record.title; // Explicação DevIN: Declara variável JavaScript label para reutilizar valor ou resultado.
+              const agreed=window.confirm('Confirme o registro que deseja excluir:\n'+label+ // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                '\n\nEsta exclusão é definitiva e pode afetar dados relacionados. Continuar?'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+              if (!agreed) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                toolNotice(lookupStatus,'Exclusão cancelada; nenhuma alteração realizada.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+              } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+              const typed=window.prompt('Para excluir '+label+', digite EXCLUIR:'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+              if (typed !== 'EXCLUIR') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                toolNotice(lookupStatus,'Confirmação recusada. Nenhuma alteração realizada.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+              } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+              const done=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript done para reutilizar valor ou resultado.
+                action:'confirm_delete',kind,id:Number(record.id), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+                confirmation:proposal.confirmation,approval:typed // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+              }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+              toolNotice(lookupStatus,done.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+              card.remove(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+            } catch(error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            finally {remove.disabled=false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+          }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          card.append(title,subtitle,button,remove); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
+          card.append(title,subtitle,button); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         recordResults.append(card); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
       }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       if (!data.records.length) toolNotice(lookupStatus,'Nenhum resultado encontrado.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

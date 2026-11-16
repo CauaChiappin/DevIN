@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../controllers/Jarvis/Api.php'; // Explicação DevI
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisAdminRecords.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisAdminActions.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/../../controllers/Security/AdminRolePolicy.php';
+require_once __DIR__ . '/../../controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisModeration.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 $method=$_SERVER['REQUEST_METHOD'] ?? ''; // Explicação DevIN: Atribui um valor à variável PHP $method.
@@ -79,27 +79,27 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
  // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     $db=getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-        if (in_array($action, ['preview_delete','confirm_delete'], true)) {
-            $enabledDelete = (string) ($_ENV['DEVIN_JARVIS_DELETIONS_ENABLED']
-                ?? $_SERVER['DEVIN_JARVIS_DELETIONS_ENABLED']
-                ?? getenv('DEVIN_JARVIS_DELETIONS_ENABLED') ?: '0') === '1';
-            if (!$enabledDelete) {
-                jarvisJson(503, ['success'=>false, 'message'=>'Exclusões pelo JARVIS não foram ativadas.']);
-            }
-            $kind = is_string($payload['kind'] ?? null) ? $payload['kind'] : '';
-            $id = filter_var($payload['id'] ?? null, FILTER_VALIDATE_INT);
-            if (!JarvisModeration::validKind($kind) || !$id || $id < 1) {
-                throw new InvalidArgumentException('Registro inválido.');
-            }
-            jarvisLimit($adminId, 'delete', 8);
-            if ($action === 'preview_delete') {
-                $proposal = JarvisModeration::prepare($db, $adminId, $kind, $id);
-                jarvisJson(200, ['success'=>true, 'proposal'=>$proposal]);
-            }
-            $nonce = is_string($payload['confirmation'] ?? null) ? $payload['confirmation'] : '';
-            $approval = is_string($payload['approval'] ?? null) ? $payload['approval'] : '';
-            jarvisJson(200, JarvisModeration::execute($db, $adminId, $kind, $id, $nonce, $approval));
-        }
+        if (in_array($action, ['preview_delete','confirm_delete'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            $enabledDelete = (string) ($_ENV['DEVIN_JARVIS_DELETIONS_ENABLED'] // Explicação DevIN: Atribui um valor à variável PHP $enabledDelete.
+                ?? $_SERVER['DEVIN_JARVIS_DELETIONS_ENABLED'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                ?? getenv('DEVIN_JARVIS_DELETIONS_ENABLED') ?: '0') === '1'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            if (!$enabledDelete) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                jarvisJson(503, ['success'=>false, 'message'=>'Exclusões pelo JARVIS não foram ativadas.']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $kind = is_string($payload['kind'] ?? null) ? $payload['kind'] : ''; // Explicação DevIN: Atribui um valor à variável PHP $kind.
+            $id = filter_var($payload['id'] ?? null, FILTER_VALIDATE_INT); // Explicação DevIN: Atribui um valor à variável PHP $id.
+            if (!JarvisModeration::validKind($kind) || !$id || $id < 1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                throw new InvalidArgumentException('Registro inválido.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            jarvisLimit($adminId, 'delete', 8); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            if ($action === 'preview_delete') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                $proposal = JarvisModeration::prepare($db, $adminId, $kind, $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+                jarvisJson(200, ['success'=>true, 'proposal'=>$proposal]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $nonce = is_string($payload['confirmation'] ?? null) ? $payload['confirmation'] : ''; // Explicação DevIN: Atribui um valor à variável PHP $nonce.
+            $approval = is_string($payload['approval'] ?? null) ? $payload['approval'] : ''; // Explicação DevIN: Atribui um valor à variável PHP $approval.
+            jarvisJson(200, JarvisModeration::execute($db, $adminId, $kind, $id, $nonce, $approval)); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (in_array($action,['manual_draft','generate'],true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $type=is_string($payload['recipient_type'] ?? null)?$payload['recipient_type']:''; // Explicação DevIN: Atribui um valor à variável PHP $type.
             $recipient=filter_var($payload['recipient_id'] ?? null,FILTER_VALIDATE_INT); // Explicação DevIN: Atribui um valor à variável PHP $recipient.
