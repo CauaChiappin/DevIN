@@ -4,7 +4,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 // Smoke checks sem banco, rede ou credenciais.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/AdminSkillManager.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/ModelRouter.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once dirname(__DIR__) . '/php/controllers/Jarvis/JobLanguageAudit.php';
+require_once dirname(__DIR__) . '/php/controllers/Jarvis/JobLanguageAudit.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 function checkJarvis(bool $condition, string $message): void // Explicação DevIN: Declara função/método checkJarvis, com seus parâmetros e comportamento.
@@ -75,15 +75,15 @@ checkJarvis(str_contains($formatted, 'Vaga #4') // Explicação DevIN: Continua 
     && str_contains($formatted, 'Nenhuma vaga foi editada'), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     'relatorio com evidencias e aviso de revisao humana'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 // A matriz nunca autoriza exclusões para perfis sem poder explícito.
-checkJarvis(!AdminRolePolicy::can('consulta','admin_delete_vaga'), 'consulta sem exclusao');
-checkJarvis(AdminRolePolicy::can('moderacao','admin_delete_vaga'), 'moderacao de vaga');
-checkJarvis(!AdminRolePolicy::can('moderacao','admin_delete_empresa'), 'moderador nao exclui empresa');
-checkJarvis(AdminRolePolicy::can('gestao','admin_delete_empresa'), 'gestao pode excluir empresa');
-checkJarvis(!AdminRolePolicy::can('desconhecido','admin_delete_vaga'), 'cargo desconhecido sem acesso');
-checkJarvis(AdminRolePolicy::can('moderacao','jarvis_analyze'), 'moderador pode analisar');
-checkJarvis(!AdminRolePolicy::can('moderacao','jarvis_send'), 'moderador nao envia comunicacao');
-checkJarvis(AdminRolePolicy::can('gestao','jarvis_send'), 'gestor pode aprovar comunicacao');
+checkJarvis(!AdminRolePolicy::can('consulta','admin_delete_vaga'), 'consulta sem exclusao'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(AdminRolePolicy::can('moderacao','admin_delete_vaga'), 'moderacao de vaga'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(!AdminRolePolicy::can('moderacao','admin_delete_empresa'), 'moderador nao exclui empresa'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(AdminRolePolicy::can('gestao','admin_delete_empresa'), 'gestao pode excluir empresa'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(!AdminRolePolicy::can('desconhecido','admin_delete_vaga'), 'cargo desconhecido sem acesso'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(AdminRolePolicy::can('moderacao','jarvis_analyze'), 'moderador pode analisar'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(!AdminRolePolicy::can('moderacao','jarvis_send'), 'moderador nao envia comunicacao'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(AdminRolePolicy::can('gestao','jarvis_send'), 'gestor pode aprovar comunicacao'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 
-checkJarvis(AdminRolePolicy::can('consulta','update_profile'), 'ADM altera somente perfil proprio');
+checkJarvis(AdminRolePolicy::can('consulta','update_profile'), 'ADM altera somente perfil proprio'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 
 echo "JARVIS Admin smoke: OK\\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.

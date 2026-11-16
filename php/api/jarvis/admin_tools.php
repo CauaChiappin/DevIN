@@ -4,7 +4,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 require_once __DIR__ . '/../../controllers/Jarvis/Api.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisAdminRecords.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisAdminActions.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php';
+require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 $method=$_SERVER['REQUEST_METHOD'] ?? ''; // Explicação DevIN: Atribui um valor à variável PHP $method.
@@ -57,24 +57,24 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 
     $payload=jarvisBody(14000); // Explicação DevIN: Atribui um valor à variável PHP $payload.
     $action=$payload['action'] ?? null; // Explicação DevIN: Atribui um valor à variável PHP $action.
-    if (!is_string($action)) throw new InvalidArgumentException('Ação inválida.');
+    if (!is_string($action)) throw new InvalidArgumentException('Ação inválida.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Autorização avaliada no PHP para cada operação, sem confiar na IA.
     // O módulo de consultas GET permanece disponível aos ADMs autenticados.
-    if (AdminRolePolicy::enabled()) {
-        $permission = in_array($action, ['manual_draft', 'generate', 'revise', 'cancel'], true)
-            ? 'jarvis_draft'
-            : ($action === 'analyze' ? 'jarvis_analyze'
-                : ($action === 'send' ? 'jarvis_send' : ''));
-        if ($permission === '') {
-            throw new DomainException('Operação não autorizada.');
-        }
-        $authDb = getDatabaseConnection();
-        try {
-            AdminRolePolicy::requireAction($authDb, $adminId, $permission);
-        } finally {
-            $authDb->close();
-        }
-    }
+    if (AdminRolePolicy::enabled()) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        $permission = in_array($action, ['manual_draft', 'generate', 'revise', 'cancel'], true) // Explicação DevIN: Atribui um valor à variável PHP $permission.
+            ? 'jarvis_draft' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            : ($action === 'analyze' ? 'jarvis_analyze' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : ($action === 'send' ? 'jarvis_send' : '')); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        if ($permission === '') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            throw new DomainException('Operação não autorizada.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $authDb = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $authDb.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            AdminRolePolicy::requireAction($authDb, $adminId, $permission); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+            $authDb->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
  // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     $db=getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.

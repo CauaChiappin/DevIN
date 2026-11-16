@@ -1,7 +1,7 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 
-require_once __DIR__ . '/AdminStepUp.php';
+require_once __DIR__ . '/AdminStepUp.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 /**
@@ -22,26 +22,26 @@ final class AdminGate // Explicação DevIN: Declara o tipo AdminGate e inicia s
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // RBAC permanece independente do Token 2, com validação no servidor.
         // Nunca confiar em cargo enviado pelo formulário nem pela IA.
-        if (AdminRolePolicy::enabled()) {
-            $adminId = AdminStepUp::adminId();
-            $action = $_POST['action'] ?? null;
-            if (!is_string($action) || !in_array($action, self::ACTIONS, true)) {
-                http_response_code(403);
-                exit('Operação não autorizada.');
-            }
-            try {
-                $db = getDatabaseConnection();
-                try {
-                    AdminRolePolicy::requireAction($db, $adminId, $action);
-                } finally {
-                    $db->close();
-                }
-            } catch (Throwable $exception) {
-                error_log('ADM RBAC deny: ' . get_class($exception));
-                http_response_code(403);
-                exit('Ação não permitida para este administrador.');
-            }
-        }
+        if (AdminRolePolicy::enabled()) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            $adminId = AdminStepUp::adminId(); // Explicação DevIN: Atribui um valor à variável PHP $adminId.
+            $action = $_POST['action'] ?? null; // Explicação DevIN: Atribui um valor à variável PHP $action.
+            if (!is_string($action) || !in_array($action, self::ACTIONS, true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                http_response_code(403); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
+                exit('Operação não autorizada.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função interceptAdminPost.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+                $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
+                try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+                    AdminRolePolicy::requireAction($db, $adminId, $action); // Explicação DevIN: Continua expressão ou bloco pertencente a função interceptAdminPost.
+                } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+                    $db->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função interceptAdminPost.
+                } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+                error_log('ADM RBAC deny: ' . get_class($exception)); // Explicação DevIN: Continua expressão ou bloco pertencente a função interceptAdminPost.
+                http_response_code(403); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
+                exit('Ação não permitida para este administrador.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função interceptAdminPost.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!AdminStepUp::enabled()) return; // Ativar somente após provisionar os 4 ADMs.
         if (AdminStepUp::allowed('site')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         $adminId = AdminStepUp::adminId(); // Explicação DevIN: Atribui um valor à variável PHP $adminId.
