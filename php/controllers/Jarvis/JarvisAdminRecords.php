@@ -86,6 +86,14 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
      * Somente nomes, títulos, IDs e nome público da empresa são retornados.
      * A classificação é heurística, não uma probabilidade estatística.
      */
+    /**
+     * Consulta até 120 registros candidatos por categoria, usando
+     * SQL parametrizado e categorias permitidas previamente.
+     * A busca permite ID, nome completo, fragmento do título e,
+     * para vagas, nome da empresa. Ordena por suggestionScore()
+     * e devolve no máximo 12 opções identificadas por ID único.
+     * Nomes iguais são mantidos como opções distintas.
+     */
     public static function suggest(mysqli $db, string $kind, string $term): array // Explicação DevIN: Declara função/método suggest, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!in_array($kind, ['vaga','pessoa','empresa'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -143,6 +151,14 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
         return array_slice($result, 0, 12); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    /**
+     * Calcula um índice de ordenação, nunca chance estatística:
+     * 120 = ID digitado exatamente; 100 = título exato; 85 = título
+     * começa pelo termo; 70 = termo dentro do título; 65/55 =
+     * nome da empresa exato/contido; demais valores dependem de
+     * quantas palavras pesquisadas aparecem no título.
+     * O índice não autoriza enviar mensagem nem excluir uma vaga.
+     */
     public static function suggestionScore( // Explicação DevIN: Declara função/método suggestionScore, com seus parâmetros e comportamento.
         string $query, string $title, string $subtitle = '', int $id = 0, int $exactId = 0 // Explicação DevIN: Continua expressão ou bloco pertencente a função suggestionScore.
     ): int { // Explicação DevIN: Continua expressão ou bloco pertencente a função suggestionScore.
