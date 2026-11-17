@@ -86,94 +86,94 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
      * Somente nomes, títulos, IDs e nome público da empresa são retornados.
      * A classificação é heurística, não uma probabilidade estatística.
      */
-    public static function suggest(mysqli $db, string $kind, string $term): array
-    {
-        if (!in_array($kind, ['vaga','pessoa','empresa'], true)) {
-            throw new InvalidArgumentException('Categoria de pesquisa inválida.');
-        }
-        $term = trim(preg_replace('/\s+/u', ' ', $term) ?? '');
-        if (mb_strlen($term, 'UTF-8') < 2 || mb_strlen($term, 'UTF-8') > 100) {
-            throw new InvalidArgumentException('Pesquise usando entre 2 e 100 caracteres.');
-        }
-        $exactId = ctype_digit($term) && (int) $term > 0 ? (int) $term : 0;
-        $tokens = preg_split('/\s+/u', $term) ?: [];
-        $first = mb_substr($tokens[0] ?? $term, 0, 40, 'UTF-8');
-        $wholeLike = '%' . str_replace(['\\','%','_'], ['\\\\','\\%','\\_'], $term) . '%';
-        $firstLike = '%' . str_replace(['\\','%','_'], ['\\\\','\\%','\\_'], $first) . '%';
-        if ($kind === 'vaga') {
-            $stmt = $db->prepare(
-                'SELECT v.id_vaga AS id, v.titulo AS title, e.nome AS subtitle '
-                . 'FROM vagas v LEFT JOIN empresa e ON e.id_empresa = v.id_empresa '
-                . 'WHERE v.id_vaga=? OR v.titulo LIKE ? OR v.titulo LIKE ? OR e.nome LIKE ? '
-                . 'ORDER BY v.id_vaga DESC LIMIT 120'
-            );
-            $stmt->bind_param('isss', $exactId, $wholeLike, $firstLike, $wholeLike);
-        } else {
-            [$table, $pk] = $kind === 'pessoa'
-                ? ['pessoa','id_pessoa'] : ['empresa','id_empresa'];
-            $stmt = $db->prepare(
-                "SELECT {$pk} AS id, nome AS title FROM {$table} "
-                . "WHERE {$pk}=? OR nome LIKE ? OR nome LIKE ? "
-                . "ORDER BY {$pk} DESC LIMIT 120"
-            );
-            $stmt->bind_param('iss', $exactId, $wholeLike, $firstLike);
-        }
-        $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-        $result = [];
-        foreach ($rows as $row) {
-            $score = self::suggestionScore(
-                $term, (string) $row['title'], (string) ($row['subtitle'] ?? ''),
-                (int) $row['id'], $exactId
-            );
-            if ($score <= 0) continue;
-            $result[] = [
-                'id' => (int) $row['id'],
-                'kind' => $kind,
-                'title' => mb_substr((string) $row['title'], 0, 120, 'UTF-8'),
-                'subtitle' => mb_substr((string) ($row['subtitle'] ?? ''), 0, 100, 'UTF-8'),
-                'score' => $score,
-                'match' => $score >= 90 ? 'Correspondência exata'
-                    : ($score >= 65 ? 'Correspondência forte' : 'Correspondência relacionada'),
-            ];
-        }
-        usort($result, static fn(array $a, array $b): int =>
-            ($b['score'] <=> $a['score']) ?: ($b['id'] <=> $a['id']));
-        return array_slice($result, 0, 12);
-    }
+    public static function suggest(mysqli $db, string $kind, string $term): array // Explicação DevIN: Declara função/método suggest, com seus parâmetros e comportamento.
+    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (!in_array($kind, ['vaga','pessoa','empresa'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            throw new InvalidArgumentException('Categoria de pesquisa inválida.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $term = trim(preg_replace('/\s+/u', ' ', $term) ?? ''); // Explicação DevIN: Atribui um valor à variável PHP $term.
+        if (mb_strlen($term, 'UTF-8') < 2 || mb_strlen($term, 'UTF-8') > 100) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            throw new InvalidArgumentException('Pesquise usando entre 2 e 100 caracteres.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $exactId = ctype_digit($term) && (int) $term > 0 ? (int) $term : 0; // Explicação DevIN: Atribui um valor à variável PHP $exactId.
+        $tokens = preg_split('/\s+/u', $term) ?: []; // Explicação DevIN: Atribui um valor à variável PHP $tokens.
+        $first = mb_substr($tokens[0] ?? $term, 0, 40, 'UTF-8'); // Explicação DevIN: Atribui um valor à variável PHP $first.
+        $wholeLike = '%' . str_replace(['\\','%','_'], ['\\\\','\\%','\\_'], $term) . '%'; // Explicação DevIN: Atribui um valor à variável PHP $wholeLike.
+        $firstLike = '%' . str_replace(['\\','%','_'], ['\\\\','\\%','\\_'], $first) . '%'; // Explicação DevIN: Atribui um valor à variável PHP $firstLike.
+        if ($kind === 'vaga') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+                'SELECT v.id_vaga AS id, v.titulo AS title, e.nome AS subtitle ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                . 'FROM vagas v LEFT JOIN empresa e ON e.id_empresa = v.id_empresa ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                . 'WHERE v.id_vaga=? OR v.titulo LIKE ? OR v.titulo LIKE ? OR e.nome LIKE ? ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                . 'ORDER BY v.id_vaga DESC LIMIT 120' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $stmt->bind_param('isss', $exactId, $wholeLike, $firstLike, $wholeLike); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
+            [$table, $pk] = $kind === 'pessoa' // Explicação DevIN: Continua expressão ou bloco pertencente a função suggest.
+                ? ['pessoa','id_pessoa'] : ['empresa','id_empresa']; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+                "SELECT {$pk} AS id, nome AS title FROM {$table} " // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                . "WHERE {$pk}=? OR nome LIKE ? OR nome LIKE ? " // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                . "ORDER BY {$pk} DESC LIMIT 120" // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $stmt->bind_param('iss', $exactId, $wholeLike, $firstLike); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+        $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função suggest.
+        $result = []; // Explicação DevIN: Atribui um valor à variável PHP $result.
+        foreach ($rows as $row) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            $score = self::suggestionScore( // Explicação DevIN: Atribui um valor à variável PHP $score.
+                $term, (string) $row['title'], (string) ($row['subtitle'] ?? ''), // Explicação DevIN: Continua expressão ou bloco pertencente a função suggest.
+                (int) $row['id'], $exactId // Explicação DevIN: Continua expressão ou bloco pertencente a função suggest.
+            ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            if ($score <= 0) continue; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            $result[] = [ // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                'id' => (int) $row['id'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'kind' => $kind, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'title' => mb_substr((string) $row['title'], 0, 120, 'UTF-8'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'subtitle' => mb_substr((string) ($row['subtitle'] ?? ''), 0, 100, 'UTF-8'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'score' => $score, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'match' => $score >= 90 ? 'Correspondência exata' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    : ($score >= 65 ? 'Correspondência forte' : 'Correspondência relacionada'), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        usort($result, static fn(array $a, array $b): int => // Explicação DevIN: Continua expressão ou bloco pertencente a função suggest.
+            ($b['score'] <=> $a['score']) ?: ($b['id'] <=> $a['id'])); // Explicação DevIN: Continua expressão ou bloco pertencente a função suggest.
+        return array_slice($result, 0, 12); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    public static function suggestionScore(
-        string $query, string $title, string $subtitle = '', int $id = 0, int $exactId = 0
-    ): int {
-        if ($exactId > 0 && $id === $exactId) return 120;
-        $normalize = static function (string $value): string {
-            $lower = mb_strtolower(trim($value), 'UTF-8');
-            $lower = strtr($lower, [
-                'á'=>'a','à'=>'a','â'=>'a','ã'=>'a','ä'=>'a',
-                'é'=>'e','ê'=>'e','è'=>'e','í'=>'i','ì'=>'i',
-                'ó'=>'o','ô'=>'o','õ'=>'o','ú'=>'u','ü'=>'u','ç'=>'c',
-            ]);
-            return trim(preg_replace('/\s+/u', ' ', $lower) ?? '');
-        };
-        $q = $normalize($query);
-        $t = $normalize($title);
-        $sub = $normalize($subtitle);
-        if ($q === '' || $t === '') return 0;
-        if ($t === $q) return 100;
-        if (str_starts_with($t, $q)) return 85;
-        if (str_contains($t, $q)) return 70;
-        if ($sub !== '' && $sub === $q) return 65;
-        if ($sub !== '' && str_contains($sub, $q)) return 55;
-        $words = array_values(array_filter(explode(' ', $q), static fn(string $w): bool => mb_strlen($w) >= 3));
-        if ($words === []) return 0;
-        $found = 0;
-        foreach ($words as $word) {
-            if (str_contains($t, $word)) $found++;
-        }
-        if ($found === 0) return 0;
-        return (int) round(15 + 45 * $found / count($words));
-    }
+    public static function suggestionScore( // Explicação DevIN: Declara função/método suggestionScore, com seus parâmetros e comportamento.
+        string $query, string $title, string $subtitle = '', int $id = 0, int $exactId = 0 // Explicação DevIN: Continua expressão ou bloco pertencente a função suggestionScore.
+    ): int { // Explicação DevIN: Continua expressão ou bloco pertencente a função suggestionScore.
+        if ($exactId > 0 && $id === $exactId) return 120; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        $normalize = static function (string $value): string { // Explicação DevIN: Define função anônima usada como operação ou callback.
+            $lower = mb_strtolower(trim($value), 'UTF-8'); // Explicação DevIN: Atribui um valor à variável PHP $lower.
+            $lower = strtr($lower, [ // Explicação DevIN: Atribui um valor à variável PHP $lower.
+                'á'=>'a','à'=>'a','â'=>'a','ã'=>'a','ä'=>'a', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'é'=>'e','ê'=>'e','è'=>'e','í'=>'i','ì'=>'i', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'ó'=>'o','ô'=>'o','õ'=>'o','ú'=>'u','ü'=>'u','ç'=>'c', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+            return trim(preg_replace('/\s+/u', ' ', $lower) ?? ''); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $q = $normalize($query); // Explicação DevIN: Atribui um valor à variável PHP $q.
+        $t = $normalize($title); // Explicação DevIN: Atribui um valor à variável PHP $t.
+        $sub = $normalize($subtitle); // Explicação DevIN: Atribui um valor à variável PHP $sub.
+        if ($q === '' || $t === '') return 0; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if ($t === $q) return 100; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (str_starts_with($t, $q)) return 85; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (str_contains($t, $q)) return 70; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if ($sub !== '' && $sub === $q) return 65; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if ($sub !== '' && str_contains($sub, $q)) return 55; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        $words = array_values(array_filter(explode(' ', $q), static fn(string $w): bool => mb_strlen($w) >= 3)); // Explicação DevIN: Atribui um valor à variável PHP $words.
+        if ($words === []) return 0; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        $found = 0; // Explicação DevIN: Atribui um valor à variável PHP $found.
+        foreach ($words as $word) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            if (str_contains($t, $word)) $found++; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if ($found === 0) return 0; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        return (int) round(15 + 45 * $found / count($words)); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /**
      * Resumo explícito selecionado pelo ADM. Somente este texto pode ser

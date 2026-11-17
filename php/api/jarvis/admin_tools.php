@@ -36,18 +36,18 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             if ($action==='drafts') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 jarvisJson(200,['success'=>true,'drafts'=>JarvisPlatformOutbox::listOwn($db,$adminId)]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-            if ($action==='suggest') {
-                $kind = is_string($_GET['kind'] ?? null) ? $_GET['kind'] : '';
-                $q = is_string($_GET['q'] ?? null) ? $_GET['q'] : '';
-                $rows = JarvisAdminRecords::suggest($db, $kind, $q);
-                JarvisAdminActivity::log($db, $adminId, 'admin', 'search', 'success', $kind);
-                jarvisJson(200, [
-                    'success'=>true,
-                    'records'=>$rows,
-                    'ranking'=>'heuristic',
-                    'message'=>'Resultados ordenados por similaridade; escolha o registro antes de agir.',
-                ]);
-            }
+            if ($action==='suggest') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                $kind = is_string($_GET['kind'] ?? null) ? $_GET['kind'] : ''; // Explicação DevIN: Atribui um valor à variável PHP $kind.
+                $q = is_string($_GET['q'] ?? null) ? $_GET['q'] : ''; // Explicação DevIN: Atribui um valor à variável PHP $q.
+                $rows = JarvisAdminRecords::suggest($db, $kind, $q); // Explicação DevIN: Atribui um valor à variável PHP $rows.
+                JarvisAdminActivity::log($db, $adminId, 'admin', 'search', 'success', $kind); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                jarvisJson(200, [ // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    'success'=>true, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'records'=>$rows, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'ranking'=>'heuristic', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'message'=>'Resultados ordenados por similaridade; escolha o registro antes de agir.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             if ($action==='search') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 $kind=is_string($_GET['kind'] ?? null)?$_GET['kind']:''; // Explicação DevIN: Atribui um valor à variável PHP $kind.
                 $q=is_string($_GET['q'] ?? null)?$_GET['q']:''; // Explicação DevIN: Atribui um valor à variável PHP $q.
