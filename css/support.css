@@ -98,3 +98,77 @@
     .support-panel{border-radius:15px;}.support-hero,.support-admin-head{border-radius:17px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     .support-admin-view{padding:10px 9px 24px;}.support-floating-help{bottom:15px;right:12px;}} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 @media(prefers-reduced-motion:reduce){.support-primary,.support-secondary,.support-ticket{transition:none;}} /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+
+/*
+ * Refinamento mobile-first da Central de Suporte:
+ * - A navegação entre formulário e histórico ocupa uma seção por vez;
+ * - Os painéis dos ADMs mudam de lista para detalhe sem arraste horizontal;
+ * - Os controles possuem alvos táteis confortáveis, inclusive no teclado virtual.
+ * As regras são aditivas: no desktop os dois painéis continuam visíveis.
+ */
+.support-mobile-tabs,
+.support-mobile-message,
+.support-mobile-back { display: none; } /* Controles próprios de telas pequenas. */
+.support-detail-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; } /* Cabeçalho da resposta. */
+.support-file-preview { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding: 10px 12px; margin-top: 8px; border: 1px solid var(--support-line); border-radius: 12px; background: #eff7ff; font-size: 13px; color: #254c70; overflow-wrap: anywhere; } /* Mostra nome e tamanho do anexo. */
+.support-file-preview[hidden] { display: none !important; } /* O botão Remover não aparece sem arquivo. */
+.support-clear-file { min-height: 42px; padding: 8px 12px; border: 1px solid #b2cce4; background: #fff; color: var(--support-blue); border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer; } /* Retira seleção sem enviar. */
+.support-counter { text-align: right; font-size: 12px; color: var(--support-muted); margin-top: 5px; } /* Comunica os caracteres ainda disponíveis. */
+.support-panel :is(input, select, textarea, button):focus-visible,
+.support-mobile-tab:focus-visible { outline: 3px solid #e4b032; outline-offset: 2px; } /* Foco visível também em Android com teclado. */
+.support-page [hidden], .support-admin-view [hidden] { display: none !important; } /* Respeita os estados sem expor dados ocultos. */
+.support-mobile-panels > * { min-width: 0; } /* Impede largura mínima automática que estourava o grid. */
+.support-ticket small,
+.support-ticket strong,
+.support-panel p,
+.support-panel .support-download { overflow-wrap: anywhere; } /* Acomoda e-mails e anexos com nomes longos. */
+
+@media (max-width: 767px) {
+    /* A navegação torna-se uma barra segmentada compacta, sem scroll horizontal. */
+    .support-mobile-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; position: sticky; top: 8px; z-index: 20; padding: 6px; margin: 12px 0 8px; border: 1px solid #d2e3f3; border-radius: 15px; background: rgba(245,250,255,.98); box-shadow: 0 6px 16px rgba(16,65,103,.08); scroll-margin-top: 12px; } /* Abas permanecem acessíveis durante leitura. */
+    .support-mobile-tab { min-height: 48px; padding: 10px 5px; border: 0; border-radius: 11px; background: transparent; color: #49627a; font: inherit; font-size: 13px; font-weight: 750; text-align: center; cursor: pointer; } /* Alvos de pelo menos 48 px. */
+    .support-mobile-tab[aria-pressed="true"] { color: #fff; background: var(--support-blue); box-shadow: 0 3px 9px rgba(0,69,133,.2); } /* Mostra qual área está ativa. */
+    .support-mobile-message:not(:empty) { display: block; padding: 11px 13px; margin: 8px 0; border-radius: 12px; background: #edf8f4; color: #175f4d; font-size: 13px; font-weight: 650; overflow-wrap: anywhere; } /* Confirmações ficam visíveis mesmo após trocar de painel. */
+    .support-mobile-message.is-error { color: #943044; background: #fff0f0; } /* Falhas são diferenciadas de sucesso. */
+    .support-mobile-panels[data-mobile-view="create"] .support-history-pane,
+    .support-mobile-panels[data-mobile-view="history"] .support-create-pane,
+    .support-mobile-panels[data-mobile-view="inbox"] .support-detail-pane,
+    .support-mobile-panels[data-mobile-view="detail"] .support-inbox-pane { display: none !important; } /* Apenas uma área por vez no celular. */
+    .support-columns, .support-admin-grid { display: block; width: 100%; max-width: 100%; min-width: 0; } /* Não usar duas colunas estreitas. */
+    .support-main { padding: 4px 12px calc(32px + env(safe-area-inset-bottom, 0px)); max-width: 100%; box-sizing: border-box; } /* Respeita barra de gestos inferior. */
+    .support-admin-view { box-sizing: border-box; max-width: 100%; width: 100%; padding: 9px 10px calc(26px + env(safe-area-inset-bottom, 0px)); } /* Reaproveita a coluna disponível do painel ADM. */
+    .support-header { padding: 14px 13px; align-items: flex-start; gap: 10px; } /* A marca e os atalhos cabem em celular estreito. */
+    .support-top-links { justify-content: flex-end; gap: 8px; }
+    .support-top-links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; padding: 0 5px; } /* Links também são fáceis de tocar. */
+    .support-hero, .support-admin-head { padding: 21px 18px; margin-bottom: 10px; border-radius: 16px; } /* Cabeçalho reduzido deixa o formulário mais próximo. */
+    .support-hero h1, .support-admin-head h1 { font-size: clamp(25px, 7vw, 34px); } /* Tipografia proporcional. */
+    .support-hero p, .support-admin-head p { line-height: 1.55; margin-bottom: 0; } /* Menos altura sem perder legibilidade. */
+    .support-panel { padding: 17px 15px; border-radius: 16px; min-width: 0; } /* Cartão inteiro ocupa a largura. */
+    .support-panel h2 { font-size: 19px; }
+    .support-panel input[type="search"], .support-panel input[type="file"], .support-panel textarea, .support-panel select { font-size: 16px; min-height: 48px; line-height: 1.45; border-radius: 12px; } /* 16 px evita zoom automático em iOS. */
+    .support-panel textarea { min-height: 170px; } /* Área de descrição confortável no celular. */
+    .support-panel label { margin-top: 16px; }
+    .support-primary, .support-secondary { min-height: 48px; } /* Botões acessíveis a toque. */
+    .support-panel form > .support-primary,
+    .support-panel form > button[type="submit"],
+    .support-actions .support-primary, .support-actions .support-secondary { width: 100%; box-sizing: border-box; margin-top: 8px; } /* Envio/encerramento não disputam a largura. */
+    .support-actions { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); } /* Ações ADM em sequência vertical. */
+    .support-ticket-list { max-height: none; overflow: visible; } /* Evita rolagem dentro de rolagem. */
+    .support-ticket { min-height: 82px; padding: 14px; } /* Cada chamado é um cartão com área de toque generosa. */
+    .support-ticket-state { font-size: 11px; }
+    .support-detail-head { align-items: flex-start; flex-direction: column; gap: 4px; }
+    .support-mobile-back { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-bottom: 5px; } /* Volta à caixa ADM sem usar botão físico. */
+    .support-download { max-width: 100%; box-sizing: border-box; min-height: 48px; align-items: center; }
+    .support-answer { padding: 13px; }
+    .support-file-preview { align-items: flex-start; }
+    .support-floating-help { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); right: 12px; min-height: 48px; padding: 11px 16px; box-sizing: border-box; } /* Ajuda não colide com a barra de gestos Android. */
+}
+@media (max-width: 360px) {
+    .support-header { flex-wrap: wrap; }
+    .support-top-links { width: 100%; justify-content: flex-start; }
+    .support-mobile-tab { font-size: 12px; }
+    .support-panel { padding: 15px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .support-mobile-tab, .support-floating-help { transition: none; scroll-behavior: auto; } /* Evita animações excessivas. */
+}
