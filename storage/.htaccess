@@ -1,0 +1,4 @@
+# Arquivos de suporte e sessões não podem ser lidos via HTTP.
+# O PHP entrega anexos exclusivamente após autenticação e checagem de acesso.
+Require all denied
+Options -Indexes
