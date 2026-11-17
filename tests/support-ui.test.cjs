@@ -44,7 +44,8 @@ test('anexos privados e exibição de texto sem HTML dinâmico', () => { // Expl
     assert.match(desk,/is_uploaded_file/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(desk,/move_uploaded_file/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(desk,/FILEINFO_MIME_TYPE/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
-    assert.match(read('storage/.htaccess'),/Require all denied/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    // O bloqueio versionado vale para todo o diretório storage, mesmo sem arquivo interno.
+    assert.match(read('.htaccess'), /RewriteRule \^\(\?:storage/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 test('ADM responde e usuário recebe canais de notificação independentes', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
