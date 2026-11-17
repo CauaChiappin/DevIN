@@ -240,3 +240,381 @@ body.game-page { /* Explicação DevIN: Inicia bloco de estilos associado ao sel
     .marquee-trilho, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     .power::after { animation: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+
+/* ===============================================================
+   DEVIN ARCADE 2026 — CATÁLOGO CLARO NO PADRÃO VISUAL DO SITE
+   Identidade: azul institucional #004a94, fundos claros e amarelo
+   pontual nos destaques. Os jogos mantêm o canvas escuro para
+   contraste; esta seção não altera páginas públicas antigas.
+   =============================================================== */
+body.arcade-portal {
+    --arcade-primary: #004a94;
+    --arcade-primary-light: #e9f3ff;
+    --arcade-surface: #ffffff;
+    --arcade-ink: #16314c;
+    --arcade-subtle: #526b83;
+    --arcade-border: #dce7f0;
+    background: #f8f7f2;
+    color: var(--arcade-ink);
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    min-height: 100dvh;
+}
+.arcade-portal .arcade-shell {
+    width: min(1440px, calc(100% - 44px));
+    padding-block: 22px 38px;
+}
+.arcade-portal .arcade-header {
+    background: #ffffff;
+    border: 1px solid var(--arcade-border);
+    box-shadow: 0 8px 32px rgba(18,58,98,.05);
+    border-radius: 20px;
+    padding: 15px clamp(16px,3vw,30px);
+}
+.arcade-portal .arcade-logo {
+    color: var(--arcade-primary);
+    font-weight: 850;
+    letter-spacing: -.055em;
+}
+.arcade-portal .arcade-logo span { color: #e6aa25; }
+.arcade-portal .arcade-nav { align-items: center; }
+.arcade-portal .arcade-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 17px;
+    border-radius: 12px;
+    color: var(--arcade-primary);
+    background: var(--arcade-primary-light);
+    border: 1px solid #cadef3;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .18s ease, transform .18s ease;
+}
+.arcade-portal .arcade-button:hover {
+    background: #dceefe;
+    transform: translateY(-1px);
+}
+.arcade-portal .portal-content { gap: 20px; margin-top: 24px; }
+.arcade-portal .portal-intro {
+    background:
+        radial-gradient(circle at 90% 30%, rgba(255,214,105,.14), transparent 32%),
+        linear-gradient(125deg,#004a94 0%,#1167b0 64%,#2482c5 100%);
+    color: #ffffff;
+    border: 0;
+    border-radius: 25px;
+    padding: clamp(25px,4vw,50px);
+    box-shadow: 0 18px 38px rgba(1,69,134,.13);
+    overflow: hidden;
+}
+.arcade-portal .portal-intro .portal-eyebrow {
+    color: #ffdf83;
+    letter-spacing: .15em;
+}
+.arcade-portal .portal-intro h1 {
+    max-width: 760px;
+    color: #ffffff;
+    font-size: clamp(31px,4.7vw,58px);
+    line-height: 1.06;
+    letter-spacing: -.055em;
+    margin: 12px 0 18px;
+}
+.arcade-portal .arcade-highlight { color: #ffe49a; }
+.arcade-portal .portal-intro > p:not(.portal-eyebrow) {
+    color: #e7f2fc;
+    max-width: 720px;
+    font-size: clamp(14px,1.35vw,17px);
+}
+.arcade-portal .arcade-quick-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+}
+.arcade-portal .arcade-quick-stats > span {
+    background: rgba(255,255,255,.13);
+    border: 1px solid rgba(255,255,255,.25);
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 650;
+}
+.arcade-portal .arcade-quick-stats strong { color: #ffe49a; font-size: 15px; }
+.arcade-portal .portal-layout {
+    grid-template-columns: minmax(300px,1fr) minmax(0,1.04fr);
+    gap: 20px;
+    align-items: start;
+}
+.arcade-portal .portal-library,
+.arcade-portal .arcade-play-panel,
+.arcade-portal .admin-progress {
+    background: var(--arcade-surface);
+    color: var(--arcade-ink);
+    border: 1px solid var(--arcade-border);
+    border-radius: 22px;
+    padding: clamp(16px,2.1vw,25px);
+    box-shadow: 0 8px 24px rgba(25,66,109,.045);
+}
+.arcade-portal .arcade-library-heading {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+.arcade-portal .arcade-library-heading h2 {
+    color: var(--arcade-ink);
+    font-size: clamp(20px,2.2vw,26px);
+    letter-spacing: -.035em;
+    line-height: 1.2;
+    margin-top: 6px;
+}
+.arcade-portal .arcade-library-heading .portal-eyebrow {
+    color: var(--arcade-primary);
+    font-size: 10px;
+    letter-spacing: .13em;
+}
+.arcade-portal .arcade-random {
+    flex: 0 0 auto;
+    border: 1px solid #f0d995;
+    border-radius: 12px;
+    background: #fff5d7;
+    color: #704c00;
+    padding: 11px 13px;
+    min-height: 44px;
+    font-weight: 750;
+    font-size: 12px;
+    cursor: pointer;
+}
+.arcade-portal .arcade-random:hover { background: #ffe9ab; }
+.arcade-portal .arcade-random:disabled { opacity: .55; cursor: not-allowed; }
+.arcade-portal .arcade-search-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 750;
+    margin-bottom: 8px;
+    color: var(--arcade-subtle);
+}
+.arcade-portal .arcade-search {
+    display: block;
+    width: 100%;
+    min-height: 47px;
+    border: 1px solid #c9dbea;
+    border-radius: 12px;
+    color: var(--arcade-ink);
+    background: #f8fbff;
+    font: inherit;
+    padding: 10px 14px;
+    outline-offset: 3px;
+}
+.arcade-portal .arcade-search:focus { border-color: var(--arcade-primary); background: #fff; }
+.arcade-portal .arcade-filters { display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 9px; }
+.arcade-portal .arcade-filter {
+    border: 1px solid #dfebf4;
+    background: #f4f8fc;
+    border-radius: 999px;
+    color: var(--arcade-subtle);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 750;
+    min-height: 34px;
+    padding: 7px 11px;
+}
+.arcade-portal .arcade-filter.is-selected {
+    background: var(--arcade-primary);
+    color: #fff;
+    border-color: var(--arcade-primary);
+}
+.arcade-portal .arcade-found {
+    color: #687f94;
+    font-size: 12px;
+    margin: 6px 0 12px;
+}
+.arcade-portal .portal-games {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 11px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    max-height: min(78vh,900px);
+    overflow-y: auto;
+    scrollbar-color: #b5d1ed transparent;
+}
+.arcade-portal .portal-game-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    min-width: 0;
+    border: 1px solid #dce7f2;
+    border-radius: 15px;
+    background: #f9fbfe;
+    color: var(--arcade-ink);
+    text-align: left;
+    padding: 15px;
+    min-height: 167px;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.arcade-portal .portal-game-card:hover,
+.arcade-portal .portal-game-card:focus-visible {
+    border-color: #7eaee1;
+    background: #eef6ff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 18px rgba(7,67,120,.08);
+    outline-offset: 3px;
+}
+.arcade-portal .portal-game-card.is-active {
+    border-color: var(--arcade-primary);
+    background: #e9f3ff;
+    box-shadow: 0 0 0 2px rgba(0,74,148,.1);
+}
+.arcade-portal .portal-game-card[hidden],
+.arcade-portal .arcade-empty[hidden] { display:none !important; }
+.arcade-portal .portal-game-card .portal-game-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+    font-size: 23px;
+    color: var(--arcade-primary);
+    background: #e4f0fb;
+    grid-column: auto;
+    grid-row: auto;
+}
+.arcade-portal .portal-game-card strong {
+    font-size: 14px;
+    color: #143657;
+    grid-column: auto;
+}
+.arcade-portal .portal-game-card span:not(.portal-game-icon) {
+    font-size: 11px;
+    color: var(--arcade-subtle);
+    line-height: 1.48;
+    grid-column: auto;
+}
+.arcade-portal .arcade-tag {
+    color: #176ba4;
+    background: #e8f3fc;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    margin-top: auto;
+}
+.arcade-portal .arcade-empty {
+    border: 1px dashed #b1cce4;
+    background: #f6faff;
+    color: var(--arcade-subtle);
+    border-radius: 13px;
+    font-size: 13px;
+    padding: 18px;
+}
+.arcade-portal .arcade-play-panel {
+    position: sticky;
+    top: 20px;
+    scroll-margin-top: 15px;
+    gap: 14px;
+}
+.arcade-portal .arcade-play-heading h2 {
+    color: #143657;
+    font-size: clamp(20px,2.25vw,27px);
+    line-height: 1.2;
+}
+.arcade-portal .arcade-play-heading p,
+.arcade-portal .admin-progress p { color: var(--arcade-subtle); }
+.arcade-portal .arcade-canvas-wrap {
+    border: 1px solid #174875;
+    border-radius: 15px;
+    background: #081c36;
+    box-shadow: 0 12px 28px rgba(5,40,75,.14);
+    touch-action: none;
+}
+.arcade-portal .arcade-overlay { background: rgba(5,22,43,.90); border-radius: 15px; }
+.arcade-portal .arcade-live-stats {
+    gap: 8px;
+    color: var(--arcade-subtle);
+    justify-content: space-between;
+}
+.arcade-portal .arcade-live-stats > span {
+    background: #edf5fd;
+    border: 1px solid #d9eaf9;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.arcade-portal .arcade-live-stats strong { color: var(--arcade-primary); }
+.arcade-portal .arcade-feedback { color: var(--arcade-primary); }
+.arcade-portal .arcade-touch-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    border-top: 1px solid #e4edf6;
+    padding-top: 14px;
+}
+.arcade-portal .arcade-touch-controls button {
+    width: 53px;
+    height: 48px;
+    color: var(--arcade-primary);
+    background: #e9f3fc;
+    border: 1px solid #b8d3eb;
+    border-radius: 11px;
+    cursor: pointer;
+    font-size: 21px;
+    font-weight: 800;
+    user-select: none;
+    touch-action: manipulation;
+}
+.arcade-portal .arcade-touch-controls button:active { background: #cde8fc; transform: scale(.96); }
+.arcade-portal .admin-progress h2 { color: var(--arcade-primary); }
+.arcade-portal .admin-progress-grid th { color: var(--arcade-primary); }
+.arcade-portal .admin-progress-grid td { color: var(--arcade-ink); }
+.arcade-portal .arcade-footer {
+    color: #536c82;
+    padding: 18px 5px 0;
+    font-size: 12px;
+}
+.arcade-portal button:focus-visible,
+.arcade-portal a:focus-visible { outline: 3px solid #e5af38; outline-offset: 2px; }
+
+@media (max-width: 1100px) {
+    .arcade-portal .portal-layout { grid-template-columns: minmax(275px,.88fr) minmax(0,1.12fr); }
+    .arcade-portal .portal-games { grid-template-columns: 1fr; max-height: 760px; }
+    .arcade-portal .portal-game-card { min-height: 126px; }
+}
+@media (max-width: 980px) {
+    .arcade-portal .portal-layout { grid-template-columns: 1fr; }
+    .arcade-portal .portal-games { grid-template-columns: repeat(2,minmax(0,1fr)); max-height: none; overflow: visible; }
+    .arcade-portal .arcade-play-panel { position: static; }
+}
+@media (max-width: 580px) {
+    .arcade-portal .arcade-shell { width: calc(100% - 20px); }
+    .arcade-portal .arcade-header { padding: 12px 15px; }
+    .arcade-portal .portal-intro { border-radius: 18px; padding: 23px 19px; }
+    .arcade-portal .portal-library, .arcade-portal .arcade-play-panel { border-radius: 17px; padding: 15px; }
+    .arcade-portal .portal-games { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+    .arcade-portal .portal-game-card { min-height: 160px; padding: 12px; }
+    .arcade-portal .arcade-library-heading { align-items: flex-start; flex-direction: column; }
+    .arcade-portal .arcade-random { width: 100%; }
+    .arcade-portal .arcade-live-stats { gap: 6px; }
+    .arcade-portal .arcade-live-stats > span { flex:1; text-align:center; padding:8px 5px; }
+    .arcade-portal .arcade-touch-controls button { min-width: 48px; flex: 1; }
+}
+@media (max-width: 375px) {
+    .arcade-portal .portal-games { grid-template-columns: 1fr; }
+    .arcade-portal .portal-game-card { min-height: 115px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .arcade-portal .portal-game-card,
+    .arcade-portal .arcade-button { transition: none; }
+}
