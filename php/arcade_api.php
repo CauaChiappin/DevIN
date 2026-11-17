@@ -12,7 +12,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/config/security.php';
+require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/controllers/ArcadeProgressPolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -69,14 +69,14 @@ function arcadeGameLimits(): array // Explicação DevIN: Declara função/méto
 
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $usuario = requireWebAuth(); // Explicação DevIN: Atribui um valor à variável PHP $usuario.
-    // A autenticação de sessão já foi validada por requireWebAuth(). // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+    // A autenticação de sessão já foi validada por requireWebAuth().
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
     ensureArcadeProgressTable($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
 
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         // O escopo padrão de todos os perfis — inclusive ADM — é pessoal.
         // A lista agregada só fica disponível com escopo explícito e conta ADM.
-        $overview = $usuario['tipo'] === 'adm' && ($_GET['escopo'] ?? '') === 'todos'; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        $overview = $usuario['tipo'] === 'adm' && ($_GET['escopo'] ?? '') === 'todos'; // Explicação DevIN: Atribui um valor à variável PHP $overview.
         if ($overview) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $result = $conn->query("
                 SELECT gp.perfil_tipo, gp.perfil_id, gp.jogo, gp.recorde, gp.maior_fase,
@@ -155,14 +155,14 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         // As regras consideram o tempo de sessão, a evolução anterior e
         // o avanço por pontos dos oito minijogos; não confiam em valores
         // enviados pelo navegador como prova de uma partida legítima.
-        if (!ArcadeProgressPolicy::isPlausible(
-            $score,
-            $level,
-            $elapsed,
-            (int) ($gameSession['recorde'] ?? 0),
-            (int) ($gameSession['maior_fase'] ?? 1),
-            $limits
-        )) {
+        if (!ArcadeProgressPolicy::isPlausible( // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            $score, // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            $level, // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            $elapsed, // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            (int) ($gameSession['recorde'] ?? 0), // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            (int) ($gameSession['maior_fase'] ?? 1), // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            $limits // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+        )) { // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             $conn->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             arcadeRespond(['sucesso' => false, 'mensagem' => 'Pontuação ou fase incompatível com o tempo de partida.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

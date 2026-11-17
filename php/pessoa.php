@@ -397,9 +397,9 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
                 </button> <!-- Explicação DevIN: Fecha elemento button do documento. -->
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-            <nav class="menu-principal" aria-label="Menu principal">
+            <nav class="menu-principal" aria-label="Menu principal"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
                 <!-- Entrada visível para os 14 jogos; autenticação continua obrigatória no servidor. -->
-                <a href="arcade.php" class="menu-arcade" aria-label="Abrir os jogos do DevIN"><span aria-hidden="true">🎮</span><span class="menu-text">Jogos DevIN</span></a> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
+                <a href="arcade.php" class="menu-arcade" aria-label="Abrir os jogos do DevIN"><span aria-hidden="true">🎮</span><span class="menu-text">Jogos DevIN</span></a> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="pessoa.php?pagina=inicio"> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. -->
                     <?= dashboardIcon('home') ?><span class="menu-text">Início</span>
                 </a> <!-- Explicação DevIN: Fecha elemento a do documento. -->

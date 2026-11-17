@@ -15,7 +15,7 @@ require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui de
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/database.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/RateLimiter.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/controllers/ResumeDocument.php';
+require_once __DIR__ . '/controllers/ResumeDocument.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/controllers/ResumeReviewResult.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -85,13 +85,13 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         if ($archive->open($path) !== true) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'Este arquivo DOCX não pôde ser aberto. Envie outro documento.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        $documentIndex = $archive->locateName('word/document.xml'); // Explicação DevIN: Localiza o XML principal dentro do arquivo ZIP do DOCX antes de validar seu tamanho.
+        $documentIndex = $archive->locateName('word/document.xml'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         $documentStats = $documentIndex === false ? false : $archive->statIndex($documentIndex); // Explicação DevIN: Atribui um valor à variável PHP $documentStats.
         if (!is_array($documentStats) || (int) ($documentStats['size'] ?? 0) > 5 * 1024 * 1024) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $archive->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
             responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'O conteúdo deste DOCX excede o limite de análise.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        $documentXml = $archive->getFromName('word/document.xml'); // Explicação DevIN: Extrai o XML interno do DOCX para leitura segura de seus parágrafos.
+        $documentXml = $archive->getFromName('word/document.xml'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         $archive->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
         if (!is_string($documentXml) || strlen($documentXml) > 5 * 1024 * 1024) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'O conteúdo deste DOCX não pôde ser analisado.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
@@ -197,7 +197,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     $review = is_string($reviewText) ? json_decode($reviewText, true, 512, JSON_THROW_ON_ERROR) : null; // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
     // Normaliza o contrato do modelo: resumo, conclusão e até oito sugestões.
     // Strings extensas ou itens incompletos não chegam diretamente à interface.
-    $review = ResumeReviewResult::normalize($review);
+    $review = ResumeReviewResult::normalize($review); // Explicação DevIN: Atribui um valor à variável PHP $review.
 } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     error_log('Resposta inválida do Gemini na revisão do currículo: ' . $exception->getMessage()); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
     responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'A IA retornou uma resposta inválida. Tente novamente.'], 502); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.

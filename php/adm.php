@@ -332,9 +332,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 </button> <!-- Explicação DevIN: Fecha elemento button do documento. -->
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
-            <nav class="menu-principal" aria-label="Menu principal">
+            <nav class="menu-principal" aria-label="Menu principal"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
                 <!-- Entrada visível para os 14 jogos; autenticação continua obrigatória no servidor. -->
-                <a href="arcade.php" class="menu-arcade" aria-label="Abrir os jogos do DevIN"><span aria-hidden="true">🎮</span><span class="menu-text">Jogos DevIN</span></a> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
+                <a href="arcade.php" class="menu-arcade" aria-label="Abrir os jogos do DevIN"><span aria-hidden="true">🎮</span><span class="menu-text">Jogos DevIN</span></a> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Posts das empresas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Pessoas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
