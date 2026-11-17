@@ -75,3 +75,32 @@ test('catálogo suporta busca, filtros e escolha aleatória', () => { // Explica
     assert.ok(src.includes('data-arcade-filter')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.ok(src.includes('data-random-game')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('recorde próprio e visão geral ADM são consultados separadamente', () => {
+    const api = read('php/arcade_api.php');
+    const driver = read('js/arcade-games.js');
+    assert.match(api, /\$overview\s*=\s*\$usuario\['tipo'\]\s*===\s*'adm'/);
+    assert.match(api, /\$_GET\['escopo'\]/);
+    assert.match(driver, /apiRequest\(\{ escopo: 'todos' \}, 'GET'\)/);
+    assert.match(driver, /async function loadProgress\(\)[\s\S]*?apiRequest\(\{\}, 'GET'\)/);
+    assert.match(api, /'escopo'\s*=>\s*\$overview\s*\?\s*'todos'\s*:\s*'proprio'/);
+});
+
+test('todos os 14 jogos podem ter recordes removidos por ADM', () => {
+    const api = read('php/arcade_api.php');
+    assert.match(api, /\$allowedGames\s*=\s*array_keys\(arcadeGameLimits\(\)\)/);
+    assert.match(api, /!in_array\(\$game,\s*\$allowedGames,\s*true\)/);
+    assert.doesNotMatch(api, /!in_array\(\$game,\s*\['maze',\s*'snake'/);
+});
+
+test('arcade permanece protegido por login mas não exige código secreto', () => {
+    const page = read('php/arcade.php');
+    const api = read('php/arcade_api.php');
+    assert.match(page, /\$usuario\s*=\s*requireWebAuth\(\)/);
+    assert.match(api, /\$usuario\s*=\s*requireWebAuth\(\)/);
+    assert.doesNotMatch(api, /requireArcadeUnlock\(\$usuario\)/);
+    assert.doesNotMatch(page, /\$_SESSION\['arcade_unlock'\]/);
+    for (const name of ['pessoa','empresa','adm']) {
+        assert.match(read('php/'+name+'.php'), /href="arcade\.php"/);
+    }
+});
