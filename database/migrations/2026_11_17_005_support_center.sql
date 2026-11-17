@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS support_replies ( -- Explicação DevIN: Cria tabela 
     message TEXT NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
     chat_sent_at DATETIME NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
     email_sent_at DATETIME NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
-    email_attempts SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    email_attempts SMALLINT UNSIGNED NOT NULL DEFAULT 0, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
     -- Bloqueia tentativas SMTP concorrentes; expira após 2 minutos caso o PHP caia.
     email_claimed_at DATETIME NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
