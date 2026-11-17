@@ -67,3 +67,41 @@ test('JARVIS só consulta a central, sem escrever ou baixar anexos', () => { // 
     assert.match(chat,/action=support/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.doesNotMatch(tools,/action==='support_delete'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+/**
+ * Contrato mobile: as duas versões do suporte não podem exigir rolagem
+ * horizontal e devem permitir navegação por botões acessíveis ao toque.
+ */
+test('central do usuário usa abas de chamado e histórico em celulares', () => {
+    const page = read('php/suporte.php');
+    const script = read('js/support-ui.js');
+    assert.match(page, /data-support-mobile-tabs/);
+    assert.match(page, /data-support-mobile-target="create"/);
+    assert.match(page, /data-support-mobile-target="history"/);
+    assert.match(page, /data-mobile-view="create"/);
+    assert.match(page, /data-support-file-preview/);
+    assert.match(page, /data-support-description-counter/);
+    assert.match(script, /function setMobileView\(view, scroll = false\)/);
+    assert.match(script, /loadDetail\(Number\(ticket\.id\), true\)/);
+    assert.match(script, /loadDetail\(response\.id, true\)/);
+});
+
+test('atendimento ADM alterna fila e detalhe e oferece retorno pelo touch', () => {
+    const admin = read('php/components/support-admin.php');
+    assert.match(admin, /data-support-mobile-target="inbox"/);
+    assert.match(admin, /data-support-mobile-target="detail"/);
+    assert.match(admin, /data-support-back/);
+    assert.match(admin, /data-mobile-view="inbox"/);
+    assert.match(read('js/support-ui.js'), /setMobileView\('inbox', true\)/);
+});
+
+test('layout responsivo possui teclado legível e proteção da barra inferior', () => {
+    const css = read('css/support.css');
+    assert.match(css, /max-width:\s*767px/);
+    assert.match(css, /support-mobile-tabs/);
+    assert.match(css, /support-mobile-panels\[data-mobile-view="history"\]/);
+    assert.match(css, /support-mobile-panels\[data-mobile-view="detail"\]/);
+    assert.match(css, /font-size:\s*16px/);
+    assert.match(css, /safe-area-inset-bottom/);
+    assert.match(css, /overflow-wrap:\s*anywhere/);
+});
