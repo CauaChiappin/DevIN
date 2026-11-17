@@ -264,29 +264,45 @@
     status.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   // Commands use explicit numerical IDs; the model never executes SQL.
-  function parseAdminCommand(message) { // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
-    const normalized=message.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); // Explicação DevIN: Declara variável JavaScript normalized para reutilizar valor ou resultado.
-    const kindPattern='(vaga|anuncio|candidato|candidata|pessoa|usuario|usuaria|empresa)'; // Explicação DevIN: Declara variável JavaScript kindPattern para reutilizar valor ou resultado.
-    const idPattern='(?:\\s+(?:de\\s+)?(?:id|numero|n[ºo]|#)\\s*[:#-]?\\s*|\\s+#?)(\\d{1,10})\\b'; // Explicação DevIN: Declara variável JavaScript idPattern para reutilizar valor ou resultado.
-    const kinds={vaga:'vaga',anuncio:'vaga',candidato:'pessoa',candidata:'pessoa',pessoa:'pessoa',usuario:'pessoa',usuaria:'pessoa',empresa:'empresa'}; // Explicação DevIN: Declara variável JavaScript kinds para reutilizar valor ou resultado.
-    const deletion=new RegExp('^(?:jarvis[,!: ]*|por favor[, ]*)?(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\\s+(?:a\\s+|o\\s+|uma\\s+|um\\s+)?'+kindPattern+idPattern+'[.!?\\s]*$','i').exec(normalized); // Explicação DevIN: Declara variável JavaScript deletion para reutilizar valor ou resultado.
-    if(deletion) return {type:'delete',kind:kinds[deletion[1]],id:Number(deletion[2])}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    // Message body remains unchanged (diacritics and case preserved).
-    const send=new RegExp('^(?:jarvis[,!: ]*|por favor[, ]*)?(?:envie|enviar|mande|mandar|escreva|escrever)\\s+(?:uma\\s+)?mensagem\\s+(?:para\\s+)?(?:a\\s+|o\\s+|ao\\s+|aos\\s+)?'+kindPattern+idPattern+'\\s*(?:dizendo|com\\s+(?:o\\s+)?texto|:\\s*|que\\s+diga)\\s*','i').exec(normalized); // Explicação DevIN: Declara variável JavaScript send para reutilizar valor ou resultado.
-    if(send) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      const type=kinds[send[1]]; // Explicação DevIN: Declara variável JavaScript type para reutilizar valor ou resultado.
-      // For accuracy do not guess the text span from normalized offsets.
-      const textOriginal=message.match(/(?:dizendo|com\s+(?:o\s+)?texto|que\s+diga)\s*[:,-]?\s*([\s\S]+)$/i) // Explicação DevIN: Declara variável JavaScript textOriginal para reutilizar valor ou resultado.
-        || message.match(/:\s*([^:]+)$/); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-      const body=textOriginal ? textOriginal[1].trim() : ''; // Explicação DevIN: Declara variável JavaScript body para reutilizar valor ou resultado.
-      if(type==='vaga') return {type:'unsupported'}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      return {type:'message',kind:type,id:Number(send[2]),body}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    if(/^(?:jarvis[,!: ]*|por favor[, ]*)?(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar|envie|enviar|mande|mandar)\b/i.test(normalized)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // Interpretar apenas comandos explícitos; conteúdo de cadastro jamais é instrução.
+  // Nomes e títulos não identificam registros univocamente: sempre mostrar opções.
+  function parseAdminCommand(message) {
+    const kindPattern='(vagas?|an[uú]ncios?|candidatos?|candidatas?|pessoas?|usu[aá]rios?|usu[aá]rias?|empresas?)';
+    const prefix='^(?:(?:jarvis)[,:!\\s]*|(?:por favor)[,\\s]*)?';
+    const kinds={
+      vaga:'vaga',vagas:'vaga',anuncio:'vaga','anúncio':'vaga',
+      anuncios:'vaga','anúncios':'vaga',candidato:'pessoa',candidatos:'pessoa',
+      candidata:'pessoa',candidatas:'pessoa',pessoa:'pessoa',pessoas:'pessoa',
+      usuario:'pessoa','usuário':'pessoa',usuarios:'pessoa','usuários':'pessoa',
+      usuaria:'pessoa','usuária':'pessoa',usuarias:'pessoa','usuárias':'pessoa',
+      empresa:'empresa',empresas:'empresa'
+    };
+    function target(kind, raw) {
+      const cleaned=raw.trim().replace(/^[#:]\\s*/, '').replace(/[!?\\.]+$/, '').trim();
+      const numeric=/^(?:(?:id|n[uú]mero|n[ºo])\\s*[:#-]?\\s*|#\\s*)?(\\d{1,10})$/i.exec(cleaned);
+      const exact=Boolean(numeric);
+      const id=exact ? Number(numeric[1]) : null;
+      const name=exact ? '' : cleaned.replace(/^(?:com\\s+o\\s+nome|de\\s+nome|chamad[oa]|intitulad[oa])\\s+/i,'').trim();
+      return {kind:kinds[kind.toLowerCase()],id,name};
+    }
+    const deletion=new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\\s+(?:(?:a|o|uma|um)\\s+)?'+kindPattern+'\\s+(.+)$','i').exec(message.trim());
+    if(deletion) return {type:'delete',...target(deletion[1],deletion[2])};
+    const sendPrefix=new RegExp(prefix+'(?:envie|enviar|mande|mandar|escreva|escrever)\\s+(?:uma\\s+)?mensagem\\s+(?:para\\s+)?(?:(?:a|o|ao|à)\\s+)?'+kindPattern+'\\s+(.+)$','i').exec(message.trim());
+    if(sendPrefix) {
+      const rest=sendPrefix[2];
+      const withText=/^(.+?)\\s+(?:dizendo|que\\s+diga|com\\s+(?:o\\s+)?texto)\\s*[:,-]?\\s*([\\s\\S]+)$/i.exec(rest)
+        || /^(.+?)\\s*:\\s*([\\s\\S]+)$/.exec(rest);
+      const recipient=target(sendPrefix[1],withText ? withText[1] : rest);
+      return {type:recipient.kind==='vaga'?'unsupported':'message',...recipient,
+        body:withText ? withText[2].trim() : ''};
+    }
+    const find=new RegExp(prefix+'(?:procure|procurar|pesquise|pesquisar|encontre|buscar|busque|localize|mostre)\\s+(?:(?:por|a|o|as|os|uma|um)\\s+)*'+kindPattern+'\\s+(?:com\\s+(?:o\\s+)?nome\\s+|chamad[oa]s?\\s+|intitulad[oa]s?\\s+)?(.+)$','i').exec(message.trim());
+    if(find) return {type:'search',...target(find[1],find[2])};
+    if(new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar|envie|enviar|mande|mandar)\\b','i').test(message)) {
+      return {type:'incomplete'};
+    }
+    return null;
+  }
 
   function chatActionCard(text) { // Explicação DevIN: Declara função/método chatActionCard, com seus parâmetros e comportamento.
     addMessage('assistant',text); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
@@ -301,18 +317,79 @@
     return button; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-  async function handleAdminCommand(message) { // Explicação DevIN: Declara função/método handleAdminCommand, com seus parâmetros e comportamento.
-    const command=parseAdminCommand(message); // Explicação DevIN: Declara variável JavaScript command para reutilizar valor ou resultado.
-    if(!command) return false; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    addMessage('user',message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
-    if(command.type==='incomplete' || !Number.isSafeInteger(command.id) || command.id<1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      addMessage('assistant','Para evitar atingir a conta errada, informe o tipo e o ID numérico. Exemplos: "Exclua a vaga 15" ou "Envie mensagem para candidato ID 12 dizendo: Olá".'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
-      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    if(command.type==='unsupported') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      addMessage('assistant','O envio é destinado a candidatos ou empresas. Informe um ID válido.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
-      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  async function handleAdminCommand(message, selected=null) {
+    const command=selected || parseAdminCommand(message);
+    if(!command) return false;
+    if(!selected) addMessage('user',message);
+    if(command.type==='unsupported') {
+      addMessage('assistant','Mensagens podem ser enviadas a candidatos ou empresas, não a vagas.');
+      return true;
+    }
+    if(command.type==='incomplete' || (!command.name && (!Number.isSafeInteger(command.id) || command.id<1))) {
+      addMessage('assistant','Informe o tipo e um nome/título ou ID. Exemplos: "Exclua a vaga Desenvolvedor PHP" ou "Envie mensagem para empresa Acme dizendo: Olá".');
+      return true;
+    }
+    if(command.name && !selected || command.type==='search') {
+      const resultsCard=chatActionCard('Pesquisando no banco DevIN: "'+(command.name || command.id)+'". Os resultados abaixo são ordenados por similaridade, não representam uma probabilidade de acerto.');
+      const results=document.createElement('div');
+      results.className='jarvis-admin__tool-results';
+      resultsCard.append(results);
+      const kinds=command.kind ? [command.kind] : ['pessoa','empresa','vaga'];
+      const choices=[];
+      try {
+        for(const kind of kinds) {
+          const answer=await api(root.dataset.tools+'?action=suggest&kind='+encodeURIComponent(kind)+'&q='+encodeURIComponent(command.name || String(command.id)));
+          choices.push(...answer.records);
+        }
+      }catch(error) {
+        addMessage('assistant','Falha na pesquisa de nomes: '+error.message);
+        return true;
+      }
+      const typeNames={vaga:'Vaga',pessoa:'Candidato',empresa:'Empresa'};
+      choices.sort((x,y)=>y.score-x.score || y.id-x.id);
+      if(!choices.length) {
+        const none=document.createElement('p');
+        none.textContent='Nenhum registro encontrado. Tente outro nome, parte do título ou pesquise pelo ID.';
+        results.append(none);
+        return true;
+      }
+      for(const record of choices.slice(0,12)) {
+        const card=document.createElement('article');
+        card.className='jarvis-admin__tool-card';
+        const title=document.createElement('strong');
+        title.textContent=typeNames[record.kind]+' #'+record.id+' — '+record.title;
+        const desc=document.createElement('small');
+        desc.textContent=[record.subtitle,record.match].filter(Boolean).join(' · ');
+        const controls=document.createElement('div');
+        controls.className='jarvis-admin__tool-actions';
+        const inspect=actionButton('Ver detalhes',async button=>{
+          button.disabled=true;
+          try{
+            const data=await api(root.dataset.tools+'?action=inspect&kind='+encodeURIComponent(record.kind)+'&id='+encodeURIComponent(record.id));
+            const details=document.createElement('p');
+            details.textContent=Object.entries(data.record).filter(([key])=>!['id'].includes(key)).map(([key,value])=>key+': '+String(value)).join(' · ').slice(0,850);
+            const old=card.querySelector('[data-jarvis-suggest-details]');
+            if(old)old.remove();
+            details.dataset.jarvisSuggestDetails='';
+            card.append(details);
+          }catch(error){addMessage('assistant','Não foi possível consultar detalhes: '+error.message);}
+          finally{button.disabled=false;}
+        });
+        controls.append(inspect);
+        if(command.type!=='search') {
+          const choose=actionButton('Selecionar '+typeNames[record.kind].toLowerCase(),async button=>{
+            button.disabled=true;
+            try {
+              await handleAdminCommand(message,{...command,id:record.id,kind:record.kind,name:''});
+              results.querySelectorAll('button').forEach(item=>{item.disabled=true;});
+            }catch(error){addMessage('assistant','Falha na seleção: '+error.message);button.disabled=false;}
+          });
+          controls.append(choose);
+        }
+        card.append(title,desc,controls);results.append(card);
+      }
+      return true;
+    }
     const toolUrl=root.dataset.tools; // Explicação DevIN: Declara variável JavaScript toolUrl para reutilizar valor ou resultado.
     if(command.type==='delete') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       let preview; // Explicação DevIN: Declara variável JavaScript preview para reutilizar valor ou resultado.
