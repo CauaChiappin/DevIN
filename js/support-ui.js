@@ -63,7 +63,8 @@
     function button(text, onclick, className = 'support-secondary') {
         const b = node('button', text, className);
         b.type = 'button';
-        b.addEventListener('click', onclick);
+        // O callback recebe o próprio botão para bloquear duplo clique.
+        b.addEventListener('click', () => void onclick(b));
         return b;
     }
 
