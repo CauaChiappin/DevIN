@@ -237,6 +237,13 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
         // Token interno e caminhos do filesystem jamais são enviados ao navegador.
         unset($ticket['attachment_token']); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
+        // ADMs podem ver a autoria de cada resposta, mas os usuários não.
+        if (($actor['tipo'] ?? '') !== 'adm') {
+            foreach ($replies as &$reply) {
+                unset($reply['admin_id'], $reply['chat_sent_at'], $reply['email_sent_at']);
+            }
+            unset($reply);
+        }
         return ['ticket'=>$ticket, 'replies'=>$replies]; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
@@ -326,11 +333,14 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
             $body = '<p>Olá, ' . $safeName . '.</p><p>O <strong>Suporte DevIN</strong> respondeu ao seu chamado <strong>#' // Explicação DevIN: Atribui um valor à variável PHP $body.
                 . (int)$row['ticket_id'] . '</strong>:</p><blockquote>' . $safeMessage // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 . '</blockquote><p>A resposta também está disponível nas Mensagens e na Central de Suporte.</p>'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-            $stmt = $db->prepare('UPDATE support_replies SET email_attempts=email_attempts+1 WHERE id=?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            // Reserva uma tentativa no banco: respostas entregues não devem ser reenviadas.
+            $stmt = $db->prepare('UPDATE support_replies SET email_attempts=email_attempts+1
+                WHERE id=? AND email_sent_at IS NULL AND email_attempts<5'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $replyId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $reserved = $stmt->affected_rows === 1;
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
-            if (MailerHelper::enviar( // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if ($reserved && MailerHelper::enviar( // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 (string)$currentOwner['email'], (string)$currentOwner['name'], // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
                 'Suporte DevIN — resposta ao chamado #' . $row['ticket_id'], $body // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             )) { // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
