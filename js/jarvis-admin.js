@@ -298,6 +298,37 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     const find=new RegExp(prefix+'(?:procure|procurar|pesquise|pesquisar|encontre|buscar|busque|localize|mostre)\\s+(?:(?:por|a|o|as|os|uma|um)\\s+)*'+kindPattern+'\\s+(?:com\\s+(?:o\\s+)?nome\\s+|chamad[oa]s?\\s+|intitulad[oa]s?\\s+)?(.+)$','i').exec(message.trim()); // Explicação DevIN: Declara variável JavaScript find para reutilizar valor ou resultado.
     if(find) return {type:'search',...target(find[1],find[2])}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    // Without an explicit category, offer choices across all permitted categories.
+    const genericSend=new RegExp(prefix+'(?:envie|enviar|mande|mandar|escreva|escrever)\\s+(?:uma\\s+)?mensagem\\s+(?:para\\s+)?(?:(?:a|o|ao|à)\\s+)?(.+) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+,'i').exec(message.trim());
+    if(genericSend) {
+      const bodyMatch=/^(.+?)\s+(?:dizendo|que\s+diga|com\s+(?:o\s+)?texto)\s*[:,-]?\s*([\s\S]+)$/i.exec(genericSend[1])
+        || /^(.+?)\s*:\s*([\s\S]+)$/.exec(genericSend[1]);
+      return {type:'message',kind:null,id:null,
+        name:(bodyMatch ? bodyMatch[1] : genericSend[1]).trim(),
+        body:bodyMatch ? bodyMatch[2].trim() : ''};
+    }
+    const genericDelete=new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\\s+(.+) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+,'i').exec(message.trim());
+    if(genericDelete) return {type:'delete',kind:null,id:null,name:genericDelete[1].trim()};
+    const genericFind=new RegExp(prefix+'(?:procure|procurar|pesquise|pesquisar|encontre|buscar|busque|localize|mostre)\\s+(.+) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+,'i').exec(message.trim());
+    if(genericFind) return {type:'search',kind:null,id:null,name:genericFind[1].trim()};
     if(new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar|envie|enviar|mande|mandar)\\b','i').test(message)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -334,7 +365,7 @@
       const results=document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
       results.className='jarvis-admin__tool-results'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       resultsCard.append(results); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
-      const kinds=command.kind ? [command.kind] : ['pessoa','empresa','vaga']; // Explicação DevIN: Declara variável JavaScript kinds para reutilizar valor ou resultado.
+      const kinds=command.kind ? [command.kind] : (command.type==='message' ? ['pessoa','empresa'] : ['pessoa','empresa','vaga']); // Explicação DevIN: Declara variável JavaScript kinds para reutilizar valor ou resultado.
       const choices=[]; // Explicação DevIN: Declara variável JavaScript choices para reutilizar valor ou resultado.
       try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         for(const kind of kinds) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
