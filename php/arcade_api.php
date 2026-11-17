@@ -13,6 +13,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/controllers/ArcadeProgressPolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 header('Cache-Control: no-store, private'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -25,21 +26,8 @@ function arcadeRespond(array $data, int $status = 200): void // Explicação Dev
     exit; // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeRespond.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-// Detalhe DevIN: Método requireArcadeUnlock: verifica condições antes de liberar o próximo passo no contexto de arcade api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
-function requireArcadeUnlock(array $usuario): void // Explicação DevIN: Declara função/método requireArcadeUnlock, com seus parâmetros e comportamento.
-{ // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    $liberacao = $_SESSION['arcade_unlock'] ?? []; // Explicação DevIN: Atribui um valor à variável PHP $liberacao.
-    if (!is_array($liberacao) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        || (int) ($liberacao['id'] ?? 0) !== $usuario['id'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        || ($liberacao['tipo'] ?? '') !== $usuario['tipo'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        || time() - (int) ($liberacao['liberado_em'] ?? 0) > 7200 // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-    ) { // Explicação DevIN: Continua expressão ou bloco pertencente a função requireArcadeUnlock.
-        unset($_SESSION['arcade_unlock']); // Explicação DevIN: Continua expressão ou bloco pertencente a função requireArcadeUnlock.
-        arcadeRespond(['sucesso' => false, 'mensagem' => 'A área de jogos precisa ser liberada pelo dashboard.'], 403); // Explicação DevIN: Continua expressão ou bloco pertencente a função requireArcadeUnlock.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-// Detalhe DevIN: Método ensureArcadeProgressTable: encapsula uma responsabilidade reutilizável do módulo no contexto de arcade api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
+// Login permanece obrigatório. O código secreto é somente um atalho
+// opcional; o menu Jogos permite acesso direto de pessoas, empresas e ADMs.
 function ensureArcadeProgressTable(mysqli $conn): void // Explicação DevIN: Declara função/método ensureArcadeProgressTable, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $conn->query('
@@ -68,25 +56,28 @@ function arcadeGameLimits(): array // Explicação DevIN: Declara função/méto
         'runner' => ['score_per_second' => 350, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         // Limites conservadores de plausibilidade para os novos minijogos.
         // Não substituem validação antitrapaça no servidor; bloqueiam abuso evidente.
-        'pong' => ['score_per_second' => 1200, 'seconds_per_level' => 3], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'dodge' => ['score_per_second' => 120, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'flappy' => ['score_per_second' => 900, 'seconds_per_level' => 7], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'target' => ['score_per_second' => 1800, 'seconds_per_level' => 1], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'collector' => ['score_per_second' => 1800, 'seconds_per_level' => 1], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'racer' => ['score_per_second' => 300, 'seconds_per_level' => 2], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'simon' => ['score_per_second' => 1400, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'basket' => ['score_per_second' => 1800, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'pong' => ['score_per_second' => 1200, 'seconds_per_level' => 3, 'score_per_level' => 125], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'dodge' => ['score_per_second' => 120, 'seconds_per_level' => 5, 'score_per_level' => 150], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'flappy' => ['score_per_second' => 900, 'seconds_per_level' => 7, 'score_per_level' => 120], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'target' => ['score_per_second' => 1800, 'seconds_per_level' => 1, 'score_per_level' => 140], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'collector' => ['score_per_second' => 1800, 'seconds_per_level' => 1, 'score_per_level' => 150], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'racer' => ['score_per_second' => 300, 'seconds_per_level' => 2, 'score_per_level' => 200], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'simon' => ['score_per_second' => 1400, 'seconds_per_level' => 5, 'score_per_level' => 120], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'basket' => ['score_per_second' => 1800, 'seconds_per_level' => 4, 'score_per_level' => 140], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $usuario = requireWebAuth(); // Explicação DevIN: Atribui um valor à variável PHP $usuario.
-    requireArcadeUnlock($usuario); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+    // A autenticação de sessão já foi validada por requireWebAuth().
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
     ensureArcadeProgressTable($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        if ($usuario['tipo'] === 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        // O escopo padrão de todos os perfis — inclusive ADM — é pessoal.
+        // A lista agregada só fica disponível com escopo explícito e conta ADM.
+        $overview = $usuario['tipo'] === 'adm' && ($_GET['escopo'] ?? '') === 'todos'; // Explicação DevIN: Atribui um valor à variável PHP $overview.
+        if ($overview) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $result = $conn->query("
                 SELECT gp.perfil_tipo, gp.perfil_id, gp.jogo, gp.recorde, gp.maior_fase,
                        gp.ultima_atividade, COALESCE(p.nome, e.nome, a.nome, 'Conta removida') AS nome
@@ -111,11 +102,11 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         $rows = $result->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
-        if ($usuario['tipo'] !== 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (!$overview) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $conn->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
-        arcadeRespond(['sucesso' => true, 'progresso' => $rows]); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+        arcadeRespond(['sucesso' => true, 'progresso' => $rows, 'escopo' => $overview ? 'todos' : 'proprio']); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -161,12 +152,17 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 
         $elapsed = max(1, time() - (int) $gameSession['iniciado_em']); // Explicação DevIN: Atribui um valor à variável PHP $elapsed.
         $limits = arcadeGameLimits()[$game]; // Explicação DevIN: Atribui um valor à variável PHP $limits.
-        $maximumScore = $elapsed * $limits['score_per_second']; // Explicação DevIN: Atribui um valor à variável PHP $maximumScore.
-        $maximumLevel = 1 + (int) floor($elapsed / $limits['seconds_per_level']); // Explicação DevIN: Atribui um valor à variável PHP $maximumLevel.
-        if ($score > $maximumScore || $level > $maximumLevel // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            || $score < (int) ($gameSession['recorde'] ?? 0) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-            || $level < (int) ($gameSession['maior_fase'] ?? 1) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        ) { // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+        // As regras consideram o tempo de sessão, a evolução anterior e
+        // o avanço por pontos dos oito minijogos; não confiam em valores
+        // enviados pelo navegador como prova de uma partida legítima.
+        if (!ArcadeProgressPolicy::isPlausible( // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            $score, // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            $level, // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            $elapsed, // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            (int) ($gameSession['recorde'] ?? 0), // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            (int) ($gameSession['maior_fase'] ?? 1), // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+            $limits // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+        )) { // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             $conn->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             arcadeRespond(['sucesso' => false, 'mensagem' => 'Pontuação ou fase incompatível com o tempo de partida.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -229,7 +225,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         $perfilId = filter_var($_POST['perfil_id'] ?? null, FILTER_VALIDATE_INT); // Explicação DevIN: Atribui um valor à variável PHP $perfilId.
         $game = requestString($_POST, 'jogo'); // Explicação DevIN: Atribui um valor à variável PHP $game.
         if (!in_array($perfilTipo, ['pessoa', 'empresa', 'adm'], true) || $perfilId === false || $perfilId <= 0 // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            || !in_array($game, ['maze', 'snake', 'tetris', 'breakout', 'memory', 'runner'], true) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            || !in_array($game, $allowedGames, true) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         ) { // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             $conn->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             arcadeRespond(['sucesso' => false, 'mensagem' => 'Registro inválido.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.

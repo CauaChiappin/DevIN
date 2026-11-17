@@ -4,6 +4,13 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
     paths: # Explicação DevIN: Configura filtro de caminhos (campo paths).
       - 'php/api/jarvis/**' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/Jarvis/**' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/arcade*.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/ArcadeProgressPolicy.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/ResumeReviewResult.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/analisar_curriculo_abnt_api.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/arcade*.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/resume_abnt_contract.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/job_language_audit_extended.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/components/jarvis-admin-widget.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'js/jarvis-admin.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'js/jarvis-dock.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -52,6 +59,9 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php -l php/adm.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/arcade.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/arcade_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/ArcadeProgressPolicy.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/ResumeReviewResult.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/analisar_curriculo_abnt_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
           php -l php/admin_security_ai.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/components/jarvis-admin-widget.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -72,6 +82,9 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
       - name: Skill manager and model routing smoke tests # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           php tests/jarvis_admin_smoke.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/arcade_progress_policy.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/job_language_audit_extended.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/resume_abnt_contract.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/jarvis_openrouter_router.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
   mysql: # Explicação DevIN: Configura propriedade YAML (campo mysql).

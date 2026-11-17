@@ -472,6 +472,8 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
             <nav class="menu-principal" aria-label="Menu principal"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
+                <!-- Entrada visível para os 14 jogos; autenticação continua obrigatória no servidor. -->
+                <a href="arcade.php" class="menu-arcade" aria-label="Abrir os jogos do DevIN"><span aria-hidden="true">🎮</span><span class="menu-text">Jogos DevIN</span></a> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="empresa.php?pagina=inicio"><?= dashboardIcon('home') ?><span class="menu-text">Início</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="empresa.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Candidatos</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'mensagens') ?>" href="empresa.php?pagina=mensagens" data-messages-api="../php/mensagens_api.php"><?= dashboardIcon('users') ?><span class="menu-text">Mensagens</span><span class="message-unread-badge" data-message-unread-badge hidden></span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->

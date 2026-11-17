@@ -75,3 +75,77 @@ test('catálogo suporta busca, filtros e escolha aleatória', () => { // Explica
     assert.ok(src.includes('data-arcade-filter')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.ok(src.includes('data-random-game')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('recorde próprio e visão geral ADM são consultados separadamente', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const api = read('php/arcade_api.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+    const driver = read('js/arcade-games.js'); // Explicação DevIN: Declara variável JavaScript driver para reutilizar valor ou resultado.
+    assert.match(api, /\$overview\s*=\s*\$usuario\['tipo'\]\s*===\s*'adm'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(api, /\$_GET\['escopo'\]/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(driver, /apiRequest\(\{ escopo: 'todos' \}, 'GET'\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(driver, /async function loadProgress\(\)[\s\S]*?apiRequest\(\{\}, 'GET'\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(api, /'escopo'\s*=>\s*\$overview\s*\?\s*'todos'\s*:\s*'proprio'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('todos os 14 jogos podem ter recordes removidos por ADM', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const api = read('php/arcade_api.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+    assert.match(api, /\$allowedGames\s*=\s*array_keys\(arcadeGameLimits\(\)\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(api, /!in_array\(\$game,\s*\$allowedGames,\s*true\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.doesNotMatch(api, /!in_array\(\$game,\s*\['maze',\s*'snake'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('arcade permanece protegido por login mas não exige código secreto', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const page = read('php/arcade.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
+    const api = read('php/arcade_api.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+    assert.match(page, /\$usuario\s*=\s*requireWebAuth\(\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(api, /\$usuario\s*=\s*requireWebAuth\(\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.doesNotMatch(api, /requireArcadeUnlock\(\$usuario\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.doesNotMatch(page, /\$_SESSION\['arcade_unlock'\]/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    for (const name of ['pessoa','empresa','adm']) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+        assert.match(read('php/'+name+'.php'), /href="arcade\.php"/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('partidas de reflexos e memória evoluem sem quebrar', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const engines = registry.create({ ctx, canvas, colors: {}, gameOver(){}, saveProgress(){} }).factories; // Explicação DevIN: Declara variável JavaScript engines para reutilizar valor ou resultado.
+    // O primeiro alvo é intencionalmente central para permitir teste de clique.
+    const target = engines.target(); // Explicação DevIN: Declara variável JavaScript target para reutilizar valor ou resultado.
+    target.pointer({clientX:320, clientY:230}); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.equal(target.score, 20); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+
+    const collector = engines.collector(); // Explicação DevIN: Declara variável JavaScript collector para reutilizar valor ou resultado.
+    const star = collector.state.stars[0]; // Explicação DevIN: Declara variável JavaScript star para reutilizar valor ou resultado.
+    collector.pointer({clientX:star.x, clientY:star.y}); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    collector.update(16); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.ok(collector.score >= 25, 'Coleta por toque deve pontuar'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+
+    const racer = engines.racer(); // Explicação DevIN: Declara variável JavaScript racer para reutilizar valor ou resultado.
+    racer.key('ArrowLeft'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.equal(racer.state.lane, 0); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    racer.key('ArrowRight'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.equal(racer.state.lane, 1); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+
+    const flappy = engines.flappy(); // Explicação DevIN: Declara variável JavaScript flappy para reutilizar valor ou resultado.
+    flappy.key('Space'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    flappy.update(16); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.ok(flappy.state.y < 220, 'Pulo deve mudar a altura'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+
+    const simon = engines.simon(); // Explicação DevIN: Declara variável JavaScript simon para reutilizar valor ou resultado.
+    simon.update(750); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    simon.update(16); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    simon.update(600); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    simon.pick(simon.state.sequence[0]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.equal(simon.score, 30, 'Repetição correta de memória deve pontuar'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('motores toleram várias atualizações consecutivas de tempo', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const engines = registry.create({ ctx, canvas, colors: {}, gameOver(){}, saveProgress(){} }).factories; // Explicação DevIN: Declara variável JavaScript engines para reutilizar valor ou resultado.
+    for (const id of ids) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+        const engine = engines[id](); // Explicação DevIN: Declara variável JavaScript engine para reutilizar valor ou resultado.
+        assert.doesNotThrow(() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            for (let frame=0; frame<170; frame++) engine.update(16); // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            engine.draw(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        }, 'Falha ao simular partida: '+id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.ok(Number.isFinite(engine.score), 'Score finito: '+id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.ok(Number.isFinite(engine.level), 'Nível finito: '+id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
