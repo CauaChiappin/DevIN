@@ -25,3 +25,30 @@ test('identifica rascunho de mensagem sem enviar',()=>{ // Explicação DevIN: C
 test('solicita ID para pedidos ambíguos',()=>assert.equal(parse('Exclua a empresa').type,'incomplete')); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
 test('não intercepta conversas normais',()=>assert.equal(parse('Como analisar candidatos?'),null)); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
 test('não aceita envio de mensagem para vaga',()=>assert.equal(parse('Envie mensagem para vaga ID 12 dizendo: teste').type,'unsupported')); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
+
+test('pesquisa vaga por titulo sem ID',()=>{
+  const x=parse('Jarvis, procure vagas Desenvolvedor PHP');
+  assert.equal(x.type,'search');assert.equal(x.kind,'vaga');assert.equal(x.name,'Desenvolvedor PHP');
+});
+test('exclusao por titulo exige selecao',()=>{
+  const x=parse('Exclua a vaga Desenvolvedor PHP');
+  assert.equal(x.type,'delete');assert.equal(x.kind,'vaga');assert.equal(x.id,null);
+  assert.equal(x.name,'Desenvolvedor PHP');
+});
+test('exclusao de empresa por nome',()=>{
+  const x=parse('Exclua a empresa Exemplo Tecnologia');
+  assert.equal(x.type,'delete');assert.equal(x.kind,'empresa');assert.equal(x.name,'Exemplo Tecnologia');
+});
+test('enviar mensagem por nome com texto original preservado',()=>{
+  const x=parse('Mande mensagem para candidata Maria Silva dizendo: Olá, tudo bem?');
+  assert.equal(x.type,'message');assert.equal(x.kind,'pessoa');assert.equal(x.name,'Maria Silva');
+  assert.equal(x.body,'Olá, tudo bem?');
+});
+test('identificar vaga por ID permanece compativel',()=>{
+  const x=parse('Jarvis, exclua a vaga ID 15');
+  assert.equal(x.type,'delete');assert.equal(x.id,15);
+});
+test('busca vaga nome com empresa como resultado depende da selecao, nao da IA',()=>{
+  const x=parse('Pesquise vagas Engenharia de Software');
+  assert.equal(x.type,'search');assert.equal(x.name,'Engenharia de Software');
+});
