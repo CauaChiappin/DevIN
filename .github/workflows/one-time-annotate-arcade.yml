@@ -1,0 +1,26 @@
+name: DevIN - Anotar arcade (temporario)
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/one-time-annotate-arcade.yml']
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Comentarios inline com ferramenta existente
+        run: python3 scripts/line_explanations.py --write
+      - name: Registrar apenas arquivos do arcade
+        run: |
+          git add php/arcade.php php/arcade_api.php js/arcade-games.js js/arcade-extra-games.js js/arcade-library.js css/jogos.css tests/arcade-extra-games.test.cjs
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(arcade): adicionar explicacoes por linha aos jogos e catalogo"
+            git push origin HEAD:main
+          fi
