@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Aplicar explicacoes linha a linha dentro dos arquivos originais
-        run: python3 scripts/line_explanations.py --write
+        run: python3 scripts/line_explanations.py --write && php -l php/controllers/SupportDesk.php
       - name: Registrar codigo de suporte e mostrar diferenca necessaria no workflow
         run: |
           git diff -- .github/workflows/jarvis-admin-checks.yml | head -n 130
