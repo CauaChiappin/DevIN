@@ -794,7 +794,8 @@
         const target = document.querySelector('[data-admin-progress]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         if (!target) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-            const data = await apiRequest({}, 'GET'); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+            const data = await apiRequest({ escopo: 'todos' }, 'GET'); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+            // A consulta de todos os perfis é restrita a administradores no servidor.
             target.replaceChildren(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAdminProgress.
             if (!data.progresso.length) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 target.textContent = 'Ainda não há progresso salvo.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
