@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Jarvis/ModelProvider.php
+ * Finalidade: conectar provedores de IA e tratar respostas.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/ModelRouter.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
@@ -9,6 +18,7 @@ require_once __DIR__ . '/ModelRouter.php'; // Explicação DevIN: Inclui depend�
  */
 final class JarvisModelException extends RuntimeException // Explicação DevIN: Declara o tipo JarvisModelException e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Método __construct: encapsula uma responsabilidade reutilizável do módulo no contexto de conectar provedores de IA e tratar respostas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public function __construct( // Explicação DevIN: Declara função/método __construct, com seus parâmetros e comportamento.
         public readonly string $reason, // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
         public readonly int $httpStatus = 0 // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
@@ -30,11 +40,13 @@ final class JarvisModelException extends RuntimeException // Explicação DevIN:
 /** Endpoint fixo, modelo(s) em lista, credenciais exclusivamente no servidor. */
 final class ModelProvider // Explicação DevIN: Declara o tipo ModelProvider e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Método setting: encapsula uma responsabilidade reutilizável do módulo no contexto de conectar provedores de IA e tratar respostas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function setting(string $name): string // Explicação DevIN: Declara função/método setting, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return trim((string) ($_ENV[$name] ?? $_SERVER[$name] ?? getenv($name) ?: '')); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método configured: encapsula uma responsabilidade reutilizável do módulo no contexto de conectar provedores de IA e tratar respostas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function configured(): bool // Explicação DevIN: Declara função/método configured, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $provider = strtolower(self::setting('DEVIN_JARVIS_PROVIDER')); // Explicação DevIN: Atribui um valor à variável PHP $provider.
@@ -44,6 +56,7 @@ final class ModelProvider // Explicação DevIN: Declara o tipo ModelProvider e 
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** @return array{status:int,body:string} */
+    // Detalhe DevIN: Método send: coordena entrega, limite de uso e tratamento de falhas no contexto de conectar provedores de IA e tratar respostas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function send(string $endpoint, string $key, string $json): array // Explicação DevIN: Declara função/método send, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!function_exists('curl_init')) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -79,6 +92,7 @@ final class ModelProvider // Explicação DevIN: Declara o tipo ModelProvider e 
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método category: encapsula uma responsabilidade reutilizável do módulo no contexto de conectar provedores de IA e tratar respostas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function category(int $status): string // Explicação DevIN: Declara função/método category, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return match ($status) { // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -98,6 +112,7 @@ final class ModelProvider // Explicação DevIN: Declara o tipo ModelProvider e 
      * @param list<array{role:string,content:string}> $messages
      * @return array{reply:string,model:string,provider:string,fallback_used:bool,key_used:string}
      */
+    // Detalhe DevIN: Método chatWithMeta: encapsula uma responsabilidade reutilizável do módulo no contexto de conectar provedores de IA e tratar respostas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function chatWithMeta(array $messages, ?callable $transport = null): array // Explicação DevIN: Declara função/método chatWithMeta, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $endpoints = [ // Explicação DevIN: Atribui um valor à variável PHP $endpoints.
@@ -148,6 +163,7 @@ final class ModelProvider // Explicação DevIN: Declara o tipo ModelProvider e 
         $backup = $provider === 'openrouter' // Explicação DevIN: Atribui um valor à variável PHP $backup.
             ? self::setting('DEVIN_JARVIS_BACKUP_API_KEY') // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             : ''; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        // Detalhe DevIN: Compara hashes ou segredos sem diferenças de tempo evitáveis.
         if ($backup !== '' && !hash_equals($primaryKey, $backup)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $keys[] = ['label' => 'backup', 'key' => $backup]; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

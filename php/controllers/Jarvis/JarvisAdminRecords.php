@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Jarvis/JarvisAdminRecords.php
+ * Finalidade: consultar registros e ordenar resultados semelhantes.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * MÓDULO DEVIN — JARVIS ADMIN RECORDS.
@@ -23,6 +32,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
 
     // Detalhamento DevIN: centraliza a operação «validKind» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
     // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+    // Detalhe DevIN: Método validKind: encapsula uma responsabilidade reutilizável do módulo no contexto de consultar registros e ordenar resultados semelhantes. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function validKind(string $kind): bool // Explicação DevIN: Declara função/método validKind, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return in_array($kind, self::KINDS, true); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -31,6 +41,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
     // Detalhe DevIN: Consulta o nome público do destinatário a partir de um ID validado. Não entrega e-mail, CPF/CNPJ, senha nem informações privadas ao chat.
     // Detalhamento DevIN: centraliza a operação «recipient» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
     // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+    // Detalhe DevIN: Método recipient: encapsula uma responsabilidade reutilizável do módulo no contexto de consultar registros e ordenar resultados semelhantes. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function recipient(mysqli $db, string $type, int $id): ?array // Explicação DevIN: Declara função/método recipient, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Detalhe DevIN: Bloqueia tipos fora de pessoa/empresa e IDs inválidos antes de qualquer consulta, evitando destinatários arbitrários.
@@ -40,6 +51,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
         [$table, $column] = $type === 'pessoa' // Explicação DevIN: Continua expressão ou bloco pertencente a função recipient.
             ? ['pessoa','id_pessoa'] : ['empresa','id_empresa']; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare("SELECT {$column} AS id, nome FROM {$table} WHERE {$column} = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         // Detalhe DevIN: Associa o ID como inteiro a um parâmetro preparado: o valor do usuário nunca é interpolado diretamente no comando SQL.
         $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -56,6 +68,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
     // Detalhe DevIN: Busca legada utilizada na aba Consultar: combina trecho do nome/título com busca por ID, devolvendo registros limitados.
     // Detalhamento DevIN: pesquisa a operação «search» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
     // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+    // Detalhe DevIN: Método search: consulta e organiza dados sem presumir que o resultado seja único no contexto de consultar registros e ordenar resultados semelhantes. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function search(mysqli $db, string $kind, string $query): array // Explicação DevIN: Declara função/método search, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!self::validKind($kind) || mb_strlen($query) > 100) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -70,6 +83,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
             [$table,$col] = $kind === 'pessoa' // Explicação DevIN: Continua expressão ou bloco pertencente a função search.
                 ? ['pessoa','id_pessoa'] : ['empresa','id_empresa']; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 "SELECT {$col} AS id,nome AS title FROM {$table} " // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . "WHERE nome LIKE ? OR {$col} = ? ORDER BY {$col} DESC LIMIT 12" // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -77,6 +91,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
             $stmt->bind_param('si', $like, $exactId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         } elseif ($kind === 'vaga') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'SELECT v.id_vaga AS id,v.titulo AS title,e.nome AS subtitle ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . 'FROM vagas v LEFT JOIN empresa e ON e.id_empresa=v.id_empresa ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -85,6 +100,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
             $stmt->bind_param('si', $like, $exactId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         } elseif ($kind === 'reports_vagas') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'SELECT id,titulo_vaga AS title,motivo,status FROM reports_vagas ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . "WHERE id=? OR titulo_vaga LIKE ? ORDER BY id DESC LIMIT 12" // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -92,6 +108,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
             $stmt->bind_param('is', $exactId, $like); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
             // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'SELECT id,nome_denunciado AS title,motivo,status,tipo_denunciado ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . 'FROM reports_perfis WHERE id=? OR nome_denunciado LIKE ? ORDER BY id DESC LIMIT 12' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -126,6 +143,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
     // Detalhe DevIN: Entrada específica da busca inteligente do chat: recebe categoria e termo, mas não tem nenhuma operação INSERT, UPDATE ou DELETE.
     // Detalhamento DevIN: sugere a operação «suggest» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
     // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+    // Detalhe DevIN: Método suggest: consulta e organiza dados sem presumir que o resultado seja único no contexto de consultar registros e ordenar resultados semelhantes. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function suggest(mysqli $db, string $kind, string $term): array // Explicação DevIN: Declara função/método suggest, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!in_array($kind, ['vaga','pessoa','empresa'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -148,6 +166,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
         // Detalhe DevIN: Para vagas, junta a tabela de empresas a fim de exibir o empregador e diferenciar anúncios com títulos repetidos.
         if ($kind === 'vaga') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'SELECT v.id_vaga AS id, v.titulo AS title, e.nome AS subtitle ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . 'FROM vagas v LEFT JOIN empresa e ON e.id_empresa = v.id_empresa ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -160,6 +179,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
             [$table, $pk] = $kind === 'pessoa' // Explicação DevIN: Continua expressão ou bloco pertencente a função suggest.
                 ? ['pessoa','id_pessoa'] : ['empresa','id_empresa']; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 "SELECT {$pk} AS id, nome AS title FROM {$table} " // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . "WHERE {$pk}=? OR nome LIKE ? OR nome LIKE ? " // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -210,6 +230,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
     // Detalhe DevIN: Função determinística do ranking: recebe termo, título, empresa e ID; não consulta LLM nem executa ações administrativas.
     // Detalhamento DevIN: sugere a operação «suggestionScore» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
     // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+    // Detalhe DevIN: Método suggestionScore: consulta e organiza dados sem presumir que o resultado seja único no contexto de consultar registros e ordenar resultados semelhantes. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function suggestionScore( // Explicação DevIN: Declara função/método suggestionScore, com seus parâmetros e comportamento.
         string $query, string $title, string $subtitle = '', int $id = 0, int $exactId = 0 // Explicação DevIN: Continua expressão ou bloco pertencente a função suggestionScore.
     ): int { // Explicação DevIN: Continua expressão ou bloco pertencente a função suggestionScore.
@@ -255,6 +276,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
     // Detalhe DevIN: Só depois da escolha do ADM expõe um resumo limitado de campos do registro. A seleção não implica exclusão nem envio.
     // Detalhamento DevIN: centraliza a operação «inspect» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
     // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+    // Detalhe DevIN: Método inspect: encapsula uma responsabilidade reutilizável do módulo no contexto de consultar registros e ordenar resultados semelhantes. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function inspect(mysqli $db, string $kind, int $id): ?array // Explicação DevIN: Declara função/método inspect, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!self::validKind($kind) || $id < 1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -272,6 +294,7 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
                 . 'FROM reports_perfis WHERE id=? LIMIT 1', // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
         // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare($queries[$kind]); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.

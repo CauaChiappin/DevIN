@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Security/AdminRolePolicy.php
+ * Finalidade: avaliar níveis de acesso dos administradores.
+ * Domínio: controle de acesso.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * Controle de permissões explícito no servidor. Nunca usar cargo ou id
@@ -19,6 +28,7 @@ final class AdminRolePolicy // Explicação DevIN: Declara o tipo AdminRolePolic
         ], // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
+    // Detalhe DevIN: Método enabled: encapsula uma responsabilidade reutilizável do módulo no contexto de avaliar níveis de acesso dos administradores. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enabled(): bool // Explicação DevIN: Declara função/método enabled, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return (string) ($_ENV['DEVIN_ADMIN_RBAC_ENABLED'] // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -26,6 +36,7 @@ final class AdminRolePolicy // Explicação DevIN: Declara o tipo AdminRolePolic
             ?? getenv('DEVIN_ADMIN_RBAC_ENABLED') ?: '0') === '1'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método can: verifica condições antes de liberar o próximo passo no contexto de avaliar níveis de acesso dos administradores. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function can(string $role, string $action): bool // Explicação DevIN: Declara função/método can, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if ($action === 'update_profile') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -34,6 +45,7 @@ final class AdminRolePolicy // Explicação DevIN: Declara o tipo AdminRolePolic
         return in_array($action, self::PERMISSIONS[$role] ?? [], true); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método requireAction: verifica condições antes de liberar o próximo passo no contexto de avaliar níveis de acesso dos administradores. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function requireAction(mysqli $db, int $adminId, string $action): void // Explicação DevIN: Declara função/método requireAction, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!self::enabled()) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -42,6 +54,7 @@ final class AdminRolePolicy // Explicação DevIN: Declara o tipo AdminRolePolic
         if ($adminId <= 0) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new DomainException('Administrador não autorizado.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare('SELECT nivel_permissao FROM administrador WHERE id_administrador = ? LIMIT 1'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('i', $adminId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.

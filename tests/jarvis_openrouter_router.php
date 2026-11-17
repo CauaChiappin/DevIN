@@ -1,9 +1,19 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — tests/jarvis_openrouter_router.php
+ * Finalidade: jarvis openrouter router.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 // Teste offline: NUNCA usa credenciais reais ou faz requisições de rede.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/ModelProvider.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método assertRouter: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis openrouter router. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function assertRouter(bool $condition, string $message): void // Explicação DevIN: Declara função/método assertRouter, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!$condition) throw new RuntimeException('Roteador OpenRouter: ' . $message); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

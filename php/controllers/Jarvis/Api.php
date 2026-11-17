@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Jarvis/Api.php
+ * Finalidade: api.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * MÓDULO DEVIN — API.
@@ -18,6 +27,7 @@ require_once __DIR__ . '/../Security/AdminStepUp.php'; // Explicação DevIN: In
 
 // Detalhamento DevIN: centraliza a operação «jarvisJson» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
 // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+// Detalhe DevIN: Método jarvisJson: encapsula uma responsabilidade reutilizável do módulo no contexto de api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function jarvisJson(int $status, array $data): never // Explicação DevIN: Declara função/método jarvisJson, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     http_response_code($status); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -31,6 +41,7 @@ function jarvisJson(int $status, array $data): never // Explicação DevIN: Decl
 /** JSON 401/403, sem redirecionar o fetch do widget à página de login. */
 // Detalhamento DevIN: centraliza a operação «jarvisAdmin» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
 // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+// Detalhe DevIN: Método jarvisAdmin: encapsula uma responsabilidade reutilizável do módulo no contexto de api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function jarvisAdmin(): int // Explicação DevIN: Declara função/método jarvisAdmin, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     startSecureSession(); // Explicação DevIN: Continua expressão ou bloco pertencente a função jarvisAdmin.
@@ -50,6 +61,7 @@ function jarvisAdmin(): int // Explicação DevIN: Declara função/método jarv
         $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare('SELECT id_administrador FROM administrador WHERE id_administrador = ? LIMIT 1'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -88,6 +100,7 @@ function jarvisAdmin(): int // Explicação DevIN: Declara função/método jarv
 
 // Detalhamento DevIN: centraliza a operação «jarvisCsrf» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
 // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+// Detalhe DevIN: Método jarvisCsrf: encapsula uma responsabilidade reutilizável do módulo no contexto de api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function jarvisCsrf(): void // Explicação DevIN: Declara função/método jarvisCsrf, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!verifyCsrfToken($_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -97,6 +110,7 @@ function jarvisCsrf(): void // Explicação DevIN: Declara função/método jarv
 
 // Detalhamento DevIN: centraliza a operação «jarvisBody» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
 // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+// Detalhe DevIN: Método jarvisBody: encapsula uma responsabilidade reutilizável do módulo no contexto de api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function jarvisBody(int $maxBytes = 18000): array // Explicação DevIN: Declara função/método jarvisBody, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $length = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0); // Explicação DevIN: Atribui um valor à variável PHP $length.
@@ -120,6 +134,7 @@ function jarvisBody(int $maxBytes = 18000): array // Explicação DevIN: Declara
 
 // Detalhamento DevIN: centraliza a operação «jarvisLimit» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
 // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
+// Detalhe DevIN: Método jarvisLimit: encapsula uma responsabilidade reutilizável do módulo no contexto de api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function jarvisLimit(int $adminId, string $scope, int $limit = 30): void // Explicação DevIN: Declara função/método jarvisLimit, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.

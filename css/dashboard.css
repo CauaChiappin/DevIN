@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — css/dashboard.css
+ * Finalidade: dashboard.
+ * Domínio: estilos responsivos e aparência.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 /* =========================================================
    DASHBOARD — ESTILOS GERAIS COMPARTILHADOS
    Usados por empresa, pessoa e administrador.

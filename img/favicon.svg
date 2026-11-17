@@ -1,3 +1,12 @@
+<!--
+  REVISÃO DETALHADA DEVIN — img/favicon.svg
+  Finalidade: favicon.
+  Domínio: componentes compartilhados.
+  Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+  Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+  explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+-->
+
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title"> <!-- Explicação DevIN: Declara gráfico vetorial. Inclui atributos de acessibilidade. -->
     <title>DevIN</title> <!-- Explicação DevIN: Declara elemento de marcação. -->
     <rect width="64" height="64" rx="14" fill="#00549f"/> <!-- Explicação DevIN: Declara elemento de marcação. -->

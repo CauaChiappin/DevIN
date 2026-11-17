@@ -1,6 +1,15 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/config/RateLimiter.php
+ * Finalidade: rate limiter.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * Lightweight fixed-window limiter shared by PHP requests on this host.
@@ -9,6 +18,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
  */
 final class RateLimiter // Explicação DevIN: Declara o tipo RateLimiter e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Método consume: encapsula uma responsabilidade reutilizável do módulo no contexto de rate limiter. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function consume(string $key, int $limit, int $windowSeconds): int // Explicação DevIN: Declara função/método consume, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         /* Conta chamadas em uma janela fixa. O arquivo é travado durante leitura e gravação
@@ -63,6 +73,7 @@ final class RateLimiter // Explicação DevIN: Declara o tipo RateLimiter e inic
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método clear: encapsula uma responsabilidade reutilizável do módulo no contexto de rate limiter. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function clear(string $key): void // Explicação DevIN: Declara função/método clear, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Uma autenticação bem-sucedida pode limpar a contagem para que falhas antigas não mantenham o usuário bloqueado.
@@ -72,6 +83,7 @@ final class RateLimiter // Explicação DevIN: Declara o tipo RateLimiter e inic
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método clientIp: encapsula uma responsabilidade reutilizável do módulo no contexto de rate limiter. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function clientIp(): string // Explicação DevIN: Declara função/método clientIp, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Usa REMOTE_ADDR, que o servidor define, em vez de confiar em cabeçalhos encaminhados pelo cliente.

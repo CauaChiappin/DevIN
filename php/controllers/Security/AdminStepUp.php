@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Security/AdminStepUp.php
+ * Finalidade: validar segundo fator administrativo e sessão.
+ * Domínio: controle de acesso.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/../../config/database.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -16,6 +25,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
     private const MAX_LIFETIME_SECONDS = 28800; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
     private const STAGE_TTL_SECONDS = 300; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
 
+    // Detalhe DevIN: Método enabled: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enabled(): bool // Explicação DevIN: Declara função/método enabled, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $value = $_ENV['DEVIN_ADMIN_STEPUP_ENABLED'] ?? $_SERVER['DEVIN_ADMIN_STEPUP_ENABLED'] ?? getenv('DEVIN_ADMIN_STEPUP_ENABLED'); // Explicação DevIN: Atribui um valor à variável PHP $value.
@@ -23,6 +33,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Chave de sessão pertence ao ADM autenticado, jamais aceita ID fornecido pelo browser. */
+    // Detalhe DevIN: Método adminId: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function adminId(): int // Explicação DevIN: Declara função/método adminId, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         startSecureSession(); // Explicação DevIN: Continua expressão ou bloco pertencente a função adminId.
@@ -38,8 +49,10 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Retorna apenas revisões/segredos já protegidos por hash armazenados no banco. */
+    // Detalhe DevIN: Método credentials: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function credentials(mysqli $db, int $id): ?array // Explicação DevIN: Declara função/método credentials, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'SELECT senha_hash AS password_hash, token2_hash, ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             . 'token2_version AS credential_version ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -53,6 +66,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
         return $row; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método revision: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function revision(array $credentials): string // Explicação DevIN: Declara função/método revision, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return hash('sha256', $credentials['password_hash'] . "\0" // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -60,6 +74,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
             . (string) ($credentials['credential_version'] ?? '0')); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método sessionKey: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function sessionKey(string $scope): string // Explicação DevIN: Declara função/método sessionKey, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!in_array($scope, ['site','ai'], true)) throw new InvalidArgumentException('Escopo inválido.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -67,6 +82,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Compara dados atuais do banco, então rotação de credencial revoga imediatamente. */
+    // Detalhe DevIN: Método allowed: verifica condições antes de liberar o próximo passo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function allowed(string $scope): bool // Explicação DevIN: Declara função/método allowed, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!self::enabled()) return false; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -89,6 +105,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
             $db->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função allowed.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!$credentials || !$credentials['token2_hash'] // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            // Detalhe DevIN: Compara hashes ou segredos sem diferenças de tempo evitáveis.
             || !hash_equals((string) ($grant['revision'] ?? ''), self::revision($credentials))) { // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
             unset($_SESSION[$key]); // Explicação DevIN: Continua expressão ou bloco pertencente a função allowed.
             return false; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -97,6 +114,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
         return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método requireAllowed: verifica condições antes de liberar o próximo passo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function requireAllowed(string $scope): void // Explicação DevIN: Declara função/método requireAllowed, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!self::allowed($scope)) throw new DomainException('Verificação adicional necessária.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -106,6 +124,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
      * Identificador apenas de etapa; o frontend só mostra o campo designado.
      * Não retorna hash, senha, hash de sessão nem motivo detalhado de falha.
      */
+    // Detalhe DevIN: Método nextAiToken: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function nextAiToken(): int // Explicação DevIN: Declara função/método nextAiToken, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $id = self::adminId(); // Explicação DevIN: Atribui um valor à variável PHP $id.
@@ -123,6 +142,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
             $db->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função nextAiToken.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!$credentials // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            // Detalhe DevIN: Compara hashes ou segredos sem diferenças de tempo evitáveis.
             || !hash_equals((string) ($stage['revision'] ?? ''), self::revision($credentials))) { // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
             unset($_SESSION['admin_stepup_ai_stage']); // Explicação DevIN: Continua expressão ou bloco pertencente a função nextAiToken.
             return 1; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -130,6 +150,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
         return 2; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método limit: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function limit(int $id): void // Explicação DevIN: Declara função/método limit, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $ip = RateLimiter::clientIp(); // Explicação DevIN: Atribui um valor à variável PHP $ip.
@@ -141,6 +162,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Usado apenas no desbloqueio do site, sem passar pelo modelo externo. */
+    // Detalhe DevIN: Método verifySite: verifica condições antes de liberar o próximo passo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function verifySite(string $token): bool // Explicação DevIN: Declara função/método verifySite, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $id = self::adminId(); // Explicação DevIN: Atribui um valor à variável PHP $id.
@@ -165,6 +187,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Somente Token 1 pode criar o estágio intermediário da IA. */
+    // Detalhe DevIN: Método verifyAiFirst: verifica condições antes de liberar o próximo passo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function verifyAiFirst(string $token): bool // Explicação DevIN: Declara função/método verifyAiFirst, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $id = self::adminId(); // Explicação DevIN: Atribui um valor à variável PHP $id.
@@ -178,6 +201,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
             $db->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função verifyAiFirst.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!$credentials || !$credentials['token2_hash'] // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            // Detalhe DevIN: Valida uma senha contra o hash armazenado sem recuperar a senha original.
             || !password_verify($token, $credentials['password_hash'])) { // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
             self::auditStep('admin_stepup_ai_stage1', 'failure', $id); // Explicação DevIN: Continua expressão ou bloco pertencente a função verifyAiFirst.
             return false; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -191,6 +215,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Token 2 somente é aceito após estágio 1 válido e ainda vigente. */
+    // Detalhe DevIN: Método verifyAiSecond: verifica condições antes de liberar o próximo passo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function verifyAiSecond(string $token): bool // Explicação DevIN: Declara função/método verifyAiSecond, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (self::nextAiToken() !== 2) return false; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -215,12 +240,14 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
         return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método auditStep: registra evidências para acompanhamento no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function auditStep(string $event, string $outcome, int $id): void // Explicação DevIN: Declara função/método auditStep, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         require_once __DIR__ . '/../Privacy/AuditService.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
         AuditService::tryRecord($event, $outcome, 'adm', $id); // Explicação DevIN: Continua expressão ou bloco pertencente a função auditStep.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método grant: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function grant(string $scope, int $id, array $credentials): void // Explicação DevIN: Declara função/método grant, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $key = self::sessionKey($scope); // Explicação DevIN: Atribui um valor à variável PHP $key.
@@ -235,6 +262,7 @@ final class AdminStepUp // Explicação DevIN: Declara o tipo AdminStepUp e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Invocar após troca de credenciais ou suspeita de sessão comprometida. */
+    // Detalhe DevIN: Método clear: encapsula uma responsabilidade reutilizável do módulo no contexto de validar segundo fator administrativo e sessão. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function clear(): void // Explicação DevIN: Declara função/método clear, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         startSecureSession(); // Explicação DevIN: Continua expressão ou bloco pertencente a função clear.

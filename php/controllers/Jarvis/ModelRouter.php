@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Jarvis/ModelRouter.php
+ * Finalidade: escolher modelos e aplicar regras de fallback.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * Roteador de modelos do JARVIS Admin. Para OpenRouter somente modelos gratuitos,
@@ -20,11 +29,13 @@ final class ModelRouter // Explicação DevIN: Declara o tipo ModelRouter e inic
         'openrouter/free', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
+    // Detalhe DevIN: Método validModel: encapsula uma responsabilidade reutilizável do módulo no contexto de escolher modelos e aplicar regras de fallback. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function validModel(string $id): bool // Explicação DevIN: Declara função/método validModel, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return preg_match('~^[a-zA-Z0-9._:/-]{1,120}$~D', $id) === 1; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método isFree: verifica condições antes de liberar o próximo passo no contexto de escolher modelos e aplicar regras de fallback. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function isFree(string $id): bool // Explicação DevIN: Declara função/método isFree, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return $id === 'openrouter/free' || str_ends_with($id, ':free'); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -35,6 +46,7 @@ final class ModelRouter // Explicação DevIN: Declara o tipo ModelRouter e inic
      * $legacy é compatível com a variável antiga DEVIN_JARVIS_FALLBACK_MODEL.
      * O CSV novo tem prioridade sobre o legado.
      */
+    // Detalhe DevIN: Método candidates: verifica condições antes de liberar o próximo passo no contexto de escolher modelos e aplicar regras de fallback. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function candidates( // Explicação DevIN: Declara função/método candidates, com seus parâmetros e comportamento.
         string $provider, // Explicação DevIN: Continua expressão ou bloco pertencente a função candidates.
         string $primary, // Explicação DevIN: Continua expressão ou bloco pertencente a função candidates.
@@ -74,6 +86,7 @@ final class ModelRouter // Explicação DevIN: Declara o tipo ModelRouter e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** A chave de reserva só é tentada em falhas recuperáveis ou da chave primária. */
+    // Detalhe DevIN: Método shouldTrySecondKey: encapsula uma responsabilidade reutilizável do módulo no contexto de escolher modelos e aplicar regras de fallback. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function shouldTrySecondKey(int $status): bool // Explicação DevIN: Declara função/método shouldTrySecondKey, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return $status === 0 || $status === 401 || $status === 402 // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -82,6 +95,7 @@ final class ModelRouter // Explicação DevIN: Declara o tipo ModelRouter e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Mantém compatibilidade com código/testes da versão antiga. */
+    // Detalhe DevIN: Método shouldFallback: encapsula uma responsabilidade reutilizável do módulo no contexto de escolher modelos e aplicar regras de fallback. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function shouldFallback(int $status): bool // Explicação DevIN: Declara função/método shouldFallback, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return self::shouldTrySecondKey($status); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.

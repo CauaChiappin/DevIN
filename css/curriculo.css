@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — css/curriculo.css
+ * Finalidade: curriculo.
+ * Domínio: estilos responsivos e aparência.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 /* Ajustes exclusivos da tela de preenchimento de currículo. */
 .curriculo-page { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     background: #004aad; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */

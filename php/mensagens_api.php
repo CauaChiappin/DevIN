@@ -1,6 +1,15 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/mensagens_api.php
+ * Finalidade: operar mensagens do sistema.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -13,6 +22,7 @@ require_once __DIR__ . '/helpers.php'; // Explicação DevIN: Inclui dependênci
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 header('Cache-Control: no-store, private'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 
+// Detalhe DevIN: Método responderMensagens: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function responderMensagens(array $dados, int $status = 200): void // Explicação DevIN: Declara função/método responderMensagens, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     http_response_code($status); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -20,16 +30,19 @@ function responderMensagens(array $dados, int $status = 200): void // Explicaç�
     exit; // Explicação DevIN: Continua expressão ou bloco pertencente a função responderMensagens.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método validarTipoChat: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function validarTipoChat(string $tipo): bool // Explicação DevIN: Declara função/método validarTipoChat, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return in_array($tipo, ['pessoa', 'empresa'], true); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método chaveAtorChat: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function chaveAtorChat(array $ator): string // Explicação DevIN: Declara função/método chaveAtorChat, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return $ator['tipo'] . ':' . $ator['id']; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método registrarConversaChat: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function registrarConversaChat(array $ator, string $tipo, int $id): void // Explicação DevIN: Declara função/método registrarConversaChat, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $participantes = [chaveAtorChat($ator), $tipo . ':' . $id]; // Explicação DevIN: Atribui um valor à variável PHP $participantes.
@@ -59,11 +72,13 @@ function registrarConversaChat(array $ator, string $tipo, int $id): void // Expl
     }, 'conversas'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método mensagemOcultaParaAtor: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function mensagemOcultaParaAtor(array $mensagem, array $ator): bool // Explicação DevIN: Declara função/método mensagemOcultaParaAtor, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return in_array(chaveAtorChat($ator), $mensagem['ocultada_para'] ?? [], true); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método traduzirMensagemMyMemory: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function traduzirMensagemMyMemory(string $texto, string $idioma): string // Explicação DevIN: Declara função/método traduzirMensagemMyMemory, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!function_exists('curl_init')) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -156,6 +171,7 @@ function traduzirMensagemMyMemory(string $texto, string $idioma): string // Expl
     return $traducao; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método resumirConversasChat: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function resumirConversasChat(array $mensagens, array $ator, array $conversas = []): array // Explicação DevIN: Declara função/método resumirConversasChat, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $contatos = []; // Explicação DevIN: Atribui um valor à variável PHP $contatos.
@@ -219,6 +235,7 @@ function resumirConversasChat(array $mensagens, array $ator, array $conversas = 
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método resumirArmazenamentoChat: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function resumirArmazenamentoChat(array $ator): array // Explicação DevIN: Declara função/método resumirArmazenamentoChat, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $mensagens = acessarArmazenamentoMensagens(static fn (array &$armazenadas): array => $armazenadas); // Explicação DevIN: Atribui um valor à variável PHP $mensagens.
@@ -230,6 +247,7 @@ function resumirArmazenamentoChat(array $ator): array // Explicação DevIN: Dec
     return resumirConversasChat($mensagens, $ator, $conversas); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método buscarUsuarioChat: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array // Explicação DevIN: Declara função/método buscarUsuarioChat, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if ($tipo === 'sistema' && $id === 0) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -242,6 +260,7 @@ function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array // Expli
 
     $tabela = $tipo === 'pessoa' ? 'pessoa' : 'empresa'; // Explicação DevIN: Atribui um valor à variável PHP $tabela.
     $coluna = $tipo === 'pessoa' ? 'id_pessoa' : 'id_empresa'; // Explicação DevIN: Atribui um valor à variável PHP $coluna.
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare("SELECT {$coluna} AS id, nome FROM {$tabela} WHERE {$coluna} = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
     $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
     $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -251,6 +270,7 @@ function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array // Expli
     return $usuario; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método destinatarioValido: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function destinatarioValido(mysqli $conn, array $ator, string $tipo, int $id): array // Explicação DevIN: Declara função/método destinatarioValido, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!validarTipoChat($tipo) || $id < 1 || ($tipo === $ator['tipo'] && $id === $ator['id'])) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -265,6 +285,7 @@ function destinatarioValido(mysqli $conn, array $ator, string $tipo, int $id): a
     return $destinatario; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método atorTemConversaChat: encapsula uma responsabilidade reutilizável do módulo no contexto de operar mensagens do sistema. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function atorTemConversaChat(array $ator, string $tipo, int $id): bool // Explicação DevIN: Declara função/método atorTemConversaChat, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $resumo = resumirArmazenamentoChat($ator); // Explicação DevIN: Atribui um valor à variável PHP $resumo.
@@ -330,6 +351,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
                 [$tabela, $colunaId] = $perfis[$tipo]; // Explicação DevIN: Continua expressão ou bloco pertencente a função atorTemConversaChat.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 $stmt = $conn->prepare("SELECT foto FROM {$tabela} WHERE {$colunaId} = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -389,6 +411,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                     'pessoa' => ['pessoa', 'id_pessoa', 'Pessoa'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'empresa' => ['empresa', 'id_empresa', 'Empresa'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 ] as $tipo => [$tabela, $colunaId, $rotulo]) { // Explicação DevIN: Continua expressão ou bloco pertencente a função atorTemConversaChat.
+                    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                     $stmt = $conn->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                         "SELECT {$colunaId} AS id, nome FROM {$tabela}
                          WHERE (nome LIKE ? OR email LIKE ?)

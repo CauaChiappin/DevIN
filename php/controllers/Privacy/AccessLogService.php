@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Privacy/AccessLogService.php
+ * Finalidade: access log service.
+ * Domínio: privacidade e proteção de dados.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/PrivacyContext.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
@@ -10,6 +19,7 @@ require_once __DIR__ . '/PrivacyContext.php'; // Explicação DevIN: Inclui depe
  */
 final class AccessLogService // Explicação DevIN: Declara o tipo AccessLogService e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Método cleanPath: encapsula uma responsabilidade reutilizável do módulo no contexto de access log service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function cleanPath(string $requestUri): string // Explicação DevIN: Declara função/método cleanPath, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $path = parse_url($requestUri, PHP_URL_PATH); // Explicação DevIN: Atribui um valor à variável PHP $path.
@@ -19,6 +29,7 @@ final class AccessLogService // Explicação DevIN: Declara o tipo AccessLogServ
         return substr((string) $path, 0, 255) ?: '/'; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método record: registra evidências para acompanhamento no contexto de access log service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function record( // Explicação DevIN: Declara função/método record, com seus parâmetros e comportamento.
         mysqli $db, // Explicação DevIN: Continua expressão ou bloco pertencente a função record.
         string $clientIp, // Explicação DevIN: Continua expressão ou bloco pertencente a função record.
@@ -40,6 +51,7 @@ final class AccessLogService // Explicação DevIN: Declara o tipo AccessLogServ
         elseif ($actorId !== null) throw new InvalidArgumentException('Ator inválido.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
         $path = self::cleanPath($requestUri); // Explicação DevIN: Atribui um valor à variável PHP $path.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'INSERT INTO app_access_logs ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             . '(client_ip,accessed_at,method,path,http_status,actor_type,actor_id,delete_after) ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -53,6 +65,7 @@ final class AccessLogService // Explicação DevIN: Declara o tipo AccessLogServ
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Usar somente REMOTE_ADDR do servidor, nunca cabeçalhos não confiáveis. */
+    // Detalhe DevIN: Método recordCurrent: registra evidências para acompanhamento no contexto de access log service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function recordCurrent(mysqli $db, int $status, ?string $type = null, ?int $id = null): ?int // Explicação DevIN: Declara função/método recordCurrent, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $ip = PrivacyContext::clientIp(); // Explicação DevIN: Atribui um valor à variável PHP $ip.

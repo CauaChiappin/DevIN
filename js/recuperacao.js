@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/recuperacao.js
+ * Finalidade: recuperacao.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 document.addEventListener('DOMContentLoaded', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     // Espera o HTML existir para conectar validações e eventos aos formulários.
     const formRecuperacao = document.getElementById('formRecuperacao'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
@@ -25,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => { // Explicação DevIN: Reg
         [document.getElementById('req-special'), (value) => /[^a-zA-Z0-9]/.test(value)], // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
+    // Detalhe DevIN: Método validarSenha: encapsula uma responsabilidade reutilizável do módulo no contexto de recuperacao. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     function validarSenha() { // Explicação DevIN: Declara função/método validarSenha, com seus parâmetros e comportamento.
         // Reflete os critérios no checklist e compara a confirmação sem substituir a validação do servidor.
         const value = senha?.value || ''; // Explicação DevIN: Declara variável JavaScript value para reutilizar valor ou resultado.

@@ -1,4 +1,13 @@
 <!DOCTYPE html> <!-- Explicação DevIN: Continua atributos ou conteúdo do elemento de marcação aberto anteriormente. -->
+<!--
+  REVISÃO DETALHADA DEVIN — html/cadastro_empresa.html
+  Finalidade: cadastrar dados de empresas.
+  Domínio: páginas e formulários.
+  Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+  Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+  explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+-->
+
 <html lang="pt-br"> <!-- Explicação DevIN: Declara elemento raiz do documento HTML. -->
 <head> <!-- Explicação DevIN: Declara metadados e dependências do documento. -->
     <meta charset="UTF-8"> <!-- Explicação DevIN: Declara metadado de navegação. -->
@@ -16,8 +25,10 @@
     <div class="main-container"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         
         <!-- Mantém os campos da empresa na coluna principal e a ilustração na coluna lateral. -->
+        <!-- Detalhe DevIN: Bloco section: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
         <section class="left-side"> <!-- Explicação DevIN: Declara seção temática. -->
             
+            <!-- Detalhe DevIN: Bloco header: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
             <header class="cadastro-header"> <!-- Explicação DevIN: Declara cabeçalho da seção ou página. -->
                 <a class="brand-logo" href="index.html">Dev<span>IN</span></a> <!-- Explicação DevIN: Declara link de navegação. A linha reúne múltiplos elementos. -->
                 <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
@@ -37,6 +48,7 @@
             <h1 class="page-title">Criar conta</h1> <!-- Explicação DevIN: Declara título principal. -->
 
             <!-- Envia os dados ao PHP para validar CNPJ, e-mail e senha antes da gravação. -->
+            <!-- Detalhe DevIN: Bloco form: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
             <form action="../php/cadastro_empresa.php" method="POST" class="register-form" id="formCadastro"> <!-- Explicação DevIN: Declara formulário de entrada de dados. -->
                 
                 <div class="form-columns"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
@@ -106,12 +118,14 @@
 
             </form> <!-- Explicação DevIN: Fecha elemento form do documento. -->
 
+            <!-- Detalhe DevIN: Bloco footer: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
             <footer class="page-footer"> <!-- Explicação DevIN: Declara rodapé. -->
                 Dev<span>IN</span> | Escola Profª Alcina Dantas Feijão | © DevIN 2026. Todos os direitos reservados. <!-- Explicação DevIN: Declara trecho em linha. -->
             </footer> <!-- Explicação DevIN: Fecha elemento footer do documento. -->
 
         </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
 
+   <!-- Detalhe DevIN: Bloco section: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
    <section class="right-side"> <!-- Explicação DevIN: Declara seção temática. -->
             <div class="mascot-container"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                 <img src="../img/robocadastro.webp" alt="Robô DevIN" class="mascot-img"> <!-- Explicação DevIN: Declara imagem na interface. -->

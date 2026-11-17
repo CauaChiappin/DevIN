@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — tests/admin_token2_permanent_integration.php
+ * Finalidade: admin token2 permanent integration.
+ * Domínio: testes e prevenção de regressões.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 if (getenv('LGPD_TEST_DB') !== 'devin_lgpd_test') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     throw new RuntimeException('Somente banco descartável.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -16,6 +25,7 @@ $_SERVER['REMOTE_ADDR'] = '192.0.2.89'; // Explicação DevIN: Atribui proprieda
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminStepUp.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminToken2Enrollment.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método assertPermanent: encapsula uma responsabilidade reutilizável do módulo no contexto de admin token2 permanent integration. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function assertPermanent(bool $condition, string $reason): void { // Explicação DevIN: Declara função/método assertPermanent, com seus parâmetros e comportamento.
     if (!$condition) throw new RuntimeException('Token 2 permanente: ' . $reason); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -24,6 +34,7 @@ $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variá
 $db->query('ALTER TABLE administrador ADD COLUMN senha_hash VARCHAR(255) NULL'); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
 $login = 'senha-de-login@' . bin2hex(random_bytes(7)); // Explicação DevIN: Atribui um valor à variável PHP $login.
 $loginHash = password_hash($login, PASSWORD_DEFAULT); // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
+// Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
 $stmt = $db->prepare('INSERT INTO administrador (id_administrador,senha_hash) VALUES (?,?)'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
 foreach ([401,402,403,404] as $id) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
     $stmt->bind_param('is', $id, $loginHash); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.

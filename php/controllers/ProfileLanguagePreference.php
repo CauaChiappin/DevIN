@@ -1,6 +1,15 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/ProfileLanguagePreference.php
+ * Finalidade: profile language preference.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 class ProfileLanguagePreference // Explicação DevIN: Declara o tipo ProfileLanguagePreference e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -8,12 +17,14 @@ class ProfileLanguagePreference // Explicação DevIN: Declara o tipo ProfileLan
     private const SUPPORTED_LANGUAGES = ['pt-BR', 'en', 'es']; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
     private const PROFILE_TYPES = ['pessoa', 'empresa', 'adm']; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
 
+    // Detalhe DevIN: Método load: consulta e organiza dados sem presumir que o resultado seja único no contexto de profile language preference. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function load(mysqli $conn, string $tipo, int $id): string // Explicação DevIN: Declara função/método load, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         self::validateProfile($tipo, $id); // Explicação DevIN: Continua expressão ou bloco pertencente a função load.
 
         foreach (['preferencias_dashboard', 'preferencias_perfil'] as $tableName) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
             try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 $stmt = $conn->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                     'SELECT idioma FROM ' . $tableName . ' WHERE ' . ( // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                         $tableName === 'preferencias_dashboard' // Explicação DevIN: Atribui um valor à variável PHP $tableName.
@@ -40,6 +51,7 @@ class ProfileLanguagePreference // Explicação DevIN: Declara o tipo ProfileLan
         return self::DEFAULT_LANGUAGE; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método save: cria registros após checagem da entrada no contexto de profile language preference. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function save(mysqli $conn, string $tipo, int $id, string $idioma): void // Explicação DevIN: Declara função/método save, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         self::validateProfile($tipo, $id); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
@@ -65,6 +77,7 @@ class ProfileLanguagePreference // Explicação DevIN: Declara o tipo ProfileLan
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4' // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
             ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $tableName === 'preferencias_dashboard' // Explicação DevIN: Atribui um valor à variável PHP $tableName.
                     ? 'INSERT INTO preferencias_dashboard (perfil_tipo, perfil_id, idioma)
@@ -80,6 +93,7 @@ class ProfileLanguagePreference // Explicação DevIN: Declara o tipo ProfileLan
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método validateProfile: verifica condições antes de liberar o próximo passo no contexto de profile language preference. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function validateProfile(string $tipo, int $id): void // Explicação DevIN: Declara função/método validateProfile, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!in_array($tipo, self::PROFILE_TYPES, true) || $id <= 0) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Jarvis/JobLanguageAudit.php
+ * Finalidade: identificar termos potencialmente ofensivos sem alterar anúncios.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * Triagem somente de leitura de linguagem de vagas para o JARVIS Admin.
@@ -22,6 +31,7 @@ final class JobLanguageAudit // Explicação DevIN: Declara o tipo JobLanguageAu
         'Exigência subjetiva que merece revisão' => '~\b(?:boa apar[eê]ncia|apar[eê]ncia impec[aá]vel)\b~iu', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
+    // Detalhe DevIN: Método requested: encapsula uma responsabilidade reutilizável do módulo no contexto de identificar termos potencialmente ofensivos sem alterar anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function requested(string $message): bool // Explicação DevIN: Declara função/método requested, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $normalized = mb_strtolower($message, 'UTF-8'); // Explicação DevIN: Atribui um valor à variável PHP $normalized.
@@ -32,6 +42,7 @@ final class JobLanguageAudit // Explicação DevIN: Declara o tipo JobLanguageAu
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** @return list<array{categoria:string,trecho:string,campo:string}> */
+    // Detalhe DevIN: Método reviewText: encapsula uma responsabilidade reutilizável do módulo no contexto de identificar termos potencialmente ofensivos sem alterar anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function reviewText(string $title, string $description): array // Explicação DevIN: Declara função/método reviewText, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $matches = []; // Explicação DevIN: Atribui um valor à variável PHP $matches.
@@ -54,6 +65,7 @@ final class JobLanguageAudit // Explicação DevIN: Declara o tipo JobLanguageAu
         return $matches; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método scan: encapsula uma responsabilidade reutilizável do módulo no contexto de identificar termos potencialmente ofensivos sem alterar anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function scan(mysqli $db): array // Explicação DevIN: Declara função/método scan, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $total = (int) $db->query('SELECT COUNT(*) FROM vagas')->fetch_row()[0]; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
@@ -61,6 +73,7 @@ final class JobLanguageAudit // Explicação DevIN: Declara o tipo JobLanguageAu
         $scanned = 0; // Explicação DevIN: Atribui um valor à variável PHP $scanned.
         $flagged = 0; // Explicação DevIN: Atribui um valor à variável PHP $flagged.
         $results = []; // Explicação DevIN: Atribui um valor à variável PHP $results.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $statement = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'SELECT id_vaga, titulo, descricao FROM vagas ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             . 'WHERE id_vaga < ? ORDER BY id_vaga DESC LIMIT ' . self::BATCH_SIZE // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -99,6 +112,7 @@ final class JobLanguageAudit // Explicação DevIN: Declara o tipo JobLanguageAu
             'amostra' => $results, 'parcial' => $scanned < $total]; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método format: transforma ou normaliza dados para o formato esperado no contexto de identificar termos potencialmente ofensivos sem alterar anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function format(array $scan): string // Explicação DevIN: Declara função/método format, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $out = 'Triagem de linguagem de vagas (consulta real ao MySQL, somente leitura).' . "\n" // Explicação DevIN: Atribui um valor à variável PHP $out.

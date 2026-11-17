@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — tests/jarvis-dock.test.cjs
+ * Finalidade: jarvis dock.test.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 const test = require('node:test'); // Explicação DevIN: Declara variável JavaScript test para reutilizar valor ou resultado.
 const assert = require('node:assert/strict'); // Explicação DevIN: Declara variável JavaScript assert para reutilizar valor ou resultado.

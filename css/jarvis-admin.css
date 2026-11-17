@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — css/jarvis-admin.css
+ * Finalidade: tratar comandos do JARVIS e apresentar confirmações.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 /* JARVIS Admin: componente isolado do dashboard existente. */
 .jarvis-admin{position:fixed;left:18px;bottom:18px;z-index:1100;font-family:inherit;color:#19334d} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .jarvis-admin *{box-sizing:border-box} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */

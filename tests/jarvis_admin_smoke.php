@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — tests/jarvis_admin_smoke.php
+ * Finalidade: jarvis admin smoke.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 // Smoke checks sem banco, rede ou credenciais.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/AdminSkillManager.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -9,6 +18,7 @@ require_once dirname(__DIR__) . '/php/controllers/Jarvis/JarvisAdminRecords.php'
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/JarvisModeration.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método checkJarvis: verifica condições antes de liberar o próximo passo no contexto de jarvis admin smoke. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function checkJarvis(bool $condition, string $message): void // Explicação DevIN: Declara função/método checkJarvis, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!$condition) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

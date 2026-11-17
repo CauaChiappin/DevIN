@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/index-language.js
+ * Finalidade: index language.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 (() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 
@@ -32,6 +41,7 @@
 @media (max-width:1240px){.lang-dd{width:min(68%,220px)}.lang-dd-btn{width:100%}.lang-dd-menu{left:0;right:auto}}
 `;
 
+    // Detalhe DevIN: Método buildDropdown: transforma ou normaliza dados para o formato esperado no contexto de index language. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     function buildDropdown(select) { // Explicação DevIN: Declara função/método buildDropdown, com seus parâmetros e comportamento.
         const style = document.createElement('style'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         style.textContent = dropdownStyles; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.

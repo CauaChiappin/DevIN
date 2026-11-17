@@ -1,6 +1,15 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/gerar_curriculo_api.php
+ * Finalidade: gerar curriculo api.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -11,6 +20,7 @@ require_once __DIR__ . '/controllers/ResumeDocument.php'; // Explicação DevIN:
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 header('Cache-Control: no-store, private'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 
+// Detalhe DevIN: Método responderGeracaoCurriculo: encapsula uma responsabilidade reutilizável do módulo no contexto de gerar curriculo api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function responderGeracaoCurriculo(array $dados, int $status = 200): void // Explicação DevIN: Declara função/método responderGeracaoCurriculo, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     http_response_code($status); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -65,6 +75,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'SELECT nome_social, grau_de_escolaridade, cursos, experiencia, idiomas
              FROM curriculo

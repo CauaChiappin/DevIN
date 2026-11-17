@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — css/site-navigation.css
+ * Finalidade: site navigation.
+ * Domínio: estilos responsivos e aparência.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 .site-menu-toggle { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
     background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */

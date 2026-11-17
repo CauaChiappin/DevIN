@@ -1,13 +1,24 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/JobSchema.php
+ * Finalidade: adaptar consultas ao esquema real de vagas.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
 
+
+// Detalhe DevIN: Método ensureJobCompensationSchema: encapsula uma responsabilidade reutilizável do módulo no contexto de adaptar consultas ao esquema real de vagas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function ensureJobCompensationSchema(mysqli $conn): void // Explicação DevIN: Declara função/método ensureJobCompensationSchema, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $textColumns = [ // Explicação DevIN: Atribui um valor à variável PHP $textColumns.
         'titulo' => 50, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'descricao' => 1000, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('
         SELECT COLUMN_NAME, CHARACTER_MAXIMUM_LENGTH, IS_NULLABLE, COLUMN_DEFAULT,
                CHARACTER_SET_NAME, COLLATION_NAME
@@ -52,6 +63,7 @@ function ensureJobCompensationSchema(mysqli $conn): void // Explicação DevIN: 
         'encerrada_em' => 'ALTER TABLE vagas ADD COLUMN encerrada_em DATETIME NULL', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('
         SELECT COLUMN_NAME
         FROM INFORMATION_SCHEMA.COLUMNS
@@ -78,6 +90,7 @@ function ensureJobCompensationSchema(mysqli $conn): void // Explicação DevIN: 
     atualizarVagasEncerradas($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função ensureJobCompensationSchema.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método atualizarVagasEncerradas: encapsula uma responsabilidade reutilizável do módulo no contexto de adaptar consultas ao esquema real de vagas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function atualizarVagasEncerradas(mysqli $conn): void // Explicação DevIN: Declara função/método atualizarVagasEncerradas, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $conn->query("
@@ -120,6 +133,7 @@ function atualizarVagasEncerradas(mysqli $conn): void // Explicação DevIN: Dec
     "); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método validarSalarioMensal: encapsula uma responsabilidade reutilizável do módulo no contexto de adaptar consultas ao esquema real de vagas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function validarSalarioMensal(string $valor): string // Explicação DevIN: Declara função/método validarSalarioMensal, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!preg_match('/^\d{1,8}(?:\.\d{1,2})?$/D', $valor) || (float) $valor > 99999999.99) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -129,6 +143,7 @@ function validarSalarioMensal(string $valor): string // Explicação DevIN: Decl
     return number_format((float) $valor, 2, '.', ''); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método validarLimiteAprovados: encapsula uma responsabilidade reutilizável do módulo no contexto de adaptar consultas ao esquema real de vagas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function validarLimiteAprovados(string $valor, bool $permitirSemLimite = false): int // Explicação DevIN: Declara função/método validarLimiteAprovados, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $limite = filter_var($valor, FILTER_VALIDATE_INT); // Explicação DevIN: Atribui um valor à variável PHP $limite.
@@ -140,6 +155,7 @@ function validarLimiteAprovados(string $valor, bool $permitirSemLimite = false):
     return $limite; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método validarConfiguracaoEncerramento: encapsula uma responsabilidade reutilizável do módulo no contexto de adaptar consultas ao esquema real de vagas. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function validarConfiguracaoEncerramento(string $criterio, string $dataEncerramento, int $limiteAprovados): ?string // Explicação DevIN: Declara função/método validarConfiguracaoEncerramento, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!in_array($criterio, ['limite', 'prazo', 'qualquer', 'nenhum'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

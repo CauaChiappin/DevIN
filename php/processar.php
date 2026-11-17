@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/processar.php
+ * Finalidade: processar.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once dirname(__DIR__) . '/vendor/autoload.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
@@ -66,6 +75,7 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
 
             foreach ($tabelas as $item) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
                 $sql = "SELECT {$item['id']} AS id, nome, email FROM {$item['tabela']} WHERE email = ? LIMIT 1"; // Explicação DevIN: Atribui um valor à variável PHP $sql.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 $stmt = $conn->prepare($sql); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->bind_param('s', $email); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -93,6 +103,7 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             // Persiste apenas o hash do código e define prazo de validade no banco.
             $codigoHash = hash('sha256', $codigo); // Explicação DevIN: Atribui um valor à variável PHP $codigoHash.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare("UPDATE {$usuario['tabela']} SET token_recuperacao = ?, token_expiracao = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE {$usuario['id_coluna']} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $idUsuario = (int) $usuario['id']; // Explicação DevIN: Atribui um valor à variável PHP $idUsuario.
             $stmt->bind_param('si', $codigoHash, $idUsuario); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -100,6 +111,7 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
             $stmt->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
             if (!MailerHelper::enviarCodigoRecuperacao6($email, (string) $usuario['nome'], $codigo, $idiomaEmail)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 $stmt = $conn->prepare("UPDATE {$usuario['tabela']} SET token_recuperacao = NULL, token_expiracao = NULL WHERE {$usuario['id_coluna']} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->bind_param('i', $idUsuario); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -146,6 +158,7 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
         // Compara o hash em tempo constante e exige exatamente seis caracteres válidos.
         $codigoCorrespondeASessao = strlen($codigoDigitado) === 6 // Explicação DevIN: Atribui um valor à variável PHP $codigoCorrespondeASessao.
             && $hashSessao !== '' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            // Detalhe DevIN: Compara hashes ou segredos sem diferenças de tempo evitáveis.
             && hash_equals($hashSessao, hash('sha256', $codigoDigitado)); // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
 
         if ($email === '') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -169,6 +182,7 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
             ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
             $usuario = null; // Explicação DevIN: Atribui um valor à variável PHP $usuario.
             foreach ($tabelas as $item) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 $stmt = $conn->prepare("SELECT {$item['id']} AS id, nome, email FROM {$item['tabela']} WHERE email = ? AND token_recuperacao = ? AND token_expiracao > NOW() LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->bind_param('ss', $email, $codigoHash); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -190,6 +204,7 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
             $idUsuario = (int) $usuario['id']; // Explicação DevIN: Atribui um valor à variável PHP $idUsuario.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare("UPDATE {$usuario['tabela']} SET token_recuperacao = NULL, token_expiracao = NULL WHERE {$usuario['id_coluna']} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $idUsuario); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -253,12 +268,14 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
             $idiomaEmail = ProfileLanguagePreference::load($conn, $tipo, $idUsuario); // Explicação DevIN: Atribui um valor à variável PHP $idiomaEmail.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare("UPDATE {$tabela} SET token_recuperacao = ?, token_expiracao = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE {$idColuna} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('si', $codigoHash, $idUsuario); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
             if (!MailerHelper::enviarCodigoRecuperacao6($email, $nome, $codigo, $idiomaEmail)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 $stmt = $conn->prepare("UPDATE {$tabela} SET token_recuperacao = NULL, token_expiracao = NULL WHERE {$idColuna} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->bind_param('i', $idUsuario); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -327,6 +344,7 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
         $conn = null; // Explicação DevIN: Atribui um valor à variável PHP $conn.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare("UPDATE {$tabela} SET senha_hash = ? WHERE {$idColuna} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('si', $senhaHash, $idUsuario); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -391,6 +409,7 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
             $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare('SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $idPessoa); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -399,15 +418,18 @@ switch ($acao) { // Explicação DevIN: Inicia repetição ou seleção de casos
 
             // Atualiza o currículo existente ou cria o primeiro registro para esta pessoa.
             if ($jaExiste) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 $stmt = $conn->prepare('UPDATE curriculo SET nome_social = ?, grau_de_escolaridade = ?, cursos = ?, experiencia = ?, idiomas = ? WHERE id_pessoa = ?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->bind_param('sssssi', $nomeSocial, $grauEscolaridade, $cursos, $experiencia, $idiomas, $idPessoa); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 $stmt = $conn->prepare('INSERT INTO curriculo (id_pessoa, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas) VALUES (?, ?, ?, ?, ?, ?)'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->bind_param('isssss', $idPessoa, $nomeSocial, $grauEscolaridade, $cursos, $experiencia, $idiomas); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmtLembrete = $conn->prepare('UPDATE pessoa SET lembrete_enviado = 0 WHERE id_pessoa = ?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmtLembrete->bind_param('i', $idPessoa); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmtLembrete->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.

@@ -1,9 +1,19 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/config/security.php
+ * Finalidade: security.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método isSecureRequest: verifica condições antes de liberar o próximo passo no contexto de security. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function isSecureRequest(): bool // Explicação DevIN: Declara função/método isSecureRequest, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return APP_ENV !== 'development' // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -13,6 +23,7 @@ function isSecureRequest(): bool // Explicação DevIN: Declara função/método
 /**
  * Inicializa a sessão com cookies protegidos.
  */
+// Detalhe DevIN: Método startSecureSession: encapsula uma responsabilidade reutilizável do módulo no contexto de security. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function startSecureSession(): void // Explicação DevIN: Declara função/método startSecureSession, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (session_status() === PHP_SESSION_ACTIVE) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -46,12 +57,14 @@ function startSecureSession(): void // Explicação DevIN: Declara função/mét
     session_start(); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método requestString: encapsula uma responsabilidade reutilizável do módulo no contexto de security. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function requestString(array $source, string $key): string // Explicação DevIN: Declara função/método requestString, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $value = $source[$key] ?? ''; // Explicação DevIN: Atribui um valor à variável PHP $value.
     return is_string($value) ? trim($value) : ''; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método csrfToken: encapsula uma responsabilidade reutilizável do módulo no contexto de security. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function csrfToken(): string // Explicação DevIN: Declara função/método csrfToken, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     startSecureSession(); // Explicação DevIN: Continua expressão ou bloco pertencente a função csrfToken.
@@ -64,6 +77,7 @@ function csrfToken(): string // Explicação DevIN: Declara função/método csr
     return $_SESSION['csrf_token']; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método verifyCsrfToken: verifica condições antes de liberar o próximo passo no contexto de security. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function verifyCsrfToken(?string $token): bool // Explicação DevIN: Declara função/método verifyCsrfToken, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     startSecureSession(); // Explicação DevIN: Continua expressão ou bloco pertencente a função verifyCsrfToken.
@@ -72,9 +86,11 @@ function verifyCsrfToken(?string $token): bool // Explicação DevIN: Declara fu
     return is_string($token) // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
         && $token !== '' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         && !empty($_SESSION['csrf_token']) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        // Detalhe DevIN: Compara hashes ou segredos sem diferenças de tempo evitáveis.
         && hash_equals($_SESSION['csrf_token'], $token); // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método requireValidCsrf: verifica condições antes de liberar o próximo passo no contexto de security. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function requireValidCsrf(): void // Explicação DevIN: Declara função/método requireValidCsrf, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Tenta obter o token do POST ou dos cabeçalhos HTTP (para solicitações AJAX)
@@ -94,6 +110,7 @@ function requireValidCsrf(): void // Explicação DevIN: Declara função/métod
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método secureSessionRegenerate: encapsula uma responsabilidade reutilizável do módulo no contexto de security. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function secureSessionRegenerate(): void // Explicação DevIN: Declara função/método secureSessionRegenerate, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     startSecureSession(); // Explicação DevIN: Continua expressão ou bloco pertencente a função secureSessionRegenerate.

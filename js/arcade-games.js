@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/arcade-games.js
+ * Finalidade: arcade games.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 (() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 

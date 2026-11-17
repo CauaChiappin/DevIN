@@ -1,6 +1,15 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/MailerHelper.php
+ * Finalidade: mailer helper.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 use PHPMailer\PHPMailer\PHPMailer; // Explicação DevIN: Importa ou exporta dependência, nome, classe ou módulo.
 use PHPMailer\PHPMailer\Exception; // Explicação DevIN: Importa ou exporta dependência, nome, classe ou módulo.
@@ -13,6 +22,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
     private const CURRICULO_URL = APP_BASE_URL . '/php/cadastrar_curriculo.php'; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
     private const DASHBOARD_PESSOA_URL = APP_BASE_URL . '/php/pessoa.php'; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
 
+    // Detalhe DevIN: Método mensagem: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function mensagem(string $idioma, string $pt, string $en, string $es): string // Explicação DevIN: Declara função/método mensagem, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if ($idioma === 'en') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -27,6 +37,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
     /**
      * Cria e configura a conexão SMTP do PHPMailer utilizando o .env
      */
+    // Detalhe DevIN: Método getMailer: consulta e organiza dados sem presumir que o resultado seja único no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function getMailer(): PHPMailer // Explicação DevIN: Declara função/método getMailer, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Centraliza a configuração SMTP para que todos os modelos usem o mesmo transporte seguro.
@@ -85,6 +96,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
     /**
      * Envia um e-mail HTML.
      */
+    // Detalhe DevIN: Método enviar: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviar( // Explicação DevIN: Declara função/método enviar, com seus parâmetros e comportamento.
         string $destinatarioEmail, // Explicação DevIN: Continua expressão ou bloco pertencente a função enviar.
         string $destinatarioNome, // Explicação DevIN: Continua expressão ou bloco pertencente a função enviar.
@@ -126,6 +138,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método enviarConfirmacaoDenuncia: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviarConfirmacaoDenuncia( // Explicação DevIN: Declara função/método enviarConfirmacaoDenuncia, com seus parâmetros e comportamento.
         string $destinatarioEmail, // Explicação DevIN: Continua expressão ou bloco pertencente a função enviarConfirmacaoDenuncia.
         string $destinatarioNome, // Explicação DevIN: Continua expressão ou bloco pertencente a função enviarConfirmacaoDenuncia.
@@ -160,6 +173,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
     /**
      * Envia e-mail após o cadastro do currículo.
      */
+    // Detalhe DevIN: Método enviarConfirmacaoCadastroCurriculo: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviarConfirmacaoCadastroCurriculo( // Explicação DevIN: Declara função/método enviarConfirmacaoCadastroCurriculo, com seus parâmetros e comportamento.
         string $emailCandidato, // Explicação DevIN: Continua expressão ou bloco pertencente a função enviarConfirmacaoCadastroCurriculo.
         string $nomeCandidato, // Explicação DevIN: Continua expressão ou bloco pertencente a função enviarConfirmacaoCadastroCurriculo.
@@ -188,6 +202,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
         return self::enviar($emailCandidato, $nomeCandidato, $assunto, $corpo); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método enviarConfirmacaoCadastroEmpresa: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviarConfirmacaoCadastroEmpresa(string $email, string $nome, string $idioma = 'pt-BR'): bool // Explicação DevIN: Declara função/método enviarConfirmacaoCadastroEmpresa, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8'); // Explicação DevIN: Atribui um valor à variável PHP $nomeSeguro.
@@ -200,6 +215,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
         return self::enviar($email, $nome, self::mensagem($idioma, 'Cadastro da empresa concluído - DevIN', 'Company registration completed - DevIN', 'Registro de empresa completado - DevIN'), $corpo); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método enviarConfirmacaoCadastro: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviarConfirmacaoCadastro(string $email, string $nome, string $idioma = 'pt-BR'): bool // Explicação DevIN: Declara função/método enviarConfirmacaoCadastro, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8'); // Explicação DevIN: Atribui um valor à variável PHP $nomeSeguro.
@@ -211,6 +227,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
         return self::enviar($email, $nome, self::mensagem($idioma, 'Cadastro confirmado - DevIN', 'Registration confirmed - DevIN', 'Registro confirmado - DevIN'), $corpo); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método enviarConfirmacaoExclusao: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviarConfirmacaoExclusao(string $email, string $nome, string $tipo, string $idioma = 'pt-BR'): bool // Explicação DevIN: Declara função/método enviarConfirmacaoExclusao, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!in_array($tipo, ['pessoa', 'empresa'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -226,6 +243,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
         return self::enviar($email, $nome, self::mensagem($idioma, 'Exclusão da conta concluída - DevIN', 'Account deletion completed - DevIN', 'Eliminación de cuenta completada - DevIN'), $corpo); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método enviarAvisoAlteracaoSenha: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviarAvisoAlteracaoSenha(string $email, string $nome, string $idioma = 'pt-BR'): bool // Explicação DevIN: Declara função/método enviarAvisoAlteracaoSenha, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $nomeSeguro = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8'); // Explicação DevIN: Atribui um valor à variável PHP $nomeSeguro.
@@ -237,6 +255,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
         return self::enviar($email, $nome, self::mensagem($idioma, 'Sua senha foi alterada - DevIN', 'Your password has been changed - DevIN', 'Tu contraseña fue cambiada - DevIN'), $corpo); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método enviarCodigoRecuperacao6: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviarCodigoRecuperacao6(string $email, string $nome, string $codigo, string $idioma = 'pt-BR'): bool // Explicação DevIN: Declara função/método enviarCodigoRecuperacao6, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Aceita somente seis caracteres alfanuméricos antes de montar a mensagem de recuperação.
@@ -284,6 +303,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
     /**
      * Envia lembrete para pessoa que ainda não criou o currículo.
      */
+    // Detalhe DevIN: Método enviarLembreteCurriculoPendente: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enviarLembreteCurriculoPendente( // Explicação DevIN: Declara função/método enviarLembreteCurriculoPendente, com seus parâmetros e comportamento.
         string $emailCandidato, // Explicação DevIN: Continua expressão ou bloco pertencente a função enviarLembreteCurriculoPendente.
         string $nomeCandidato, // Explicação DevIN: Continua expressão ou bloco pertencente a função enviarLembreteCurriculoPendente.
@@ -315,6 +335,7 @@ class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e inicia s
     /**
      * Notifica as empresas sobre um novo candidato que concluiu o currículo.
      */
+    // Detalhe DevIN: Método notificarEmpresasNovoCandidato: encapsula uma responsabilidade reutilizável do módulo no contexto de mailer helper. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function notificarEmpresasNovoCandidato( // Explicação DevIN: Declara função/método notificarEmpresasNovoCandidato, com seus parâmetros e comportamento.
         mysqli $conn, // Explicação DevIN: Continua expressão ou bloco pertencente a função notificarEmpresasNovoCandidato.
         string $nomeCandidato // Explicação DevIN: Continua expressão ou bloco pertencente a função notificarEmpresasNovoCandidato.

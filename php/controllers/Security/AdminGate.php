@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Security/AdminGate.php
+ * Finalidade: admin gate.
+ * Domínio: controle de acesso.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/AdminStepUp.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -18,6 +27,7 @@ final class AdminGate // Explicação DevIN: Declara o tipo AdminGate e inicia s
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
     private const MAX_PENDING_SECONDS = 300; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
 
+    // Detalhe DevIN: Método interceptAdminPost: encapsula uma responsabilidade reutilizável do módulo no contexto de admin gate. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function interceptAdminPost(): void // Explicação DevIN: Declara função/método interceptAdminPost, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // RBAC permanece independente do Token 2, com validação no servidor.
@@ -92,6 +102,7 @@ final class AdminGate // Explicação DevIN: Declara o tipo AdminGate e inicia s
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Retorna apenas valores previamente submetidos e com CSRF válido. */
+    // Detalhe DevIN: Método consumePending: encapsula uma responsabilidade reutilizável do módulo no contexto de admin gate. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function consumePending(int $adminId): ?array // Explicação DevIN: Declara função/método consumePending, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $pending = $_SESSION['admin_stepup_pending'] ?? null; // Explicação DevIN: Atribui um valor à variável PHP $pending.

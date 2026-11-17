@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/doom.js
+ * Finalidade: doom.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 (function () { // Explicação DevIN: Define função anônima usada como operação ou callback.
   'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 
@@ -37,6 +46,7 @@
   let damageCooldown = 0; // Explicação DevIN: Declara variável JavaScript damageCooldown para reutilizar valor ou resultado.
 
   // Reinicia jogador, inimigos, projéteis e indicadores para iniciar uma partida limpa.
+  // Detalhe DevIN: Método resetGame: encapsula uma responsabilidade reutilizável do módulo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function resetGame() { // Explicação DevIN: Declara função/método resetGame, com seus parâmetros e comportamento.
     player = { x: 2.5, y: 1.5, angle: 0, health: 100 }; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     enemies = [ // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -56,12 +66,14 @@
     canvas.focus(); // Explicação DevIN: Continua expressão ou bloco pertencente a função resetGame.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método setMessage: encapsula uma responsabilidade reutilizável do módulo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function setMessage(text) { // Explicação DevIN: Declara função/método setMessage, com seus parâmetros e comportamento.
     if (!message) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     message.textContent = text; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     message.hidden = text === ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método updateHud: modifica apenas os dados previstos pela operação no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function updateHud() { // Explicação DevIN: Declara função/método updateHud, com seus parâmetros e comportamento.
     if (healthOutput) healthOutput.textContent = String(Math.max(0, Math.ceil(player.health))); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     if (scoreOutput) scoreOutput.textContent = String(score); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -69,29 +81,34 @@
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
   // Converte coordenadas do jogo em célula do mapa e trata bordas como parede.
+  // Detalhe DevIN: Método isWall: verifica condições antes de liberar o próximo passo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function isWall(x, y) { // Explicação DevIN: Declara função/método isWall, com seus parâmetros e comportamento.
     const column = Math.floor(x); // Explicação DevIN: Declara variável JavaScript column para reutilizar valor ou resultado.
     const row = Math.floor(y); // Explicação DevIN: Declara variável JavaScript row para reutilizar valor ou resultado.
     return row < 0 || row >= mapHeight || column < 0 || column >= mapWidth || map[row][column] === '#'; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método canMove: verifica condições antes de liberar o próximo passo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function canMove(x, y, radius) { // Explicação DevIN: Declara função/método canMove, com seus parâmetros e comportamento.
     // Testa os quatro cantos do corpo para evitar atravessar paredes ao mover-se na diagonal.
     return !isWall(x - radius, y - radius) && !isWall(x + radius, y - radius) // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
       && !isWall(x - radius, y + radius) && !isWall(x + radius, y + radius); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método moveEntity: encapsula uma responsabilidade reutilizável do módulo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function moveEntity(entity, dx, dy, radius) { // Explicação DevIN: Declara função/método moveEntity, com seus parâmetros e comportamento.
     // Resolve os eixos separadamente e permite deslizar pela parede quando apenas um eixo está bloqueado.
     if (canMove(entity.x + dx, entity.y, radius)) entity.x += dx; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     if (canMove(entity.x, entity.y + dy, radius)) entity.y += dy; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método pressed: encapsula uma responsabilidade reutilizável do módulo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function pressed(...names) { // Explicação DevIN: Declara função/método pressed, com seus parâmetros e comportamento.
     return names.some((name) => keys.has(name)); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
   // Atualiza movimento e colisões usando delta em segundos, independente da taxa de quadros.
+  // Detalhe DevIN: Método update: modifica apenas os dados previstos pela operação no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function update(delta) { // Explicação DevIN: Declara função/método update, com seus parâmetros e comportamento.
     if (gameState !== 'playing') return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
@@ -145,6 +162,7 @@
     updateHud(); // Explicação DevIN: Continua expressão ou bloco pertencente a função update.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método fire: encapsula uma responsabilidade reutilizável do módulo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function fire() { // Explicação DevIN: Declara função/método fire, com seus parâmetros e comportamento.
     fireCooldown = 0.24; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     shots.push({ // Explicação DevIN: Continua expressão ou bloco pertencente a função fire.
@@ -156,6 +174,7 @@
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método resizeCanvas: encapsula uma responsabilidade reutilizável do módulo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function resizeCanvas() { // Explicação DevIN: Declara função/método resizeCanvas, com seus parâmetros e comportamento.
     const bounds = canvas.getBoundingClientRect(); // Explicação DevIN: Declara variável JavaScript bounds para reutilizar valor ou resultado.
     const ratio = window.devicePixelRatio || 1; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
@@ -169,6 +188,7 @@
     return { width: bounds.width, height: bounds.height }; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método render: transforma ou normaliza dados para o formato esperado no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function render() { // Explicação DevIN: Declara função/método render, com seus parâmetros e comportamento.
     const size = resizeCanvas(); // Explicação DevIN: Declara variável JavaScript size para reutilizar valor ou resultado.
     const cell = Math.min(size.width / mapWidth, size.height / mapHeight); // Explicação DevIN: Declara variável JavaScript cell para reutilizar valor ou resultado.
@@ -240,6 +260,7 @@
     context.stroke(); // Explicação DevIN: Continua expressão ou bloco pertencente a função render.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Método frame: encapsula uma responsabilidade reutilizável do módulo no contexto de doom. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function frame(time) { // Explicação DevIN: Declara função/método frame, com seus parâmetros e comportamento.
     const delta = Math.min((time - lastTime) / 1000 || 0, 0.05); // Explicação DevIN: Declara variável JavaScript delta para reutilizar valor ou resultado.
     lastTime = time; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
