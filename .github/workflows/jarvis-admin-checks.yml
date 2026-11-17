@@ -50,8 +50,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           php -v # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/adm.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          php -l php/arcade.php # Explicação DevIN: Valida sintaxe da página de jogos com os novos cartões.
-          php -l php/arcade_api.php # Explicação DevIN: Valida sintaxe da API de classificação e recordes.
+          php -l php/arcade.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/arcade_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
           php -l php/admin_security_ai.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/components/jarvis-admin-widget.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -63,10 +63,10 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           node --check js/jarvis-dock.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/jarvis-admin.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          node --check js/arcade-games.js # Explicação DevIN: Valida sintaxe do motor principal de jogos.
-          node --check js/arcade-extra-games.js # Explicação DevIN: Valida sintaxe dos minijogos adicionais.
-          node --check js/arcade-library.js # Explicação DevIN: Valida sintaxe da pesquisa e filtros.
-          node --test tests/arcade-extra-games.test.cjs # Explicação DevIN: Garante funcionamento básico dos novos motores.
+          node --check js/arcade-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --check js/arcade-extra-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --check js/arcade-library.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/arcade-extra-games.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
           node --test tests/jarvis-dock.test.cjs tests/jarvis-responsive.test.cjs tests/jarvis-chat-commands.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
       - name: Skill manager and model routing smoke tests # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
