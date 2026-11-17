@@ -12,7 +12,8 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/config/security.php';
+require_once __DIR__ . '/controllers/ArcadeProgressPolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 header('Cache-Control: no-store, private'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -55,14 +56,14 @@ function arcadeGameLimits(): array // Explicação DevIN: Declara função/méto
         'runner' => ['score_per_second' => 350, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         // Limites conservadores de plausibilidade para os novos minijogos.
         // Não substituem validação antitrapaça no servidor; bloqueiam abuso evidente.
-        'pong' => ['score_per_second' => 1200, 'seconds_per_level' => 3], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'dodge' => ['score_per_second' => 120, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'flappy' => ['score_per_second' => 900, 'seconds_per_level' => 7], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'target' => ['score_per_second' => 1800, 'seconds_per_level' => 1], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'collector' => ['score_per_second' => 1800, 'seconds_per_level' => 1], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'racer' => ['score_per_second' => 300, 'seconds_per_level' => 2], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'simon' => ['score_per_second' => 1400, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'basket' => ['score_per_second' => 1800, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'pong' => ['score_per_second' => 1200, 'seconds_per_level' => 3, 'score_per_level' => 125], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'dodge' => ['score_per_second' => 120, 'seconds_per_level' => 5, 'score_per_level' => 150], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'flappy' => ['score_per_second' => 900, 'seconds_per_level' => 7, 'score_per_level' => 120], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'target' => ['score_per_second' => 1800, 'seconds_per_level' => 1, 'score_per_level' => 140], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'collector' => ['score_per_second' => 1800, 'seconds_per_level' => 1, 'score_per_level' => 150], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'racer' => ['score_per_second' => 300, 'seconds_per_level' => 2, 'score_per_level' => 200], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'simon' => ['score_per_second' => 1400, 'seconds_per_level' => 5, 'score_per_level' => 120], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'basket' => ['score_per_second' => 1800, 'seconds_per_level' => 4, 'score_per_level' => 140], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
@@ -151,12 +152,17 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 
         $elapsed = max(1, time() - (int) $gameSession['iniciado_em']); // Explicação DevIN: Atribui um valor à variável PHP $elapsed.
         $limits = arcadeGameLimits()[$game]; // Explicação DevIN: Atribui um valor à variável PHP $limits.
-        $maximumScore = $elapsed * $limits['score_per_second']; // Explicação DevIN: Atribui um valor à variável PHP $maximumScore.
-        $maximumLevel = 1 + (int) floor($elapsed / $limits['seconds_per_level']); // Explicação DevIN: Atribui um valor à variável PHP $maximumLevel.
-        if ($score > $maximumScore || $level > $maximumLevel // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            || $score < (int) ($gameSession['recorde'] ?? 0) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-            || $level < (int) ($gameSession['maior_fase'] ?? 1) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        ) { // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+        // As regras consideram o tempo de sessão, a evolução anterior e
+        // o avanço por pontos dos oito minijogos; não confiam em valores
+        // enviados pelo navegador como prova de uma partida legítima.
+        if (!ArcadeProgressPolicy::isPlausible(
+            $score,
+            $level,
+            $elapsed,
+            (int) ($gameSession['recorde'] ?? 0),
+            (int) ($gameSession['maior_fase'] ?? 1),
+            $limits
+        )) {
             $conn->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             arcadeRespond(['sucesso' => false, 'mensagem' => 'Pontuação ou fase incompatível com o tempo de partida.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
