@@ -178,6 +178,15 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Indicador leve para mostrar chamados abertos no menu do ADM.
+    public static function countOpen(mysqli $db): int
+    {
+        self::requireSchema($db);
+        $row = $db->query('SELECT COUNT(*) AS total FROM support_tickets WHERE status="aberto"')
+            ->fetch_assoc();
+        return (int) ($row['total'] ?? 0);
+    }
+
     // Lista de chamados visível aos ADMs, limitada para não sobrecarregar a página.
     public static function listAdmin(mysqli $db): array // Explicação DevIN: Declara função/método listAdmin, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
