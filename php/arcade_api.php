@@ -65,7 +65,17 @@ function arcadeGameLimits(): array // Explicação DevIN: Declara função/méto
         'tetris' => ['score_per_second' => 5000, 'seconds_per_level' => 12], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'breakout' => ['score_per_second' => 1000, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'memory' => ['score_per_second' => 800, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'runner' => ['score_per_second' => 350, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'runner' => ['score_per_second' => 350, 'seconds_per_level' => 4],
+        // Limites conservadores de plausibilidade para os novos minijogos.
+        // Não substituem validação antitrapaça no servidor; bloqueiam abuso evidente.
+        'pong' => ['score_per_second' => 1200, 'seconds_per_level' => 3],
+        'dodge' => ['score_per_second' => 120, 'seconds_per_level' => 5],
+        'flappy' => ['score_per_second' => 900, 'seconds_per_level' => 7],
+        'target' => ['score_per_second' => 1800, 'seconds_per_level' => 4],
+        'collector' => ['score_per_second' => 1800, 'seconds_per_level' => 4],
+        'racer' => ['score_per_second' => 300, 'seconds_per_level' => 5],
+        'simon' => ['score_per_second' => 1400, 'seconds_per_level' => 5],
+        'basket' => ['score_per_second' => 1800, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
