@@ -15,7 +15,8 @@ require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui de
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/database.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/RateLimiter.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/controllers/ResumeDocument.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/controllers/ResumeDocument.php';
+require_once __DIR__ . '/controllers/ResumeReviewResult.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 header('Cache-Control: no-store, private'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -192,12 +193,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     $providerData = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
     $reviewText = $providerData['candidates'][0]['content']['parts'][0]['text'] ?? null; // Explicação DevIN: Atribui um valor à variável PHP $reviewText.
     $review = is_string($reviewText) ? json_decode($reviewText, true, 512, JSON_THROW_ON_ERROR) : null; // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
-    if (!is_array($review) || !is_string($review['resumo'] ?? null) || !is_string($review['conclusao'] ?? null) || !is_array($review['pontos'] ?? null)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        throw new UnexpectedValueException('Formato de revisão inválido.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    $review['pontos'] = array_slice(array_values(array_filter($review['pontos'], static fn ($item): bool => // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        is_array($item) && is_string($item['titulo'] ?? null) && is_string($item['orientacao'] ?? null) // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
-    )), 0, 8); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
+    // Normaliza o contrato do modelo: resumo, conclusão e até oito sugestões.
+    // Strings extensas ou itens incompletos não chegam diretamente à interface.
+    $review = ResumeReviewResult::normalize($review);
 } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     error_log('Resposta inválida do Gemini na revisão do currículo: ' . $exception->getMessage()); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
     responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'A IA retornou uma resposta inválida. Tente novamente.'], 502); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
