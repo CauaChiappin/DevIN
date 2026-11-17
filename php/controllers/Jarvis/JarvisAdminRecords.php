@@ -82,6 +82,100 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /**
+     * Pesquisa paginada logicamente e ordenada por relevância para escolha do ADM.
+     * Somente nomes, títulos, IDs e nome público da empresa são retornados.
+     * A classificação é heurística, não uma probabilidade estatística.
+     */
+    public static function suggest(mysqli $db, string $kind, string $term): array
+    {
+        if (!in_array($kind, ['vaga','pessoa','empresa'], true)) {
+            throw new InvalidArgumentException('Categoria de pesquisa inválida.');
+        }
+        $term = trim(preg_replace('/\s+/u', ' ', $term) ?? '');
+        if (mb_strlen($term, 'UTF-8') < 2 || mb_strlen($term, 'UTF-8') > 100) {
+            throw new InvalidArgumentException('Pesquise usando entre 2 e 100 caracteres.');
+        }
+        $exactId = ctype_digit($term) && (int) $term > 0 ? (int) $term : 0;
+        $tokens = preg_split('/\s+/u', $term) ?: [];
+        $first = mb_substr($tokens[0] ?? $term, 0, 40, 'UTF-8');
+        $wholeLike = '%' . str_replace(['\\','%','_'], ['\\\\','\\%','\\_'], $term) . '%';
+        $firstLike = '%' . str_replace(['\\','%','_'], ['\\\\','\\%','\\_'], $first) . '%';
+        if ($kind === 'vaga') {
+            $stmt = $db->prepare(
+                'SELECT v.id_vaga AS id, v.titulo AS title, e.nome AS subtitle '
+                . 'FROM vagas v LEFT JOIN empresa e ON e.id_empresa = v.id_empresa '
+                . 'WHERE v.id_vaga=? OR v.titulo LIKE ? OR v.titulo LIKE ? OR e.nome LIKE ? '
+                . 'ORDER BY v.id_vaga DESC LIMIT 120'
+            );
+            $stmt->bind_param('isss', $exactId, $wholeLike, $firstLike, $wholeLike);
+        } else {
+            [$table, $pk] = $kind === 'pessoa'
+                ? ['pessoa','id_pessoa'] : ['empresa','id_empresa'];
+            $stmt = $db->prepare(
+                "SELECT {$pk} AS id, nome AS title FROM {$table} "
+                . "WHERE {$pk}=? OR nome LIKE ? OR nome LIKE ? "
+                . "ORDER BY {$pk} DESC LIMIT 120"
+            );
+            $stmt->bind_param('iss', $exactId, $wholeLike, $firstLike);
+        }
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $result = [];
+        foreach ($rows as $row) {
+            $score = self::suggestionScore(
+                $term, (string) $row['title'], (string) ($row['subtitle'] ?? ''),
+                (int) $row['id'], $exactId
+            );
+            if ($score <= 0) continue;
+            $result[] = [
+                'id' => (int) $row['id'],
+                'kind' => $kind,
+                'title' => mb_substr((string) $row['title'], 0, 120, 'UTF-8'),
+                'subtitle' => mb_substr((string) ($row['subtitle'] ?? ''), 0, 100, 'UTF-8'),
+                'score' => $score,
+                'match' => $score >= 90 ? 'Correspondência exata'
+                    : ($score >= 65 ? 'Correspondência forte' : 'Correspondência relacionada'),
+            ];
+        }
+        usort($result, static fn(array $a, array $b): int =>
+            ($b['score'] <=> $a['score']) ?: ($b['id'] <=> $a['id']));
+        return array_slice($result, 0, 12);
+    }
+
+    public static function suggestionScore(
+        string $query, string $title, string $subtitle = '', int $id = 0, int $exactId = 0
+    ): int {
+        if ($exactId > 0 && $id === $exactId) return 120;
+        $normalize = static function (string $value): string {
+            $lower = mb_strtolower(trim($value), 'UTF-8');
+            $lower = strtr($lower, [
+                'á'=>'a','à'=>'a','â'=>'a','ã'=>'a','ä'=>'a',
+                'é'=>'e','ê'=>'e','è'=>'e','í'=>'i','ì'=>'i',
+                'ó'=>'o','ô'=>'o','õ'=>'o','ú'=>'u','ü'=>'u','ç'=>'c',
+            ]);
+            return trim(preg_replace('/\s+/u', ' ', $lower) ?? '');
+        };
+        $q = $normalize($query);
+        $t = $normalize($title);
+        $sub = $normalize($subtitle);
+        if ($q === '' || $t === '') return 0;
+        if ($t === $q) return 100;
+        if (str_starts_with($t, $q)) return 85;
+        if (str_contains($t, $q)) return 70;
+        if ($sub !== '' && $sub === $q) return 65;
+        if ($sub !== '' && str_contains($sub, $q)) return 55;
+        $words = array_values(array_filter(explode(' ', $q), static fn(string $w): bool => mb_strlen($w) >= 3));
+        if ($words === []) return 0;
+        $found = 0;
+        foreach ($words as $word) {
+            if (str_contains($t, $word)) $found++;
+        }
+        if ($found === 0) return 0;
+        return (int) round(15 + 45 * $found / count($words));
+    }
+
+    /**
      * Resumo explícito selecionado pelo ADM. Somente este texto pode ser
      * incluído na chamada externa de IA após clique em Analisar.
      */
