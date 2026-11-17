@@ -2,6 +2,9 @@ const test=require('node:test'); // Explicação DevIN: Declara variável JavaSc
 const assert=require('node:assert/strict'); // Explicação DevIN: Declara variável JavaScript assert para reutilizar valor ou resultado.
 const fs=require('node:fs'); // Explicação DevIN: Declara variável JavaScript fs para reutilizar valor ou resultado.
 const vm=require('node:vm'); // Explicação DevIN: Declara variável JavaScript vm para reutilizar valor ou resultado.
+// Carrega o JavaScript real do widget; isola apenas o interpretador
+// de comandos para validar nomes, IDs, descrições e casos ambíguos.
+// Os testes não acessam a produção nem enviam/excluem dados.
 const source=fs.readFileSync(require('node:path').join(__dirname,'../js/jarvis-admin.js'),'utf8'); // Explicação DevIN: Declara variável JavaScript source para reutilizar valor ou resultado.
 const begin=source.indexOf('  function parseAdminCommand(message) {'); // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
 const finish=source.indexOf('  function chatActionCard(',begin); // Explicação DevIN: Declara função/método chatActionCard, com seus parâmetros e comportamento.
