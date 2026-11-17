@@ -299,28 +299,28 @@
     const find=new RegExp(prefix+'(?:procure|procurar|pesquise|pesquisar|encontre|buscar|busque|localize|mostre)\\s+(?:(?:por|a|o|as|os|uma|um)\\s+)*'+kindPattern+'\\s+(?:com\\s+(?:o\\s+)?nome\\s+|chamad[oa]s?\\s+|intitulad[oa]s?\\s+)?(.+)$','i').exec(message.trim()); // Explicação DevIN: Declara variável JavaScript find para reutilizar valor ou resultado.
     if(find) return {type:'search',...target(find[1],find[2])}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // If the ADM omitted a category, show possible people, companies or jobs.
-    const simple=message.trim().replace(/^jarvis[,:!\s]*|^por favor[,\s]*/i,'');
-    const gsend=/^(?:envie|enviar|mande|mandar|escreva|escrever)\s+/i.exec(simple);
-    if(gsend && /\bmensagem\b/i.test(simple)) {
-      const raw=simple.replace(/^(?:envie|enviar|mande|mandar|escreva|escrever)\s+/i,'');
-      const rest=raw.replace(/^(?:uma\s+)?mensagem\s+(?:para\s+)?(?:a\s+|o\s+|ao\s+|à\s+)?/i,'');
-      const bodyMatch=/^(.+?)\s+(?:dizendo|que\s+diga|com\s+o?\s*texto)\s*[:,-]?\s*([\s\S]+)$/i.exec(rest);
-      const second=bodyMatch || /^(.+?)\s*:\s*([\s\S]+)$/.exec(rest);
-      return {
-        type:'message',kind:null,id:null,
-        name:(second ? second[1] : rest).trim(),
-        body:second ? second[2].trim() : ''
-      };
-    }
-    const gdelete=/^(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\s+(.+)$/i.exec(simple);
-    if(gdelete) {
-      const what=gdelete[1].trim();
-      const categoryOnly=/^(?:a|o|uma|um)\s+(?:empresa|vaga|pessoa|candidato|candidata)$/i;
-      if(categoryOnly.test(what)) return {type:'incomplete'};
-      return {type:'delete',kind:null,id:null,name:what};
-    }
-    const gfind=/^(?:procure|pesquise|encontre|busque|localize|mostre)\s+(.+)$/i.exec(simple);
-    if(gfind) return {type:'search',kind:null,id:null,name:gfind[1].trim()};
+    const simple=message.trim().replace(/^jarvis[,:!\s]*|^por favor[,\s]*/i,''); // Explicação DevIN: Declara variável JavaScript simple para reutilizar valor ou resultado.
+    const gsend=/^(?:envie|enviar|mande|mandar|escreva|escrever)\s+/i.exec(simple); // Explicação DevIN: Declara variável JavaScript gsend para reutilizar valor ou resultado.
+    if(gsend && /\bmensagem\b/i.test(simple)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      const raw=simple.replace(/^(?:envie|enviar|mande|mandar|escreva|escrever)\s+/i,''); // Explicação DevIN: Declara variável JavaScript raw para reutilizar valor ou resultado.
+      const rest=raw.replace(/^(?:uma\s+)?mensagem\s+(?:para\s+)?(?:a\s+|o\s+|ao\s+|à\s+)?/i,''); // Explicação DevIN: Declara variável JavaScript rest para reutilizar valor ou resultado.
+      const bodyMatch=/^(.+?)\s+(?:dizendo|que\s+diga|com\s+o?\s*texto)\s*[:,-]?\s*([\s\S]+)$/i.exec(rest); // Explicação DevIN: Declara variável JavaScript bodyMatch para reutilizar valor ou resultado.
+      const second=bodyMatch || /^(.+?)\s*:\s*([\s\S]+)$/.exec(rest); // Explicação DevIN: Declara variável JavaScript second para reutilizar valor ou resultado.
+      return { // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        type:'message',kind:null,id:null, // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
+        name:(second ? second[1] : rest).trim(), // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
+        body:second ? second[2].trim() : '' // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
+      }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    const gdelete=/^(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\s+(.+)$/i.exec(simple); // Explicação DevIN: Declara variável JavaScript gdelete para reutilizar valor ou resultado.
+    if(gdelete) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      const what=gdelete[1].trim(); // Explicação DevIN: Declara variável JavaScript what para reutilizar valor ou resultado.
+      const categoryOnly=/^(?:a|o|uma|um)\s+(?:empresa|vaga|pessoa|candidato|candidata)$/i; // Explicação DevIN: Declara variável JavaScript categoryOnly para reutilizar valor ou resultado.
+      if(categoryOnly.test(what)) return {type:'incomplete'}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      return {type:'delete',kind:null,id:null,name:what}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    const gfind=/^(?:procure|pesquise|encontre|busque|localize|mostre)\s+(.+)$/i.exec(simple); // Explicação DevIN: Declara variável JavaScript gfind para reutilizar valor ou resultado.
+    if(gfind) return {type:'search',kind:null,id:null,name:gfind[1].trim()}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     if(new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar|envie|enviar|mande|mandar)\\b','i').test(message)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
