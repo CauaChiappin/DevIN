@@ -16,6 +16,12 @@
     const messageForm = root.querySelector('[data-support-reply]'); // Explicação DevIN: Declara variável JavaScript messageForm para reutilizar valor ou resultado.
     const search = root.querySelector('[data-support-search]'); // Explicação DevIN: Declara variável JavaScript search para reutilizar valor ou resultado.
     const createForm = root.querySelector('[data-support-create]'); // Explicação DevIN: Declara variável JavaScript createForm para reutilizar valor ou resultado.
+    // A seleção da fila ADM e o retorno ao histórico são controles apenas de apresentação.
+    const statusFilter = root.querySelector('[data-support-status-filter]'); // Explicação DevIN: Declara variável JavaScript statusFilter para reutilizar valor ou resultado.
+    const historyPane = root.querySelector('.support-history-pane'); // Explicação DevIN: Declara variável JavaScript historyPane para reutilizar valor ou resultado.
+    const historyBack = root.querySelector('[data-support-history-back]'); // Explicação DevIN: Declara variável JavaScript historyBack para reutilizar valor ou resultado.
+    const replyField = messageForm?.querySelector('[name="message"]'); // Explicação DevIN: Declara variável JavaScript replyField para reutilizar valor ou resultado.
+    const replyCounter = messageForm?.querySelector('[data-support-reply-counter]'); // Explicação DevIN: Declara variável JavaScript replyCounter para reutilizar valor ou resultado.
     const categories = { // Explicação DevIN: Declara variável JavaScript categories para reutilizar valor ou resultado.
         erro:'Erro no site', duvida:'Dúvida', conta:'Conta e acesso', // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         vaga:'Vagas e candidaturas', seguranca:'Segurança e privacidade', // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
@@ -42,10 +48,21 @@
             mobileTabBar.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'}); // Explicação DevIN: Continua expressão ou bloco pertencente a função setMobileView.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    mobileTabs.forEach(tab => tab.addEventListener('click', // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-        () => setMobileView(tab.dataset.supportMobileTarget))); // Explicação DevIN: Continua expressão ou bloco pertencente a função setMobileView.
+    // A pessoa sempre reencontra a lista ao abrir a aba de histórico pelo controle superior.
+    function setHistoryView(view) { // Explicação DevIN: Declara função/método setHistoryView, com seus parâmetros e comportamento.
+        if (historyPane) historyPane.dataset.supportHistoryView = view; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (historyBack) historyBack.hidden = view !== 'detail'; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    mobileTabs.forEach(tab => tab.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (!admin && tab.dataset.supportMobileTarget === 'history') setHistoryView('list'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        setMobileView(tab.dataset.supportMobileTarget); // Explicação DevIN: Continua expressão ou bloco pertencente a função setHistoryView.
+    })); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+    historyBack?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        setHistoryView('list'); // Explicação DevIN: Continua expressão ou bloco pertencente a função setHistoryView.
+        setMobileView('history', true); // Explicação DevIN: Continua expressão ou bloco pertencente a função setHistoryView.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     root.querySelector('[data-support-back]')?.addEventListener('click', // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-        () => setMobileView('inbox', true)); // Explicação DevIN: Continua expressão ou bloco pertencente a função setMobileView.
+        () => setMobileView('inbox', true)); // Explicação DevIN: Continua expressão ou bloco pertencente a função setHistoryView.
 
     // O anexo é apenas descrito no navegador: seu conteúdo nunca é lido em JavaScript.
     const attachmentInput = createForm?.querySelector('[name="attachment"]'); // Explicação DevIN: Declara variável JavaScript attachmentInput para reutilizar valor ou resultado.
@@ -82,6 +99,14 @@
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Consulta JSON autenticada ou FormData CSRF; erro HTTP nunca vira sucesso.
+    // Contador de resposta acompanha o maxlength do navegador, inclusive emojis compostos.
+    function updateReplyCounter() { // Explicação DevIN: Declara função/método updateReplyCounter, com seus parâmetros e comportamento.
+        if (replyField && replyCounter) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            replyCounter.textContent = replyField.value.length + ' / 3000 caracteres'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    replyField?.addEventListener('input', updateReplyCounter); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    updateReplyCounter(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateReplyCounter.
     async function request(query = {}, payload = null) { // Explicação DevIN: Declara função/método request, com seus parâmetros e comportamento.
         const url = new URL(endpoint, location.href); // Explicação DevIN: Declara variável JavaScript url para reutilizar valor ou resultado.
         Object.entries(query).forEach(([key, value]) => url.searchParams.set(key, String(value))); // Explicação DevIN: Continua expressão ou bloco pertencente a função request.
@@ -133,10 +158,13 @@
         if (!list) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         list.replaceChildren(); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
         const term = (search?.value || '').trim().toLocaleLowerCase('pt-BR'); // Explicação DevIN: Declara variável JavaScript term para reutilizar valor ou resultado.
-        const visible = tickets.filter(item => !term || [ // Explicação DevIN: Declara variável JavaScript visible para reutilizar valor ou resultado.
-            item.id, item.requester_name || '', item.requester_email || '', // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
-            label(item), item.description || '' // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
-        ].join(' ').toLocaleLowerCase('pt-BR').includes(term)); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
+        // O filtro por situação é local aos chamados autorizados já retornados pela API.
+        const desiredStatus = statusFilter?.value || 'all'; // Explicação DevIN: Declara variável JavaScript desiredStatus para reutilizar valor ou resultado.
+        const visible = tickets.filter(item => (desiredStatus === 'all' || item.status === desiredStatus) && // Explicação DevIN: Declara variável JavaScript visible para reutilizar valor ou resultado.
+            (!term || [ // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
+                item.id, item.requester_name || '', item.requester_email || '', // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
+                label(item), item.description || '' // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
+            ].join(' ').toLocaleLowerCase('pt-BR').includes(term))); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
         const count = root.querySelector('[data-support-stat-open]'); // Explicação DevIN: Declara variável JavaScript count para reutilizar valor ou resultado.
         if (count) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             const open = tickets.filter(item => item.status === 'aberto').length; // Explicação DevIN: Declara variável JavaScript open para reutilizar valor ou resultado.
@@ -166,7 +194,10 @@
     // Reconsulta detalhes com verificação de propriedade no PHP.
     async function loadDetail(id, revealMobile = false) { // Explicação DevIN: Declara função/método loadDetail, com seus parâmetros e comportamento.
         // Ao tocar em um cartão, mostrar o detalhe na segunda aba do celular.
-        if (revealMobile) setMobileView(admin ? 'detail' : 'history', true); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (revealMobile) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (!admin) setHistoryView('detail'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            setMobileView(admin ? 'detail' : 'history', true); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         selectedId = id; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         renderList(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
         detail.hidden = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -287,6 +318,7 @@
             payload.set('id',messageForm.dataset.ticketId); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             const result = await request({},payload); // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
             messageForm.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+            updateReplyCounter(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             status('Resposta registrada. Mensagem interna: ' + (result.chat_sent ? 'enviada' : 'pendente') // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
                 + '. E-mail: ' + (result.email_sent ? 'enviado' : 'pendente') + '.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             await refresh(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
@@ -303,6 +335,7 @@
         catch(error){status(error.message,true);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     search?.addEventListener('input', renderList); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    statusFilter?.addEventListener('change', renderList); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     root.querySelector('[data-support-refresh]')?.addEventListener('click', refresh); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     refresh(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
 })(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.

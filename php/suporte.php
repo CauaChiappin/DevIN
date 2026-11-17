@@ -90,11 +90,16 @@ $dashboard = $actor['tipo'] === 'pessoa' ? 'pessoa.php' : 'empresa.php'; // Expl
                 </form> <!-- Explicação DevIN: Fecha elemento form do documento. -->
             </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
             <section class="support-panel support-history-pane" aria-labelledby="support-history-title"> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
+                <!-- No celular, a lista recolhe após escolher um chamado para mostrar a resposta sem rolagem longa. -->
+                <div data-support-history-overview> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                 <h2 id="support-history-title">Meus chamados</h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. -->
                 <p class="support-hint">Acompanhe as respostas sem precisar reenviar o problema.</p> <!-- Explicação DevIN: Declara parágrafo. -->
                 <div data-support-list class="support-ticket-list"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                     <p class="support-hint">Carregando seus chamados...</p> <!-- Explicação DevIN: Declara parágrafo. -->
                 </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                <!-- O botão de retorno recupera a lista, sem perder a aba ou refazer o login. -->
+                <button type="button" class="support-secondary support-history-back" data-support-history-back hidden>← Voltar aos meus chamados</button> <!-- Explicação DevIN: Declara botão de ação. -->
                 <div data-support-detail class="support-ticket-detail" hidden></div> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
             </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
         </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
