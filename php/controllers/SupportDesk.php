@@ -87,7 +87,7 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         // Em Apache, nega qualquer acesso HTTP mesmo se a pasta for movida.
         $deny = $real . '/.htaccess'; // Explicação DevIN: Atribui um valor à variável PHP $deny.
         if (!file_exists($deny)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            file_put_contents($deny, "Require all denied\nOptions -Indexes\n", LOCK_EX); // Explicação DevIN: Continua expressão ou bloco pertencente a função storageDirectory.
+            file_put_contents($deny, "Require all denied\n", LOCK_EX); // Explicação DevIN: Continua expressão ou bloco pertencente a função storageDirectory.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return $real; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -282,6 +282,16 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         $row = $stmt->get_result()->fetch_assoc(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
         $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
         if (!$row) throw new DomainException('Resposta não localizada.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        // Confere se o destinatário ainda possui conta ativa antes de notificá-lo.
+        // A consulta atual prevalece sobre e-mails antigos do snapshot do chamado.
+        try {
+            $currentOwner = self::owner($db, [
+                'tipo'=>(string)$row['requester_type'], 'id'=>(int)$row['requester_id']
+            ]);
+        } catch (DomainException $error) {
+            error_log('Suporte: destinatário inativo para resposta ' . $replyId);
+            return ['chat_sent'=>false,'email_sent'=>false];
+        }
         $chat = !empty($row['chat_sent_at']); // Explicação DevIN: Atribui um valor à variável PHP $chat.
         $email = !empty($row['email_sent_at']); // Explicação DevIN: Atribui um valor à variável PHP $email.
         if (!$chat) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -312,7 +322,7 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
             if (MailerHelper::enviar( // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                (string)$row['requester_email'], (string)$row['requester_name'], // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
+                (string)$currentOwner['email'], (string)$currentOwner['name'], // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
                 'Suporte DevIN — resposta ao chamado #' . $row['ticket_id'], $body // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             )) { // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
                 $stmt = $db->prepare('UPDATE support_replies SET email_sent_at=NOW() WHERE id=?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
