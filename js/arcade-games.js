@@ -86,6 +86,9 @@
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: O catálogo externo acrescenta jogos originais sem criar novas permissões de banco.
+    const additionalCatalog = window.DevINArcadeExtraGames?.metadata || {};
+    Object.assign(games, additionalCatalog);
     const cellRect = (x, y, size, left, top) => ({ // Explicação DevIN: Declara variável JavaScript cellRect para reutilizar valor ou resultado.
         x: left + x * size, y: top + y * size, size // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -658,7 +661,16 @@
         }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    const factories = { maze: mazeEngine, snake: snakeEngine, tetris: tetrisEngine, breakout: breakoutEngine, memory: memoryEngine, runner: runnerEngine }; // Explicação DevIN: Declara variável JavaScript factories para reutilizar valor ou resultado.
+    // Detalhe DevIN: Novos motores seguem o contrato key(), pointer(), update() e draw().
+    // A persistência de recordes e a classificação seguem sob controle da API original.
+    const extraFactories = window.DevINArcadeExtraGames?.create({
+        ctx, canvas: activeCanvas, colors, gameOver, saveProgress
+    }).factories || {};
+    const factories = {
+        maze: mazeEngine, snake: snakeEngine, tetris: tetrisEngine,
+        breakout: breakoutEngine, memory: memoryEngine, runner: runnerEngine,
+        ...extraFactories
+    }; // Explicação DevIN: Declara variável JavaScript factories para reutilizar valor ou resultado.
 
     async function launch(game) { // Explicação DevIN: Declara função/método launch, com seus parâmetros e comportamento.
         if (!factories[game]) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -833,6 +845,26 @@
         if (!engine?.ended) engine?.pointer?.(event); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Arraste no canvas para posicionar a plataforma/cesta em dispositivos táteis.
+    activeCanvas.addEventListener('pointermove', (event) => {
+        if (!engine?.ended && event.buttons === 1) engine?.pointer?.(event);
+    });
+    // Alternativa ao teclado físico para aparelhos com tela sensível ao toque.
+    document.querySelectorAll('[data-arcade-key]').forEach((button) => {
+        button.addEventListener('pointerdown', (event) => {
+            event.preventDefault();
+            if (!engine || engine.ended) return;
+            engine.key?.(button.dataset.arcadeKey);
+        });
+    });
+    document.querySelectorAll('[data-launch-game]').forEach((button) => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('[data-launch-game]').forEach((item) => {
+                item.classList.toggle('is-active', item === button);
+                item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
+            });
+        });
+    });
     function frame(timestamp) { // Explicação DevIN: Declara função/método frame, com seus parâmetros e comportamento.
         const delta = lastFrame ? Math.min(timestamp - lastFrame, 80) : 16; // Explicação DevIN: Declara variável JavaScript delta para reutilizar valor ou resultado.
         lastFrame = timestamp; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
