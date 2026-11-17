@@ -298,37 +298,24 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     const find=new RegExp(prefix+'(?:procure|procurar|pesquise|pesquisar|encontre|buscar|busque|localize|mostre)\\s+(?:(?:por|a|o|as|os|uma|um)\\s+)*'+kindPattern+'\\s+(?:com\\s+(?:o\\s+)?nome\\s+|chamad[oa]s?\\s+|intitulad[oa]s?\\s+)?(.+)$','i').exec(message.trim()); // Explicação DevIN: Declara variável JavaScript find para reutilizar valor ou resultado.
     if(find) return {type:'search',...target(find[1],find[2])}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    // Without an explicit category, offer choices across all permitted categories.
-    const genericSend=new RegExp(prefix+'(?:envie|enviar|mande|mandar|escreva|escrever)\\s+(?:uma\\s+)?mensagem\\s+(?:para\\s+)?(?:(?:a|o|ao|à)\\s+)?(.+) // Explicação DevIN: Declara variável JavaScript genericSend para reutilizar valor ou resultado.
-      return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-,'i').exec(message.trim()); // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
-    if(genericSend) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      const bodyMatch=/^(.+?)\s+(?:dizendo|que\s+diga|com\s+(?:o\s+)?texto)\s*[:,-]?\s*([\s\S]+)$/i.exec(genericSend[1]) // Explicação DevIN: Declara variável JavaScript bodyMatch para reutilizar valor ou resultado.
-        || /^(.+?)\s*:\s*([\s\S]+)$/.exec(genericSend[1]); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-      return {type:'message',kind:null,id:null, // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-        name:(bodyMatch ? bodyMatch[1] : genericSend[1]).trim(), // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
-        body:bodyMatch ? bodyMatch[2].trim() : ''}; // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    const genericDelete=new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\\s+(.+) // Explicação DevIN: Declara variável JavaScript genericDelete para reutilizar valor ou resultado.
-      return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-,'i').exec(message.trim()); // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
-    if(genericDelete) return {type:'delete',kind:null,id:null,name:genericDelete[1].trim()}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    const genericFind=new RegExp(prefix+'(?:procure|procurar|pesquise|pesquisar|encontre|buscar|busque|localize|mostre)\\s+(.+) // Explicação DevIN: Declara variável JavaScript genericFind para reutilizar valor ou resultado.
-      return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-,'i').exec(message.trim()); // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
-    if(genericFind) return {type:'search',kind:null,id:null,name:genericFind[1].trim()}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    // If the ADM omitted a category, show possible people, companies or jobs.
+    const simple=message.trim().replace(/^jarvis[,:!\s]*|^por favor[,\s]*/i,'');
+    const gsend=/^(?:envie|enviar|mande|mandar|escreva|escrever)\s+/i.exec(simple);
+    if(gsend && /\bmensagem\b/i.test(simple)) {
+      const raw=simple.replace(/^(?:envie|enviar|mande|mandar|escreva|escrever)\s+/i,'');
+      const rest=raw.replace(/^(?:uma\s+)?mensagem\s+(?:para\s+)?(?:a\s+|o\s+|ao\s+|à\s+)?/i,'');
+      const bodyMatch=/^(.+?)\s+(?:dizendo|que\s+diga|com\s+o?\s*texto)\s*[:,-]?\s*([\s\S]+)$/i.exec(rest);
+      const second=bodyMatch || /^(.+?)\s*:\s*([\s\S]+)$/.exec(rest);
+      return {
+        type:'message',kind:null,id:null,
+        name:(second ? second[1] : rest).trim(),
+        body:second ? second[2].trim() : ''
+      };
+    }
+    const gdelete=/^(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\s+(.+)$/i.exec(simple);
+    if(gdelete) return {type:'delete',kind:null,id:null,name:gdelete[1].trim()};
+    const gfind=/^(?:procure|pesquise|encontre|busque|localize|mostre)\s+(.+)$/i.exec(simple);
+    if(gfind) return {type:'search',kind:null,id:null,name:gfind[1].trim()};
     if(new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar|envie|enviar|mande|mandar)\\b','i').test(message)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
