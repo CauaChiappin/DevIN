@@ -36,6 +36,10 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             if ($action==='drafts') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 jarvisJson(200,['success'=>true,'drafts'=>JarvisPlatformOutbox::listOwn($db,$adminId)]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            // Pesquisa somente de leitura. A sessão de ADM, rate limit e
+            // CSRF das operações POST são conferidos na entrada da API.
+            // Não confie em tipo, texto ou resultado informados pelo navegador.
+            // A busca apenas oferece escolhas; não executa nenhuma mutação.
             if ($action==='suggest') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 $kind = is_string($_GET['kind'] ?? null) ? $_GET['kind'] : ''; // Explicação DevIN: Atribui um valor à variável PHP $kind.
                 $q = is_string($_GET['q'] ?? null) ? $_GET['q'] : ''; // Explicação DevIN: Atribui um valor à variável PHP $q.
