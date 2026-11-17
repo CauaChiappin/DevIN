@@ -2,6 +2,17 @@
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 
+/**
+ * MÓDULO DEVIN — AUTH CONTROLLER.
+ * Responsabilidade: parte do subsistema de dados de perfis, currículos, vagas e interações do DevIN.
+ * Leia os métodos abaixo em sequência: entrada validada -> processamento ->
+ * resposta ao chamador. Comentários detalhados descrevem decisões, limites
+ * e efeitos colaterais; os comentários gerados por linha foram preservados.
+ * Atenção: chamadas de banco e ações administrativas exigem autorização no
+ * endpoint controlador; métodos isolados não constituem permissão para a IA.
+ */
+
+
 require_once __DIR__ . '/../config/database.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../config/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -14,6 +25,8 @@ class AuthController // Explicação DevIN: Declara o tipo AuthController e inic
     // CRIAR SESSÃO E COOKIE JWT
     // =====================================================
 
+    // Detalhamento DevIN: centraliza a operação «establishSession» no contexto de dados de perfis, currículos, vagas e interações do DevIN; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function establishSession(array $auth): void // Explicação DevIN: Declara função/método establishSession, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Troca o ID da sessão após login para impedir reutilização de um identificador anterior.
@@ -51,6 +64,8 @@ class AuthController // Explicação DevIN: Declara o tipo AuthController e inic
     // LOGIN
     // =====================================================
 
+    // Detalhamento DevIN: registra auditoria a operação «login» no contexto de dados de perfis, currículos, vagas e interações do DevIN; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function login(string $email, string $senha): array // Explicação DevIN: Declara função/método login, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Valida formato antes de consultar o banco e devolve sempre a mesma falha para credenciais incorretas.
@@ -75,6 +90,7 @@ class AuthController // Explicação DevIN: Declara o tipo AuthController e inic
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         // password_verify confere a senha contra o hash sem armazenar a senha original.
+        // Detalhamento DevIN: Verificação de senha por hash, evitando comparar ou armazenar a senha em texto puro.
         if (!$usuario || !password_verify($senha, $usuario['senha_hash'])) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new RuntimeException('E-mail ou senha inválidos.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -108,6 +124,8 @@ class AuthController // Explicação DevIN: Declara o tipo AuthController e inic
     // PROCURAR USUÁRIO PELO EMAIL
     // =====================================================
 
+    // Detalhamento DevIN: localiza a operação «findUserByEmail» no contexto de dados de perfis, currículos, vagas e interações do DevIN; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     private static function findUserByEmail(mysqli $conn, string $email): ?array // Explicação DevIN: Declara função/método findUserByEmail, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $sources = [ // Explicação DevIN: Atribui um valor à variável PHP $sources.
@@ -159,6 +177,8 @@ class AuthController // Explicação DevIN: Declara o tipo AuthController e inic
     // EXTRAIR ID DINAMICAMENTE
     // =====================================================
 
+    // Detalhamento DevIN: centraliza a operação «extractId» no contexto de dados de perfis, currículos, vagas e interações do DevIN; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     private static function extractId(array $row): int // Explicação DevIN: Declara função/método extractId, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Os esquemas usam nomes de chave diferentes, então procura as colunas de ID conhecidas.
@@ -183,6 +203,8 @@ class AuthController // Explicação DevIN: Declara o tipo AuthController e inic
     // REDIRECIONAMENTO POR PERFIL
     // =====================================================
 
+    // Detalhamento DevIN: centraliza a operação «redirectByUserType» no contexto de dados de perfis, currículos, vagas e interações do DevIN; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function redirectByUserType(string $tipo): string // Explicação DevIN: Declara função/método redirectByUserType, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Roteia cada perfil para o painel correspondente e usa a página inicial como fallback.
