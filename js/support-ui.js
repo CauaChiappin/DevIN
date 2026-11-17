@@ -51,6 +51,7 @@
     // A pessoa sempre reencontra a lista ao abrir a aba de histórico pelo controle superior.
     function setHistoryView(view) { // Explicação DevIN: Guarda no DOM a visualização da lista ou do chamado sem alterar permissões.
         if (historyPane) historyPane.dataset.supportHistoryView = view; // Explicação DevIN: CSS oculta a lista somente em telas pequenas quando um chamado está aberto.
+        if (historyBack) historyBack.hidden = view !== 'detail'; // Explicação DevIN: Botão de voltar aparece apenas ao ler um chamado.
     } // Explicação DevIN: Finaliza o controlador visual de histórico.
     mobileTabs.forEach(tab => tab.addEventListener('click', () => { // Explicação DevIN: Vincula as duas abas aos respectivos painéis.
         if (!admin && tab.dataset.supportMobileTarget === 'history') setHistoryView('list'); // Explicação DevIN: Evita retornar a um detalhe antigo sem querer.
