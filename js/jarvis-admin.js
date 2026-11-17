@@ -278,11 +278,11 @@
       empresa:'empresa',empresas:'empresa'
     };
     function target(kind, raw) {
-      const cleaned=raw.trim().replace(/^[#:]\\s*/, '').replace(/[!?\\.]+$/, '').trim();
-      const numeric=/^(?:(?:id|n[uú]mero|n[ºo])\\s*[:#-]?\\s*|#\\s*)?(\\d{1,10})$/i.exec(cleaned);
+      const cleaned=raw.trim().replace(/^[#:]\s*/, '').replace(/[!?\.]+$/, '').trim();
+      const numeric=/^(?:(?:id|n[uú]mero|n[ºo])\s*[:#-]?\s*|#\s*)?(\d{1,10})$/i.exec(cleaned);
       const exact=Boolean(numeric);
       const id=exact ? Number(numeric[1]) : null;
-      const name=exact ? '' : cleaned.replace(/^(?:com\\s+o\\s+nome|de\\s+nome|chamad[oa]|intitulad[oa])\\s+/i,'').trim();
+      const name=exact ? '' : cleaned.replace(/^(?:com\s+o\s+nome|de\s+nome|chamad[oa]|intitulad[oa])\s+/i,'').trim();
       return {kind:kinds[kind.toLowerCase()],id,name};
     }
     const deletion=new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\\s+(?:(?:a|o|uma|um)\\s+)?'+kindPattern+'\\s+(.+)$','i').exec(message.trim());
@@ -290,8 +290,8 @@
     const sendPrefix=new RegExp(prefix+'(?:envie|enviar|mande|mandar|escreva|escrever)\\s+(?:uma\\s+)?mensagem\\s+(?:para\\s+)?(?:(?:a|o|ao|à)\\s+)?'+kindPattern+'\\s+(.+)$','i').exec(message.trim());
     if(sendPrefix) {
       const rest=sendPrefix[2];
-      const withText=/^(.+?)\\s+(?:dizendo|que\\s+diga|com\\s+(?:o\\s+)?texto)\\s*[:,-]?\\s*([\\s\\S]+)$/i.exec(rest)
-        || /^(.+?)\\s*:\\s*([\\s\\S]+)$/.exec(rest);
+      const withText=/^(.+?)\s+(?:dizendo|que\s+diga|com\s+(?:o\s+)?texto)\s*[:,-]?\s*([\s\S]+)$/i.exec(rest)
+        || /^(.+?)\s*:\s*([\s\S]+)$/.exec(rest);
       const recipient=target(sendPrefix[1],withText ? withText[1] : rest);
       return {type:recipient.kind==='vaga'?'unsupported':'message',...recipient,
         body:withText ? withText[2].trim() : ''};
