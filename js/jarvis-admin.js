@@ -263,6 +263,525 @@
     conversationSelect.value = String(id); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     status.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // Command routing does not let the language model execute mutations.
+  // Require a concrete numeric ID: names can match multiple real users.
+  function parseAdminCommand(message) {
+    const normalized=message.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+    const kindPattern='(vaga|anuncio|candidato|candidata|pessoa|usuario|usuaria|empresa)';
+    const idPattern='(?:\\s+(?:de\\s+)?(?:id|numero|n[ºo]|#)\\s*[:#-]?\\s*|\\s+#?)(\\d{1,10})\\b';
+    const deletion=new RegExp('^(?:jarvis[,!: ]*|por favor[, ]*)?(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\\s+(?:a\\s+|o\\s+|uma\\s+|um\\s+)?'+kindPattern+idPattern+'[.!?\\s]* // Explicação DevIN: Declara função/método chat, com seus parâmetros e comportamento.
+    if (busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    busy = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    send.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    status.textContent = 'Consultando...'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    if (mode === 'chat') addMessage('user', message); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      const data = await api(root.dataset.endpoint, { // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+        mode, message, page: root.dataset.page || 'inicio', conversation_id: conversationId, // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
+        use_history: $('[data-jarvis-use-history]').checked // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
+      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      addMessage('assistant', data.reply || 'Sem resposta.', data); // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
+      if (mode === 'chat') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        conversationId = Number(data.conversation_id); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        await loadConversations($('[data-jarvis-search]').value.trim()).catch(() => {}); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      status.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+      // O erro não é salvo no histórico, pois o provedor não confirmou a resposta.
+      addMessage('assistant', 'Falha: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
+      status.textContent = 'Solicitação não concluída.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+      busy = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      send.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      if (!panel.hidden && activeTab === 'chat') input.focus(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  const labels = {pending: 'Pendente', in_progress: 'Em análise', done: 'Concluída', cancelled: 'Cancelada'}; // Explicação DevIN: Declara variável JavaScript labels para reutilizar valor ou resultado.
+  function taskButton(label, action, id) { // Explicação DevIN: Declara função/método taskButton, com seus parâmetros e comportamento.
+    const button = document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    button.type = 'button'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    button.textContent = label; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    button.dataset.taskAction = action; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    button.dataset.taskId = String(id); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    return button; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  function renderTasks(rows) { // Explicação DevIN: Declara função/método renderTasks, com seus parâmetros e comportamento.
+    taskList.replaceChildren(); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderTasks.
+    if (!rows.length) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      const info = document.createElement('p'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+      info.className = 'jarvis-admin__tasks-empty'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      info.textContent = 'Nenhuma atividade registrada.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      taskList.append(info); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderTasks.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    rows.forEach(task => { // Explicação DevIN: Continua expressão ou bloco pertencente a função renderTasks.
+      const card = document.createElement('article'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+      card.className = 'jarvis-admin__task'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      const heading = document.createElement('strong'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+      heading.textContent = task.title; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      const state = document.createElement('span'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+      state.className = 'jarvis-admin__task-status'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      state.textContent = labels[task.status] || task.status; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      const desc = document.createElement('p'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+      desc.textContent = task.description || 'Sem descrição.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      const actions = document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+      actions.className = 'jarvis-admin__task-actions'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      if (task.status === 'pending') actions.append(taskButton('Iniciar análise', 'start', task.id)); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      if (task.status === 'in_progress') actions.append(taskButton('Concluir registro', 'complete', task.id)); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      if (['pending', 'in_progress'].includes(task.status)) actions.append(taskButton('Cancelar', 'cancel', task.id)); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      card.append(heading, state, desc, actions); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderTasks.
+      taskList.append(card); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderTasks.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  async function loadTasks() { // Explicação DevIN: Declara função/método loadTasks, com seus parâmetros e comportamento.
+    taskStatus.textContent = 'Carregando...'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      const data = await api(root.dataset.tasks); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+      renderTasks(data.tasks); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadTasks.
+      taskStatus.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+      taskStatus.textContent = error.message; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+
+  // As ferramentas são uma API separada. Nunca há comando de moderação.
+  const toolUrl = root.dataset.tools; // Explicação DevIN: Declara variável JavaScript toolUrl para reutilizar valor ou resultado.
+  const lookupStatus = $('[data-jarvis-lookup-status]'); // Explicação DevIN: Declara variável JavaScript lookupStatus para reutilizar valor ou resultado.
+  const recordResults = $('[data-jarvis-record-results]'); // Explicação DevIN: Declara variável JavaScript recordResults para reutilizar valor ou resultado.
+  const analysisArea = $('[data-jarvis-analysis]'); // Explicação DevIN: Declara variável JavaScript analysisArea para reutilizar valor ou resultado.
+  const outboxStatus = $('[data-jarvis-outbox-status]'); // Explicação DevIN: Declara variável JavaScript outboxStatus para reutilizar valor ou resultado.
+  const outboxList = $('[data-jarvis-outbox-list]'); // Explicação DevIN: Declara variável JavaScript outboxList para reutilizar valor ou resultado.
+  const auditStatus = $('[data-jarvis-audit-status]'); // Explicação DevIN: Declara variável JavaScript auditStatus para reutilizar valor ou resultado.
+  const auditList = $('[data-jarvis-audit-list]'); // Explicação DevIN: Declara variável JavaScript auditList para reutilizar valor ou resultado.
+
+  function toolNotice(node, text) { node.textContent = String(text); } // Explicação DevIN: Declara função/método toolNotice, com seus parâmetros e comportamento.
+
+  async function loadDrafts() { // Explicação DevIN: Declara função/método loadDrafts, com seus parâmetros e comportamento.
+    toolNotice(outboxStatus, 'Carregando rascunhos...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      const data = await api(toolUrl + '?action=drafts'); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+      outboxList.replaceChildren(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+      if (!data.drafts.length) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const info = document.createElement('p'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        info.textContent = 'Nenhuma mensagem preparada.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        outboxList.append(info); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      data.drafts.forEach(row => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+        const card = document.createElement('article'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        card.className = 'jarvis-admin__tool-card'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        const heading = document.createElement('strong'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        heading.textContent = (row.recipient_type === 'pessoa' ? 'Candidato' : 'Empresa') // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          + ' #' + row.recipient_id + ' · ' + row.status + ' · ' + (row.source === 'ai' ? 'IA' : 'ADM'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+        const body = document.createElement('textarea'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        body.rows = 4; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        body.maxLength = 1200; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        body.value = row.body; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        body.readOnly = row.status !== 'draft'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        body.setAttribute('aria-label', 'Conteúdo da mensagem para revisão'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+        const actions = document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        actions.className = 'jarvis-admin__tool-actions'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        if (row.status === 'draft' || row.status === 'failed') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          const send = document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          send.type = 'button'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          send.textContent = 'Revisar e enviar'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          send.addEventListener('click', async () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (send.disabled) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (row.status === 'draft' && body.value.trim() !== row.body) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+              try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+                await api(toolUrl, {action:'revise', draft_id:Number(row.id), body:body.value.trim()}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+              } catch (error) {toolNotice(outboxStatus,error.message);return;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            const recipient = (row.recipient_type === 'pessoa' ? 'candidato' : 'empresa') + ' #' + row.recipient_id; // Explicação DevIN: Declara variável JavaScript recipient para reutilizar valor ou resultado.
+            const confirmed = window.prompt('Confira o destinatário (' + recipient // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+              + ') e o texto acima. Digite ENVIAR para confirmar o envio único:'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+            if (confirmed !== 'ENVIAR') return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            send.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+              await api(toolUrl, {action:'send', draft_id:Number(row.id), confirmed:true, approval:'ENVIAR'}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+              toolNotice(outboxStatus, 'Mensagem enviada como Support DevIN.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+              await loadDrafts(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+            } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+              toolNotice(outboxStatus, error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+              send.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          actions.append(send); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+          const cancel = document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          cancel.type = 'button'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          cancel.textContent = 'Descartar'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          cancel.addEventListener('click', async () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (!window.confirm('Descartar o rascunho?')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            cancel.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+              await api(toolUrl, {action:'cancel', draft_id:Number(row.id)}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+              await loadDrafts(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+            } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+              toolNotice(outboxStatus,error.message);cancel.disabled = false; // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          actions.append(cancel); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        card.append(heading,body,actions); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+        outboxList.append(card); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
+      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      if (!data.drafts.length) toolNotice(outboxStatus, ''); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      else if (outboxStatus.textContent === 'Carregando rascunhos...') toolNotice(outboxStatus,''); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    } catch (error) {toolNotice(outboxStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+  async function loadAudit() { // Explicação DevIN: Declara função/método loadAudit, com seus parâmetros e comportamento.
+    toolNotice(auditStatus,'Carregando histórico...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      const data = await api(toolUrl + '?action=history'); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+      auditList.replaceChildren(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      if (!data.events.length) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const text = document.createElement('p');text.textContent='Ainda não há ações registradas.'; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        auditList.append(text); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      data.events.forEach(row => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        const card=document.createElement('article'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        card.className='jarvis-admin__tool-card jarvis-admin__audit-entry'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        const heading=document.createElement('strong'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        heading.textContent=(row.origin === 'ai'?'IA':row.origin === 'admin'?'ADM':'Sistema') // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          + ' · ADM #' + row.admin_id + ' · ' + row.event_name + ' · ' + row.status; // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        const detail=document.createElement('small'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        detail.textContent=row.created_at + ' · ' + row.target_type // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          + (row.target_id ? ' #' + row.target_id : ''); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        card.append(heading,detail); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        auditList.append(card); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      toolNotice(auditStatus,''); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    } catch (error) {toolNotice(auditStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+  $('[data-jarvis-audit-refresh]').addEventListener('click', () => void loadAudit()); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+  $('[data-jarvis-lookup-form]').addEventListener('submit', async event => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    toolNotice(lookupStatus,'Consultando registros...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    analysisArea.textContent=''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    recordResults.replaceChildren(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    const kind=$('[data-jarvis-record-kind]').value; // Explicação DevIN: Declara variável JavaScript kind para reutilizar valor ou resultado.
+    const query=$('[data-jarvis-record-query]').value.trim(); // Explicação DevIN: Declara variável JavaScript query para reutilizar valor ou resultado.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      const data=await api(toolUrl + '?action=search&kind=' + encodeURIComponent(kind) // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+        + '&q=' + encodeURIComponent(query)); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      data.records.forEach(record => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        const card=document.createElement('article'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        card.className='jarvis-admin__tool-card'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        const title=document.createElement('strong'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        title.textContent='#'+record.id+' · '+(record.title||record.name||kind); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        const subtitle=document.createElement('small'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        subtitle.textContent=[record.subtitle,record.motivo,record.status].filter(Boolean).join(' · '); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        const button=document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        button.type='button';button.textContent='Analisar com IA'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        button.addEventListener('click',async()=>{ // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+          if (button.disabled) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          button.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          toolNotice(lookupStatus,'Analisando registro selecionado...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+          try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            const result=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
+              action:'analyze',kind,id:Number(record.id), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+              question:$('[data-jarvis-record-question]').value.trim() // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            analysisArea.textContent=result.reply; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            toolNotice(lookupStatus,'Análise concluída. Nenhum dado foi alterado.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+          } catch (error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+          finally {button.disabled=false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (['vaga','pessoa','empresa'].includes(kind)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          const remove=document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          remove.type='button'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          remove.textContent='Solicitar exclusão'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          remove.addEventListener('click',async()=>{ // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            if (remove.disabled) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            remove.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+              const result=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
+                action:'preview_delete',kind,id:Number(record.id) // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+              }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+              const proposal=result.proposal; // Explicação DevIN: Declara variável JavaScript proposal para reutilizar valor ou resultado.
+              const label=proposal.record.kind+' #'+proposal.record.id+' — '+proposal.record.title; // Explicação DevIN: Declara variável JavaScript label para reutilizar valor ou resultado.
+              const agreed=window.confirm('Confirme o registro que deseja excluir:\n'+label+ // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                '\n\nEsta exclusão é definitiva e pode afetar dados relacionados. Continuar?'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+              if (!agreed) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                toolNotice(lookupStatus,'Exclusão cancelada; nenhuma alteração realizada.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+              } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+              const typed=window.prompt('Para excluir '+label+', digite EXCLUIR:'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+              if (typed !== 'EXCLUIR') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                toolNotice(lookupStatus,'Confirmação recusada. Nenhuma alteração realizada.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+              } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+              const done=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript done para reutilizar valor ou resultado.
+                action:'confirm_delete',kind,id:Number(record.id), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+                confirmation:proposal.confirmation,approval:typed // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+              }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+              toolNotice(lookupStatus,done.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+              card.remove(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+            } catch(error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            finally {remove.disabled=false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+          }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          card.append(title,subtitle,button,remove); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
+          card.append(title,subtitle,button); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        recordResults.append(card); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      if (!data.records.length) toolNotice(lookupStatus,'Nenhum resultado encontrado.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      else toolNotice(lookupStatus,'Registros encontrados: '+data.records.length+'.'); // Explicação DevIN: Define ramo alternativo para condição anterior.
+    } catch (error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+  $('[data-jarvis-compose-form]').addEventListener('submit',async event=>{ // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    const submit=event.target.querySelector('button[type="submit"]'); // Explicação DevIN: Declara variável JavaScript submit para reutilizar valor ou resultado.
+    if (submit.disabled) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    submit.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    toolNotice(outboxStatus,'Gerando rascunho, sem enviar...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      const result=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
+        action:'generate', // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        recipient_type:$('[data-jarvis-recipient-type]').value, // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        recipient_id:Number($('[data-jarvis-recipient-id]').value), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        brief:$('[data-jarvis-brief]').value.trim() // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      toolNotice(outboxStatus,'Rascunho para '+result.draft.recipient.name+ // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        ' criado. Revise o texto antes de qualquer envio.'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+      await loadDrafts(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    } catch(error) {toolNotice(outboxStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+    finally {submit.disabled=false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+  launcher.addEventListener('click', event => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    if (suppressDragClick && event.detail !== 0) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      suppressDragClick = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    suppressDragClick = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    open(panel.hidden); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  $('[data-jarvis-close]').addEventListener('click', () => open(false)); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+  $('[data-jarvis-expand]').addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    panel.classList.toggle('is-expanded'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    positionPanelNearLauncher(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  root.querySelectorAll('[data-jarvis-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.jarvisTab))); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+  $('[data-jarvis-new]').addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    conversationSelect.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    clearMessages(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    status.textContent = 'Nova conversa iniciada.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    input.focus(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  $('[data-jarvis-delete]').addEventListener('click', async () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    if (busy || !conversationId || !window.confirm('Excluir esta conversa salva?')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      await api(root.dataset.conversations, {action: 'delete', conversation_id: conversationId}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      clearMessages(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      await loadConversations($('[data-jarvis-search]').value.trim()); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      status.textContent = 'Conversa excluída.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    } catch (error) {status.textContent = error.message;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  conversationSelect.addEventListener('change', async () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    if (busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    try {await loadConversation(conversationSelect.value);} // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+    catch (error) {status.textContent = error.message;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  $('[data-jarvis-search]').addEventListener('input', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    window.clearTimeout(searchTimer); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const query = event.target.value.trim(); // Explicação DevIN: Declara variável JavaScript query para reutilizar valor ou resultado.
+    searchTimer = window.setTimeout(() => loadConversations(query).catch(error => {status.textContent = error.message;}), 350); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  $('[data-jarvis-summary]').addEventListener('click', () => chat('summary')); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+  input.addEventListener('input', resize); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+  input.addEventListener('keydown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      $('[data-jarvis-form]').requestSubmit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  $('[data-jarvis-form]').addEventListener('submit', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    const value = input.value.trim(); // Explicação DevIN: Declara variável JavaScript value para reutilizar valor ou resultado.
+    if (!value || busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    input.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    resize(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    if (parseAdminCommand(value)) {
+      if (busy) return;
+      busy=true;send.disabled=true;
+      void handleAdminCommand(value).catch(error=>{
+        addMessage('assistant','Não foi possível processar o comando: '+error.message);
+      }).finally(()=>{busy=false;send.disabled=false;});
+    } else {
+      chat('chat', value);
+    } // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  const taskExamples = { // Explicação DevIN: Declara variável JavaScript taskExamples para reutilizar valor ou resultado.
+    reports: { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      title: 'Analisar denúncias pendentes', // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      description: 'Abrir a aba Reports, revisar os fatos de cada denúncia e registrar uma decisão humana.' // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    jobs: { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      title: 'Revisar vagas publicadas', // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      description: 'Verificar descrições incompletas, anúncios repetidos e informações inconsistentes na lista de vagas.' // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    metrics: { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      title: 'Preparar resumo de indicadores', // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      description: 'Conferir a contagem de candidatos, empresas, vagas e denúncias; preparar um relatório para a equipe.' // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  root.querySelectorAll('[data-jarvis-task-example]').forEach(button => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    button.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+      const example = taskExamples[button.dataset.jarvisTaskExample]; // Explicação DevIN: Declara variável JavaScript example para reutilizar valor ou resultado.
+      if (!example) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      $('[data-jarvis-task-title]').value = example.title; // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      $('[data-jarvis-task-description]').value = example.description; // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      taskStatus.textContent = 'Exemplo preenchido. Revise e toque em Adicionar à fila.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      $('[data-jarvis-task-title]').focus(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  $('[data-jarvis-task-form]').addEventListener('submit', async (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    const title = $('[data-jarvis-task-title]').value.trim(); // Explicação DevIN: Declara variável JavaScript title para reutilizar valor ou resultado.
+    const description = $('[data-jarvis-task-description]').value.trim(); // Explicação DevIN: Declara variável JavaScript description para reutilizar valor ou resultado.
+    if (!title) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    const button = $('[data-jarvis-task-add]'); // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
+    button.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      await api(root.dataset.tasks, {action: 'create', title, description}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      event.target.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      await loadTasks(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    } catch (error) {taskStatus.textContent = error.message;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+    finally {button.disabled = false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  taskList.addEventListener('click', async (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    const button = event.target.closest('[data-task-action]'); // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
+    if (!button) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    const action = button.dataset.taskAction; // Explicação DevIN: Declara variável JavaScript action para reutilizar valor ou resultado.
+    const actionLabel = {start:'iniciar a análise',complete:'concluir o registro',cancel:'cancelar a atividade'}[action]; // Explicação DevIN: Declara variável JavaScript actionLabel para reutilizar valor ou resultado.
+    if (!actionLabel || !window.confirm('Confirmar: ' + actionLabel + '? Isto não modifica vagas ou contas.')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    button.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      await api(root.dataset.tasks, {action, task_id: Number(button.dataset.taskId)}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      await loadTasks(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    } catch (error) {taskStatus.textContent = error.message;button.disabled = false;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  document.addEventListener('keydown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    if (event.key === 'Escape' && !panel.hidden) open(false); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // O chat, histórico e a fila exigem sessão ADM no backend.
+})(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+,'i').exec(normalized);
+    const kinds={vaga:'vaga',anuncio:'vaga',candidato:'pessoa',candidata:'pessoa',pessoa:'pessoa',usuario:'pessoa',usuaria:'pessoa',empresa:'empresa'};
+    if(deletion) return {type:'delete',kind:kinds[deletion[1]],id:Number(deletion[2])};
+    // Message body remains unchanged (diacritics and case preserved).
+    const send=new RegExp('^(?:jarvis[,!: ]*|por favor[, ]*)?(?:envie|enviar|mande|mandar|escreva|escrever)\\s+(?:uma\\s+)?mensagem\\s+(?:para\\s+)?(?:a\\s+|o\\s+|ao\\s+|aos\\s+)?'+kindPattern+idPattern+'\\s*(?:dizendo|com\\s+(?:o\\s+)?texto|:\\s*|que\\s+diga)\\s*','i').exec(normalized);
+    if(send) {
+      const type=kinds[send[1]];
+      const messageMatch=/\b(?:dizendo|com\s+(?:o\s+)?texto|que\s+diga)\b\s*[:,-]?\s*|:\s*/i.exec(message.slice(send[0].length - 5));
+      // For accuracy do not guess the text span from normalized offsets.
+      const textOriginal=message.match(/(?:dizendo|com\s+(?:o\s+)?texto|que\s+diga)\s*[:,-]?\s*([\s\S]+)$/i)
+        || message.match(/:\s*([^:]+)$/);
+      const body=textOriginal ? textOriginal[1].trim() : '';
+      if(type==='vaga') return {type:'unsupported'};
+      return {type:'message',kind:type,id:Number(send[2]),body};
+    }
+    if(/^(?:jarvis[,!: ]*|por favor[, ]*)?(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar|envie|enviar|mande|mandar)\b/i.test(normalized)) {
+      return {type:'incomplete'};
+    }
+    return null;
+  }
+
+  function chatActionCard(text) {
+    addMessage('assistant',text);
+    return messages.lastElementChild;
+  }
+
+  function actionButton(label,callback) {
+    const button=document.createElement('button');
+    button.type='button';
+    button.textContent=label;
+    button.addEventListener('click',()=>void callback(button));
+    return button;
+  }
+
+  async function handleAdminCommand(message) {
+    const command=parseAdminCommand(message);
+    if(!command) return false;
+    addMessage('user',message);
+    if(command.type==='incomplete' || !Number.isSafeInteger(command.id) || command.id<1) {
+      addMessage('assistant','Para evitar atingir a conta errada, informe o tipo e o ID numérico. Exemplos: "Exclua a vaga 15" ou "Envie mensagem para candidato ID 12 dizendo: Olá".');
+      return true;
+    }
+    if(command.type==='unsupported') {
+      addMessage('assistant','O envio é destinado a candidatos ou empresas. Informe um ID válido.');
+      return true;
+    }
+    const toolUrl=root.dataset.tools;
+    if(command.type==='delete') {
+      let preview;
+      try {preview=(await api(toolUrl,{action:'preview_delete',kind:command.kind,id:command.id})).proposal;}
+      catch(error) {addMessage('assistant','Não foi possível preparar a exclusão: '+error.message);return true;}
+      const record=preview.record;
+      const card=chatActionCard('Confirme o registro: '+record.kind+' #'+record.id+' — '+record.title+
+        '. Exclusão definitiva, sujeita a vínculos no banco. Nenhuma alteração foi feita.');
+      const controls=document.createElement('div');
+      controls.className='jarvis-admin__tool-actions';
+      const cancel=actionButton('Cancelar',async()=>{controls.remove();status.textContent='Exclusão cancelada.';});
+      const approve=actionButton('Confirmar exclusão',async button=>{
+        if(!window.confirm('Excluir definitivamente '+record.kind+' #'+record.id+' — '+record.title+'?'))return;
+        if(window.prompt('Digite EXCLUIR para confirmar a exclusão:')!=='EXCLUIR')return;
+        button.disabled=true;
+        try {
+          const result=await api(toolUrl,{action:'confirm_delete',kind:record.kind,id:record.id,confirmation:preview.confirmation,approval:'EXCLUIR'});
+          controls.remove();
+          addMessage('assistant',result.message+' ID #'+record.id+'.');
+        }catch(error){addMessage('assistant','Exclusão não realizada: '+error.message);controls.remove();}
+      });
+      controls.append(approve,cancel);card.append(controls);
+      return true;
+    }
+    if(command.type==='message') {
+      if(!command.body || command.body.length>1200) {
+        addMessage('assistant','Informe o texto completo da mensagem, com até 1.200 caracteres. Exemplo: "Envie mensagem para pessoa ID 12 dizendo: Olá, precisamos revisar sua vaga."');
+        return true;
+      }
+      let draft;
+      try {draft=(await api(toolUrl,{action:'manual_draft',recipient_type:command.kind,recipient_id:command.id,body:command.body})).draft;}
+      catch(error){addMessage('assistant','Não foi possível preparar a mensagem: '+error.message);return true;}
+      const recipient=draft.recipient;
+      const card=chatActionCard('Rascunho para '+recipient.type+' #'+recipient.id+' — '+recipient.name+
+        '. Confira o texto antes de enviar. Nada foi enviado ainda.');
+      const editor=document.createElement('textarea');
+      editor.rows=4;editor.maxLength=1200;editor.value=draft.body;
+      editor.setAttribute('aria-label','Revise a mensagem antes do envio');
+      const controls=document.createElement('div');controls.className='jarvis-admin__tool-actions';
+      const cancel=actionButton('Descartar',async button=>{
+        button.disabled=true;
+        try{await api(toolUrl,{action:'cancel',draft_id:Number(draft.id)});controls.remove();editor.remove();}
+        catch(error){addMessage('assistant','Falha ao descartar: '+error.message);button.disabled=false;}
+      });
+      const approve=actionButton('Revisar e enviar',async button=>{
+        const body=editor.value.trim();
+        if(!body || body.length>1200){addMessage('assistant','Texto inválido.');return;}
+        if(!window.confirm('Enviar esta mensagem para '+recipient.name+' (#'+recipient.id+')?\n\n'+body))return;
+        if(window.prompt('Digite ENVIAR para confirmar o envio único:')!=='ENVIAR')return;
+        button.disabled=true;
+        try{
+          if(body!==draft.body) await api(toolUrl,{action:'revise',draft_id:Number(draft.id),body});
+          await api(toolUrl,{action:'send',draft_id:Number(draft.id),confirmed:true,approval:'ENVIAR'});
+          controls.remove();editor.readOnly=true;
+          addMessage('assistant','Mensagem enviada pelo DevIN a '+recipient.name+' (#'+recipient.id+').');
+        }catch(error){addMessage('assistant','Envio não confirmado: '+error.message);button.disabled=false;}
+      });
+      controls.append(approve,cancel);card.append(editor,controls);
+      return true;
+    }
+    return false;
+  }
+
   async function chat(mode, message = '') { // Explicação DevIN: Declara função/método chat, com seus parâmetros e comportamento.
     if (busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     busy = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
