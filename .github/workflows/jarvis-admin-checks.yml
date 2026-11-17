@@ -164,14 +164,14 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           JARVIS_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_PASSWORD).
         run: php tests/jarvis_controlled_actions_mysql.php # Explicação DevIN: Configura comando de execução (campo run).
 
-      - name: Support center isolation and notification integration
-        env:
-          SUPPORT_TEST_HOST: 127.0.0.1
-          SUPPORT_TEST_DB: devin_support_ci
-          SUPPORT_TEST_USER: root
-          SUPPORT_TEST_PASSWORD: jarvis-ci-only
-          MYSQL_PWD: jarvis-ci-only
-        run: |
-          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_support_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
-          mysql -h 127.0.0.1 -u root devin_support_ci < database/migrations/2026_11_17_005_support_center.sql
-          php tests/support_center_mysql.php
+      - name: Support center isolation and notification integration # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          SUPPORT_TEST_HOST: 127.0.0.1 # Explicação DevIN: Configura propriedade YAML (campo SUPPORT_TEST_HOST).
+          SUPPORT_TEST_DB: devin_support_ci # Explicação DevIN: Configura propriedade YAML (campo SUPPORT_TEST_DB).
+          SUPPORT_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo SUPPORT_TEST_USER).
+          SUPPORT_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo SUPPORT_TEST_PASSWORD).
+          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_PWD).
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_support_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          mysql -h 127.0.0.1 -u root devin_support_ci < database/migrations/2026_11_17_005_support_center.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/support_center_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
