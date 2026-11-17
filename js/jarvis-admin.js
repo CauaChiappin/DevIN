@@ -313,7 +313,12 @@
       };
     }
     const gdelete=/^(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\s+(.+)$/i.exec(simple);
-    if(gdelete) return {type:'delete',kind:null,id:null,name:gdelete[1].trim()};
+    if(gdelete) {
+      const what=gdelete[1].trim();
+      const categoryOnly=/^(?:a|o|uma|um)\s+(?:empresa|vaga|pessoa|candidato|candidata)$/i;
+      if(categoryOnly.test(what)) return {type:'incomplete'};
+      return {type:'delete',kind:null,id:null,name:what};
+    }
     const gfind=/^(?:procure|pesquise|encontre|busque|localize|mostre)\s+(.+)$/i.exec(simple);
     if(gfind) return {type:'search',kind:null,id:null,name:gfind[1].trim()};
     if(new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar|envie|enviar|mande|mandar)\\b','i').test(message)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
