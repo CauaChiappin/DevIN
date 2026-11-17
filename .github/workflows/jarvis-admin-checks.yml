@@ -60,7 +60,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           node --check js/jarvis-dock.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/jarvis-admin.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          node --test tests/jarvis-dock.test.cjs tests/jarvis-responsive.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/jarvis-dock.test.cjs tests/jarvis-responsive.test.cjs tests/jarvis-chat-commands.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
       - name: Skill manager and model routing smoke tests # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           php tests/jarvis_admin_smoke.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
