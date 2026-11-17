@@ -74,6 +74,8 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         if (!is_string($fileContent) || !str_starts_with($fileContent, '%PDF-')) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'O conteúdo deste PDF não pôde ser lido. Envie outro arquivo.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        // Um PDF assinado corretamente é encaminhado em base64 ao Gemini,
+        // que pode considerar a diagramação. Nunca armazenar esse conteúdo em logs.
         $filePart = ['inline_data' => ['mime_type' => $mimeType, 'data' => base64_encode($fileContent)]]; // Explicação DevIN: Atribui um valor à variável PHP $filePart.
     } elseif ($extension === 'docx') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         if (!class_exists(ZipArchive::class) || !class_exists(DOMDocument::class)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -83,13 +85,13 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         if ($archive->open($path) !== true) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'Este arquivo DOCX não pôde ser aberto. Envie outro documento.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        $documentIndex = $archive->locateName('word/document.xml'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        $documentIndex = $archive->locateName('word/document.xml'); // Explicação DevIN: Localiza o XML principal dentro do arquivo ZIP do DOCX antes de validar seu tamanho.
         $documentStats = $documentIndex === false ? false : $archive->statIndex($documentIndex); // Explicação DevIN: Atribui um valor à variável PHP $documentStats.
         if (!is_array($documentStats) || (int) ($documentStats['size'] ?? 0) > 5 * 1024 * 1024) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $archive->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
             responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'O conteúdo deste DOCX excede o limite de análise.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        $documentXml = $archive->getFromName('word/document.xml'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        $documentXml = $archive->getFromName('word/document.xml'); // Explicação DevIN: Extrai o XML interno do DOCX para leitura segura de seus parágrafos.
         $archive->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
         if (!is_string($documentXml) || strlen($documentXml) > 5 * 1024 * 1024) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'O conteúdo deste DOCX não pôde ser analisado.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
