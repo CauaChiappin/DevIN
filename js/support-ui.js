@@ -24,6 +24,63 @@
     let tickets = []; // Explicação DevIN: Declara variável JavaScript tickets para reutilizar valor ou resultado.
     let selectedId = null; // Explicação DevIN: Declara variável JavaScript selectedId para reutilizar valor ou resultado.
 
+    // Controla apenas a navegação visual; o servidor continua verificando permissões.
+    const mobilePanels = root.querySelector('[data-mobile-view]');
+    const mobileTabBar = root.querySelector('[data-support-mobile-tabs]');
+    const mobileMessage = root.querySelector('[data-support-mobile-message]');
+    const mobileTabs = [...root.querySelectorAll('[data-support-mobile-target]')];
+    const isMobile = () => Boolean(window.matchMedia?.('(max-width: 767px)').matches);
+
+    // Uma área por vez no celular; desktop mantém o formulário e o histórico simultâneos.
+    function setMobileView(view, scroll = false) {
+        if (!mobilePanels || !mobileTabs.some(tab => tab.dataset.supportMobileTarget === view)) return;
+        mobilePanels.dataset.mobileView = view;
+        mobileTabs.forEach(tab => tab.setAttribute('aria-pressed',
+            String(tab.dataset.supportMobileTarget === view)));
+        if (scroll && isMobile() && mobileTabBar) {
+            const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+            mobileTabBar.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'});
+        }
+    }
+    mobileTabs.forEach(tab => tab.addEventListener('click',
+        () => setMobileView(tab.dataset.supportMobileTarget)));
+    root.querySelector('[data-support-back]')?.addEventListener('click',
+        () => setMobileView('inbox', true));
+
+    // O anexo é apenas descrito no navegador: seu conteúdo nunca é lido em JavaScript.
+    const attachmentInput = createForm?.querySelector('[name="attachment"]');
+    const attachmentPreview = createForm?.querySelector('[data-support-file-preview]');
+    const attachmentStatus = createForm?.querySelector('[data-support-attachment-status]');
+    const clearFile = createForm?.querySelector('[data-support-clear-file]');
+    const descriptionField = createForm?.querySelector('[name="description"]');
+    const descriptionCounter = createForm?.querySelector('[data-support-description-counter]');
+
+    function updateAttachment() {
+        if (!attachmentInput || !attachmentPreview || !attachmentStatus) return;
+        const file = attachmentInput.files?.[0];
+        attachmentPreview.hidden = !file;
+        attachmentStatus.textContent = file
+            ? file.name + ' · ' + (file.size / (1024 * 1024)).toFixed(2) + ' MB'
+            : '';
+        if (file && file.size > 20 * 1024 * 1024) {
+            attachmentInput.value = '';
+            attachmentPreview.hidden = true;
+            attachmentStatus.textContent = '';
+            status('O anexo ultrapassa 20 MB. Escolha um arquivo menor.', true);
+        }
+    }
+    attachmentInput?.addEventListener('change', updateAttachment);
+    clearFile?.addEventListener('click', () => {
+        attachmentInput.value = '';
+        updateAttachment();
+    });
+    descriptionField?.addEventListener('input', () => {
+        if (descriptionCounter) {
+            descriptionCounter.textContent = Array.from(descriptionField.value).length
+                + ' / 4000 caracteres';
+        }
+    });
+
     // Consulta JSON autenticada ou FormData CSRF; erro HTTP nunca vira sucesso.
     async function request(query = {}, payload = null) { // Explicação DevIN: Declara função/método request, com seus parâmetros e comportamento.
         const url = new URL(endpoint, location.href); // Explicação DevIN: Declara variável JavaScript url para reutilizar valor ou resultado.
@@ -50,11 +107,14 @@
         return element; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    function status(text, isError = false) { // Explicação DevIN: Declara função/método status, com seus parâmetros e comportamento.
-        if (!feedback) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        feedback.textContent = text; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        feedback.classList.toggle('is-error', isError); // Explicação DevIN: Continua expressão ou bloco pertencente a função status.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    function status(text, isError = false) {
+        // A confirmação também aparece acima das abas quando o formulário está oculto.
+        for (const target of [feedback, mobileMessage]) {
+            if (!target) continue;
+            target.textContent = text;
+            target.classList.toggle('is-error', isError);
+        }
+    }
 
     function label(ticket) { // Explicação DevIN: Declara função/método label, com seus parâmetros e comportamento.
         return categories[ticket.category] || ticket.category; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -87,7 +147,7 @@
             return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         visible.forEach(ticket => { // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
-            const item = button('', () => loadDetail(Number(ticket.id)), 'support-ticket'); // Explicação DevIN: Declara variável JavaScript item para reutilizar valor ou resultado.
+            const item = button('', () => loadDetail(Number(ticket.id), true), 'support-ticket'); // Explicação DevIN: Declara variável JavaScript item para reutilizar valor ou resultado.
             item.classList.toggle('is-active', Number(ticket.id) === selectedId); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
             item.append( // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                 node('strong', '#' + ticket.id + ' · ' + label(ticket)), // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
@@ -104,7 +164,9 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Reconsulta detalhes com verificação de propriedade no PHP.
-    async function loadDetail(id) { // Explicação DevIN: Declara função/método loadDetail, com seus parâmetros e comportamento.
+    async function loadDetail(id, revealMobile = false) {
+        // Ao tocar em um cartão, mostrar o detalhe na segunda aba do celular.
+        if (revealMobile) setMobileView(admin ? 'detail' : 'history', true);
         selectedId = id; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         renderList(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
         detail.hidden = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -204,9 +266,10 @@
             data.set('action','create'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             const response = await request({},data); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
             createForm.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+            updateAttachment(); // Remove a prévia do arquivo que foi enviado com sucesso.
             status('Chamado #' + response.id + ' enviado com sucesso.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             await refresh(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
-            await loadDetail(response.id); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+            await loadDetail(response.id, true); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
         } catch (error) { status(error.message, true); } // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
         finally { send.disabled = false; } // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
