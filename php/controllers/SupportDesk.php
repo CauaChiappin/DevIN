@@ -179,13 +179,13 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Indicador leve para mostrar chamados abertos no menu do ADM.
-    public static function countOpen(mysqli $db): int
-    {
-        self::requireSchema($db);
-        $row = $db->query('SELECT COUNT(*) AS total FROM support_tickets WHERE status="aberto"')
-            ->fetch_assoc();
-        return (int) ($row['total'] ?? 0);
-    }
+    public static function countOpen(mysqli $db): int // Explicação DevIN: Declara função/método countOpen, com seus parâmetros e comportamento.
+    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        self::requireSchema($db); // Explicação DevIN: Continua expressão ou bloco pertencente a função countOpen.
+        $row = $db->query('SELECT COUNT(*) AS total FROM support_tickets WHERE status="aberto"') // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+            ->fetch_assoc(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+        return (int) ($row['total'] ?? 0); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Lista de chamados visível aos ADMs, limitada para não sobrecarregar a página.
     public static function listAdmin(mysqli $db): array // Explicação DevIN: Declara função/método listAdmin, com seus parâmetros e comportamento.
@@ -293,14 +293,14 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         if (!$row) throw new DomainException('Resposta não localizada.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         // Confere se o destinatário ainda possui conta ativa antes de notificá-lo.
         // A consulta atual prevalece sobre e-mails antigos do snapshot do chamado.
-        try {
-            $currentOwner = self::owner($db, [
-                'tipo'=>(string)$row['requester_type'], 'id'=>(int)$row['requester_id']
-            ]);
-        } catch (DomainException $error) {
-            error_log('Suporte: destinatário inativo para resposta ' . $replyId);
-            return ['chat_sent'=>false,'email_sent'=>false];
-        }
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            $currentOwner = self::owner($db, [ // Explicação DevIN: Atribui um valor à variável PHP $currentOwner.
+                'tipo'=>(string)$row['requester_type'], 'id'=>(int)$row['requester_id'] // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+        } catch (DomainException $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            error_log('Suporte: destinatário inativo para resposta ' . $replyId); // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
+            return ['chat_sent'=>false,'email_sent'=>false]; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $chat = !empty($row['chat_sent_at']); // Explicação DevIN: Atribui um valor à variável PHP $chat.
         $email = !empty($row['email_sent_at']); // Explicação DevIN: Atribui um valor à variável PHP $email.
         if (!$chat) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

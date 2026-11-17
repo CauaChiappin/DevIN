@@ -741,7 +741,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
  <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/site-navigation.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
     <!-- Badge de atendimento visível em todas as telas do administrador. -->
-    <script src="../js/support-badge.js?v=<?= filemtime(__DIR__ . '/../js/support-badge.js') ?>" defer></script>
+    <script src="../js/support-badge.js?v=<?= filemtime(__DIR__ . '/../js/support-badge.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/dashboard-menu.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->

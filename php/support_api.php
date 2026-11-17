@@ -47,10 +47,10 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         if ($_SERVER['REQUEST_METHOD'] === 'GET') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $action = (string)($_GET['action'] ?? 'list'); // Explicação DevIN: Atribui um valor à variável PHP $action.
-            if ($action === 'count' && $actor['tipo'] === 'adm') {
+            if ($action === 'count' && $actor['tipo'] === 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 // Endpoint mínimo para atualizar o badge do menu administrativo.
-                supportJson(200, ['sucesso'=>true,'count'=>SupportDesk::countOpen($db)]);
-            }
+                supportJson(200, ['sucesso'=>true,'count'=>SupportDesk::countOpen($db)]); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             if ($action === 'list') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 // A consulta de ADM permite visão geral; usuários veem somente os próprios registros.
                 $rows = $actor['tipo'] === 'adm' // Explicação DevIN: Atribui um valor à variável PHP $rows.
