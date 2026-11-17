@@ -282,7 +282,16 @@
    * Texto livre é mantido no navegador; a IA externa não decide os alvos.
    */
   // Detalhe DevIN: Transforma texto escrito no chat em intenção controlada; não consulta o banco nem permite que um modelo decida qual registro modificar.
-  function parseAdminCommand(message) { // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
+  function parseAdminCommand(message) {
+    // O pedido explícito de suporte permite ao JARVIS consultar dados
+    // autorizados, sem passar nomes/e-mails de usuários ao modelo remoto.
+    const supportRequest = message.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/^jarvis[,!: ]*/, '').trim();
+    if (/^(?:(?:mostre|mostrar|liste|listar|veja|ver|consulte|consultar|busque|buscar|quais sao)\s+)?(?:(?:os|as|meus)\s+)?(?:chamados?|tickets?|mensagens?)\s+(?:do\s+|de\s+)?suporte\b/.test(supportRequest)
+        || /^(?:suporte|chamados de suporte)[.!?\s]*$/.test(supportRequest)) {
+      return {type:'support',name:'suporte',id:0};
+    }
+ // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
     // Detalhe DevIN: Define expressões aceitas para vagas, pessoas e empresas, incluindo plural e variações com acentos; não permite nomes arbitrários de tabelas.
     const kindPattern='(vagas?|an[uú]ncios?|candidatos?|candidatas?|pessoas?|usu[aá]rios?|usu[aá]rias?|empresas?)'; // Explicação DevIN: Declara variável JavaScript kindPattern para reutilizar valor ou resultado.
     // Detalhe DevIN: Aceita formas educadas como Jarvis e por favor sem obrigar o ADM a decorar uma sintaxe rígida.
@@ -394,6 +403,39 @@
     // Detalhe DevIN: Exibe a pergunta do ADM somente uma vez; a seleção posterior não duplica a mensagem no histórico visual.
     if(!selected) addMessage('user',message); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Detalhe DevIN: Recusa categorias incompatíveis com a operação, como tentar enviar mensagem diretamente a uma vaga.
+    if(command.type==='support') {
+      // Esta consulta não executa ações de escrita nem expõe anexos ao modelo.
+      try {
+        const data=await api(root.dataset.tools+'?action=support');
+        const rows=data.tickets || [];
+        const card=chatActionCard(rows.length
+          ? 'Chamados de suporte recebidos: '+rows.length+' registros recentes.'
+          : 'Não há chamados recentes no suporte.');
+        const list=document.createElement('div');
+        list.className='jarvis-admin__tool-results';
+        card.append(list);
+        for(const ticket of rows){
+          const item=document.createElement('article');
+          item.className='jarvis-admin__tool-card';
+          const name=document.createElement('strong');
+          name.textContent='#'+ticket.id+' · '+ticket.requester_name+' · '+ticket.requester_email;
+          const description=document.createElement('p');
+          description.textContent='Categoria: '+ticket.category+' · '+ticket.status+' · '+ticket.description;
+          const details=actionButton('Ver respostas',async button=>{
+            button.disabled=true;
+            try {
+              const response=await api(root.dataset.tools+'?action=support&id='+encodeURIComponent(ticket.id));
+              const replies=(response.replies||[]).map(r=>'ADM: '+r.message).join('\n\n');
+              addMessage('assistant','Chamado #'+ticket.id+'\n'+response.ticket.description+
+                '\n\n'+(replies || 'Ainda sem respostas.'));
+            } catch(error) { addMessage('assistant',error.message); }
+            finally { button.disabled=false; }
+          });
+          item.append(name,description,details);list.append(item);
+        }
+      } catch(error) { addMessage('assistant','Não foi possível consultar o suporte: '+error.message); }
+      return true;
+    }
     if(command.type==='unsupported') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       addMessage('assistant','Mensagens podem ser enviadas a candidatos ou empresas, não a vagas.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
       return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
