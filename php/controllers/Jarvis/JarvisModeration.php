@@ -1,6 +1,17 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 
+/**
+ * MÓDULO DEVIN — JARVIS MODERATION.
+ * Responsabilidade: parte do subsistema de orquestração das ferramentas e respostas do JARVIS para administradores.
+ * Leia os métodos abaixo em sequência: entrada validada -> processamento ->
+ * resposta ao chamador. Comentários detalhados descrevem decisões, limites
+ * e efeitos colaterais; os comentários gerados por linha foram preservados.
+ * Atenção: chamadas de banco e ações administrativas exigem autorização no
+ * endpoint controlador; métodos isolados não constituem permissão para a IA.
+ */
+
+
 /** Fluxo de exclusão supervisionado por ADM, nunca pelo modelo externo. */
 final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModeration e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -12,12 +23,16 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
     // Detalhe DevIN: Valida se o tipo escolhido está entre vaga, pessoa e empresa; impede exclusões de administradores ou tabelas extras.
+    // Detalhamento DevIN: centraliza a operação «validKind» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function validKind(string $kind): bool // Explicação DevIN: Declara função/método validKind, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return isset(self::MAP[$kind]); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Detalhe DevIN: Lê somente ID e título/nome para apresentar prévia; FOR UPDATE opcional é usado quando a operação deve bloquear a linha.
+    // Detalhamento DevIN: centraliza a operação «target» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function target(mysqli $db, string $kind, int $id, bool $lock = false): ?array // Explicação DevIN: Declara função/método target, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Detalhe DevIN: Recusa tipo desconhecido e IDs abaixo de 1 para impedir consultas perigosas ou sem alvo.
@@ -29,6 +44,7 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
         $query = "SELECT {$primary} AS id, {$title} AS title FROM {$table} " // Explicação DevIN: Atribui um valor à variável PHP $query.
             . "WHERE {$primary}=? LIMIT 1" . ($lock ? " FOR UPDATE" : ""); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         // Detalhe DevIN: Prepara SQL cujo esquema é pré-aprovado; o ID fornecido pelo administrador é ligado depois como parâmetro.
+        // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
         $stmt = $db->prepare($query); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -47,6 +63,8 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
      * O título só é exibido; ele nunca é executado como instrução.
      */
     // Detalhe DevIN: A primeira etapa nunca exclui: cria uma proposta com nonce aleatório, vínculo com administrador e validade de 180 s.
+    // Detalhamento DevIN: prepara a operação «prepare» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function prepare(mysqli $db, int $admin, string $kind, int $id): array // Explicação DevIN: Declara função/método prepare, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Detalhe DevIN: Confirma a existência do registro antes de oferecer botão de exclusão.
@@ -55,6 +73,7 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
             throw new DomainException('Registro não encontrado.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Detalhe DevIN: Cria um token de uso único imprevisível; a sessão guarda apenas seu hash SHA-256, não o valor entregue ao frontend.
+        // Detalhamento DevIN: Geração criptograficamente segura de bytes aleatórios para tokens, nonces ou segredos.
         $nonce = bin2hex(random_bytes(24)); // Explicação DevIN: Atribui um valor à variável PHP $nonce.
         // Detalhe DevIN: Associa token, ADM, categoria, ID, resumo do título e expiração à sessão autenticada.
         $_SESSION['jarvis_delete_pending'] = [ // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -76,6 +95,8 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Detalhe DevIN: A segunda etapa só pode excluir após validar proposta não expirada, nonce correto, ADM, categoria e ID.
+    // Detalhamento DevIN: executa a operação «execute» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function execute( // Explicação DevIN: Declara função/método execute, com seus parâmetros e comportamento.
         mysqli $db, // Explicação DevIN: Continua expressão ou bloco pertencente a função execute.
         int $admin, // Explicação DevIN: Continua expressão ou bloco pertencente a função execute.
@@ -90,6 +111,7 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
         // Detalhe DevIN: Confere todos os campos de confirmação, inclusive a palavra EXCLUIR, para bloquear mutações não intencionais.
         if (!is_array($pending) || $approval !== 'EXCLUIR' // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             || !preg_match('/^[a-f0-9]{48}$/D', $nonce) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            // Detalhamento DevIN: Comparação resistente a diferenças de tempo, usada para verificar segredo/token sem exposição.
             || !hash_equals((string) ($pending['nonce_hash'] ?? ''), hash('sha256', $nonce)) // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
             || (int) ($pending['expires_at'] ?? 0) < time() // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             || (int) ($pending['admin'] ?? 0) !== $admin // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -103,16 +125,19 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
             throw new InvalidArgumentException('Alvo inválido.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Detalhe DevIN: Inicia transação: a exclusão e o registro de auditoria devem ser confirmados juntos ou revertidos.
+        // Detalhamento DevIN: Início de transação: alterações relacionadas precisam ser confirmadas juntas ou desfeitas em caso de erro.
         $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função execute.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             // Detalhe DevIN: Recarrega e bloqueia a mesma linha com FOR UPDATE, evitando agir com base em prévia desatualizada.
             $record = self::target($db, $kind, $id, true); // Explicação DevIN: Atribui um valor à variável PHP $record.
             // Detalhe DevIN: Cancela se o registro desapareceu ou seu título mudou desde a proposta original.
             if ($record === null // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                // Detalhamento DevIN: Comparação resistente a diferenças de tempo, usada para verificar segredo/token sem exposição.
                 || !hash_equals((string) $pending['title_hash'], hash('sha256', $record['title']))) { // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
                 throw new DomainException('Registro alterado ou indisponível. Faça nova consulta.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             // Detalhe DevIN: Remove somente uma linha da tabela autorizada e do ID confirmado; vínculos do banco ainda podem impedir a operação.
+            // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
             $stmt = $db->prepare("DELETE FROM {$table} WHERE {$primary}=?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -123,6 +148,7 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
                 throw new DomainException('Não foi possível excluir o registro selecionado.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             // Detalhe DevIN: Prepara o evento de auditoria na mesma transação, com ADM, alvo e tipo da operação executada.
+            // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'INSERT INTO jarvis_moderation_audit ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . '(admin_id,target_type,target_id,action_code) VALUES (?,?,?,?)' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -132,11 +158,13 @@ final class JarvisModeration // Explicação DevIN: Declara o tipo JarvisModerat
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função execute.
             // Detalhe DevIN: Confirma a transação apenas após exclusão e auditoria terem sido concluídas corretamente.
+            // Detalhamento DevIN: Confirmação transacional: só persiste o conjunto de alterações depois da sequência anterior concluir.
             $db->commit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função execute.
             return ['success' => true, 'message' => 'Registro excluído após confirmação do administrador.', // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
                 'record' => $record]; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         } catch (Throwable $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
             // Detalhe DevIN: Qualquer erro desfaz alterações não confirmadas para preservar consistência entre os dados e o histórico.
+            // Detalhamento DevIN: Reversão transacional: restaura o estado do banco quando uma etapa falha.
             $db->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função execute.
             throw $error; // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
