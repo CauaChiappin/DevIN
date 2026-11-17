@@ -22,6 +22,17 @@
 8. Acesse o painel de ADM, confira o contador, a caixa de entrada e a resposta por e-mail + Mensagens. Teste o JARVIS com `DEVIN_JARVIS_ACTIONS_ENABLED=1` **apenas depois** de migrações e permissões existentes validadas.
 9. Verifique que nenhuma URL pública em `/storage/` ou nos arquivos físicos entregue anexos diretamente. A regra existente no `.htaccess` raiz bloqueia a pasta; um `.htaccess` adicional é criado pelo PHP na pasta de anexos.
 
+## Experiência no celular
+
+- O formulário do candidato ou da empresa abre na aba **Novo chamado**; a aba **Meus chamados** mostra histórico e respostas.
+- Depois de enviar, o histórico do chamado recém-criado aparece automaticamente. A confirmação de envio permanece visível acima das abas, evitando que se perca ao esconder o formulário.
+- O arquivo opcional mostra nome e tamanho antes do envio e tem um botão **Remover**. O limite real continua em 20 MiB no backend, sem leitura local do conteúdo.
+- Há contador de até 4.000 caracteres no relato para facilitar a escrita no teclado móvel.
+- ADMs usam **Caixa de entrada** e **Atendimento** em abas separadas no celular, com retorno **Voltar à lista** e sem exigir rolagem horizontal.
+- Campos textuais possuem fonte de 16 px (evita zoom involuntário do iOS), alvos de toque de 48 px e espaçamento para barra de gestos Android.
+- No desktop, a divisão em duas colunas permanece. As abas são ocultadas acima de 767 px de largura.
+- Testar manualmente com viewport de 320 px, 360 px, 390 px, 768 px e desktop, incluindo teclado aberto, nomes de anexos longos e rotação de tela. Testes automatizados verificam o contrato, mas não equivalem a teste visual de navegador.
+
 ## Segurança e limitações
 
 - Identificação (nome e e-mail) vem do banco vinculado à sessão; nunca do formulário.
