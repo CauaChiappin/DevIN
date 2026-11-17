@@ -286,7 +286,9 @@ final class JarvisAdminRecords // Explicação DevIN: Declara o tipo JarvisAdmin
             return self::recipient($db, $kind, $id); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $queries = [ // Explicação DevIN: Atribui um valor à variável PHP $queries.
-            'vaga' => 'SELECT id_vaga AS id,titulo AS title,LEFT(descricao,450) AS description ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            // Para análise contextual, disponibilizar até 3.000 caracteres da vaga; o
+            // corte anterior de 450 caracteres escondia requisitos importantes.
+            'vaga' => 'SELECT id_vaga AS id,titulo AS title,LEFT(descricao,3000) AS description ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . 'FROM vagas WHERE id_vaga=? LIMIT 1', // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             'reports_vagas' => 'SELECT id,motivo,status,id_vaga,titulo_vaga AS title ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . 'FROM reports_vagas WHERE id=? LIMIT 1', // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
