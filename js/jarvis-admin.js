@@ -272,9 +272,13 @@
    * Sem ID, a intenção não identifica por si só uma linha do banco.
    * Texto livre é mantido no navegador; a IA externa não decide os alvos.
    */
+  // Detalhe DevIN: Transforma texto escrito no chat em intenção controlada; não consulta o banco nem permite que um modelo decida qual registro modificar.
   function parseAdminCommand(message) { // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
+    // Detalhe DevIN: Define expressões aceitas para vagas, pessoas e empresas, incluindo plural e variações com acentos; não permite nomes arbitrários de tabelas.
     const kindPattern='(vagas?|an[uú]ncios?|candidatos?|candidatas?|pessoas?|usu[aá]rios?|usu[aá]rias?|empresas?)'; // Explicação DevIN: Declara variável JavaScript kindPattern para reutilizar valor ou resultado.
+    // Detalhe DevIN: Aceita formas educadas como Jarvis e por favor sem obrigar o ADM a decorar uma sintaxe rígida.
     const prefix='^(?:(?:jarvis)[,:!\\s]*|(?:por favor)[,\\s]*)?'; // Explicação DevIN: Declara variável JavaScript prefix para reutilizar valor ou resultado.
+    // Detalhe DevIN: Converte sinônimos para as três categorias internas autorizadas; por exemplo, candidato e pessoa usam a mesma tabela.
     const kinds={ // Explicação DevIN: Declara variável JavaScript kinds para reutilizar valor ou resultado.
       vaga:'vaga',vagas:'vaga',anuncio:'vaga','anúncio':'vaga', // Explicação DevIN: Continua expressão ou bloco pertencente a função parseAdminCommand.
       anuncios:'vaga','anúncios':'vaga',candidato:'pessoa',candidatos:'pessoa', // Explicação DevIN: Continua expressão ou bloco pertencente a função parseAdminCommand.
@@ -283,33 +287,48 @@
       usuaria:'pessoa','usuária':'pessoa',usuarias:'pessoa','usuárias':'pessoa', // Explicação DevIN: Continua expressão ou bloco pertencente a função parseAdminCommand.
       empresa:'empresa',empresas:'empresa' // Explicação DevIN: Continua expressão ou bloco pertencente a função parseAdminCommand.
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Separa tipo e identificador informado; pode retornar ID ou nome, nunca os dois como indicação inequívoca de uma conta.
     function target(kind, raw) { // Explicação DevIN: Declara função/método target, com seus parâmetros e comportamento.
+      // Detalhe DevIN: Retira marcadores como #, espaços e pontuação no fim sem alterar o cadastro armazenado no MySQL.
       const cleaned=raw.trim().replace(/^[#:]\s*/, '').replace(/[!?\.]+$/, '').trim(); // Explicação DevIN: Declara variável JavaScript cleaned para reutilizar valor ou resultado.
+      // Detalhe DevIN: Reconhece apenas IDs inteiros explícitos ou números isolados; nomes como Empresa 123 Ltda continuam texto para busca.
       const numeric=/^(?:(?:id|n[uú]mero|n[ºo])\s*[:#-]?\s*|#\s*)?(\d{1,10})$/i.exec(cleaned); // Explicação DevIN: Declara variável JavaScript numeric para reutilizar valor ou resultado.
+      // Detalhe DevIN: Registra se houve correspondência ao padrão de ID para impedir conversão de nomes misturados com algarismos.
       const exact=Boolean(numeric); // Explicação DevIN: Declara variável JavaScript exact para reutilizar valor ou resultado.
+      // Detalhe DevIN: Quando o termo representa um ID, ele pode seguir diretamente para prévia; nos demais casos exige consulta e seleção.
       const id=exact ? Number(numeric[1]) : null; // Explicação DevIN: Declara variável JavaScript id para reutilizar valor ou resultado.
+      // Detalhe DevIN: Preserva a expressão textual para procurar registros no servidor, removendo apenas prefixos descritivos comuns.
       const name=exact ? '' : cleaned.replace(/^(?:com\s+o\s+nome|de\s+nome|chamad[oa]|intitulad[oa])\s+/i,'').trim(); // Explicação DevIN: Declara variável JavaScript name para reutilizar valor ou resultado.
       return {kind:kinds[kind.toLowerCase()],id,name}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Interpreta pedidos explícitos de exclusão; não executa DELETE neste ponto, apenas identifica tipo e alvo pretendido.
     const deletion=new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\\s+(?:(?:a|o|uma|um)\\s+)?'+kindPattern+'\\s+(.+)$','i').exec(message.trim()); // Explicação DevIN: Declara variável JavaScript deletion para reutilizar valor ou resultado.
+    // Detalhe DevIN: Devolve a intenção estruturada ao fluxo de confirmação; uma frase jamais serve como autorização final.
     if(deletion) return {type:'delete',...target(deletion[1],deletion[2])}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    // Detalhe DevIN: Reconhece comandos de criar ou enviar mensagem com destinatário indicado, sem transmitir imediatamente a mensagem.
     const sendPrefix=new RegExp(prefix+'(?:envie|enviar|mande|mandar|escreva|escrever)\\s+(?:uma\\s+)?mensagem\\s+(?:para\\s+)?(?:(?:a|o|ao|à)\\s+)?'+kindPattern+'\\s+(.+)$','i').exec(message.trim()); // Explicação DevIN: Declara variável JavaScript sendPrefix para reutilizar valor ou resultado.
     if(sendPrefix) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       const rest=sendPrefix[2]; // Explicação DevIN: Declara variável JavaScript rest para reutilizar valor ou resultado.
+      // Detalhe DevIN: Divide a frase entre destinatário e texto após dizendo, que diga ou com o texto, preservando a mensagem original.
       const withText=/^(.+?)\s+(?:dizendo|que\s+diga|com\s+(?:o\s+)?texto)\s*[:,-]?\s*([\s\S]+)$/i.exec(rest) // Explicação DevIN: Declara variável JavaScript withText para reutilizar valor ou resultado.
         || /^(.+?)\s*:\s*([\s\S]+)$/.exec(rest); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
       const recipient=target(sendPrefix[1],withText ? withText[1] : rest); // Explicação DevIN: Declara variável JavaScript recipient para reutilizar valor ou resultado.
+      // Detalhe DevIN: Impede mensagem para uma vaga, pois apenas contas de candidatos e empresas são destinatários válidos.
       return {type:recipient.kind==='vaga'?'unsupported':'message',...recipient, // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
         body:withText ? withText[2].trim() : ''}; // Explicação DevIN: Continua expressão ou bloco pertencente a função target.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Interpreta consultas como procure vagas Desenvolvedor PHP, solicitando lista de correspondências sem mutação.
     const find=new RegExp(prefix+'(?:procure|procurar|pesquise|pesquisar|encontre|buscar|busque|localize|mostre)\\s+(?:(?:por|a|o|as|os|uma|um)\\s+)*'+kindPattern+'\\s+(?:com\\s+(?:o\\s+)?nome\\s+|chamad[oa]s?\\s+|intitulad[oa]s?\\s+)?(.+)$','i').exec(message.trim()); // Explicação DevIN: Declara variável JavaScript find para reutilizar valor ou resultado.
     if(find) return {type:'search',...target(find[1],find[2])}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // If the ADM omitted a category, show possible people, companies or jobs.
+    // Detalhe DevIN: Cria versão sem vocativo para aceitar buscas e ações quando a categoria do usuário não foi mencionada.
     const simple=message.trim().replace(/^jarvis[,:!\s]*|^por favor[,\s]*/i,''); // Explicação DevIN: Declara variável JavaScript simple para reutilizar valor ou resultado.
     const gsend=/^(?:envie|enviar|mande|mandar|escreva|escrever)\s+/i.exec(simple); // Explicação DevIN: Declara variável JavaScript gsend para reutilizar valor ou resultado.
+    // Detalhe DevIN: Quando o pedido é enviar mensagem sem dizer candidato ou empresa, pesquisa ambas as categorias e pede escolha.
     if(gsend && /\bmensagem\b/i.test(simple)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       const raw=simple.replace(/^(?:envie|enviar|mande|mandar|escreva|escrever)\s+/i,''); // Explicação DevIN: Declara variável JavaScript raw para reutilizar valor ou resultado.
       const rest=raw.replace(/^(?:uma\s+)?mensagem\s+(?:para\s+)?(?:a\s+|o\s+|ao\s+|à\s+)?/i,''); // Explicação DevIN: Declara variável JavaScript rest para reutilizar valor ou resultado.
+      // Detalhe DevIN: Extrai o corpo para revisão pelo ADM: a confirmação de envio continua sendo uma etapa separada.
       const bodyMatch=/^(.+?)\s+(?:dizendo|que\s+diga|com\s+o?\s*texto)\s*[:,-]?\s*([\s\S]+)$/i.exec(rest); // Explicação DevIN: Declara variável JavaScript bodyMatch para reutilizar valor ou resultado.
       const second=bodyMatch || /^(.+?)\s*:\s*([\s\S]+)$/.exec(rest); // Explicação DevIN: Declara variável JavaScript second para reutilizar valor ou resultado.
       return { // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -319,25 +338,31 @@
       }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     const gdelete=/^(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar)\s+(.+)$/i.exec(simple); // Explicação DevIN: Declara variável JavaScript gdelete para reutilizar valor ou resultado.
+    // Detalhe DevIN: Exclusões sem categoria são tratadas como consultas para seleção, nunca como remoção do primeiro resultado.
     if(gdelete) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       const what=gdelete[1].trim(); // Explicação DevIN: Declara variável JavaScript what para reutilizar valor ou resultado.
       const categoryOnly=/^(?:a|o|uma|um)\s+(?:empresa|vaga|pessoa|candidato|candidata)$/i; // Explicação DevIN: Declara variável JavaScript categoryOnly para reutilizar valor ou resultado.
+      // Detalhe DevIN: Caso seja digitado apenas Exclua a empresa, exige o nome ou ID em vez de agir sem alvo definido.
       if(categoryOnly.test(what)) return {type:'incomplete'}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       return {type:'delete',kind:null,id:null,name:what}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Habilita busca geral por nome sem exigir termos técnicos como candidato, empresa ou vaga.
     const gfind=/^(?:procure|pesquise|encontre|busque|localize|mostre)\s+(.+)$/i.exec(simple); // Explicação DevIN: Declara variável JavaScript gfind para reutilizar valor ou resultado.
     if(gfind) return {type:'search',kind:null,id:null,name:gfind[1].trim()}; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     if(new RegExp(prefix+'(?:exclua|excluir|delete|deletar|remova|remover|apague|apagar|envie|enviar|mande|mandar)\\b','i').test(message)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       return {type:'incomplete'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Se não existe comando administrativo reconhecido, a mensagem segue para o chat convencional e não aciona ferramentas.
     return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Cria uma resposta visual no chat para prévia e seleção; o texto exibido não é uma autorização de backend.
   function chatActionCard(text) { // Explicação DevIN: Declara função/método chatActionCard, com seus parâmetros e comportamento.
     addMessage('assistant',text); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
     return messages.lastElementChild; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+  // Detalhe DevIN: Gera um botão de ação com callback específico; apenas o clique real do ADM inicia a próxima etapa.
   function actionButton(label,callback) { // Explicação DevIN: Declara função/método actionButton, com seus parâmetros e comportamento.
     const button=document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
     button.type='button'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -352,14 +377,19 @@
    * Requisições usam o endpoint autenticado com limite de uso e CSRF.
    * A aprovação de uma ação ocorre em outra chamada, depois da prévia.
    */
+  // Detalhe DevIN: Orquestra consulta, seleção e confirmação no frontend, utilizando apenas endpoints autenticados da aplicação.
   async function handleAdminCommand(message, selected=null) { // Explicação DevIN: Declara função/método handleAdminCommand, com seus parâmetros e comportamento.
+    // Detalhe DevIN: Um resultado já escolhido prevalece sobre a interpretação original da frase: usa o ID da seleção para evitar ambiguidade.
     const command=selected || parseAdminCommand(message); // Explicação DevIN: Declara variável JavaScript command para reutilizar valor ou resultado.
     if(!command) return false; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    // Detalhe DevIN: Exibe a pergunta do ADM somente uma vez; a seleção posterior não duplica a mensagem no histórico visual.
     if(!selected) addMessage('user',message); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    // Detalhe DevIN: Recusa categorias incompatíveis com a operação, como tentar enviar mensagem diretamente a uma vaga.
     if(command.type==='unsupported') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       addMessage('assistant','Mensagens podem ser enviadas a candidatos ou empresas, não a vagas.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
       return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Impede continuar quando faltam nome/ID ou quando um suposto ID não é número inteiro positivo seguro.
     if(command.type==='incomplete' || (!command.name && (!Number.isSafeInteger(command.id) || command.id<1))) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       addMessage('assistant','Informe o tipo e um nome/título ou ID. Exemplos: "Exclua a vaga Desenvolvedor PHP" ou "Envie mensagem para empresa Acme dizendo: Olá".'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
       return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -368,14 +398,19 @@
     // No modo "search" somente exibir resultados, sem ações.
     // Cada opção conserva seu ID verdadeiro e a classificação textual.
     // Até 12 candidatos são mostrados; o ADM escolhe manualmente.
+    // Detalhe DevIN: Nomes e títulos podem se repetir: mostra alternativas em vez de escolher automaticamente a primeira.
     if(command.name && !selected || command.type==='search') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      // Detalhe DevIN: Explica que a ordenação por similaridade é heurística; não é uma porcentagem confiável de identificação.
       const resultsCard=chatActionCard('Pesquisando no banco DevIN: "'+(command.name || command.id)+'". Os resultados abaixo são ordenados por similaridade, não representam uma probabilidade de acerto.'); // Explicação DevIN: Declara variável JavaScript resultsCard para reutilizar valor ou resultado.
       const results=document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
       results.className='jarvis-admin__tool-results'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       resultsCard.append(results); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      // Detalhe DevIN: Escolhe categorias a consultar: para mensagens só pessoas/empresas; para buscas/exclusões, inclui vagas.
       const kinds=command.kind ? [command.kind] : (command.type==='message' ? ['pessoa','empresa'] : ['pessoa','empresa','vaga']); // Explicação DevIN: Declara variável JavaScript kinds para reutilizar valor ou resultado.
+      // Detalhe DevIN: Agrega os candidatos retornados pelo banco; cada item conserva categoria, ID, título e motivo da correspondência.
       const choices=[]; // Explicação DevIN: Declara variável JavaScript choices para reutilizar valor ou resultado.
       try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        // Detalhe DevIN: Consulta cada categoria aprovada separadamente para impedir consulta SQL genérica construída a partir da frase do ADM.
         for(const kind of kinds) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
           const answer=await api(root.dataset.tools+'?action=suggest&kind='+encodeURIComponent(kind)+'&q='+encodeURIComponent(command.name || String(command.id))); // Explicação DevIN: Declara variável JavaScript answer para reutilizar valor ou resultado.
           choices.push(...answer.records); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
@@ -385,13 +420,16 @@
         return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
       } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       const typeNames={vaga:'Vaga',pessoa:'Candidato',empresa:'Empresa'}; // Explicação DevIN: Declara variável JavaScript typeNames para reutilizar valor ou resultado.
+      // Detalhe DevIN: Ordena por relevância e depois ID; empate não elimina candidatos nem dispensa confirmação da identidade.
       choices.sort((x,y)=>y.score-x.score || y.id-x.id); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      // Detalhe DevIN: Quando não há resultados, informa que nada foi encontrado e não tenta inventar ou inferir IDs.
       if(!choices.length) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         const none=document.createElement('p'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         none.textContent='Nenhum registro encontrado. Tente outro nome, parte do título ou pesquise pelo ID.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         results.append(none); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
         return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
       } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      // Detalhe DevIN: Mostra até doze cartões para o ADM comparar registros homônimos, incluindo empresa associada quando disponível.
       for(const record of choices.slice(0,12)) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
         const card=document.createElement('article'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         card.className='jarvis-admin__tool-card'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -401,9 +439,11 @@
         desc.textContent=[record.subtitle,record.match].filter(Boolean).join(' · '); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         const controls=document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         controls.className='jarvis-admin__tool-actions'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        // Detalhe DevIN: Ver detalhes abre um resumo do registro específico selecionado, sem executar ações de escrita no banco.
         const inspect=actionButton('Ver detalhes',async button=>{ // Explicação DevIN: Declara variável JavaScript inspect para reutilizar valor ou resultado.
           button.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
           try{ // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            // Detalhe DevIN: Consulta dados limitados do registro pelo ID real; o frontend apenas apresenta o resumo retornado pelo backend.
             const data=await api(root.dataset.tools+'?action=inspect&kind='+encodeURIComponent(record.kind)+'&id='+encodeURIComponent(record.id)); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
             const details=document.createElement('p'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
             details.textContent=Object.entries(data.record).filter(([key])=>!['id'].includes(key)).map(([key,value])=>key+': '+String(value)).join(' · ').slice(0,850); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -416,6 +456,7 @@
         }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         controls.append(inspect); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
         if(command.type!=='search') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          // Detalhe DevIN: Selecionar transforma um resultado de pesquisa em alvo concreto para a ação original, mas ainda não envia nem exclui.
           const choose=actionButton('Selecionar '+typeNames[record.kind].toLowerCase(),async button=>{ // Explicação DevIN: Declara variável JavaScript choose para reutilizar valor ou resultado.
             button.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
@@ -434,8 +475,10 @@
     // prévia do registro já escolhido por ID, com nonce temporário.
     // Só enviar confirm_delete após confirmação e palavra EXCLUIR.
     // A API revalida o registro e registra a operação na auditoria.
+    // Detalhe DevIN: Após a escolha, pede ao backend uma prévia vinculada ao administrador e ao registro, sem executar DELETE.
     if(command.type==='delete') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       let preview; // Explicação DevIN: Declara variável JavaScript preview para reutilizar valor ou resultado.
+      // Detalhe DevIN: A API gera um nonce efêmero e confirma que o registro ainda existe antes de exibir a opção de exclusão.
       try {preview=(await api(toolUrl,{action:'preview_delete',kind:command.kind,id:command.id})).proposal;} // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
       catch(error) {addMessage('assistant','Não foi possível preparar a exclusão: '+error.message);return true;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
       const record=preview.record; // Explicação DevIN: Declara variável JavaScript record para reutilizar valor ou resultado.
@@ -444,11 +487,13 @@
       const controls=document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
       controls.className='jarvis-admin__tool-actions'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       const cancel=actionButton('Cancelar',async()=>{controls.remove();status.textContent='Exclusão cancelada.';}); // Explicação DevIN: Declara variável JavaScript cancel para reutilizar valor ou resultado.
+      // Detalhe DevIN: A exclusão requer clique no botão, janela de confirmação e palavra EXCLUIR; nenhuma resposta da IA pula essas etapas.
       const approve=actionButton('Confirmar exclusão',async button=>{ // Explicação DevIN: Declara variável JavaScript approve para reutilizar valor ou resultado.
         if(!window.confirm('Excluir definitivamente '+record.kind+' #'+record.id+' — '+record.title+'?'))return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         if(window.prompt('Digite EXCLUIR para confirmar a exclusão:')!=='EXCLUIR')return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         button.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+          // Detalhe DevIN: Apenas a chamada final pode alterar o banco; o servidor valida nonce, prazo, ID e registra auditoria.
           const result=await api(toolUrl,{action:'confirm_delete',kind:record.kind,id:record.id,confirmation:preview.confirmation,approval:'EXCLUIR'}); // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
           controls.remove(); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
           addMessage('assistant',result.message+' ID #'+record.id+'.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
@@ -461,17 +506,21 @@
     // O ADM pode editar o conteúdo; o envio só ocorre em chamada
     // separada com confirmação explícita ENVIAR.
     // A mensagem não é enviada automaticamente quando o texto é escrito.
+    // Detalhe DevIN: Mensagens seguem fluxo próprio: preparar rascunho, mostrar nome da conta, revisar o texto e confirmar o envio.
     if(command.type==='message') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      // Detalhe DevIN: Não cria rascunho vazio nem com mais de 1200 caracteres; solicita um texto válido ao ADM.
       if(!command.body || command.body.length>1200) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         addMessage('assistant','Informe o texto completo da mensagem, com até 1.200 caracteres. Exemplo: "Envie mensagem para pessoa ID 12 dizendo: Olá, precisamos revisar sua vaga."'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
         return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
       } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       let draft; // Explicação DevIN: Declara variável JavaScript draft para reutilizar valor ou resultado.
+      // Detalhe DevIN: Cria rascunho para um destinatário confirmado, mas não envia a mensagem nem dispara notificação.
       try {draft=(await api(toolUrl,{action:'manual_draft',recipient_type:command.kind,recipient_id:command.id,body:command.body})).draft;} // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
       catch(error){addMessage('assistant','Não foi possível preparar a mensagem: '+error.message);return true;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
       const recipient=draft.recipient; // Explicação DevIN: Declara variável JavaScript recipient para reutilizar valor ou resultado.
       const card=chatActionCard('Rascunho para '+recipient.type+' #'+recipient.id+' — '+recipient.name+ // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
         '. Confira o texto antes de enviar. Nada foi enviado ainda.'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+      // Detalhe DevIN: Oferece edição final do conteúdo pelo ADM; este texto é o efetivamente revisado antes de enviar.
       const editor=document.createElement('textarea'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
       editor.rows=4;editor.maxLength=1200;editor.value=draft.body; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       editor.setAttribute('aria-label','Revise a mensagem antes do envio'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
@@ -481,6 +530,7 @@
         try{await api(toolUrl,{action:'cancel',draft_id:Number(draft.id)});controls.remove();editor.remove();} // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         catch(error){addMessage('assistant','Falha ao descartar: '+error.message);button.disabled=false;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
       }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      // Detalhe DevIN: Mostra conteúdo e identidade do destinatário, exigindo confirmação humana explícita para uma entrega única.
       const approve=actionButton('Revisar e enviar',async button=>{ // Explicação DevIN: Declara variável JavaScript approve para reutilizar valor ou resultado.
         const body=editor.value.trim(); // Explicação DevIN: Declara variável JavaScript body para reutilizar valor ou resultado.
         if(!body || body.length>1200){addMessage('assistant','Texto inválido.');return;} // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -489,6 +539,7 @@
         button.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         try{ // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
           if(body!==draft.body) await api(toolUrl,{action:'revise',draft_id:Number(draft.id),body}); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          // Detalhe DevIN: Envia a mensagem ao outbox do DevIN somente depois de revisão e ENVIAR; erros não são apresentados como sucesso.
           await api(toolUrl,{action:'send',draft_id:Number(draft.id),confirmed:true,approval:'ENVIAR'}); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
           controls.remove();editor.readOnly=true; // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
           addMessage('assistant','Mensagem enviada pelo DevIN a '+recipient.name+' (#'+recipient.id+').'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
