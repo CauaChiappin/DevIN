@@ -52,3 +52,18 @@ test('busca vaga nome com empresa como resultado depende da selecao, nao da IA',
   const x=parse('Pesquise vagas Engenharia de Software'); // Explicação DevIN: Declara variável JavaScript x para reutilizar valor ou resultado.
   assert.equal(x.type,'search');assert.equal(x.name,'Engenharia de Software'); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('mensagem por nome sem informar categoria permite escolher destinatario',()=>{
+  const x=parse('Envie mensagem para Maria Souza dizendo: Olá Maria');
+  assert.equal(x.type,'message');assert.equal(x.kind,null);
+  assert.equal(x.name,'Maria Souza');assert.equal(x.body,'Olá Maria');
+});
+test('exclusao por nome sem categoria exige escolha de registro',()=>{
+  const x=parse('Exclua Maria Souza');
+  assert.equal(x.type,'delete');assert.equal(x.kind,null);assert.equal(x.id,null);
+  assert.equal(x.name,'Maria Souza');
+});
+test('pesquisa geral por nome sem categoria',()=>{
+  const x=parse('Pesquise Maria Souza');
+  assert.equal(x.type,'search');assert.equal(x.kind,null);assert.equal(x.name,'Maria Souza');
+});
