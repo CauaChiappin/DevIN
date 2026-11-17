@@ -138,7 +138,8 @@ jobs:
       - name: Registrar comentarios nos arquivos originais
         shell: bash
         run: |
-          git add -u
+          # A automacao nao tem permissao de escrever outros workflows; nao os modificar.
+          git add -u -- . ':(exclude).github/workflows/**'
           if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
