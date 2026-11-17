@@ -24,23 +24,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 $_SESSION['idioma'] = $idiomaAtual; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 
-$liberacao = $_SESSION['arcade_unlock'] ?? []; // Explicação DevIN: Atribui um valor à variável PHP $liberacao.
-$acessoValido = is_array($liberacao) // Explicação DevIN: Atribui um valor à variável PHP $acessoValido.
-    && (int) ($liberacao['id'] ?? 0) === $usuario['id'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-    && ($liberacao['tipo'] ?? '') === $usuario['tipo'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-    && time() - (int) ($liberacao['liberado_em'] ?? 0) <= 7200; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-
-if (!$acessoValido) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    unset($_SESSION['arcade_unlock']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    $dashboards = [ // Explicação DevIN: Atribui um valor à variável PHP $dashboards.
-        'adm' => 'adm.php', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'empresa' => 'empresa.php', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'pessoa' => 'pessoa.php', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-    ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
-    header('Location: ' . APP_BASE_URL . '/php/' . ($dashboards[$usuario['tipo']] ?? 'login.php')); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
-    exit; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
+// O Arcade é acessível a qualquer usuário autenticado do DevIN.
+// A sequência secreta anterior permanece como atalho opcional no dashboard,
+// mas não deve impedir que candidatos ou empresas encontrem os jogos.
 $csrfToken = csrfToken(); // Explicação DevIN: Atribui um valor à variável PHP $csrfToken.
 $isAdmin = $usuario['tipo'] === 'adm'; // Explicação DevIN: Atribui um valor à variável PHP $isAdmin.
 ?>
