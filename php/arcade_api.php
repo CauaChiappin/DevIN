@@ -71,9 +71,9 @@ function arcadeGameLimits(): array // Explicação DevIN: Declara função/méto
         'pong' => ['score_per_second' => 1200, 'seconds_per_level' => 3], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'dodge' => ['score_per_second' => 120, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'flappy' => ['score_per_second' => 900, 'seconds_per_level' => 7], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'target' => ['score_per_second' => 1800, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'collector' => ['score_per_second' => 1800, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        'racer' => ['score_per_second' => 300, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'target' => ['score_per_second' => 1800, 'seconds_per_level' => 1], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'collector' => ['score_per_second' => 1800, 'seconds_per_level' => 1], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        'racer' => ['score_per_second' => 300, 'seconds_per_level' => 2], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'simon' => ['score_per_second' => 1400, 'seconds_per_level' => 5], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'basket' => ['score_per_second' => 1800, 'seconds_per_level' => 4], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
