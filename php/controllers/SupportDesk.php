@@ -352,8 +352,8 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função notify.
                 $email = true; // Explicação DevIN: Atribui um valor à variável PHP $email.
-            } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
-                // Falha do transporte libera a reserva para uma tentativa manual futura.
+            } elseif ($reserved) {
+                // Somente a tentativa que reservou o envio pode liberá-la. para uma tentativa manual futura.
                 $stmt = $db->prepare('UPDATE support_replies SET email_claimed_at=NULL
                     WHERE id=? AND email_sent_at IS NULL');
                 $stmt->bind_param('i', $replyId);
