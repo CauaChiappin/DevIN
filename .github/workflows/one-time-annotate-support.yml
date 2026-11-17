@@ -1,0 +1,27 @@
+name: DevIN suporte - anotar codigo (temporario)
+on:
+  push:
+    branches: [feature/central-suporte-admin-jarvis-20261117]
+    paths: ['.github/workflows/one-time-annotate-support.yml']
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Aplicar explicacoes linha a linha dentro dos arquivos originais
+        run: python3 scripts/line_explanations.py --write
+      - name: Registrar codigo de suporte e mostrar diferenca necessaria no workflow
+        run: |
+          git diff -- .github/workflows/jarvis-admin-checks.yml | head -n 130
+          git add .env.example css/support.css database/migrations/2026_11_17_005_support_center.sql js/jarvis-admin.js js/support-ui.js php/adm.php php/api/jarvis/admin_tools.php php/components/support-admin.php php/controllers/SupportDesk.php php/empresa.php php/helpers.php php/pessoa.php php/suporte.php php/support_api.php php/mensagens_api.php storage/.htaccess tests/jarvis-chat-commands.test.cjs tests/support-ui.test.cjs tests/support_center_mysql.php
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(suporte): explicar cada linha dos arquivos da central"
+            git push origin HEAD:feature/central-suporte-admin-jarvis-20261117
+          fi
