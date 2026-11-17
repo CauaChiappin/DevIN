@@ -10,10 +10,12 @@ require_once __DIR__ . '/../ChatStorage.php'; // Explicação DevIN: Inclui depe
  */
 final class JarvisAdminActivity // Explicação DevIN: Declara o tipo JarvisAdminActivity e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Relação autorizada de eventos de auditoria: não permite que texto livre da IA seja gravado como um tipo arbitrário de evento.
     private const EVENTS = [ // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
         'search','inspect','analysis','draft_generated','draft_manual', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'draft_revised','message_sent','message_failed','draft_cancelled','action_denied' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+    // Detalhe DevIN: Registra quem solicitou e qual ação ocorreu, sem armazenar senhas, corpo da mensagem, prompts nem dados privados.
     public static function log(mysqli $db, int $admin, string $origin, string $event, // Explicação DevIN: Declara função/método log, com seus parâmetros e comportamento.
         string $status, string $targetType='none', ?int $targetId=null, string $detail=''): void // Explicação DevIN: Continua expressão ou bloco pertencente a função log.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -50,6 +52,7 @@ final class JarvisAdminActivity // Explicação DevIN: Declara o tipo JarvisAdmi
      * o que foi registrado pela IA e o que foi aprovado por outros ADMs.
      * O log omite o texto e os dados privados do destinatário.
      */
+    // Detalhe DevIN: Exibe trilha de auditoria limitada a administradores autenticados, sem expor conteúdo das mensagens.
     public static function latestAll(mysqli $db): array // Explicação DevIN: Declara função/método latestAll, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $result=$db->query('SELECT id,admin_id,origin,event_name,status,' // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
@@ -66,12 +69,16 @@ final class JarvisAdminActivity // Explicação DevIN: Declara o tipo JarvisAdmi
  */
 final class JarvisPlatformOutbox // Explicação DevIN: Declara o tipo JarvisPlatformOutbox e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Máximo de mensagens aprovadas por administrador na janela de 24 horas, limitando uso indevido da funcionalidade.
     public const MAX_DAILY = 15; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
+    // Detalhe DevIN: Máximo de mensagens para a mesma pessoa ou empresa em 24 horas; reduz insistência e spam.
     public const MAX_PER_RECIPIENT = 2; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
 
+    // Detalhe DevIN: Verifica o corpo do rascunho antes de gravar ou enviar, bloqueando texto vazio, excessivo e padrões de solicitação de segredos.
     public static function validateMessage(string $message): string // Explicação DevIN: Declara função/método validateMessage, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $message=trim($message); // Explicação DevIN: Atribui um valor à variável PHP $message.
+        // Detalhe DevIN: Rejeita mensagens maiores que 1200 caracteres, contendo links, ou instruções para revelar senhas, tokens e CPF.
         if ($message==='' || mb_strlen($message,'UTF-8')>1200 // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             || preg_match('/https?:\/\/|www\./iu',$message) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             || preg_match('/(?:informe|envie|compartilhe|digite|revele)\s+(?:sua?|seus?)\s+(?:senha|token|c[oó]digo|cpf)/iu',$message)) { // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -82,15 +89,18 @@ final class JarvisPlatformOutbox // Explicação DevIN: Declara o tipo JarvisPla
         return $message; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: A criação adiciona um item com status draft ao outbox e registra auditoria; não envia nenhuma notificação ao destinatário.
     public static function create(mysqli $db, int $admin, string $type, int $recipient, // Explicação DevIN: Declara função/método create, com seus parâmetros e comportamento.
         string $message, string $source): array // Explicação DevIN: Continua expressão ou bloco pertencente a função create.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!in_array($source,['ai','admin'],true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new InvalidArgumentException('Origem inválida.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        // Detalhe DevIN: Consulta novamente o destinatário por ID para impedir que a interface invente uma conta ou nome.
         $target=JarvisAdminRecords::recipient($db,$type,$recipient); // Explicação DevIN: Atribui um valor à variável PHP $target.
         if (!$target) throw new InvalidArgumentException('Destinatário não encontrado.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         $message=self::validateMessage($message); // Explicação DevIN: Atribui um valor à variável PHP $message.
+        // Detalhe DevIN: Grava rascunho e auditoria numa mesma transação, evitando mensagem sem rastreabilidade.
         $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função create.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             $stmt=$db->prepare('INSERT INTO jarvis_platform_outbox ' // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -110,6 +120,7 @@ final class JarvisPlatformOutbox // Explicação DevIN: Declara o tipo JarvisPla
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Lista apenas os rascunhos vinculados ao ADM que está consultando; ele não pode operar rascunhos alheios por ID.
     public static function listOwn(mysqli $db, int $admin): array // Explicação DevIN: Declara função/método listOwn, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $stmt=$db->prepare('SELECT id,recipient_type,recipient_id,body,source,status,' // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -122,6 +133,7 @@ final class JarvisPlatformOutbox // Explicação DevIN: Declara o tipo JarvisPla
         return $rows; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Permite editar somente um rascunho ainda não enviado e pertencente ao administrador autenticado.
     public static function revise(mysqli $db,int $admin,int $id,string $message): void // Explicação DevIN: Declara função/método revise, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $message=self::validateMessage($message); // Explicação DevIN: Atribui um valor à variável PHP $message.
@@ -147,6 +159,7 @@ final class JarvisPlatformOutbox // Explicação DevIN: Declara o tipo JarvisPla
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Permite cancelar um rascunho ou envio falho sem tentar apagar mensagens que já foram entregues.
     public static function cancel(mysqli $db,int $admin,int $id): void // Explicação DevIN: Declara função/método cancel, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função cancel.
@@ -174,15 +187,18 @@ final class JarvisPlatformOutbox // Explicação DevIN: Declara o tipo JarvisPla
      * Se o salvamento do status falhar após a entrega, repetir o POST com
      * aprovação explícita não duplica a notificação.
      */
+    // Detalhe DevIN: Entrega exige rascunho existente, identidade válida, aprovação humana e confirmação separada no endpoint administrativo.
     public static function send(mysqli $db,int $admin,int $id): void // Explicação DevIN: Declara função/método send, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if ($id<1 || $admin<1) throw new InvalidArgumentException('Solicitação inválida.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        // Detalhe DevIN: Nomeia bloqueio MySQL por ADM para evitar dois envios simultâneos da mesma conta administrativa.
         $name='jarvis_send_'.$admin; // Explicação DevIN: Atribui um valor à variável PHP $name.
         $stmt=$db->prepare('SELECT GET_LOCK(?,3) AS granted'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('s',$name); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $locked=(int)$stmt->get_result()->fetch_assoc()['granted']===1; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
         $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função send.
+        // Detalhe DevIN: Se o bloqueio não foi obtido, interrompe o envio para evitar concorrência e duplicações.
         if (!$locked) throw new RuntimeException('O envio está ocupado. Tente novamente.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função send.
@@ -193,8 +209,10 @@ final class JarvisPlatformOutbox // Explicação DevIN: Declara o tipo JarvisPla
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $row=$stmt->get_result()->fetch_assoc(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
                 $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função send.
+                // Detalhe DevIN: Proíbe reenviar automaticamente um item que já saiu do estado draft/failed; reduz mensagens duplicadas.
                 if (!$row || !in_array($row['status'],['draft','failed'],true)) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                     throw new DomainException('Rascunho indisponível ou já enviado.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+                // Detalhe DevIN: Revalida a existência do destinatário imediatamente antes da entrega, pois o cadastro pode ter sido removido.
                 $target=JarvisAdminRecords::recipient($db,$row['recipient_type'],(int)$row['recipient_id']); // Explicação DevIN: Atribui um valor à variável PHP $target.
                 if (!$target) throw new DomainException('Destinatário indisponível.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 self::validateMessage($row['body']); // Explicação DevIN: Continua expressão ou bloco pertencente a função send.
@@ -204,16 +222,20 @@ final class JarvisPlatformOutbox // Explicação DevIN: Declara o tipo JarvisPla
                     . 'COALESCE(sent_at,reviewed_at)>=UTC_TIMESTAMP()-INTERVAL 1 DAY'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 $stmt->bind_param('i',$admin); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+                // Detalhe DevIN: Conta envios efetivos ou em andamento nas últimas 24 horas para aplicar o limite por ADM.
                 $daily=(int)$stmt->get_result()->fetch_row()[0]; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
                 $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função send.
+                // Detalhe DevIN: Rejeita o envio quando o ADM atingiu o limite estabelecido para esta janela de tempo.
                 if ($daily>=self::MAX_DAILY) throw new DomainException('Limite diário de envios atingido.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 $stmt=$db->prepare('SELECT COUNT(*) FROM jarvis_platform_outbox ' // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                     . "WHERE recipient_type=? AND recipient_id=? AND status IN ('sent','sending') " // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                     . 'AND COALESCE(sent_at,reviewed_at)>=UTC_TIMESTAMP()-INTERVAL 1 DAY'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 $stmt->bind_param('si',$row['recipient_type'],$row['recipient_id']); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+                // Detalhe DevIN: Conta as notificações recentes para este mesmo destinatário independentemente do ADM que as iniciou.
                 $perRecipient=(int)$stmt->get_result()->fetch_row()[0]; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
                 $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função send.
+                // Detalhe DevIN: Rejeita mensagens excessivas para a mesma conta, limitando insistência de contato.
                 if ($perRecipient>=self::MAX_PER_RECIPIENT) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                     throw new DomainException('Limite de mensagens para este destinatário atingido.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
 
