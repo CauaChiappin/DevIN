@@ -19,6 +19,19 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'tests/jarvis-dock.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis-responsive.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/adm.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/suporte.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/support_api.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/SupportDesk.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/components/support-admin.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'js/support-ui.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'css/support.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/mensagens_api.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/pessoa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/empresa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/helpers.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'database/migrations/2026_11_17_005_support_center.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/support*.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/support*.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - '.github/workflows/jarvis-admin-checks.yml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis_admin_smoke.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis_openrouter_router.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -57,6 +70,15 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           php -v # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/adm.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/suporte.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/support_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/SupportDesk.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/components/support-admin.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/mensagens_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/pessoa.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/empresa.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/helpers.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+
           php -l php/arcade.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/arcade_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/controllers/ArcadeProgressPolicy.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -73,6 +95,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           node --check js/jarvis-dock.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/jarvis-admin.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --check js/support-ui.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/support-ui.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-extra-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-library.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -139,3 +163,15 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           JARVIS_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_USER).
           JARVIS_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo JARVIS_TEST_PASSWORD).
         run: php tests/jarvis_controlled_actions_mysql.php # Explicação DevIN: Configura comando de execução (campo run).
+
+      - name: Support center isolation and notification integration
+        env:
+          SUPPORT_TEST_HOST: 127.0.0.1
+          SUPPORT_TEST_DB: devin_support_ci
+          SUPPORT_TEST_USER: root
+          SUPPORT_TEST_PASSWORD: jarvis-ci-only
+          MYSQL_PWD: jarvis-ci-only
+        run: |
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_support_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+          mysql -h 127.0.0.1 -u root devin_support_ci < database/migrations/2026_11_17_005_support_center.sql
+          php tests/support_center_mysql.php
