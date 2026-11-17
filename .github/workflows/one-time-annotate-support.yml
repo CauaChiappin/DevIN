@@ -18,7 +18,7 @@ jobs:
       - name: Registrar codigo de suporte e mostrar diferenca necessaria no workflow
         run: |
           git diff -- .github/workflows/jarvis-admin-checks.yml | head -n 130
-          git add .env.example css/support.css database/migrations/2026_11_17_005_support_center.sql js/jarvis-admin.js js/support-ui.js php/adm.php php/api/jarvis/admin_tools.php php/components/support-admin.php php/controllers/SupportDesk.php php/empresa.php php/helpers.php php/pessoa.php php/suporte.php php/support_api.php php/mensagens_api.php storage/.htaccess tests/jarvis-chat-commands.test.cjs tests/support-ui.test.cjs tests/support_center_mysql.php
+          git add .env.example css/support.css database/migrations/2026_11_17_005_support_center.sql js/jarvis-admin.js js/support-ui.js js/support-badge.js php/adm.php php/api/jarvis/admin_tools.php php/components/support-admin.php php/controllers/SupportDesk.php php/empresa.php php/helpers.php php/pessoa.php php/suporte.php php/support_api.php php/mensagens_api.php tests/jarvis-chat-commands.test.cjs tests/support-ui.test.cjs tests/support_center_mysql.php
           if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
