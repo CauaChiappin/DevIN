@@ -25,21 +25,8 @@ function arcadeRespond(array $data, int $status = 200): void // Explicação Dev
     exit; // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeRespond.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-// Detalhe DevIN: Método requireArcadeUnlock: verifica condições antes de liberar o próximo passo no contexto de arcade api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
-function requireArcadeUnlock(array $usuario): void // Explicação DevIN: Declara função/método requireArcadeUnlock, com seus parâmetros e comportamento.
-{ // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    $liberacao = $_SESSION['arcade_unlock'] ?? []; // Explicação DevIN: Atribui um valor à variável PHP $liberacao.
-    if (!is_array($liberacao) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        || (int) ($liberacao['id'] ?? 0) !== $usuario['id'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        || ($liberacao['tipo'] ?? '') !== $usuario['tipo'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        || time() - (int) ($liberacao['liberado_em'] ?? 0) > 7200 // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-    ) { // Explicação DevIN: Continua expressão ou bloco pertencente a função requireArcadeUnlock.
-        unset($_SESSION['arcade_unlock']); // Explicação DevIN: Continua expressão ou bloco pertencente a função requireArcadeUnlock.
-        arcadeRespond(['sucesso' => false, 'mensagem' => 'A área de jogos precisa ser liberada pelo dashboard.'], 403); // Explicação DevIN: Continua expressão ou bloco pertencente a função requireArcadeUnlock.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-// Detalhe DevIN: Método ensureArcadeProgressTable: encapsula uma responsabilidade reutilizável do módulo no contexto de arcade api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
+// Login permanece obrigatório. O código secreto é somente um atalho
+// opcional; o menu Jogos permite acesso direto de pessoas, empresas e ADMs.
 function ensureArcadeProgressTable(mysqli $conn): void // Explicação DevIN: Declara função/método ensureArcadeProgressTable, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $conn->query('
@@ -81,7 +68,7 @@ function arcadeGameLimits(): array // Explicação DevIN: Declara função/méto
 
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $usuario = requireWebAuth(); // Explicação DevIN: Atribui um valor à variável PHP $usuario.
-    requireArcadeUnlock($usuario); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+    // A autenticação de sessão já foi validada por requireWebAuth(). // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
     ensureArcadeProgressTable($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
 
