@@ -25,6 +25,9 @@ cache/
 storage/sessions/*
 !storage/sessions/.gitkeep
 storage/rate-limits/
+# Anexos privados: nunca versionar arquivos recebidos dos usuários.
+storage/support-attachments/
+
 
 # Build and coverage output
 dist/
