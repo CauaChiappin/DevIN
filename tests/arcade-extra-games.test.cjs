@@ -104,3 +104,48 @@ test('arcade permanece protegido por login mas não exige código secreto', () =
         assert.match(read('php/'+name+'.php'), /href="arcade\.php"/);
     }
 });
+
+test('partidas de reflexos e memória evoluem sem quebrar', () => {
+    const engines = registry.create({ ctx, canvas, colors: {}, gameOver(){}, saveProgress(){} }).factories;
+    // O primeiro alvo é intencionalmente central para permitir teste de clique.
+    const target = engines.target();
+    target.pointer({clientX:320, clientY:230});
+    assert.equal(target.score, 20);
+
+    const collector = engines.collector();
+    const star = collector.state.stars[0];
+    collector.pointer({clientX:star.x, clientY:star.y});
+    collector.update(16);
+    assert.ok(collector.score >= 25, 'Coleta por toque deve pontuar');
+
+    const racer = engines.racer();
+    racer.key('ArrowLeft');
+    assert.equal(racer.state.lane, 0);
+    racer.key('ArrowRight');
+    assert.equal(racer.state.lane, 1);
+
+    const flappy = engines.flappy();
+    flappy.key('Space');
+    flappy.update(16);
+    assert.ok(flappy.state.y < 220, 'Pulo deve mudar a altura');
+
+    const simon = engines.simon();
+    simon.update(750);
+    simon.update(16);
+    simon.update(600);
+    simon.pick(simon.state.sequence[0]);
+    assert.equal(simon.score, 30, 'Repetição correta de memória deve pontuar');
+});
+
+test('motores toleram várias atualizações consecutivas de tempo', () => {
+    const engines = registry.create({ ctx, canvas, colors: {}, gameOver(){}, saveProgress(){} }).factories;
+    for (const id of ids) {
+        const engine = engines[id]();
+        assert.doesNotThrow(() => {
+            for (let frame=0; frame<170; frame++) engine.update(16);
+            engine.draw();
+        }, 'Falha ao simular partida: '+id);
+        assert.ok(Number.isFinite(engine.score), 'Score finito: '+id);
+        assert.ok(Number.isFinite(engine.level), 'Nível finito: '+id);
+    }
+});
