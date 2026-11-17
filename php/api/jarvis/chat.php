@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/api/jarvis/chat.php
+ * Finalidade: chat.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/../../controllers/Jarvis/Api.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/ConversationRepository.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -156,6 +165,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        // Detalhe DevIN: Inicia uma transação para manter alterações relacionadas consistentes.
         $db->begin_transaction(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         if ($conversationId === null) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $conversationId = ConversationRepository::create($db, $adminId, mb_substr(trim($message), 0, 80, 'UTF-8')); // Explicação DevIN: Atribui um valor à variável PHP $conversationId.
@@ -164,8 +174,10 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         ConversationRepository::append($db, (int) $conversationId, 'user', trim($message)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         ConversationRepository::append($db, (int) $conversationId, 'assistant', $answer); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        // Detalhe DevIN: Confirma alterações realizadas no mesmo contexto transacional.
         $db->commit(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        // Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
         $db->rollback(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         throw $exception; // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.

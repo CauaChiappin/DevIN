@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/jarvis-admin.js
+ * Finalidade: tratar comandos do JARVIS e apresentar confirmações.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 /* JARVIS Admin — widgets e dados de rede são renderizados apenas com textContent. */
 (() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.

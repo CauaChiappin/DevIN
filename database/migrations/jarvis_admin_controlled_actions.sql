@@ -1,6 +1,14 @@
+-- REVISÃO DETALHADA DEVIN — database/migrations/jarvis_admin_controlled_actions.sql
+-- Finalidade: jarvis admin controlled actions.
+-- Domínio: assistência administrativa.
+-- Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+-- Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+-- explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+
 -- JARVIS Admin — observabilidade e mensagens oficiais com revisão humana.
 -- Migration ADITIVA. Aplicar somente após backup e em ambiente de desenvolvimento.
 -- Não altera usuários, vagas, denúncias ou o histórico anterior.
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS jarvis_action_events ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Explicação DevIN: Declara a chave primária para identificar registros sem duplicação.
     admin_id INT NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
@@ -16,6 +24,7 @@ CREATE TABLE IF NOT EXISTS jarvis_action_events ( -- Explicação DevIN: Cria ta
     INDEX idx_jarvis_action_events_kind (event_name,created_at) -- Explicação DevIN: Cria índice para auxiliar buscas ou ordenação no banco.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS jarvis_platform_outbox ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Explicação DevIN: Declara a chave primária para identificar registros sem duplicação.
     admin_id INT NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.

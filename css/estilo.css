@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — css/estilo.css
+ * Finalidade: estilo.
+ * Domínio: estilos responsivos e aparência.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 * {
     margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
     padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */

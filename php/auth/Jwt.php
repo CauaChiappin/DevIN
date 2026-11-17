@@ -1,9 +1,19 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
+/**
+ * REVISÃO DETALHADA DEVIN — php/auth/Jwt.php
+ * Finalidade: jwt.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/../config/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 class Jwt // Explicação DevIN: Declara o tipo Jwt e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Método encode: encapsula uma responsabilidade reutilizável do módulo no contexto de jwt. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function encode(array $payload, string $secret): string // Explicação DevIN: Declara função/método encode, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         /* Serializa cabeçalho e dados em Base64 URL-safe e assina as duas partes com HMAC-SHA256.
@@ -43,6 +53,7 @@ class Jwt // Explicação DevIN: Declara o tipo Jwt e inicia sua estrutura.
         return $headerEncoded . '.' . $payloadEncoded . '.' . $signatureEncoded; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método decode: encapsula uma responsabilidade reutilizável do módulo no contexto de jwt. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function decode(string $token, string $secret): array // Explicação DevIN: Declara função/método decode, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Um JWT tem exatamente três partes separadas por ponto: cabeçalho, dados e assinatura.
@@ -77,6 +88,7 @@ class Jwt // Explicação DevIN: Declara o tipo Jwt e inicia sua estrutura.
         ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         // Só interpreta os dados depois de confirmar a assinatura com comparação segura.
+        // Detalhe DevIN: Compara hashes ou segredos sem diferenças de tempo evitáveis.
         if (!hash_equals($expectedSignature, $signature)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new RuntimeException('Assinatura do token inválida.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -110,6 +122,7 @@ class Jwt // Explicação DevIN: Declara o tipo Jwt e inicia sua estrutura.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         // Confere emissor, campos obrigatórios e datas para rejeitar token alterado ou expirado.
+        // Detalhe DevIN: Compara hashes ou segredos sem diferenças de tempo evitáveis.
         if (!isset($payload['iss']) || !hash_equals(JWT_ISSUER, (string) $payload['iss'])) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new RuntimeException('Emissor do token inválido.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -130,6 +143,7 @@ class Jwt // Explicação DevIN: Declara o tipo Jwt e inicia sua estrutura.
         return $payload; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método base64UrlEncode: encapsula uma responsabilidade reutilizável do módulo no contexto de jwt. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function base64UrlEncode(string $data): string // Explicação DevIN: Declara função/método base64UrlEncode, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // JWT troca caracteres do Base64 padrão e remove padding para ser seguro em URLs e cabeçalhos.
@@ -139,6 +153,7 @@ class Jwt // Explicação DevIN: Declara o tipo Jwt e inicia sua estrutura.
         ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método base64UrlDecode: encapsula uma responsabilidade reutilizável do módulo no contexto de jwt. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function base64UrlDecode(string $data): string // Explicação DevIN: Declara função/método base64UrlDecode, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Restaura o alfabeto e o padding exigido pelo decodificador estrito do PHP.

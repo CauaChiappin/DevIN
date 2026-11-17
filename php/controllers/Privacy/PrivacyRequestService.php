@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Privacy/PrivacyRequestService.php
+ * Finalidade: privacy request service.
+ * Domínio: privacidade e proteção de dados.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/PrivacyContext.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
@@ -12,6 +21,7 @@ final class PrivacyRequestService // Explicação DevIN: Declara o tipo PrivacyR
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
     /** Cria para conta autenticada após validação da sessão pelo controlador. */
+    // Detalhe DevIN: Método create: cria registros após checagem da entrada no contexto de privacy request service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function create(mysqli $db, string $accountType, int $accountId, string $requestType): string // Explicação DevIN: Declara função/método create, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         PrivacyContext::validateAccount($accountType, $accountId); // Explicação DevIN: Continua expressão ou bloco pertencente a função create.
@@ -20,6 +30,7 @@ final class PrivacyRequestService // Explicação DevIN: Declara o tipo PrivacyR
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         PrivacyContext::requireAccount($db, $accountType, $accountId); // Explicação DevIN: Continua expressão ou bloco pertencente a função create.
         $reference = bin2hex(random_bytes(16)); // Explicação DevIN: Atribui um valor à variável PHP $reference.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'INSERT INTO privacy_requests ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             . '(public_reference,account_type,account_id,request_type,status,requested_at) ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -32,9 +43,11 @@ final class PrivacyRequestService // Explicação DevIN: Declara o tipo PrivacyR
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** Uma pessoa/empresa nunca obtém solicitações de outras contas por ID. */
+    // Detalhe DevIN: Método listOwn: consulta e organiza dados sem presumir que o resultado seja único no contexto de privacy request service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function listOwn(mysqli $db, string $accountType, int $accountId): array // Explicação DevIN: Declara função/método listOwn, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         PrivacyContext::validateAccount($accountType, $accountId); // Explicação DevIN: Continua expressão ou bloco pertencente a função listOwn.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'SELECT public_reference,request_type,status,requested_at,resolved_at ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             . 'FROM privacy_requests WHERE account_type = ? AND account_id = ? ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -52,6 +65,7 @@ final class PrivacyRequestService // Explicação DevIN: Declara o tipo PrivacyR
      * exigem justificativa por CÓDIGO controlado, sem texto pessoal no log.
      * A marca 'completed' atesta conclusão do processo externo, NÃO executa eliminação.
      */
+    // Detalhe DevIN: Método updateStatus: modifica apenas os dados previstos pela operação no contexto de privacy request service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function updateStatus( // Explicação DevIN: Declara função/método updateStatus, com seus parâmetros e comportamento.
         mysqli $db, int $adminId, int $requestId, string $next, ?string $basisCode = null // Explicação DevIN: Continua expressão ou bloco pertencente a função updateStatus.
     ): void { // Explicação DevIN: Continua expressão ou bloco pertencente a função updateStatus.
@@ -68,9 +82,11 @@ final class PrivacyRequestService // Explicação DevIN: Declara o tipo PrivacyR
         if (in_array($next, ['completed','denied'], true) && !$basisCode) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new InvalidArgumentException('Justificativa codificada obrigatória.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        // Detalhe DevIN: Inicia uma transação para manter alterações relacionadas consistentes.
         $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateStatus.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             PrivacyContext::requireAccount($db, 'adm', $adminId, true); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateStatus.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare('SELECT status FROM privacy_requests WHERE id = ? LIMIT 1 FOR UPDATE'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $requestId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -79,6 +95,7 @@ final class PrivacyRequestService // Explicação DevIN: Declara o tipo PrivacyR
             if ($row === null || !in_array($next, $allowed[$row['status']] ?? [], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 throw new DomainException('Transição de solicitação não autorizada.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'UPDATE privacy_requests SET status = ?, ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . "identity_verified_at = IF(? = 'under_review',UTC_TIMESTAMP(6),identity_verified_at), " // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -88,8 +105,10 @@ final class PrivacyRequestService // Explicação DevIN: Declara o tipo PrivacyR
             $stmt->bind_param('ssssi', $next, $next, $next, $basisCode, $requestId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateStatus.
+            // Detalhe DevIN: Confirma alterações realizadas no mesmo contexto transacional.
             $db->commit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateStatus.
         } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            // Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
             $db->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateStatus.
             throw $exception; // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

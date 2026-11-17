@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/redefinir.js
+ * Finalidade: redefinir.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 document.addEventListener('DOMContentLoaded', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     // Obtém os campos e indicadores usados para feedback imediato durante a redefinição.
     const novaSenha = document.getElementById('nova_senha'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.

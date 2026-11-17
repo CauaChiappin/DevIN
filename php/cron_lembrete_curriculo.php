@@ -1,6 +1,15 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/cron_lembrete_curriculo.php
+ * Finalidade: cron lembrete curriculo.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 // Este script altera e-mails e dados; só pode ser executado pelo agendador no terminal.
 if (PHP_SAPI !== 'cli') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -38,6 +47,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     /*
      * Prepara o UPDATE uma única vez fora do loop.
      */
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmtUpdate = $conn->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         "UPDATE pessoa
          SET lembrete_enviado = 1

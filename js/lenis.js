@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/lenis.js
+ * Finalidade: lenis.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 (() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   // Usa o cabeçalho simples como alternativa quando alguma biblioteca de animação não carregou.
   const fallbackHeader = document.querySelector('.cabecalho-site'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
@@ -51,6 +60,7 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => { // Explicação De
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método atualizarHeader: encapsula uma responsabilidade reutilizável do módulo no contexto de lenis. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function atualizarHeader(scroll, direcao = 0) { // Explicação DevIN: Declara função/método atualizarHeader, com seus parâmetros e comportamento.
   if (header) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // As classes permitem ao CSS compactar o cabeçalho e diferenciar a direção da rolagem.
@@ -106,6 +116,7 @@ gsap.fromTo('.arte-principal', // Animação de entrada da arte principal
 
 /* Define estado inicial e estados de entrada/saída para cada elemento observado pelo ScrollTrigger.
  * `entrada` também é reutilizado ao voltar a rolar para cima, mantendo a animação reversível. */
+// Detalhe DevIN: Método revelar: encapsula uma responsabilidade reutilizável do módulo no contexto de lenis. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function revelar(selector, entrada) { // Função para revelar elementos com animação ao entrar na viewport
   gsap.utils.toArray(selector).forEach((elemento) => { // Itera sobre cada elemento selecionado
     gsap.set(elemento, entrada); // Explicação DevIN: Continua expressão ou bloco pertencente a função atualizarHeader.
@@ -141,6 +152,7 @@ function revelar(selector, entrada) { // Função para revelar elementos com ani
 
 /* Aplica a animação a cada filho do grupo e usa stagger para que os itens apareçam em sequência.
  * Os quatro callbacks tratam entrada e saída tanto ao rolar para baixo quanto para cima. */
+// Detalhe DevIN: Método revelarGrupo: encapsula uma responsabilidade reutilizável do módulo no contexto de lenis. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function revelarGrupo(selector, entrada, saida) { // Função para revelar grupos de elementos com animação ao entrar na viewport
   gsap.utils.toArray(selector).forEach((grupo) => { // Itera sobre cada grupo selecionado
     const itens = gsap.utils.toArray(grupo.children); // Seleciona todos os filhos do grupo para animar em conjunto

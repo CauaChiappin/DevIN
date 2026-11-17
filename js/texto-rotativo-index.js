@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/texto-rotativo-index.js
+ * Finalidade: texto rotativo index.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 const rotatingIndexWord = document.querySelector('[data-rotating-word-index]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
 const rotatingIndexPoint = document.querySelector('[data-rotating-point-index]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
 

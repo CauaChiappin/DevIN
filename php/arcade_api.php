@@ -1,6 +1,15 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/arcade_api.php
+ * Finalidade: arcade api.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -8,6 +17,7 @@ require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dep
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 header('Cache-Control: no-store, private'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 
+// Detalhe DevIN: Método arcadeRespond: encapsula uma responsabilidade reutilizável do módulo no contexto de arcade api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function arcadeRespond(array $data, int $status = 200): void // Explicação DevIN: Declara função/método arcadeRespond, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     http_response_code($status); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -15,6 +25,7 @@ function arcadeRespond(array $data, int $status = 200): void // Explicação Dev
     exit; // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeRespond.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método requireArcadeUnlock: verifica condições antes de liberar o próximo passo no contexto de arcade api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function requireArcadeUnlock(array $usuario): void // Explicação DevIN: Declara função/método requireArcadeUnlock, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $liberacao = $_SESSION['arcade_unlock'] ?? []; // Explicação DevIN: Atribui um valor à variável PHP $liberacao.
@@ -28,6 +39,7 @@ function requireArcadeUnlock(array $usuario): void // Explicação DevIN: Declar
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método ensureArcadeProgressTable: encapsula uma responsabilidade reutilizável do módulo no contexto de arcade api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function ensureArcadeProgressTable(mysqli $conn): void // Explicação DevIN: Declara função/método ensureArcadeProgressTable, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $conn->query('
@@ -44,6 +56,7 @@ function ensureArcadeProgressTable(mysqli $conn): void // Explicação DevIN: De
     '); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método arcadeGameLimits: encapsula uma responsabilidade reutilizável do módulo no contexto de arcade api. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function arcadeGameLimits(): array // Explicação DevIN: Declara função/método arcadeGameLimits, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return [ // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -75,6 +88,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 LIMIT 500
             "); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare('
                 SELECT jogo, recorde, maior_fase, ultima_atividade
                 FROM progresso_jogos
@@ -149,6 +163,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 
         $_SESSION['arcade_games'][$game]['recorde'] = $score; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         $_SESSION['arcade_games'][$game]['maior_fase'] = $level; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('
             INSERT INTO progresso_jogos (perfil_tipo, perfil_id, jogo, recorde, maior_fase, ultima_atividade)
             VALUES (?, ?, ?, ?, ?, NOW())
@@ -171,6 +186,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             arcadeRespond(['sucesso' => false, 'mensagem' => 'Jogo inválido.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare("
             SELECT COALESCE(NULLIF(p.nome, ''), NULLIF(e.nome, ''), NULLIF(a.nome, ''), 'Conta removida') AS nome,
                    gp.recorde, gp.maior_fase
@@ -209,6 +225,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             arcadeRespond(['sucesso' => false, 'mensagem' => 'Registro inválido.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('DELETE FROM progresso_jogos WHERE perfil_tipo = ? AND perfil_id = ? AND jogo = ?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('sis', $perfilTipo, $perfilId, $game); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.

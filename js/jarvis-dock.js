@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/jarvis-dock.js
+ * Finalidade: jarvis dock.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 /* Geometria pura do encaixe do botão JarvisDevIN, sem dependência do DOM. */
 (function (host, factory) { // Explicação DevIN: Define função anônima usada como operação ou callback.
   'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
@@ -7,9 +16,11 @@
 })(typeof window === 'undefined' ? null : window, function () { // Explicação DevIN: Define função anônima usada como operação ou callback.
   'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
   const MARGIN = 12; // Explicação DevIN: Declara variável JavaScript MARGIN para reutilizar valor ou resultado.
+  // Detalhe DevIN: Método clamp: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis dock. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function clamp(value, low, high) { // Explicação DevIN: Declara função/método clamp, com seus parâmetros e comportamento.
     return Math.max(low, Math.min(high, value)); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // Detalhe DevIN: Método snap: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis dock. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function snap(centerX, desiredTop, viewportWidth, viewportHeight, width, height, margin = MARGIN) { // Explicação DevIN: Declara função/método snap, com seus parâmetros e comportamento.
     const safeWidth = Math.max(1, viewportWidth); // Explicação DevIN: Declara variável JavaScript safeWidth para reutilizar valor ou resultado.
     const safeHeight = Math.max(1, viewportHeight); // Explicação DevIN: Declara variável JavaScript safeHeight para reutilizar valor ou resultado.
@@ -29,6 +40,7 @@
       yRatio: range > 0 ? (top - minTop) / range : 0 // Explicação DevIN: Continua expressão ou bloco pertencente a função snap.
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // Detalhe DevIN: Método restore: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis dock. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
   function restore(saved, viewportWidth, viewportHeight, width, height, margin = MARGIN) { // Explicação DevIN: Declara função/método restore, com seus parâmetros e comportamento.
     const side = saved && saved.side === 'right' ? 'right' : 'left'; // Explicação DevIN: Declara variável JavaScript side para reutilizar valor ou resultado.
     const ratio = saved && Number.isFinite(saved.yRatio) // Explicação DevIN: Declara variável JavaScript ratio para reutilizar valor ou resultado.

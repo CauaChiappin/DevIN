@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Privacy/PrivacyContext.php
+ * Finalidade: privacy context.
+ * Domínio: privacidade e proteção de dados.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * Helper puro: nunca confia em X-Forwarded-For, cookies ou ids de cliente.
@@ -14,11 +23,13 @@ final class PrivacyContext // Explicação DevIN: Declara o tipo PrivacyContext 
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
     private const PURPOSES = ['marketing_email','analytics_cookies','ai_resume_transfer','ai_admin_history']; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
 
+    // Detalhe DevIN: Método env: encapsula uma responsabilidade reutilizável do módulo no contexto de privacy context. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function env(string $name): string // Explicação DevIN: Declara função/método env, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return trim((string) ($_ENV[$name] ?? $_SERVER[$name] ?? getenv($name) ?: '')); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método validateAccount: verifica condições antes de liberar o próximo passo no contexto de privacy context. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function validateAccount(string $type, int $id): void // Explicação DevIN: Declara função/método validateAccount, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!array_key_exists($type, self::ACCOUNT_TABLES) || $id < 1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -26,10 +37,12 @@ final class PrivacyContext // Explicação DevIN: Declara o tipo PrivacyContext 
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método requireAccount: verifica condições antes de liberar o próximo passo no contexto de privacy context. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function requireAccount(mysqli $db, string $type, int $id, bool $lock = false): void // Explicação DevIN: Declara função/método requireAccount, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         self::validateAccount($type, $id); // Explicação DevIN: Continua expressão ou bloco pertencente a função requireAccount.
         [$table, $key] = self::ACCOUNT_TABLES[$type]; // Explicação DevIN: Continua expressão ou bloco pertencente a função requireAccount.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare("SELECT {$key} FROM {$table} WHERE {$key} = ? LIMIT 1" . ($lock ? ' FOR UPDATE' : '')); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -38,6 +51,7 @@ final class PrivacyContext // Explicação DevIN: Declara o tipo PrivacyContext 
         if (!$exists) throw new InvalidArgumentException('Conta não encontrada.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método validatePurpose: verifica condições antes de liberar o próximo passo no contexto de privacy context. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function validatePurpose(string $purpose): void // Explicação DevIN: Declara função/método validatePurpose, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!in_array($purpose, self::PURPOSES, true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -45,6 +59,7 @@ final class PrivacyContext // Explicação DevIN: Declara o tipo PrivacyContext 
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método clientIp: encapsula uma responsabilidade reutilizável do módulo no contexto de privacy context. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function clientIp(?array $server = null): ?string // Explicação DevIN: Declara função/método clientIp, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $source = $server ?? $_SERVER; // Explicação DevIN: Atribui um valor à variável PHP $source.
@@ -52,6 +67,7 @@ final class PrivacyContext // Explicação DevIN: Declara o tipo PrivacyContext 
         return is_string($ip) && filter_var($ip, FILTER_VALIDATE_IP) ? $ip : null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método ipHash: encapsula uma responsabilidade reutilizável do módulo no contexto de privacy context. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function ipHash(?string $ip, ?string $overrideKey = null): ?string // Explicação DevIN: Declara função/método ipHash, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if ($ip === null || !filter_var($ip, FILTER_VALIDATE_IP)) return null; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -65,6 +81,7 @@ final class PrivacyContext // Explicação DevIN: Declara o tipo PrivacyContext 
         return hash_hmac('sha256', $packed, $key); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método userAgent: encapsula uma responsabilidade reutilizável do módulo no contexto de privacy context. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function userAgent(?string $value = null): ?string // Explicação DevIN: Declara função/método userAgent, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $value = $value ?? ($_SERVER['HTTP_USER_AGENT'] ?? null); // Explicação DevIN: Atribui um valor à variável PHP $value.
@@ -74,6 +91,7 @@ final class PrivacyContext // Explicação DevIN: Declara o tipo PrivacyContext 
         return substr((string) $safe, 0, 512); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método requestId: encapsula uma responsabilidade reutilizável do módulo no contexto de privacy context. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function requestId(): string // Explicação DevIN: Declara função/método requestId, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $hex = bin2hex(random_bytes(16)); // Explicação DevIN: Atribui um valor à variável PHP $hex.

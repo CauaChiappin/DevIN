@@ -1,9 +1,19 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/ProfileReports.php
+ * Finalidade: profile reports.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/ChatStorage.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método ensureProfileReportsSchema: encapsula uma responsabilidade reutilizável do módulo no contexto de profile reports. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function ensureProfileReportsSchema(mysqli $conn): void // Explicação DevIN: Declara função/método ensureProfileReportsSchema, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $conn->query("
@@ -34,6 +44,7 @@ function ensureProfileReportsSchema(mysqli $conn): void // Explicação DevIN: D
         'veredito' => 'ALTER TABLE reports_perfis ADD COLUMN veredito ENUM("manter", "excluir") NULL', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'parecer' => 'ALTER TABLE reports_perfis ADD COLUMN parecer TEXT NOT NULL DEFAULT ""', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('
         SELECT COLUMN_NAME
         FROM INFORMATION_SCHEMA.COLUMNS
@@ -78,6 +89,7 @@ function ensureProfileReportsSchema(mysqli $conn): void // Explicação DevIN: D
     "); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método dispatchProfileReportNotifications: coordena entrega, limite de uso e tratamento de falhas no contexto de profile reports. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function dispatchProfileReportNotifications(mysqli $conn): bool // Explicação DevIN: Declara função/método dispatchProfileReportNotifications, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $result = $conn->query('
@@ -88,6 +100,7 @@ function dispatchProfileReportNotifications(mysqli $conn): bool // Explicação 
         LIMIT 100
     '); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     $notifications = $result->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('UPDATE reports_perfis_notificacoes SET entregue_em = NOW() WHERE id = ? AND entregue_em IS NULL'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
     $allDelivered = true; // Explicação DevIN: Atribui um valor à variável PHP $allDelivered.
 
@@ -111,6 +124,7 @@ function dispatchProfileReportNotifications(mysqli $conn): bool // Explicação 
     return $allDelivered; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método submitProfileReport: encapsula uma responsabilidade reutilizável do módulo no contexto de profile reports. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function submitProfileReport( // Explicação DevIN: Declara função/método submitProfileReport, com seus parâmetros e comportamento.
     mysqli $conn, // Explicação DevIN: Continua expressão ou bloco pertencente a função submitProfileReport.
     array $reporter, // Explicação DevIN: Continua expressão ou bloco pertencente a função submitProfileReport.
@@ -140,6 +154,7 @@ function submitProfileReport( // Explicação DevIN: Declara função/método su
     [$table, $idColumn] = $targetType === 'pessoa' // Explicação DevIN: Continua expressão ou bloco pertencente a função submitProfileReport.
         ? ['pessoa', 'id_pessoa'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         : ['empresa', 'id_empresa']; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare("SELECT nome FROM {$table} WHERE {$idColumn} = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
     $stmt->bind_param('i', $targetId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
     $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -149,6 +164,7 @@ function submitProfileReport( // Explicação DevIN: Declara função/método su
         throw new InvalidArgumentException('Este perfil não está mais disponível.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('
         INSERT INTO reports_perfis (
             tipo_denunciado, id_denunciado, nome_denunciado,
@@ -182,6 +198,7 @@ function submitProfileReport( // Explicação DevIN: Declara função/método su
     return ['id' => $reportId, 'nome' => (string) $target['nome']]; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método decideProfileReport: encapsula uma responsabilidade reutilizável do módulo no contexto de profile reports. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $adminId): bool // Explicação DevIN: Declara função/método decideProfileReport, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if ($reportId < 1 || !in_array($verdict, ['manter', 'excluir'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -191,8 +208,10 @@ function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $
         throw new InvalidArgumentException('Administrador inválido.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Inicia uma transação para manter alterações relacionadas consistentes.
     $conn->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função decideProfileReport.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('SELECT * FROM reports_perfis WHERE id = ? FOR UPDATE'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('i', $reportId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -206,6 +225,7 @@ function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $
         if ($verdict === 'excluir') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $table = $report['tipo_denunciado'] === 'empresa' ? 'empresa' : 'pessoa'; // Explicação DevIN: Atribui um valor à variável PHP $table.
             $idColumn = $report['tipo_denunciado'] === 'empresa' ? 'id_empresa' : 'id_pessoa'; // Explicação DevIN: Atribui um valor à variável PHP $idColumn.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare("SELECT {$idColumn} FROM {$table} WHERE {$idColumn} = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $report['id_denunciado']); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -216,6 +236,7 @@ function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $
                 throw new InvalidArgumentException('O perfil denunciado não está mais disponível.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare("DELETE FROM {$table} WHERE {$idColumn} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $report['id_denunciado']); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -226,6 +247,7 @@ function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $
             ? 'O perfil foi removido após análise da denúncia.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             : 'O perfil foi mantido após análise da denúncia.'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
 
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('
             UPDATE reports_perfis
             SET status = "concluida",
@@ -242,6 +264,7 @@ function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $
         $reporterMessage = $verdict === 'excluir' // Explicação DevIN: Atribui um valor à variável PHP $reporterMessage.
             ? 'Sua denúncia sobre o perfil "' . $report['nome_denunciado'] . '" foi aceita. O perfil foi removido da plataforma após análise da equipe DevIN.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             : 'Sua denúncia sobre o perfil "' . $report['nome_denunciado'] . '" foi recusada. Após análise da equipe DevIN, o perfil foi mantido na plataforma.'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('
             INSERT IGNORE INTO reports_perfis_notificacoes
                 (id_report, tipo_destinatario, id_destinatario, mensagem)
@@ -256,8 +279,10 @@ function decideProfileReport(mysqli $conn, int $reportId, string $verdict, int $
         ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função decideProfileReport.
+        // Detalhe DevIN: Confirma alterações realizadas no mesmo contexto transacional.
         $conn->commit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função decideProfileReport.
     } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        // Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
         $conn->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função decideProfileReport.
         throw $exception; // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

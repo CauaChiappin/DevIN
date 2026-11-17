@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — tests/jarvis-responsive.test.cjs
+ * Finalidade: jarvis responsive.test.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 
 const test = require('node:test'); // Explicação DevIN: Declara variável JavaScript test para reutilizar valor ou resultado.
@@ -10,6 +19,7 @@ const html = fs.readFileSync(path.join(__dirname,'../php/components/jarvis-admin
 const js = fs.readFileSync(path.join(__dirname,'../js/jarvis-admin.js'),'utf8'); // Explicação DevIN: Declara variável JavaScript js para reutilizar valor ou resultado.
 const dashboardJs = fs.readFileSync(path.join(__dirname,'../js/dashboard.js'),'utf8'); // Explicação DevIN: Declara variável JavaScript dashboardJs para reutilizar valor ou resultado.
 
+// Detalhe DevIN: Método blocks: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis responsive.test. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function blocks(selector) { // Explicação DevIN: Declara função/método blocks, com seus parâmetros e comportamento.
   const normalized = selector.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); // Explicação DevIN: Declara variável JavaScript normalized para reutilizar valor ou resultado.
   const expression = new RegExp(normalized+'\\s*\\{([^}]+)\\}', 'g'); // Explicação DevIN: Declara variável JavaScript expression para reutilizar valor ou resultado.
@@ -18,6 +28,7 @@ function blocks(selector) { // Explicação DevIN: Declara função/método bloc
   while ((match = expression.exec(css))) result.push(match[1]); // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
   return result; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+// Detalhe DevIN: Método hasRule: verifica condições antes de liberar o próximo passo no contexto de jarvis responsive.test. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function hasRule(selector, expression) { // Explicação DevIN: Declara função/método hasRule, com seus parâmetros e comportamento.
   return blocks(selector).some(block => expression.test(block)); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

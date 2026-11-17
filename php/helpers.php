@@ -1,10 +1,20 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/helpers.php
+ * Finalidade: helpers.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * Retorna a classe 'ativo' caso a página fornecida seja a página atual.
  */
+// Detalhe DevIN: Método ativo: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function ativo(string $paginaAtual, string $pagina): string // Explicação DevIN: Declara função/método ativo, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return $paginaAtual === $pagina ? 'ativo' : ''; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -13,6 +23,7 @@ function ativo(string $paginaAtual, string $pagina): string // Explicação DevI
 /**
  * Escapa strings contra XSS (Cross-Site Scripting).
  */
+// Detalhe DevIN: Método h: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function h(?string $valor): string // Explicação DevIN: Declara função/método h, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8'); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -21,6 +32,7 @@ function h(?string $valor): string // Explicação DevIN: Declara função/méto
 /** 
  * Cabeçalho compacto compartilhado pelas listas dos dashboards.
  */
+// Detalhe DevIN: Método dashboardListHeader: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function dashboardListHeader(string $pagina, string $titulo, string $placeholder, string $contador = '', bool $filtrosCandidatos = false): string // Explicação DevIN: Declara função/método dashboardListHeader, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Escapa textos dinâmicos antes de compor o HTML compartilhado do cabeçalho.
@@ -51,6 +63,7 @@ function dashboardListHeader(string $pagina, string $titulo, string $placeholder
 /** 
  * Transforma os rótulos de um card em etiquetas compactas e seguras.
  */
+// Detalhe DevIN: Método dashboardCardTags: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function dashboardCardTags(string $tags): string // Explicação DevIN: Declara função/método dashboardCardTags, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $items = array_values(array_filter(array_map('trim', explode('|', $tags)))); // Explicação DevIN: Atribui um valor à variável PHP $items.
@@ -65,6 +78,7 @@ function dashboardCardTags(string $tags): string // Explicação DevIN: Declara 
 /** 
  * Prepara os dados do currículo para o painel de detalhes do administrador.
  */
+// Detalhe DevIN: Método dashboardCandidateDetails: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function dashboardCandidateDetails(array $candidate): array // Explicação DevIN: Declara função/método dashboardCandidateDetails, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Divide habilidades escritas em linhas ou separadas por vírgula, ponto e vírgula ou barra.
@@ -95,6 +109,7 @@ function dashboardCandidateDetails(array $candidate): array // Explicação DevI
 /** 
  * Conteúdo institucional compartilhado pelos três dashboards.
  */
+// Detalhe DevIN: Método aboutPage: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function aboutPage(): string // Explicação DevIN: Declara função/método aboutPage, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return <<<'HTML'
@@ -119,6 +134,7 @@ HTML;
 /**
  * Resolve fotos armazenadas no diretório de uploads, inclusive nomes legados.
  */
+// Detalhe DevIN: Método profilePhotoFilePath: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function profilePhotoFilePath(string $foto, ?string $tipo = null, ?int $id = null): ?string // Explicação DevIN: Declara função/método profilePhotoFilePath, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (str_starts_with($foto, 'uploads/')) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -153,6 +169,7 @@ function profilePhotoFilePath(string $foto, ?string $tipo = null, ?int $id = nul
  * Monta o avatar reutilizado no menu, no modal e no perfil.
  * Se não houver foto válida, exibe as iniciais do nome como avatar padrão.
  */
+// Detalhe DevIN: Método profileAvatar: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function profileAvatar(array $perfil, string $classes): string // Explicação DevIN: Declara função/método profileAvatar, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     static $finfo = null; // Explicação DevIN: Continua expressão ou bloco pertencente a função profileAvatar.
@@ -195,6 +212,7 @@ function profileAvatar(array $perfil, string $classes): string // Explicação D
 /** 
  * Painel de detalhes compartilhado pelas áreas de listagem dos dashboards.
  */
+// Detalhe DevIN: Método dashboardDetailPanel: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function dashboardDetailPanel(): string // Explicação DevIN: Declara função/método dashboardDetailPanel, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     return <<<'HTML'
@@ -290,6 +308,7 @@ HTML;
 /**
  * Retorna os caminhos SVG dos ícones da interface.
  */
+// Detalhe DevIN: Método dashboardIcon: encapsula uma responsabilidade reutilizável do módulo no contexto de helpers. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function dashboardIcon(string $name): string // Explicação DevIN: Declara função/método dashboardIcon, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $paths = [ // Explicação DevIN: Atribui um valor à variável PHP $paths.

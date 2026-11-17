@@ -1,6 +1,15 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/middlewares/auth.php
+ * Finalidade: auth.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/../config/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../auth/Jwt.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -10,6 +19,7 @@ require_once __DIR__ . '/../config/security.php'; // Explicação DevIN: Inclui 
 /**
  * Extrai o token JWT dos cabeçalhos HTTP ou do Cookie.
  */
+// Detalhe DevIN: Método getBearerToken: consulta e organiza dados sem presumir que o resultado seja único no contexto de auth. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function getBearerToken(): ?string // Explicação DevIN: Declara função/método getBearerToken, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $authorization = ''; // Explicação DevIN: Atribui um valor à variável PHP $authorization.
@@ -34,6 +44,7 @@ function getBearerToken(): ?string // Explicação DevIN: Declara função/méto
 /**
  * Decodifica o token JWT do usuário autenticado.
  */
+// Detalhe DevIN: Método authUser: encapsula uma responsabilidade reutilizável do módulo no contexto de auth. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function authUser(): array // Explicação DevIN: Declara função/método authUser, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $token = getBearerToken(); // Explicação DevIN: Atribui um valor à variável PHP $token.
@@ -48,6 +59,7 @@ function authUser(): array // Explicação DevIN: Declara função/método authU
 /**
  * Middleware para proteger rotas da API REST (retorna JSON 401 em caso de falha).
  */
+// Detalhe DevIN: Método requireAuth: verifica condições antes de liberar o próximo passo no contexto de auth. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function requireAuth(): array // Explicação DevIN: Declara função/método requireAuth, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Middleware de API: converte falhas de token em HTTP 401 JSON e interrompe a execução protegida.
@@ -66,6 +78,7 @@ function requireAuth(): array // Explicação DevIN: Declara função/método re
  * O middleware também valida o tipo de usuário para impedir acesso
  * direto a dashboards de outro perfil.
  */
+// Detalhe DevIN: Método requireWebAuth: verifica condições antes de liberar o próximo passo no contexto de auth. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function requireWebAuth(?string $tipoEsperado = null): array // Explicação DevIN: Declara função/método requireWebAuth, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     /* Middleware de páginas: verifica sessão, expiração e tipo de conta antes de fornecer
@@ -125,6 +138,7 @@ function requireWebAuth(?string $tipoEsperado = null): array // Explicação Dev
  * Protege especificamente o dashboard da pessoa.
  * A conta só pode entrar no dashboard depois que existir um currículo.
  */
+// Detalhe DevIN: Método requirePessoaComCurriculo: verifica condições antes de liberar o próximo passo no contexto de auth. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function requirePessoaComCurriculo(): array // Explicação DevIN: Declara função/método requirePessoaComCurriculo, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Reaproveita as verificações de sessão e acrescenta a regra de currículo obrigatório.
@@ -134,6 +148,7 @@ function requirePessoaComCurriculo(): array // Explicação DevIN: Declara funç
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
         // O dashboard só fica disponível depois que existe currículo associado à conta.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'SELECT id_curriculo FROM curriculo WHERE id_pessoa = ? LIMIT 1' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

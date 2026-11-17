@@ -1,4 +1,6 @@
 <!DOCTYPE html> <!-- Explicação DevIN: Continua atributos ou conteúdo do elemento de marcação aberto anteriormente. -->
+<!-- Detalhe DevIN: REVISÃO DETALHADA DEVIN — html/login.html Finalidade: login. Domínio: páginas e formulários. Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito. Os comentários ao lado de cada instrução são mantidos; as notas adicionais explicam as decisões e os efeitos do bloco sem modificar o comportamento. -->
+
 <html lang="pt-br"> <!-- Explicação DevIN: Declara elemento raiz do documento HTML. -->
 <head> <!-- Explicação DevIN: Declara metadados e dependências do documento. -->
     <meta charset="UTF-8"> <!-- Explicação DevIN: Declara metadado de navegação. -->
@@ -13,12 +15,14 @@
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
 <body> <!-- Explicação DevIN: Declara corpo visível da página. -->
 
+    <!-- Detalhe DevIN: Bloco header: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
     <header class="cabecalho-site"> <!-- Explicação DevIN: Declara cabeçalho da seção ou página. -->
         <a class="marca" href="index.html">Dev<span>IN</span></a> <!-- Explicação DevIN: Declara link de navegação. A linha reúne múltiplos elementos. -->
         <button class="site-menu-toggle" type="button" aria-label="Abrir menu" aria-controls="site-menu" aria-expanded="false" data-site-menu-toggle> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
             <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span> <!-- Explicação DevIN: Declara trecho em linha. Inclui atributos de acessibilidade. A linha reúne múltiplos elementos. -->
         </button> <!-- Explicação DevIN: Fecha elemento button do documento. -->
 
+        <!-- Detalhe DevIN: Bloco nav: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
         <nav class="navegacao" aria-label="Navegação principal"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
             <a href="index.html#conheca">Conheça o DevIN</a> <!-- Explicação DevIN: Declara link de navegação. -->
             <a href="index.html#etapas">Etapas</a> <!-- Explicação DevIN: Declara link de navegação. -->
@@ -31,6 +35,7 @@
     </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
 
     <!-- Área principal combina a ilustração da plataforma com o formulário de autenticação. -->
+    <!-- Detalhe DevIN: Bloco main: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
     <main class="conteudo-login"> <!-- Explicação DevIN: Declara conteúdo principal da página. -->
         
         <div class="robo-area"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
@@ -40,6 +45,7 @@
         <div class="area-login"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
             <h1>Login</h1> <!-- Explicação DevIN: Declara título principal. -->
             <!-- As credenciais são enviadas ao backend por POST para validação e criação da sessão. -->
+            <!-- Detalhe DevIN: Bloco form: organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->
             <form action="../php/login.php" method="POST"> <!-- Explicação DevIN: Declara formulário de entrada de dados. -->
                 <div class="grupo-campo"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                     <label for="email">Email:</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->

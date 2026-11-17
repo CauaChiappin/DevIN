@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — css/chat.css
+ * Finalidade: chat.
+ * Domínio: estilos responsivos e aparência.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 .dashboard-shell.page-mensagens { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */

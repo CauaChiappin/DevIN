@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — tests/jarvis-chat-commands.test.cjs
+ * Finalidade: jarvis chat commands.test.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 const test=require('node:test'); // Explicação DevIN: Declara variável JavaScript test para reutilizar valor ou resultado.
 const assert=require('node:assert/strict'); // Explicação DevIN: Declara variável JavaScript assert para reutilizar valor ou resultado.
 const fs=require('node:fs'); // Explicação DevIN: Declara variável JavaScript fs para reutilizar valor ou resultado.

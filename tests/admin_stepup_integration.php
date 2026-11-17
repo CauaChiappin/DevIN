@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — tests/admin_stepup_integration.php
+ * Finalidade: admin stepup integration.
+ * Domínio: testes e prevenção de regressões.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 if (getenv('LGPD_TEST_DB') !== 'devin_lgpd_test') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     throw new RuntimeException('Somente banco descartável de CI.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -17,12 +26,14 @@ $_SERVER['REMOTE_ADDR'] = '192.0.2.25'; // Explicação DevIN: Atribui proprieda
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminStepUp.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminGate.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método stepCheck: encapsula uma responsabilidade reutilizável do módulo no contexto de admin stepup integration. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function stepCheck(bool $condition, string $label): void { // Explicação DevIN: Declara função/método stepCheck, com seus parâmetros e comportamento.
     if (!$condition) throw new RuntimeException('ADM step-up: ' . $label); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
 $login = 'login@' . bin2hex(random_bytes(8)); // Explicação DevIN: Atribui um valor à variável PHP $login.
 $loginHash = password_hash($login, PASSWORD_DEFAULT); // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
+// Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
 $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
     'INSERT INTO administrador (id_administrador,senha_hash,token2_hash,token2_version) ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     . 'VALUES (?,?,?,1)' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -70,6 +81,7 @@ stepCheck(AdminStepUp::verifySite($keys[311]), 'senha Token 2 continua válida a
 
 $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
 $newLoginHash = password_hash('nova-senha-da-conta-de-teste', PASSWORD_DEFAULT); // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
+// Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
 $stmt = $db->prepare('UPDATE administrador SET senha_hash = ? WHERE id_administrador = 311'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
 $stmt->bind_param('s', $newLoginHash); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.

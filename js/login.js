@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/login.js
+ * Finalidade: login.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 document.addEventListener('DOMContentLoaded', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
 
     // Aguarda o HTML ser montado antes de procurar elementos; o mesmo script pode ser incluído em outras páginas.

@@ -1,3 +1,10 @@
+-- REVISÃO DETALHADA DEVIN — database/migrations/2026_11_09_001_lgpd_foundation.sql
+-- Finalidade: 2026 11 09 001 lgpd foundation.
+-- Domínio: estrutura e integridade do banco.
+-- Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+-- Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+-- explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+
 -- DevIN | FASE 1: Bases de privacidade, consentimento e auditoria
 -- MySQL 8.0.16+ / InnoDB / utf8mb4 | Nenhuma tabela existente é alterada.
 -- Criar SOMENTE em desenvolvimento, apos backup e revisao.
@@ -5,6 +12,7 @@
 -- Referencias polimorficas intencionais: sem FK para tabelas de contas existentes.
 SET NAMES utf8mb4; -- Explicação DevIN: Continua a definição, restrição ou comando SQL do bloco atual.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS legal_document_versions ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  document_type ENUM('terms','privacy','cookies') NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
@@ -17,6 +25,7 @@ CREATE TABLE IF NOT EXISTS legal_document_versions ( -- Explicação DevIN: Cria
  KEY idx_legal_document_active (document_type, is_active) -- Explicação DevIN: Cria índice para auxiliar buscas ou ordenação no banco.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS user_legal_acceptances ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  account_type ENUM('pessoa','empresa','adm') NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
@@ -32,6 +41,7 @@ CREATE TABLE IF NOT EXISTS user_legal_acceptances ( -- Explicação DevIN: Cria 
  KEY idx_user_legal_terms (terms_version, privacy_notice_version) -- Explicação DevIN: Cria índice para auxiliar buscas ou ordenação no banco.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS user_consent_preferences ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  account_type ENUM('pessoa','empresa','adm') NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
@@ -46,6 +56,7 @@ CREATE TABLE IF NOT EXISTS user_consent_preferences ( -- Explicação DevIN: Cri
  CONSTRAINT chk_user_consent_preference_bool CHECK (is_granted IN (0,1)) -- Explicação DevIN: Continua a definição, restrição ou comando SQL do bloco atual.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS user_consent_events ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  account_type ENUM('pessoa','empresa','adm') NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
@@ -61,6 +72,7 @@ CREATE TABLE IF NOT EXISTS user_consent_events ( -- Explicação DevIN: Cria tab
  KEY idx_user_consent_event_date (happened_at) -- Explicação DevIN: Cria índice para auxiliar buscas ou ordenação no banco.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS audit_logs ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  event_type VARCHAR(64) NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
@@ -80,6 +92,7 @@ CREATE TABLE IF NOT EXISTS audit_logs ( -- Explicação DevIN: Cria tabela persi
  KEY idx_audit_retention (retention_until) -- Explicação DevIN: Cria índice para auxiliar buscas ou ordenação no banco.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS app_access_logs ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  client_ip VARBINARY(16) NOT NULL, -- Explicação DevIN: Continua a definição, restrição ou comando SQL do bloco atual.
@@ -97,6 +110,7 @@ CREATE TABLE IF NOT EXISTS app_access_logs ( -- Explicação DevIN: Cria tabela 
  KEY idx_access_actor (actor_type, actor_id, accessed_at) -- Explicação DevIN: Cria índice para auxiliar buscas ou ordenação no banco.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS privacy_requests ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  public_reference CHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, -- Explicação DevIN: Continua a definição, restrição ou comando SQL do bloco atual.
@@ -114,6 +128,7 @@ CREATE TABLE IF NOT EXISTS privacy_requests ( -- Explicação DevIN: Cria tabela
  KEY idx_privacy_request_pending (status, requested_at) -- Explicação DevIN: Cria índice para auxiliar buscas ou ordenação no banco.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS privacy_erasure_receipts ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  request_id BIGINT UNSIGNED NOT NULL, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
@@ -129,6 +144,7 @@ CREATE TABLE IF NOT EXISTS privacy_erasure_receipts ( -- Explicação DevIN: Cri
  REFERENCES privacy_requests (id) ON DELETE RESTRICT -- Explicação DevIN: Continua a definição, restrição ou comando SQL do bloco atual.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; -- Explicação DevIN: Define mecanismo de armazenamento ou conjunto de caracteres da tabela.
 
+-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.
 CREATE TABLE IF NOT EXISTS privacy_security_incidents ( -- Explicação DevIN: Cria tabela persistente no banco de dados, se aplicável com proteção de existência.
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- Explicação DevIN: Especifica coluna, tipo, valor padrão ou restrição da tabela SQL.
  reference_code CHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, -- Explicação DevIN: Continua a definição, restrição ou comando SQL do bloco atual.

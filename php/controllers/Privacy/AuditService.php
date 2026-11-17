@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Privacy/AuditService.php
+ * Finalidade: audit service.
+ * Domínio: privacidade e proteção de dados.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/PrivacyContext.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
@@ -19,11 +28,13 @@ final class AuditService // Explicação DevIN: Declara o tipo AuditService e in
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
     private const OUTCOMES = ['success', 'failure', 'blocked']; // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
 
+    // Detalhe DevIN: Método enabled: encapsula uma responsabilidade reutilizável do módulo no contexto de audit service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function enabled(): bool // Explicação DevIN: Declara função/método enabled, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return PrivacyContext::env('DEVIN_LGPD_AUDIT_ENABLED') === '1'; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método record: registra evidências para acompanhamento no contexto de audit service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function record( // Explicação DevIN: Declara função/método record, com seus parâmetros e comportamento.
         mysqli $db, // Explicação DevIN: Continua expressão ou bloco pertencente a função record.
         string $event, // Explicação DevIN: Continua expressão ou bloco pertencente a função record.
@@ -49,6 +60,7 @@ final class AuditService // Explicação DevIN: Declara o tipo AuditService e in
             throw new RuntimeException('Prazo de auditoria deve ser definido entre 30 e 1825 dias.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $ipHash = PrivacyContext::ipHash(PrivacyContext::clientIp()); // Explicação DevIN: Atribui um valor à variável PHP $ipHash.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'INSERT INTO audit_logs ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             . '(event_type,outcome,actor_type,actor_id,subject_type,subject_id,event_at,ip_hash,request_id,metadata_json,retention_until) ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -68,6 +80,7 @@ final class AuditService // Explicação DevIN: Declara o tipo AuditService e in
      * Instrumentação opcional e não intrusiva. Até ativar Fase 1 em deploy,
      * fluxos antigos seguem funcionando. Falha de auditoria nunca revela PII.
      */
+    // Detalhe DevIN: Método tryRecord: encapsula uma responsabilidade reutilizável do módulo no contexto de audit service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function tryRecord( // Explicação DevIN: Declara função/método tryRecord, com seus parâmetros e comportamento.
         string $event, // Explicação DevIN: Continua expressão ou bloco pertencente a função tryRecord.
         string $outcome, // Explicação DevIN: Continua expressão ou bloco pertencente a função tryRecord.

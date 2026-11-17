@@ -1,10 +1,20 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/config/database.php
+ * Finalidade: database.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 // Garante que o .env seja carregado antes de tentar ler as variáveis
 require_once __DIR__ . '/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método getDatabaseConnection: consulta e organiza dados sem presumir que o resultado seja único no contexto de database. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function getDatabaseConnection(): mysqli // Explicação DevIN: Declara função/método getDatabaseConnection, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     /* Resolve credenciais primeiro nas variáveis modernas, depois nos nomes legados e por fim

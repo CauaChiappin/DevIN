@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — tests/privacy_phase1_integration.php
+ * Finalidade: privacy phase1 integration.
+ * Domínio: testes e prevenção de regressões.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /** Executar APENAS com banco descartável em CI; requer variáveis LGPD_TEST_* . */
 foreach (['LGPD_TEST_DB','LGPD_TEST_USER','LGPD_TEST_PASSWORD'] as $name) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
@@ -23,9 +32,11 @@ require_once dirname(__DIR__) . '/php/controllers/Privacy/ErasureReceiptService.
 require_once dirname(__DIR__) . '/php/controllers/Privacy/SecurityIncidentService.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Privacy/RetentionService.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método check: verifica condições antes de liberar o próximo passo no contexto de privacy phase1 integration. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function check(bool $ok, string $label): void { // Explicação DevIN: Declara função/método check, com seus parâmetros e comportamento.
     if (!$ok) throw new RuntimeException('Falha em ' . $label); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+// Detalhe DevIN: Método rejects: encapsula uma responsabilidade reutilizável do módulo no contexto de privacy phase1 integration. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function rejects(callable $operation, string $label): void { // Explicação DevIN: Declara função/método rejects, com seus parâmetros e comportamento.
     try { $operation(); } catch (InvalidArgumentException | RuntimeException | DomainException $expected) { return; } // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     throw new RuntimeException('Não rejeitou ' . $label); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -47,12 +58,15 @@ check(LegalDocumentService::active($db, 'terms')['version_code'] === '2026-11-v1
 check(LegalDocumentService::active($db, 'privacy')['version_code'] === '2026-11-v1', 'versão política'); // Explicação DevIN: Continua expressão ou bloco pertencente a função rejects.
 rejects(static fn() => LegalDocumentService::publishApproved($db,'terms','2026-11-v1',hash('sha256','texto diferente')),'imutabilidade'); // Explicação DevIN: Continua expressão ou bloco pertencente a função rejects.
 
+// Detalhe DevIN: Inicia uma transação para manter alterações relacionadas consistentes.
 $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função rejects.
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     rejects(static fn() => ConsentService::recordLegalAcceptance($db,'pessoa',101,false,'2026-11-v1','2026-11-v1'),'checkbox não marcado'); // Explicação DevIN: Continua expressão ou bloco pertencente a função rejects.
     rejects(static fn() => ConsentService::recordLegalAcceptance($db,'pessoa',101,true,'2025-old','2026-11-v1'), 'versão não exibida'); // Explicação DevIN: Continua expressão ou bloco pertencente a função rejects.
     $consentId = ConsentService::recordLegalAcceptance($db,'pessoa',101,true,'2026-11-v1','2026-11-v1'); // Explicação DevIN: Atribui um valor à variável PHP $consentId.
+    // Detalhe DevIN: Confirma alterações realizadas no mesmo contexto transacional.
     $db->commit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função rejects.
+// Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
 } catch (Throwable $e) {$db->rollback();throw $e;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
 check($consentId > 0, 'registro aceite'); // Explicação DevIN: Continua expressão ou bloco pertencente a função rejects.
 $row = $db->query("SELECT account_id,terms_version,privacy_notice_version,ip_hash,user_agent FROM user_legal_acceptances WHERE id = {$consentId}")->fetch_assoc(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.

@@ -1,12 +1,22 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/ProfileController.php
+ * Finalidade: profile controller.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/../config/database.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../MailerHelper.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/ProfileLanguagePreference.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método profileTable: encapsula uma responsabilidade reutilizável do módulo no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function profileTable(string $tipo): array // Explicação DevIN: Declara função/método profileTable, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Mapa fechado evita que o tipo recebido controle diretamente nomes de tabela SQL.
@@ -22,12 +32,14 @@ function profileTable(string $tipo): array // Explicação DevIN: Declara funç�
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método findProfile: consulta e organiza dados sem presumir que o resultado seja único no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function findProfile(string $tipo, int $id): ?array // Explicação DevIN: Declara função/método findProfile, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     [$table, $idColumn] = profileTable($tipo); // Explicação DevIN: Continua expressão ou bloco pertencente a função findProfile.
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
 
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare("SELECT * FROM {$table} WHERE {$idColumn} = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         if (!$stmt) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new RuntimeException('Não foi possível carregar o perfil.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -43,6 +55,7 @@ function findProfile(string $tipo, int $id): ?array // Explicação DevIN: Decla
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método saveProfilePhoto: cria registros após checagem da entrada no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function saveProfilePhoto(string $tipo, int $id, ?array $upload): ?string // Explicação DevIN: Declara função/método saveProfilePhoto, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     /* Mantém a foto atual quando não há novo envio; quando há, verifica erro, tamanho e conteúdo
@@ -86,6 +99,7 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload): ?string // Exp
     return 'uploads/' . $fileName; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método ensureUniqueEmail: encapsula uma responsabilidade reutilizável do módulo no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function ensureUniqueEmail(string $tipo, int $id, string $email): void // Explicação DevIN: Declara função/método ensureUniqueEmail, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $tables = [ // Explicação DevIN: Atribui um valor à variável PHP $tables.
@@ -99,6 +113,7 @@ function ensureUniqueEmail(string $tipo, int $id, string $email): void // Explic
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         // Permite que a própria conta mantenha o e-mail, mas bloqueia endereço usado por outra.
         foreach ($tables as $tableTipo => [$idColumn, $table]) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare("SELECT {$idColumn} FROM {$table} WHERE email = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             if (!$stmt) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 throw new RuntimeException('Não foi possível validar o e-mail.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -118,6 +133,7 @@ function ensureUniqueEmail(string $tipo, int $id, string $email): void // Explic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método updateProfile: modifica apenas os dados previstos pela operação no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function updateProfile(string $tipo, int $id, array $data, ?array $upload = null): void // Explicação DevIN: Declara função/método updateProfile, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     [$table, $idColumn] = profileTable($tipo); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateProfile.
@@ -146,6 +162,7 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         // Administradores têm apenas nome/e-mail; os demais perfis também atualizam contato e foto.
         if ($tipo === 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare("UPDATE {$table} SET nome = ?, email = ? WHERE {$idColumn} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             if (!$stmt) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 throw new RuntimeException('Falha ao preparar atualização do perfil.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -160,7 +177,9 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
             $stmt = $foto === null // Explicação DevIN: Atribui um valor à variável PHP $stmt.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 ? $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ? WHERE {$idColumn} = ?") // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+                // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
                 : $conn->prepare("UPDATE {$table} SET nome = ?, email = ?, cep = ?, telefone = ?, foto = ? WHERE {$idColumn} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             if (!$stmt) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 throw new RuntimeException('Falha ao preparar atualização do perfil.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -193,6 +212,7 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método ensureLanguagePreferencesTable: encapsula uma responsabilidade reutilizável do módulo no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function ensureLanguagePreferencesTable(mysqli $conn): void // Explicação DevIN: Declara função/método ensureLanguagePreferencesTable, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     static $tableEnsured = false; // Explicação DevIN: Continua expressão ou bloco pertencente a função ensureLanguagePreferencesTable.
@@ -212,6 +232,7 @@ function ensureLanguagePreferencesTable(mysqli $conn): void // Explicação DevI
     $tableEnsured = true; // Explicação DevIN: Atribui um valor à variável PHP $tableEnsured.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método getProfileLanguage: consulta e organiza dados sem presumir que o resultado seja único no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function getProfileLanguage(string $tipo, int $id): string // Explicação DevIN: Declara função/método getProfileLanguage, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     profileTable($tipo); // Explicação DevIN: Continua expressão ou bloco pertencente a função getProfileLanguage.
@@ -219,6 +240,7 @@ function getProfileLanguage(string $tipo, int $id): string // Explicação DevIN
 
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         ensureLanguagePreferencesTable($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função getProfileLanguage.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('SELECT idioma FROM preferencias_dashboard WHERE perfil_tipo = ? AND perfil_id = ? LIMIT 1'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('si', $tipo, $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -237,6 +259,7 @@ function getProfileLanguage(string $tipo, int $id): string // Explicação DevIN
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método updateLanguage: modifica apenas os dados previstos pela operação no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function updateLanguage(string $tipo, int $id, string $idioma): void // Explicação DevIN: Declara função/método updateLanguage, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     profileTable($tipo); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateLanguage.
@@ -247,6 +270,7 @@ function updateLanguage(string $tipo, int $id, string $idioma): void // Explica�
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         ensureLanguagePreferencesTable($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateLanguage.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare("
             INSERT INTO preferencias_dashboard (perfil_tipo, perfil_id, idioma)
             VALUES (?, ?, ?)
@@ -263,6 +287,7 @@ function updateLanguage(string $tipo, int $id, string $idioma): void // Explica�
     $_SESSION['idioma'] = $idioma; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método deleteProfile: trata remoção sujeita às permissões e integridade do banco no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function deleteProfile(string $tipo, int $id): void // Explicação DevIN: Declara função/método deleteProfile, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     [$table, $idColumn] = profileTable($tipo); // Explicação DevIN: Continua expressão ou bloco pertencente a função deleteProfile.
@@ -273,6 +298,7 @@ function deleteProfile(string $tipo, int $id): void // Explicação DevIN: Decla
 
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         if (in_array($tipo, ['pessoa', 'empresa'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmtProfile = $conn->prepare("SELECT nome, email FROM {$table} WHERE {$idColumn} = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmtProfile->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmtProfile->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -289,6 +315,7 @@ function deleteProfile(string $tipo, int $id): void // Explicação DevIN: Decla
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         // O ID é parâmetro preparado; tabela e coluna foram selecionadas pelo mapa fechado.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare("DELETE FROM {$table} WHERE {$idColumn} = ?"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         if (!$stmt) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new RuntimeException('Não foi possível excluir o perfil.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -306,6 +333,7 @@ function deleteProfile(string $tipo, int $id): void // Explicação DevIN: Decla
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método listProfiles: consulta e organiza dados sem presumir que o resultado seja único no contexto de profile controller. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function listProfiles(string $tipo): array // Explicação DevIN: Declara função/método listProfiles, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Retorna uma lista compacta ordenada para interfaces que precisam apenas identificar perfis.

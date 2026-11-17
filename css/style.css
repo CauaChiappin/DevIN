@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — css/style.css
+ * Finalidade: style.
+ * Domínio: estilos responsivos e aparência.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 :root { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
     --bg: #f8f7f2; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
     --black: #000000; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */

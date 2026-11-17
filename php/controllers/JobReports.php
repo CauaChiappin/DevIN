@@ -1,10 +1,20 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/JobReports.php
+ * Finalidade: processar denúncias relativas a anúncios.
+ * Domínio: processamento no servidor.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/ChatStorage.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/JobSchema.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método ensureJobReportsSchema: encapsula uma responsabilidade reutilizável do módulo no contexto de processar denúncias relativas a anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function ensureJobReportsSchema(mysqli $conn): void // Explicação DevIN: Declara função/método ensureJobReportsSchema, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     ensureJobCompensationSchema($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função ensureJobReportsSchema.
@@ -39,6 +49,7 @@ function ensureJobReportsSchema(mysqli $conn): void // Explicação DevIN: Decla
         'salario_mensal' => 'ALTER TABLE reports_vagas ADD COLUMN salario_mensal DECIMAL(10,2) NOT NULL DEFAULT 0.00', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'limite_aprovados' => 'ALTER TABLE reports_vagas ADD COLUMN limite_aprovados INT UNSIGNED NOT NULL DEFAULT 0', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('
         SELECT COLUMN_NAME
         FROM INFORMATION_SCHEMA.COLUMNS
@@ -82,6 +93,7 @@ function ensureJobReportsSchema(mysqli $conn): void // Explicação DevIN: Decla
     "); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método submitJobReport: encapsula uma responsabilidade reutilizável do módulo no contexto de processar denúncias relativas a anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reason, string $details): array // Explicação DevIN: Declara função/método submitJobReport, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     ensureJobCompensationSchema($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função submitJobReport.
@@ -96,6 +108,7 @@ function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reas
         throw new InvalidArgumentException('Descreva o motivo em até 1.000 caracteres.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('
         SELECT v.titulo, COALESCE(v.descricao, \'\') AS descricao,
                v.salario_mensal, v.limite_aprovados, v.id_empresa, e.nome AS nome_empresa
@@ -115,6 +128,7 @@ function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reas
         throw new InvalidArgumentException('Não é possível denunciar uma vaga publicada pela sua própria empresa.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('
         INSERT INTO reports_vagas (
             id_vaga, titulo_vaga, descricao_vaga, salario_mensal, limite_aprovados,
@@ -152,6 +166,7 @@ function submitJobReport(mysqli $conn, array $reporter, int $jobId, string $reas
     return ['id' => $reportId, 'titulo' => (string) $job['titulo']]; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método dispatchJobReportNotifications: coordena entrega, limite de uso e tratamento de falhas no contexto de processar denúncias relativas a anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function dispatchJobReportNotifications(mysqli $conn): bool // Explicação DevIN: Declara função/método dispatchJobReportNotifications, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $result = $conn->query('
@@ -162,6 +177,7 @@ function dispatchJobReportNotifications(mysqli $conn): bool // Explicação DevI
         LIMIT 100
     '); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     $notifications = $result->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+    // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
     $stmt = $conn->prepare('UPDATE reports_vagas_notificacoes SET entregue_em = NOW() WHERE id = ? AND entregue_em IS NULL'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
     $allDelivered = true; // Explicação DevIN: Atribui um valor à variável PHP $allDelivered.
 
@@ -185,14 +201,17 @@ function dispatchJobReportNotifications(mysqli $conn): bool // Explicação DevI
     return $allDelivered; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método decideJobReport: encapsula uma responsabilidade reutilizável do módulo no contexto de processar denúncias relativas a anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $adminId): bool // Explicação DevIN: Declara função/método decideJobReport, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if ($reportId < 1 || !in_array($verdict, ['manter', 'excluir'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         throw new InvalidArgumentException('Decisão de moderação inválida.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Inicia uma transação para manter alterações relacionadas consistentes.
     $conn->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função decideJobReport.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('SELECT * FROM reports_vagas WHERE id = ? FOR UPDATE'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('i', $reportId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -203,6 +222,7 @@ function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $admi
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         if ($verdict === 'excluir') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $conn->prepare('DELETE FROM vagas WHERE id_vaga = ?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $report['id_vaga']); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -213,6 +233,7 @@ function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $admi
         $parecer = $verdict === 'excluir' // Explicação DevIN: Atribui um valor à variável PHP $parecer.
             ? 'A vaga foi removida após análise da denúncia.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             : 'A vaga foi mantida após análise da denúncia.'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('
             UPDATE reports_vagas
             SET status = ?, parecer = ?, analisado_por = ?, analisado_em = NOW()
@@ -233,6 +254,7 @@ function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $admi
             [(string) $report['tipo_denunciante'], (int) $report['id_denunciante'], $reporterMessage], // Explicação DevIN: Continua expressão ou bloco pertencente a função decideJobReport.
             ['empresa', (int) $report['id_empresa'], $companyMessage], // Explicação DevIN: Continua expressão ou bloco pertencente a função decideJobReport.
         ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('
             INSERT IGNORE INTO reports_vagas_notificacoes
                 (id_report, tipo_destinatario, id_destinatario, mensagem)
@@ -244,8 +266,10 @@ function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $admi
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função decideJobReport.
 
+        // Detalhe DevIN: Confirma alterações realizadas no mesmo contexto transacional.
         $conn->commit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função decideJobReport.
     } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        // Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
         $conn->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função decideJobReport.
         throw $exception; // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

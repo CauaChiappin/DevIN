@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — js/cadastro.js
+ * Finalidade: cadastro.
+ * Domínio: interações do navegador.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 const senhaInput = document.getElementById('senha'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
 const confirmeSenhaInput = document.getElementById('confirme_senha'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
 const reqLength = document.getElementById('req-length'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
@@ -29,6 +38,7 @@ if (cadastroForm && !csrfInput) { // Explicação DevIN: Inicia desvio condicion
         }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método togglePasswordVisibility: encapsula uma responsabilidade reutilizável do módulo no contexto de cadastro. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function togglePasswordVisibility(inputId, imgElement) { // Explicação DevIN: Declara função/método togglePasswordVisibility, com seus parâmetros e comportamento.
     // Alterna o campo entre senha oculta e texto visível, atualizando também o ícone.
     const input = document.getElementById(inputId); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
@@ -42,6 +52,7 @@ function togglePasswordVisibility(inputId, imgElement) { // Explicação DevIN: 
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método updateRequirement: modifica apenas os dados previstos pela operação no contexto de cadastro. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function updateRequirement(element, isValid) { // Explicação DevIN: Declara função/método updateRequirement, com seus parâmetros e comportamento.
     // Troca classes e ícone juntos para o mesmo resultado aparecer visualmente e no texto do item.
     const icon = element.querySelector('.req-icon'); // Explicação DevIN: Declara variável JavaScript icon para reutilizar valor ou resultado.
@@ -50,6 +61,7 @@ function updateRequirement(element, isValid) { // Explicação DevIN: Declara fu
     icon.textContent = isValid ? '✅' : '⚠️'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método checkPasswordMatch: verifica condições antes de liberar o próximo passo no contexto de cadastro. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function checkPasswordMatch() { // Explicação DevIN: Declara função/método checkPasswordMatch, com seus parâmetros e comportamento.
     // Só mostra divergência depois que o usuário começou a preencher a confirmação.
     if (!confirmeSenhaInput.value) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -97,6 +109,7 @@ cadastroForm?.addEventListener('submit', async (event) => { // Explicação DevI
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhe DevIN: Método aplicarMascara: encapsula uma responsabilidade reutilizável do módulo no contexto de cadastro. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function aplicarMascara(id, limite, formatar) { // Explicação DevIN: Declara função/método aplicarMascara, com seus parâmetros e comportamento.
     const campo = document.getElementById(id); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
 

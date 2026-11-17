@@ -1,3 +1,12 @@
+/*
+ * REVISÃO DETALHADA DEVIN — css/politica-privacidade.css
+ * Finalidade: politica privacidade.
+ * Domínio: estilos responsivos e aparência.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 :root { --bg: #f8f7f2; --blue: #004a94; --text: #111827; --muted: #4b5563; --white: #ffffff; --line: #e3e1d9; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 24px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */

@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — tests/jarvis_admin_mysql.php
+ * Finalidade: jarvis admin mysql.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 /**
  * Integração do JARVIS Admin contra MySQL isolado e descartável de CI.
@@ -19,10 +28,12 @@ $db->set_charset('utf8mb4'); // Explicação DevIN: Participa da instrução atu
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/ConversationRepository.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/AdminTaskQueue.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método assertJarvis: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis admin mysql. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function assertJarvis(bool $value, string $message): void // Explicação DevIN: Declara função/método assertJarvis, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!$value) throw new RuntimeException('JARVIS MySQL: ' . $message); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+// Detalhe DevIN: Método expectJarvisRejection: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis admin mysql. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function expectJarvisRejection(callable $operation, string $message): void // Explicação DevIN: Declara função/método expectJarvisRejection, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
@@ -86,6 +97,7 @@ assertJarvis(array_column($audit, 'action') === ['created','started','completed'
     'auditoria das transições'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 
 assertJarvis(ConversationRepository::delete($db, $admin1, $conversationId), 'dono exclui conversa'); // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
+// Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
 $stmt = $db->prepare('SELECT COUNT(*) FROM jarvis_messages WHERE conversation_id = ?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
 $stmt->bind_param('i', $conversationId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
 $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.

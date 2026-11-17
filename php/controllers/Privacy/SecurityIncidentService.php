@@ -1,11 +1,21 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Privacy/SecurityIncidentService.php
+ * Finalidade: security incident service.
+ * Domínio: privacidade e proteção de dados.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/PrivacyContext.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 /** Registro de incidentes: retenção de pelo menos cinco anos, com acesso restrito a ADMs. */
 final class SecurityIncidentService // Explicação DevIN: Declara o tipo SecurityIncidentService e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    // Detalhe DevIN: Método register: cria registros após checagem da entrada no contexto de security incident service. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function register( // Explicação DevIN: Declara função/método register, com seus parâmetros e comportamento.
         mysqli $db, int $adminId, string $discoveredUtc, string $summary, // Explicação DevIN: Continua expressão ou bloco pertencente a função register.
         array $categories, ?int $affectedCount = null // Explicação DevIN: Continua expressão ou bloco pertencente a função register.
@@ -24,6 +34,7 @@ final class SecurityIncidentService // Explicação DevIN: Declara o tipo Securi
         // Texto de resumo pode conter dado pessoal: validar e revisar antes da inserção.
         $reference = bin2hex(random_bytes(16)); // Explicação DevIN: Atribui um valor à variável PHP $reference.
         $json = json_encode(array_values(array_unique($categories)), JSON_THROW_ON_ERROR); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
+        // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             'INSERT INTO privacy_security_incidents ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             . '(reference_code,discovered_at,risk_level,affected_data_categories_json,affected_subjects_count,' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.

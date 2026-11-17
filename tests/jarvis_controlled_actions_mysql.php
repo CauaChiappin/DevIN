@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — tests/jarvis_controlled_actions_mysql.php
+ * Finalidade: jarvis controlled actions mysql.
+ * Domínio: assistência administrativa.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 /** Integração offline em MySQL descartável. NUNCA usar banco real. */
 if (getenv('JARVIS_TEST_DB') !== 'devin_jarvis_ci') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     throw new RuntimeException('Banco de teste não autorizado.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -11,9 +20,11 @@ $db=new mysqli(getenv('JARVIS_TEST_HOST') ?: '127.0.0.1', // Explicação DevIN:
 $db->set_charset('utf8mb4'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 require_once dirname(__DIR__).'/php/controllers/Jarvis/JarvisAdminActions.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
+// Detalhe DevIN: Método prove: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis controlled actions mysql. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function prove(bool $condition,string $why): void { // Explicação DevIN: Declara função/método prove, com seus parâmetros e comportamento.
     if (!$condition) throw new RuntimeException('JARVIS controlled actions: '.$why); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+// Detalhe DevIN: Método forbidden: encapsula uma responsabilidade reutilizável do módulo no contexto de jarvis controlled actions mysql. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
 function forbidden(callable $fn,string $why): void { // Explicação DevIN: Declara função/método forbidden, com seus parâmetros e comportamento.
     try {$fn();} catch(InvalidArgumentException | DomainException $expected) {return;} // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     throw new RuntimeException('Permitido indevidamente: '.$why); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.

@@ -1,5 +1,14 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+/**
+ * REVISÃO DETALHADA DEVIN — php/controllers/Security/AdminToken2Enrollment.php
+ * Finalidade: cadastrar e alterar segredos de administrador.
+ * Domínio: controle de acesso.
+ * Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.
+ * Os comentários ao lado de cada instrução são mantidos; as notas adicionais
+ * explicam as decisões e os efeitos do bloco sem modificar o comportamento.
+ */
+
 
 require_once __DIR__ . '/AdminStepUp.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/AdminToken2Hasher.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -16,11 +25,13 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
      * existe na tabela administrativa. Não confiar apenas em usuario_tipo na
      * sessão nem aceitar IDs informados por GET ou POST.
      */
+    // Detalhe DevIN: Método requireVerifiedAdminAccount: verifica condições antes de liberar o próximo passo no contexto de cadastrar e alterar segredos de administrador. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function requireVerifiedAdminAccount(): int // Explicação DevIN: Declara função/método requireVerifiedAdminAccount, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $id = AdminStepUp::adminId(); // verifica login, tipo e validade da sessão
         $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'SELECT senha_hash FROM administrador WHERE id_administrador = ? LIMIT 1' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -39,11 +50,13 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
         return $id; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método configured: encapsula uma responsabilidade reutilizável do módulo no contexto de cadastrar e alterar segredos de administrador. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function configured(): bool // Explicação DevIN: Declara função/método configured, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $id = AdminStepUp::adminId(); // Explicação DevIN: Atribui um valor à variável PHP $id.
         $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'SELECT token2_hash FROM administrador WHERE id_administrador = ? LIMIT 1' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -58,6 +71,7 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método limit: encapsula uma responsabilidade reutilizável do módulo no contexto de cadastrar e alterar segredos de administrador. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     private static function limit(int $id): void // Explicação DevIN: Declara função/método limit, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $ip = RateLimiter::clientIp(); // Explicação DevIN: Atribui um valor à variável PHP $ip.
@@ -68,6 +82,7 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Detalhe DevIN: Método validateNewToken: verifica condições antes de liberar o próximo passo no contexto de cadastrar e alterar segredos de administrador. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function validateNewToken(string $newToken2, string $confirmation): void // Explicação DevIN: Declara função/método validateNewToken, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Sem limite ARBITRÁRIO de caracteres. Teto técnico 64 KiB evita negação
@@ -85,6 +100,7 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
      * true: cadastrado ou alterado; false: verificação recusada.
      * Dados sensíveis nunca são gravados em logs nem devolvidos ao chamador.
      */
+    // Detalhe DevIN: Método save: cria registros após checagem da entrada no contexto de cadastrar e alterar segredos de administrador. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
     public static function save( // Explicação DevIN: Declara função/método save, com seus parâmetros e comportamento.
         string $token1, ?string $currentToken2, // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
         string $newToken2, string $confirmation // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
@@ -96,7 +112,9 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
 
         $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            // Detalhe DevIN: Inicia uma transação para manter alterações relacionadas consistentes.
             $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'SELECT senha_hash, token2_hash FROM administrador ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . 'WHERE id_administrador = ? LIMIT 1 FOR UPDATE' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -107,8 +125,11 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
 
             if (!$account || !is_string($account['senha_hash']) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                // Detalhe DevIN: Valida uma senha contra o hash armazenado sem recuperar a senha original.
                 || !password_verify($token1, $account['senha_hash']) // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
+                // Detalhe DevIN: Valida uma senha contra o hash armazenado sem recuperar a senha original.
                 || password_verify($newToken2, $account['senha_hash'])) { // Explicação DevIN: Executa operação criptográfica de senha ou comparação protegida.
+                // Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
                 $db->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
                 return false; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -119,11 +140,13 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
                 || !AdminToken2Hasher::verify($currentToken2, $account['token2_hash']) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 || AdminToken2Hasher::verify($newToken2, $account['token2_hash']) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             )) { // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
+                // Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
                 $db->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
                 return false; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
             // Poucos ADMs: impedir reutilização da mesma chave por outro ADM.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'SELECT token2_hash FROM administrador WHERE id_administrador <> ? ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . 'AND token2_hash IS NOT NULL' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -134,12 +157,14 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
             foreach ($others as $other) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
                 if (AdminToken2Hasher::verify($newToken2, $other['token2_hash'])) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                    // Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
                     $db->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
                     return false; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
                 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
             $hash = AdminToken2Hasher::create($newToken2); // Explicação DevIN: Atribui um valor à variável PHP $hash.
+            // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
             $stmt = $db->prepare( // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                 'UPDATE administrador SET token2_hash = ?, ' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 . 'token2_version = token2_version + 1, ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -149,6 +174,7 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
             $stmt->bind_param('si', $hash, $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
+            // Detalhe DevIN: Confirma alterações realizadas no mesmo contexto transacional.
             $db->commit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
 
             // As autorizações de site e IA desta sessão perdem validade agora;
@@ -160,6 +186,7 @@ final class AdminToken2Enrollment // Explicação DevIN: Declara o tipo AdminTok
             AuditService::tryRecord('admin_token2_enrolled', 'success', 'adm', $id); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
             return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
         } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            // Detalhe DevIN: Desfaz alterações ainda não confirmadas quando ocorre falha.
             $db->rollback(); // Explicação DevIN: Continua expressão ou bloco pertencente a função save.
             throw $exception; // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
