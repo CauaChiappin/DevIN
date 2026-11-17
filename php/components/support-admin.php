@@ -28,6 +28,14 @@
             <label for="support-admin-search">Encontrar chamado</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
             <input id="support-admin-search" type="search" data-support-search
                    placeholder="Nome, e-mail, categoria ou número..." maxlength="100">
+            <!-- Filtro rápido, útil quando o ADM atende vários chamados pelo celular. -->
+            <label for="support-admin-status">Filtrar atendimento</label>
+            <select id="support-admin-status" data-support-status-filter>
+                <option value="all">Todos os chamados</option>
+                <option value="aberto">Aguardando resposta</option>
+                <option value="respondido">Respondidos</option>
+                <option value="fechado">Encerrados</option>
+            </select>
             <div data-support-list class="support-ticket-list"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                 <p class="support-hint">Carregando solicitações...</p> <!-- Explicação DevIN: Declara parágrafo. -->
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
@@ -46,6 +54,8 @@
                 <textarea id="support-admin-message" name="message" rows="6"
                           minlength="2" maxlength="3000" required
                           placeholder="Escreva uma resposta clara e respeitosa. Não solicite senhas ou tokens."></textarea>
+                <!-- Contador acessível: ajuda a evitar respostas cortadas pelo limite de 3.000 caracteres. -->
+                <div class="support-counter" data-support-reply-counter aria-live="off">0 / 3000 caracteres</div>
                 <div class="support-actions"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                     <button type="submit" class="support-primary">Responder ao usuário</button> <!-- Explicação DevIN: Declara botão de ação. -->
                     <button type="button" data-support-close class="support-secondary">Encerrar chamado</button> <!-- Explicação DevIN: Declara botão de ação. -->
