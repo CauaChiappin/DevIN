@@ -2,6 +2,19 @@
 
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 
+/**
+ * MÓDULO DEVIN — CHAT STORAGE.
+ * Responsabilidade: parte do subsistema de dados de perfis, currículos, vagas e interações do DevIN.
+ * Leia os métodos abaixo em sequência: entrada validada -> processamento ->
+ * resposta ao chamador. Comentários detalhados descrevem decisões, limites
+ * e efeitos colaterais; os comentários gerados por linha foram preservados.
+ * Atenção: chamadas de banco e ações administrativas exigem autorização no
+ * endpoint controlador; métodos isolados não constituem permissão para a IA.
+ */
+
+
+// Detalhamento DevIN: centraliza a operação «mensagemConclusaoReportExpirada» no contexto de dados de perfis, currículos, vagas e interações do DevIN; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+// Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
 function mensagemConclusaoReportExpirada(array $mensagem, ?int $agora = null): bool // Explicação DevIN: Declara função/método mensagemConclusaoReportExpirada, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (strpos((string) ($mensagem['chave_evento'] ?? ''), 'job-report:') !== 0) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -30,6 +43,8 @@ function mensagemConclusaoReportExpirada(array $mensagem, ?int $agora = null): b
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 /** @return mixed Retorna o resultado produzido pela operação sobre o armazenamento. */
+// Detalhamento DevIN: centraliza a operação «acessarArmazenamentoMensagens» no contexto de dados de perfis, currículos, vagas e interações do DevIN; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+// Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
 function acessarArmazenamentoMensagens(callable $operacao, string $recurso = 'mensagens') // Explicação DevIN: Declara função/método acessarArmazenamentoMensagens, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (!in_array($recurso, ['mensagens', 'conversas'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -103,6 +118,8 @@ function acessarArmazenamentoMensagens(callable $operacao, string $recurso = 'me
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+// Detalhamento DevIN: centraliza a operação «appendPlatformChatNotification» no contexto de dados de perfis, currículos, vagas e interações do DevIN; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+// Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
 function appendPlatformChatNotification(string $eventKey, string $recipientType, int $recipientId, string $message): void // Explicação DevIN: Declara função/método appendPlatformChatNotification, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if ($eventKey === '' || !in_array($recipientType, ['pessoa', 'empresa'], true) || $recipientId < 1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
