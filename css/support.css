@@ -172,3 +172,21 @@
 @media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
     .support-mobile-tab, .support-floating-help { transition: none; scroll-behavior: auto; } /* Evita animações excessivas. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/*
+ * Navegação de detalhes no celular.
+ * O histórico grande some quando um usuário abre um chamado: a resposta fica
+ * imediatamente acessível, e "Voltar aos meus chamados" restaura a lista.
+ * No desktop, lista e detalhe continuam visíveis simultaneamente.
+ */
+.support-history-back { display: none; } /* Explicação DevIN: Mantém o retorno oculto no layout de duas colunas de computadores. */
+
+@media (max-width: 767px) {
+    .support-history-pane[data-support-history-view="detail"] [data-support-history-overview] { display: none; } /* Explicação DevIN: Prioriza o detalhe selecionado sem exigir rolagem por dezenas de cartões. */
+    .support-history-pane[data-support-history-view="detail"] .support-history-back:not([hidden]) { display: inline-flex; width: 100%; min-height: 48px; align-items: center; justify-content: center; margin: 0 0 10px; } /* Explicação DevIN: Oferece retorno tátil e explícito para a lista do usuário. */
+    .support-history-pane[data-support-history-view="detail"] [data-support-detail] { padding-top: 2px; } /* Explicação DevIN: Aproxima o texto do chamado do botão de voltar no celular. */
+    .support-admin-view .support-actions { position: sticky; bottom: env(safe-area-inset-bottom, 0px); z-index: 10; padding: 10px 0 calc(8px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--support-line); background: linear-gradient(to bottom, rgba(255,255,255,.96), #fff 36%); } /* Explicação DevIN: Mantém as opções de resposta acessíveis com teclado virtual e barra de gestos. */
+    .support-admin-view .support-panel textarea { scroll-margin-bottom: 150px; } /* Explicação DevIN: Evita que o foco do campo fique sob a barra de ações fixa. */
+    .support-admin-view .support-panel select { width: 100%; min-height: 48px; font-size: 16px; } /* Explicação DevIN: Filtro de situação pode ser usado com uma mão sem zoom automático no iOS. */
+    .support-admin-view .support-counter { padding-right: 3px; } /* Explicação DevIN: Mantém a contagem de resposta legível ao lado da caixa de texto. */
+}
