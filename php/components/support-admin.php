@@ -29,13 +29,13 @@
             <input id="support-admin-search" type="search" data-support-search
                    placeholder="Nome, e-mail, categoria ou número..." maxlength="100">
             <!-- Filtro rápido, útil quando o ADM atende vários chamados pelo celular. -->
-            <label for="support-admin-status">Filtrar atendimento</label> <!-- Explicação DevIN: Associa o filtro à situação dos chamados da caixa ADM. -->
-            <select id="support-admin-status" data-support-status-filter> <!-- Explicação DevIN: Restringe os cartões já autorizados pela API sem enviar filtros sensíveis. -->
-                <option value="all">Todos os chamados</option> <!-- Explicação DevIN: Desativa a seleção por estado para exibir o conjunto disponível. -->
-                <option value="aberto">Aguardando resposta</option> <!-- Explicação DevIN: Mostra solicitações que ainda aguardam atendimento. -->
-                <option value="respondido">Respondidos</option> <!-- Explicação DevIN: Mostra solicitações com resposta enviada pelos ADMs. -->
-                <option value="fechado">Encerrados</option> <!-- Explicação DevIN: Mostra solicitações finalizadas. -->
-            </select> <!-- Explicação DevIN: Encerra a caixa de seleção de status. -->
+            <label for="support-admin-status">Filtrar atendimento</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+            <select id="support-admin-status" data-support-status-filter> <!-- Explicação DevIN: Declara seleção de opções. -->
+                <option value="all">Todos os chamados</option> <!-- Explicação DevIN: Declara opção selecionável. -->
+                <option value="aberto">Aguardando resposta</option> <!-- Explicação DevIN: Declara opção selecionável. -->
+                <option value="respondido">Respondidos</option> <!-- Explicação DevIN: Declara opção selecionável. -->
+                <option value="fechado">Encerrados</option> <!-- Explicação DevIN: Declara opção selecionável. -->
+            </select> <!-- Explicação DevIN: Fecha elemento select do documento. -->
             <div data-support-list class="support-ticket-list"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                 <p class="support-hint">Carregando solicitações...</p> <!-- Explicação DevIN: Declara parágrafo. -->
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
@@ -55,7 +55,7 @@
                           minlength="2" maxlength="3000" required
                           placeholder="Escreva uma resposta clara e respeitosa. Não solicite senhas ou tokens."></textarea>
                 <!-- Contador acessível: ajuda a evitar respostas cortadas pelo limite de 3.000 caracteres. -->
-                <div class="support-counter" data-support-reply-counter aria-live="off">0 / 3000 caracteres</div> <!-- Explicação DevIN: Exibe a contagem local enquanto o ADM escreve no celular. -->
+                <div class="support-counter" data-support-reply-counter aria-live="off">0 / 3000 caracteres</div> <!-- Explicação DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
                 <div class="support-actions"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                     <button type="submit" class="support-primary">Responder ao usuário</button> <!-- Explicação DevIN: Declara botão de ação. -->
                     <button type="button" data-support-close class="support-secondary">Encerrar chamado</button> <!-- Explicação DevIN: Declara botão de ação. -->

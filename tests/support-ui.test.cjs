@@ -110,32 +110,32 @@ test('layout responsivo possui teclado legível e proteção da barra inferior',
  * Regressões mobile: a pessoa deve abrir o atendimento sem rolar toda a lista
  * e o administrador deve poder filtrar a fila e responder com contador claro.
  */
-test('a leitura de um chamado recolhe a lista longa somente no celular', () => { // Explicação DevIN: Confere se a seção de histórico possui retorno explícito.
-    const user = read('php/suporte.php'); // Explicação DevIN: Lê a marcação de histórico do usuário.
-    const code = read('js/support-ui.js'); // Explicação DevIN: Consulta a lógica de navegação de chamados.
-    const css = read('css/support.css'); // Explicação DevIN: Consulta as regras compactas de exibição.
-    assert.match(user, /data-support-history-overview/); // Explicação DevIN: O agrupamento de cartões permite ocultação no celular.
-    assert.match(user, /data-support-history-back/); // Explicação DevIN: O botão de retorno é obrigatório no fluxo de detalhes.
-    assert.match(code, /function setHistoryView\(view\)/); // Explicação DevIN: Controlador de lista/detalhe existe no frontend.
-    assert.match(code, /setHistoryView\('detail'\)/); // Explicação DevIN: Selecionar cartão dá prioridade ao conteúdo do chamado.
-    assert.match(code, /setHistoryView\('list'\)/); // Explicação DevIN: Navegação tem caminho de retorno à lista.
-    assert.match(css, /data-support-history-view="detail"/); // Explicação DevIN: A lista só é recolhida quando o usuário consulta detalhes.
-});
-test('ADM filtra chamados por situação sem sair da página', () => { // Explicação DevIN: Evita busca por lista longa no celular.
-    const view = read('php/components/support-admin.php'); // Explicação DevIN: Verifica o seletor do painel ADM.
-    const code = read('js/support-ui.js'); // Explicação DevIN: Verifica filtragem local dos itens autorizados.
-    assert.match(view, /data-support-status-filter/); // Explicação DevIN: O seletor de situação deve estar presente na interface.
-    assert.match(view, /value="aberto"/); // Explicação DevIN: O estado aguardando resposta pode ser escolhido.
-    assert.match(view, /value="respondido"/); // Explicação DevIN: O estado respondido pode ser escolhido.
-    assert.match(code, /desiredStatus/); // Explicação DevIN: A rotina usa o estado para filtrar os cartões.
-    assert.match(code, /statusFilter\?\.addEventListener\('change', renderList\)/); // Explicação DevIN: Alterar filtro redesenha a lista.
-});
-test('resposta administrativa tem contagem e área de ações móvel', () => { // Explicação DevIN: Protege experiência ao digitar no celular.
-    const view = read('php/components/support-admin.php'); // Explicação DevIN: Carrega contador do formulário ADM.
-    const code = read('js/support-ui.js'); // Explicação DevIN: Carrega lógica de contagem no campo de resposta.
-    const css = read('css/support.css'); // Explicação DevIN: Carrega estilos de barra de envio.
-    assert.match(view, /data-support-reply-counter/); // Explicação DevIN: Indicador visual existe junto ao campo.
-    assert.match(code, /function updateReplyCounter\(\)/); // Explicação DevIN: Contagem é atualizada durante edição.
-    assert.match(code, /updateReplyCounter\(\);/); // Explicação DevIN: A indicação é iniciada e reiniciada após envio.
-    assert.match(css, /support-admin-view \.support-actions\s*\{\s*position:\s*sticky/); // Explicação DevIN: Botões permanecem acessíveis ao rolar.
-});
+test('a leitura de um chamado recolhe a lista longa somente no celular', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const user = read('php/suporte.php'); // Explicação DevIN: Declara variável JavaScript user para reutilizar valor ou resultado.
+    const code = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript code para reutilizar valor ou resultado.
+    const css = read('css/support.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    assert.match(user, /data-support-history-overview/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(user, /data-support-history-back/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(code, /function setHistoryView\(view\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(code, /setHistoryView\('detail'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(code, /setHistoryView\('list'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /data-support-history-view="detail"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+test('ADM filtra chamados por situação sem sair da página', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const view = read('php/components/support-admin.php'); // Explicação DevIN: Declara variável JavaScript view para reutilizar valor ou resultado.
+    const code = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript code para reutilizar valor ou resultado.
+    assert.match(view, /data-support-status-filter/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(view, /value="aberto"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(view, /value="respondido"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(code, /desiredStatus/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(code, /statusFilter\?\.addEventListener\('change', renderList\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+test('resposta administrativa tem contagem e área de ações móvel', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const view = read('php/components/support-admin.php'); // Explicação DevIN: Declara variável JavaScript view para reutilizar valor ou resultado.
+    const code = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript code para reutilizar valor ou resultado.
+    const css = read('css/support.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    assert.match(view, /data-support-reply-counter/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(code, /function updateReplyCounter\(\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(code, /updateReplyCounter\(\);/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /support-admin-view \.support-actions\s*\{\s*position:\s*sticky/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
