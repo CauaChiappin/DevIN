@@ -4,7 +4,8 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 // Smoke checks sem banco, rede ou credenciais.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/AdminSkillManager.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/ModelRouter.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once dirname(__DIR__) . '/php/controllers/Jarvis/JobLanguageAudit.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once dirname(__DIR__) . '/php/controllers/Jarvis/JobLanguageAudit.php';
+require_once dirname(__DIR__) . '/php/controllers/Jarvis/JarvisAdminRecords.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Jarvis/JarvisModeration.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once dirname(__DIR__) . '/php/controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
@@ -92,4 +93,14 @@ checkJarvis(JarvisModeration::validKind('empresa'), 'permitir alvo empresa'); //
 checkJarvis(JarvisModeration::validKind('pessoa'), 'permitir alvo pessoa'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 checkJarvis(!JarvisModeration::validKind('administrador'), 'impedir exclusao de ADM'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 checkJarvis(!JarvisModeration::validKind('reports_vagas'), 'impedir exclusao fora das 3 categorias'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(JarvisAdminRecords::suggestionScore('Desenvolvedor PHP', 'Desenvolvedor PHP')===100,
+    'ranking da vaga com titulo exato');
+checkJarvis(JarvisAdminRecords::suggestionScore('Desenvolvedor', 'Desenvolvedor PHP')===85,
+    'ranking de vaga que comeca com o termo');
+checkJarvis(JarvisAdminRecords::suggestionScore('PHP', 'Desenvolvedor PHP')===70,
+    'ranking de trecho do titulo');
+checkJarvis(JarvisAdminRecords::suggestionScore('DevIN', 'Estágio PHP', 'DevIN')===65,
+    'ranking da empresa associada');
+checkJarvis(JarvisAdminRecords::suggestionScore('Estagiário', 'Vaga para contabilidade')===0,
+    'nao inventar coincidencias');
 echo "JARVIS Admin smoke: OK\\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.
