@@ -340,7 +340,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Pessoas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'reports') ?>" href="adm.php?pagina=reports"><?= dashboardIcon('flag') ?><span class="menu-text">Reports</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <!-- Suporte possui um ícone exclusivo de boia e exibe chamados dos usuários. -->
-                <a class="<?= ativo($pagina, 'suporte') ?>" href="adm.php?pagina=suporte"><?= dashboardIcon('lifebuoy') ?><span class="menu-text">Suporte</span><span data-support-menu-count class="message-unread-badge" hidden></span></a>
+                <a class="<?= ativo($pagina, 'suporte') ?>" href="adm.php?pagina=suporte"><?= dashboardIcon('lifebuoy') ?><span class="menu-text">Suporte</span><span data-support-menu-count class="message-unread-badge" hidden></span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="adm.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
             </nav> <!-- Explicação DevIN: Fecha elemento nav do documento. -->
 
@@ -732,11 +732,11 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     <?php require __DIR__ . '/components/jarvis-admin-widget.php'; ?>
     <link rel="stylesheet" href="../css/jarvis-admin.css?v=<?= filemtime(__DIR__ . '/../css/jarvis-admin.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/jarvis-dock.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-dock.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
-    <script src="../js/jarvis-admin.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-admin.js') ?>" defer></script>
+    <script src="../js/jarvis-admin.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-admin.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <!-- Suporte usa estilos isolados para não alterar os componentes existentes. -->
     <?php if ($pagina === 'suporte'): ?>
-        <link rel="stylesheet" href="../css/support.css?v=<?= filemtime(__DIR__ . '/../css/support.css') ?>">
-        <script src="../js/support-ui.js?v=<?= filemtime(__DIR__ . '/../js/support-ui.js') ?>" defer></script>
+        <link rel="stylesheet" href="../css/support.css?v=<?= filemtime(__DIR__ . '/../css/support.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
+        <script src="../js/support-ui.js?v=<?= filemtime(__DIR__ . '/../js/support-ui.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
  <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/site-navigation.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->

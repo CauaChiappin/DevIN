@@ -1,4 +1,4 @@
-<?php
+<?php // Explicação DevIN: Abre código PHP interpretado no servidor.
 /**
  * Componente interno da central de atendimento para ADMs.
  * A API confere novamente a sessão; ocultar um botão nunca concede permissão.
@@ -7,43 +7,43 @@
 ?>
 <section class="support-admin-view" data-support-root data-role="admin"
          data-endpoint="support_api.php" data-csrf="<?= h(csrfToken()) ?>">
-    <header class="support-admin-head">
-        <span class="support-eyebrow">CENTRAL DE ATENDIMENTO · DEVIN</span>
-        <h1>Suporte aos usuários</h1>
-        <p>Chamados recebidos de candidatos e empresas, com acompanhamento, anexos e resposta individual.</p>
-        <div class="support-status-row">
-            <span data-support-stat-open>Carregando chamados...</span>
-            <button type="button" data-support-refresh class="support-secondary">Atualizar</button>
-        </div>
-    </header>
-    <div class="support-admin-grid">
-        <section class="support-panel" aria-labelledby="support-inbox-title">
-            <h2 id="support-inbox-title">Caixa de entrada</h2>
-            <label for="support-admin-search">Encontrar chamado</label>
+    <header class="support-admin-head"> <!-- Explicação DevIN: Declara cabeçalho da seção ou página. -->
+        <span class="support-eyebrow">CENTRAL DE ATENDIMENTO · DEVIN</span> <!-- Explicação DevIN: Declara trecho em linha. -->
+        <h1>Suporte aos usuários</h1> <!-- Explicação DevIN: Declara título principal. -->
+        <p>Chamados recebidos de candidatos e empresas, com acompanhamento, anexos e resposta individual.</p> <!-- Explicação DevIN: Declara parágrafo. -->
+        <div class="support-status-row"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+            <span data-support-stat-open>Carregando chamados...</span> <!-- Explicação DevIN: Declara trecho em linha. -->
+            <button type="button" data-support-refresh class="support-secondary">Atualizar</button> <!-- Explicação DevIN: Declara botão de ação. -->
+        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+    </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
+    <div class="support-admin-grid"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+        <section class="support-panel" aria-labelledby="support-inbox-title"> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
+            <h2 id="support-inbox-title">Caixa de entrada</h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. -->
+            <label for="support-admin-search">Encontrar chamado</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
             <input id="support-admin-search" type="search" data-support-search
                    placeholder="Nome, e-mail, categoria ou número..." maxlength="100">
-            <div data-support-list class="support-ticket-list">
-                <p class="support-hint">Carregando solicitações...</p>
-            </div>
-        </section>
-        <section class="support-panel" aria-labelledby="support-answer-title">
-            <h2 id="support-answer-title">Detalhes e resposta</h2>
-            <div data-support-detail class="support-ticket-detail">
-                <p class="support-hint">Escolha um chamado à esquerda para ler a descrição, ver anexos e responder.</p>
-            </div>
+            <div data-support-list class="support-ticket-list"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                <p class="support-hint">Carregando solicitações...</p> <!-- Explicação DevIN: Declara parágrafo. -->
+            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+        </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
+        <section class="support-panel" aria-labelledby="support-answer-title"> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
+            <h2 id="support-answer-title">Detalhes e resposta</h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. -->
+            <div data-support-detail class="support-ticket-detail"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                <p class="support-hint">Escolha um chamado à esquerda para ler a descrição, ver anexos e responder.</p> <!-- Explicação DevIN: Declara parágrafo. -->
+            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
             <!-- O botão de envio não existe até um chamado válido ser selecionado. -->
-            <form data-support-reply hidden>
-                <label for="support-admin-message">Responder como Suporte DevIN</label>
+            <form data-support-reply hidden> <!-- Explicação DevIN: Declara formulário de entrada de dados. -->
+                <label for="support-admin-message">Responder como Suporte DevIN</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
                 <textarea id="support-admin-message" name="message" rows="6"
                           minlength="2" maxlength="3000" required
                           placeholder="Escreva uma resposta clara e respeitosa. Não solicite senhas ou tokens."></textarea>
-                <div class="support-actions">
-                    <button type="submit" class="support-primary">Responder ao usuário</button>
-                    <button type="button" data-support-close class="support-secondary">Encerrar chamado</button>
-                </div>
-                <p class="support-feedback" data-support-feedback role="status" aria-live="polite"></p>
-                <p class="support-hint">Ao responder, o usuário recebe a mensagem na plataforma e uma tentativa de e-mail. Se o SMTP falhar, uma opção de reenvio ficará disponível.</p>
-            </form>
-        </section>
-    </div>
-</section>
+                <div class="support-actions"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <button type="submit" class="support-primary">Responder ao usuário</button> <!-- Explicação DevIN: Declara botão de ação. -->
+                    <button type="button" data-support-close class="support-secondary">Encerrar chamado</button> <!-- Explicação DevIN: Declara botão de ação. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+                <p class="support-feedback" data-support-feedback role="status" aria-live="polite"></p> <!-- Explicação DevIN: Declara parágrafo. Inclui atributos de acessibilidade. -->
+                <p class="support-hint">Ao responder, o usuário recebe a mensagem na plataforma e uma tentativa de e-mail. Se o SMTP falhar, uma opção de reenvio ficará disponível.</p> <!-- Explicação DevIN: Declara parágrafo. -->
+            </form> <!-- Explicação DevIN: Fecha elemento form do documento. -->
+        </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
+    </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+</section> <!-- Explicação DevIN: Fecha elemento section do documento. -->

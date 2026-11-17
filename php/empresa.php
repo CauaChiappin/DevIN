@@ -441,7 +441,7 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
         <link rel="stylesheet" href="../css/chat.css?v=<?= filemtime(__DIR__ . '/../css/chat.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
     <?php if ($pagina === 'sobre'): ?>
-    <link rel="stylesheet" href="../css/support.css?v=<?= filemtime(__DIR__ . '/../css/support.css') ?>">
+    <link rel="stylesheet" href="../css/support.css?v=<?= filemtime(__DIR__ . '/../css/support.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
 <body> <!-- Explicação DevIN: Declara corpo visível da página. -->
@@ -481,7 +481,7 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="empresa.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Candidatos</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'mensagens') ?>" href="empresa.php?pagina=mensagens" data-messages-api="../php/mensagens_api.php"><?= dashboardIcon('users') ?><span class="menu-text">Mensagens</span><span class="message-unread-badge" data-message-unread-badge hidden></span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <!-- A boia identifica o suporte, diferente do ícone de denúncias. -->
-                <a href="suporte.php" aria-label="Abrir central de suporte do DevIN"><?= dashboardIcon('lifebuoy') ?><span class="menu-text">Suporte</span></a>
+                <a href="suporte.php" aria-label="Abrir central de suporte do DevIN"><?= dashboardIcon('lifebuoy') ?><span class="menu-text">Suporte</span></a> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="empresa.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
             </nav> <!-- Explicação DevIN: Fecha elemento nav do documento. -->
 
@@ -592,9 +592,9 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
             <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
                 <!-- Acesso flutuante rápido na seção Sobre nós; destino exige login. -->
-                <a class="support-floating-help" href="suporte.php" aria-label="Pedir ajuda ao Suporte DevIN">
+                <a class="support-floating-help" href="suporte.php" aria-label="Pedir ajuda ao Suporte DevIN"> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. -->
                     <?= dashboardIcon('lifebuoy') ?><span>Ajuda</span>
-                </a>
+                </a> <!-- Explicação DevIN: Fecha elemento a do documento. -->
 
             <?php elseif ($pagina === 'perfil'): ?>
                 <section class="perfil-card"> <!-- Explicação DevIN: Declara seção temática. -->

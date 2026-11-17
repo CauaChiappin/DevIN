@@ -3,98 +3,98 @@
  * superfícies claras, seguindo o layout dos dashboards e do novo Arcade.
  * A mesma folha serve à página do usuário e à caixa de entrada ADM.
  */
-:root {
-    --support-blue:#00569b;
-    --support-blue-strong:#004480;
-    --support-tint:#eaf3ff;
-    --support-cream:#f8f7f2;
-    --support-ink:#1a3248;
-    --support-muted:#52677c;
-    --support-line:#d7e3ee;
-}
-.support-page { margin:0;min-height:100vh;background:var(--support-cream);color:var(--support-ink);
-    font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif; }
-.support-header { max-width:1240px;margin:auto;padding:22px 26px;display:flex;align-items:center;
-    justify-content:space-between;gap:14px; }
-.support-brand { font-weight:850;font-size:27px;letter-spacing:-1.3px;color:var(--support-blue);
-    text-decoration:none; }
-.support-brand span {color:#de9b19;}
-.support-top-links {display:flex;flex-wrap:wrap;gap:14px;}
-.support-top-links a {text-decoration:none;font-size:14px;font-weight:650;color:var(--support-blue);}
-.support-main {max-width:1240px;margin:auto;padding:6px 26px 64px;}
-.support-hero,.support-admin-head {border-radius:24px;padding:30px clamp(20px,3.3vw,42px);
-    margin-bottom:22px;background:linear-gradient(115deg,var(--support-blue-strong),#1c77b9);color:#fff;}
-.support-hero h1,.support-admin-head h1 {font-size:clamp(29px,4vw,42px);font-weight:820;
-    letter-spacing:-.04em;line-height:1.12;margin:7px 0 13px;color:#fff;}
-.support-hero p,.support-admin-head p {font-size:14px;line-height:1.65;color:#edf6ff;max-width:740px;}
-.support-eyebrow {font-weight:780;font-size:11px;letter-spacing:.13em;color:#ffdf89;}
-.support-columns {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:20px;align-items:start;}
-.support-admin-view {padding:16px 18px 40px;max-width:1400px;margin:auto;color:var(--support-ink);}
-.support-admin-grid {display:grid;grid-template-columns:minmax(260px,.85fr) minmax(0,1.15fr);gap:18px;}
-.support-admin-head {margin-bottom:18px;}
-.support-status-row {display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:13px;}
-.support-panel {background:#fff;border:1px solid var(--support-line);border-radius:20px;
-    padding:clamp(17px,2.6vw,28px);box-shadow:0 10px 24px rgba(11,59,102,.055);min-width:0;}
-.support-panel h2 {font-size:21px;letter-spacing:-.025em;margin:0 0 6px;color:#173b60;}
-.support-panel h3 {font-size:17px;color:#173b60;overflow-wrap:anywhere;}
-.support-panel h4 {font-size:14px;margin:19px 0 8px;}
-.support-panel label {display:block;font-size:13px;font-weight:700;margin:17px 0 7px;}
-.support-panel label span {color:#ac3d47;}
-.support-panel input[type="search"],.support-panel input[type="file"],.support-panel textarea,
-.support-panel select {display:block;box-sizing:border-box;width:100%;font:inherit;font-size:14px;
-    min-height:45px;padding:11px 12px;border:1px solid #cbd9e8;border-radius:12px;
-    color:#17334c;background:#fbfdff;outline-offset:3px;}
-.support-panel input[type="file"] {cursor:pointer;padding:9px;}
-.support-panel textarea {min-height:145px;resize:vertical;line-height:1.55;}
-.support-panel input:focus,.support-panel textarea:focus,.support-panel select:focus {
-    border-color:var(--support-blue);background:#fff;}
-.support-hint {font-size:12px;color:var(--support-muted);line-height:1.6;margin:8px 0 12px;}
-.support-primary,.support-secondary,.support-ticket {font-family:inherit;cursor:pointer;
-    transition:background .18s,transform .18s,border-color .18s;}
-.support-primary {background:var(--support-blue);color:#fff;border:1px solid var(--support-blue);
-    border-radius:12px;font-weight:760;font-size:13px;padding:13px 17px;min-height:46px;margin-top:17px;}
-.support-primary:hover {background:var(--support-blue-strong);transform:translateY(-1px);}
-.support-secondary {border:1px solid #b8d2e8;border-radius:11px;background:#eff7ff;
-    padding:9px 13px;font-size:12px;font-weight:750;color:var(--support-blue);}
-.support-secondary:hover {background:#dceefa;}
-.support-primary:disabled,.support-secondary:disabled {cursor:wait;opacity:.65;}
-.support-feedback {min-height:1.5em;font-weight:650;font-size:13px;color:#14745a;}
-.support-feedback.is-error,.support-error {color:#ae3446;}
-.support-ticket-list {display:flex;flex-direction:column;gap:9px;margin-top:14px;
-    max-height:70vh;overflow:auto;}
-.support-ticket {border:1px solid #d7e4ef;background:#f8fbff;color:var(--support-ink);
-    border-radius:13px;display:flex;align-items:stretch;gap:6px;flex-direction:column;text-align:left;
-    padding:13px;max-width:100%;overflow-wrap:anywhere;}
-.support-ticket:hover,.support-ticket.is-active {border-color:#418ac5;background:#ebf5ff;}
-.support-ticket strong {font-size:13px;color:#18456f;}
-.support-ticket small {font-size:11px;color:#61758b;}
-.support-ticket-snippet {font-size:12px;line-height:1.42;color:#2f4f6c;}
-.support-ticket-state {align-self:flex-start;border-radius:999px;padding:3px 9px;
-    font-size:10px;font-style:normal;font-weight:760;background:#e3eef9;color:#245c94;}
-.support-ticket-state.state-aberto {background:#fff0d4;color:#805b09;}
-.support-ticket-state.state-respondido {background:#def5eb;color:#116f56;}
-.support-ticket-state.state-fechado {background:#e8e8ec;color:#59626d;}
-.support-ticket-detail {padding:14px 0 0;overflow-wrap:anywhere;}
-.support-description {white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.62;font-size:14px;}
-.support-download {display:inline-flex;margin:12px 0;background:var(--support-tint);color:var(--support-blue);
-    text-decoration:none;border-radius:10px;padding:10px 13px;font-size:13px;font-weight:700;}
-.support-answer {background:#eef6fe;border-left:3px solid var(--support-blue);border-radius:9px;
-    padding:12px 14px;margin:12px 0;overflow-wrap:anywhere;}
-.support-answer strong {font-size:12px;color:var(--support-blue);}
-.support-answer p {margin:6px 0;}
-.support-actions {display:flex;flex-wrap:wrap;gap:9px;align-items:center;}
-.support-actions .support-secondary {margin-top:17px;}
-.support-floating-help {position:fixed;right:22px;bottom:25px;z-index:90;display:inline-flex;
-    gap:9px;align-items:center;background:var(--support-blue);color:white;border-radius:999px;
-    box-shadow:0 10px 28px rgba(0,66,124,.24);padding:13px 19px;text-decoration:none;
-    font-weight:780;font-size:14px;}
-.support-floating-help:hover {background:var(--support-blue-strong);}
-.support-floating-help svg {width:21px;height:21px;stroke:currentColor;}
-.support-admin-view :focus-visible,.support-page :focus-visible,.support-floating-help:focus-visible {
-    outline:3px solid #efb332;outline-offset:3px;}
-@media(max-width:1000px){.support-columns,.support-admin-grid{grid-template-columns:1fr;}
-    .support-ticket-list{max-height:none;}}
-@media(max-width:550px){.support-header{padding:16px 17px;}.support-main{padding:4px 12px 35px;}
-    .support-panel{border-radius:15px;}.support-hero,.support-admin-head{border-radius:17px;}
-    .support-admin-view{padding:10px 9px 24px;}.support-floating-help{bottom:15px;right:12px;}}
-@media(prefers-reduced-motion:reduce){.support-primary,.support-secondary,.support-ticket{transition:none;}}
+:root { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    --support-blue:#00569b; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --support-blue-strong:#004480; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --support-tint:#eaf3ff; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --support-cream:#f8f7f2; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --support-ink:#1a3248; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --support-muted:#52677c; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --support-line:#d7e3ee; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-page { margin:0;min-height:100vh;background:var(--support-cream);color:var(--support-ink); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif; } /* Explicação DevIN: Define família tipográfica por meio da propriedade CSS font-family. */
+.support-header { max-width:1240px;margin:auto;padding:22px 26px;display:flex;align-items:center; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    justify-content:space-between;gap:14px; } /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+.support-brand { font-weight:850;font-size:27px;letter-spacing:-1.3px;color:var(--support-blue); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    text-decoration:none; } /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+.support-brand span {color:#de9b19;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-top-links {display:flex;flex-wrap:wrap;gap:14px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-top-links a {text-decoration:none;font-size:14px;font-weight:650;color:var(--support-blue);} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-main {max-width:1240px;margin:auto;padding:6px 26px 64px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-hero,.support-admin-head {border-radius:24px;padding:30px clamp(20px,3.3vw,42px); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    margin-bottom:22px;background:linear-gradient(115deg,var(--support-blue-strong),#1c77b9);color:#fff;} /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-bottom. */
+.support-hero h1,.support-admin-head h1 {font-size:clamp(29px,4vw,42px);font-weight:820; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    letter-spacing:-.04em;line-height:1.12;margin:7px 0 13px;color:#fff;} /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+.support-hero p,.support-admin-head p {font-size:14px;line-height:1.65;color:#edf6ff;max-width:740px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-eyebrow {font-weight:780;font-size:11px;letter-spacing:.13em;color:#ffdf89;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-columns {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:20px;align-items:start;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-admin-view {padding:16px 18px 40px;max-width:1400px;margin:auto;color:var(--support-ink);} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-admin-grid {display:grid;grid-template-columns:minmax(260px,.85fr) minmax(0,1.15fr);gap:18px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-admin-head {margin-bottom:18px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-status-row {display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:13px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel {background:#fff;border:1px solid var(--support-line);border-radius:20px; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    padding:clamp(17px,2.6vw,28px);box-shadow:0 10px 24px rgba(11,59,102,.055);min-width:0;} /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+.support-panel h2 {font-size:21px;letter-spacing:-.025em;margin:0 0 6px;color:#173b60;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel h3 {font-size:17px;color:#173b60;overflow-wrap:anywhere;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel h4 {font-size:14px;margin:19px 0 8px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel label {display:block;font-size:13px;font-weight:700;margin:17px 0 7px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel label span {color:#ac3d47;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel input[type="search"],.support-panel input[type="file"],.support-panel textarea, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel select {display:block;box-sizing:border-box;width:100%;font:inherit;font-size:14px; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    min-height:45px;padding:11px 12px;border:1px solid #cbd9e8;border-radius:12px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    color:#17334c;background:#fbfdff;outline-offset:3px;} /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+.support-panel input[type="file"] {cursor:pointer;padding:9px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel textarea {min-height:145px;resize:vertical;line-height:1.55;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-panel input:focus,.support-panel textarea:focus,.support-panel select:focus { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border-color:var(--support-blue);background:#fff;} /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+.support-hint {font-size:12px;color:var(--support-muted);line-height:1.6;margin:8px 0 12px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-primary,.support-secondary,.support-ticket {font-family:inherit;cursor:pointer; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    transition:background .18s,transform .18s,border-color .18s;} /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+.support-primary {background:var(--support-blue);color:#fff;border:1px solid var(--support-blue); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    border-radius:12px;font-weight:760;font-size:13px;padding:13px 17px;min-height:46px;margin-top:17px;} /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+.support-primary:hover {background:var(--support-blue-strong);transform:translateY(-1px);} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-secondary {border:1px solid #b8d2e8;border-radius:11px;background:#eff7ff; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    padding:9px 13px;font-size:12px;font-weight:750;color:var(--support-blue);} /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+.support-secondary:hover {background:#dceefa;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-primary:disabled,.support-secondary:disabled {cursor:wait;opacity:.65;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-feedback {min-height:1.5em;font-weight:650;font-size:13px;color:#14745a;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-feedback.is-error,.support-error {color:#ae3446;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-ticket-list {display:flex;flex-direction:column;gap:9px;margin-top:14px; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    max-height:70vh;overflow:auto;} /* Explicação DevIN: Define altura máxima por meio da propriedade CSS max-height. */
+.support-ticket {border:1px solid #d7e4ef;background:#f8fbff;color:var(--support-ink); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    border-radius:13px;display:flex;align-items:stretch;gap:6px;flex-direction:column;text-align:left; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    padding:13px;max-width:100%;overflow-wrap:anywhere;} /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+.support-ticket:hover,.support-ticket.is-active {border-color:#418ac5;background:#ebf5ff;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-ticket strong {font-size:13px;color:#18456f;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-ticket small {font-size:11px;color:#61758b;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-ticket-snippet {font-size:12px;line-height:1.42;color:#2f4f6c;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-ticket-state {align-self:flex-start;border-radius:999px;padding:3px 9px; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    font-size:10px;font-style:normal;font-weight:760;background:#e3eef9;color:#245c94;} /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+.support-ticket-state.state-aberto {background:#fff0d4;color:#805b09;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-ticket-state.state-respondido {background:#def5eb;color:#116f56;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-ticket-state.state-fechado {background:#e8e8ec;color:#59626d;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-ticket-detail {padding:14px 0 0;overflow-wrap:anywhere;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-description {white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.62;font-size:14px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-download {display:inline-flex;margin:12px 0;background:var(--support-tint);color:var(--support-blue); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    text-decoration:none;border-radius:10px;padding:10px 13px;font-size:13px;font-weight:700;} /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+.support-answer {background:#eef6fe;border-left:3px solid var(--support-blue);border-radius:9px; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    padding:12px 14px;margin:12px 0;overflow-wrap:anywhere;} /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+.support-answer strong {font-size:12px;color:var(--support-blue);} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-answer p {margin:6px 0;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-actions {display:flex;flex-wrap:wrap;gap:9px;align-items:center;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-actions .support-secondary {margin-top:17px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-floating-help {position:fixed;right:22px;bottom:25px;z-index:90;display:inline-flex; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    gap:9px;align-items:center;background:var(--support-blue);color:white;border-radius:999px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    box-shadow:0 10px 28px rgba(0,66,124,.24);padding:13px 19px;text-decoration:none; /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    font-weight:780;font-size:14px;} /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+.support-floating-help:hover {background:var(--support-blue-strong);} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-floating-help svg {width:21px;height:21px;stroke:currentColor;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-admin-view :focus-visible,.support-page :focus-visible,.support-floating-help:focus-visible { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    outline:3px solid #efb332;outline-offset:3px;} /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline. */
+@media(max-width:1000px){.support-columns,.support-admin-grid{grid-template-columns:1fr;} /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .support-ticket-list{max-height:none;}} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+@media(max-width:550px){.support-header{padding:16px 17px;}.support-main{padding:4px 12px 35px;} /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .support-panel{border-radius:15px;}.support-hero,.support-admin-head{border-radius:17px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .support-admin-view{padding:10px 9px 24px;}.support-floating-help{bottom:15px;right:12px;}} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+@media(prefers-reduced-motion:reduce){.support-primary,.support-secondary,.support-ticket{transition:none;}} /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
