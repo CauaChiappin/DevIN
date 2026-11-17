@@ -72,36 +72,36 @@ test('JARVIS só consulta a central, sem escrever ou baixar anexos', () => { // 
  * Contrato mobile: as duas versões do suporte não podem exigir rolagem
  * horizontal e devem permitir navegação por botões acessíveis ao toque.
  */
-test('central do usuário usa abas de chamado e histórico em celulares', () => {
-    const page = read('php/suporte.php');
-    const script = read('js/support-ui.js');
-    assert.match(page, /data-support-mobile-tabs/);
-    assert.match(page, /data-support-mobile-target="create"/);
-    assert.match(page, /data-support-mobile-target="history"/);
-    assert.match(page, /data-mobile-view="create"/);
-    assert.match(page, /data-support-file-preview/);
-    assert.match(page, /data-support-description-counter/);
-    assert.match(script, /function setMobileView\(view, scroll = false\)/);
-    assert.match(script, /loadDetail\(Number\(ticket\.id\), true\)/);
-    assert.match(script, /loadDetail\(response\.id, true\)/);
-});
+test('central do usuário usa abas de chamado e histórico em celulares', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const page = read('php/suporte.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
+    const script = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript script para reutilizar valor ou resultado.
+    assert.match(page, /data-support-mobile-tabs/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-support-mobile-target="create"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-support-mobile-target="history"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-mobile-view="create"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-support-file-preview/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-support-description-counter/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(script, /function setMobileView\(view, scroll = false\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(script, /loadDetail\(Number\(ticket\.id\), true\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(script, /loadDetail\(response\.id, true\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('atendimento ADM alterna fila e detalhe e oferece retorno pelo touch', () => {
-    const admin = read('php/components/support-admin.php');
-    assert.match(admin, /data-support-mobile-target="inbox"/);
-    assert.match(admin, /data-support-mobile-target="detail"/);
-    assert.match(admin, /data-support-back/);
-    assert.match(admin, /data-mobile-view="inbox"/);
-    assert.match(read('js/support-ui.js'), /setMobileView\('inbox', true\)/);
-});
+test('atendimento ADM alterna fila e detalhe e oferece retorno pelo touch', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const admin = read('php/components/support-admin.php'); // Explicação DevIN: Declara variável JavaScript admin para reutilizar valor ou resultado.
+    assert.match(admin, /data-support-mobile-target="inbox"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(admin, /data-support-mobile-target="detail"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(admin, /data-support-back/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(admin, /data-mobile-view="inbox"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(read('js/support-ui.js'), /setMobileView\('inbox', true\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('layout responsivo possui teclado legível e proteção da barra inferior', () => {
-    const css = read('css/support.css');
-    assert.match(css, /max-width:\s*767px/);
-    assert.match(css, /support-mobile-tabs/);
-    assert.match(css, /support-mobile-panels\[data-mobile-view="history"\]/);
-    assert.match(css, /support-mobile-panels\[data-mobile-view="detail"\]/);
-    assert.match(css, /font-size:\s*16px/);
-    assert.match(css, /safe-area-inset-bottom/);
-    assert.match(css, /overflow-wrap:\s*anywhere/);
-});
+test('layout responsivo possui teclado legível e proteção da barra inferior', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const css = read('css/support.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    assert.match(css, /max-width:\s*767px/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /support-mobile-tabs/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /support-mobile-panels\[data-mobile-view="history"\]/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /support-mobile-panels\[data-mobile-view="detail"\]/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /font-size:\s*16px/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /safe-area-inset-bottom/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /overflow-wrap:\s*anywhere/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

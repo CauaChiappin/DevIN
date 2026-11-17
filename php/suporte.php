@@ -47,11 +47,11 @@ $dashboard = $actor['tipo'] === 'pessoa' ? 'pessoa.php' : 'empresa.php'; // Expl
                A resposta aparecerá aqui, nas Mensagens e no seu e-mail.</p> <!-- Explicação DevIN: Continua atributos ou conteúdo do elemento de marcação aberto anteriormente. -->
         </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
         <!-- Navegação compacta para celulares: as duas áreas permanecem lado a lado no desktop. -->
-        <div class="support-mobile-tabs" data-support-mobile-tabs role="group" aria-label="Áreas da Central de Ajuda">
-            <button type="button" class="support-mobile-tab" data-support-mobile-target="create" aria-pressed="true">Novo chamado</button>
-            <button type="button" class="support-mobile-tab" data-support-mobile-target="history" aria-pressed="false">Meus chamados</button>
-        </div>
-        <p class="support-mobile-message" data-support-mobile-message role="status" aria-live="polite"></p>
+        <div class="support-mobile-tabs" data-support-mobile-tabs role="group" aria-label="Áreas da Central de Ajuda"> <!-- Explicação DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
+            <button type="button" class="support-mobile-tab" data-support-mobile-target="create" aria-pressed="true">Novo chamado</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+            <button type="button" class="support-mobile-tab" data-support-mobile-target="history" aria-pressed="false">Meus chamados</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+        <p class="support-mobile-message" data-support-mobile-message role="status" aria-live="polite"></p> <!-- Explicação DevIN: Declara parágrafo. Inclui atributos de acessibilidade. -->
         <div class="support-columns support-mobile-panels" data-mobile-view="create"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
             <section class="support-panel support-create-pane" aria-labelledby="support-form-title"> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
                 <h2 id="support-form-title">Abrir chamado</h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. -->
@@ -73,16 +73,16 @@ $dashboard = $actor['tipo'] === 'pessoa' ? 'pessoa.php' : 'empresa.php'; // Expl
                     <textarea id="support-description" name="description" rows="7"
                               minlength="10" maxlength="4000" required
                               placeholder="Explique o problema, onde ocorreu e o que você esperava encontrar. Não envie senhas nem tokens."></textarea>
-                    <div class="support-counter" data-support-description-counter aria-live="off">0 / 4000 caracteres</div>
+                    <div class="support-counter" data-support-description-counter aria-live="off">0 / 4000 caracteres</div> <!-- Explicação DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
                     <label for="support-attachment">Anexo <small>(opcional, até 20 MB)</small></label> <!-- Explicação DevIN: Declara rótulo associado a um campo. A linha reúne múltiplos elementos. -->
                     <input id="support-attachment" name="attachment" type="file"
                            accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.log,.docx,.zip"
                            aria-describedby="support-attachment-status">
                     <!-- Feedback de seleção é atualizado no próprio aparelho, antes do envio. -->
-                    <div class="support-file-preview" data-support-file-preview hidden>
-                        <span id="support-attachment-status" data-support-attachment-status aria-live="polite"></span>
-                        <button type="button" class="support-clear-file" data-support-clear-file>Remover</button>
-                    </div>
+                    <div class="support-file-preview" data-support-file-preview hidden> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                        <span id="support-attachment-status" data-support-attachment-status aria-live="polite"></span> <!-- Explicação DevIN: Declara trecho em linha. Inclui atributos de acessibilidade. -->
+                        <button type="button" class="support-clear-file" data-support-clear-file>Remover</button> <!-- Explicação DevIN: Declara botão de ação. -->
+                    </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
                     <p class="support-hint">Formatos: PDF, PNG, JPG, WEBP, TXT, LOG, DOCX ou ZIP. <!-- Explicação DevIN: Declara parágrafo. -->
                        Anexos são privados e acessíveis apenas ao dono do chamado e aos ADMs.</p> <!-- Explicação DevIN: Continua atributos ou conteúdo do elemento de marcação aberto anteriormente. -->
                     <button type="submit" class="support-primary" data-support-submit>Enviar solicitação</button> <!-- Explicação DevIN: Declara botão de ação. -->

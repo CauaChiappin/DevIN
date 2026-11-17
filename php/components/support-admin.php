@@ -17,11 +17,11 @@
         </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
     </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
     <!-- Em celular, alterna entre caixa de entrada e atendimento sem rolagem horizontal. -->
-    <div class="support-mobile-tabs" data-support-mobile-tabs role="group" aria-label="Áreas do atendimento">
-        <button type="button" class="support-mobile-tab" data-support-mobile-target="inbox" aria-pressed="true">Caixa de entrada</button>
-        <button type="button" class="support-mobile-tab" data-support-mobile-target="detail" aria-pressed="false">Atendimento</button>
-    </div>
-    <p class="support-mobile-message" data-support-mobile-message role="status" aria-live="polite"></p>
+    <div class="support-mobile-tabs" data-support-mobile-tabs role="group" aria-label="Áreas do atendimento"> <!-- Explicação DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
+        <button type="button" class="support-mobile-tab" data-support-mobile-target="inbox" aria-pressed="true">Caixa de entrada</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+        <button type="button" class="support-mobile-tab" data-support-mobile-target="detail" aria-pressed="false">Atendimento</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+    </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+    <p class="support-mobile-message" data-support-mobile-message role="status" aria-live="polite"></p> <!-- Explicação DevIN: Declara parágrafo. Inclui atributos de acessibilidade. -->
     <div class="support-admin-grid support-mobile-panels" data-mobile-view="inbox"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         <section class="support-panel support-inbox-pane" aria-labelledby="support-inbox-title"> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
             <h2 id="support-inbox-title">Caixa de entrada</h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. -->
@@ -33,10 +33,10 @@
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
         </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
         <section class="support-panel support-detail-pane" aria-labelledby="support-answer-title"> <!-- Explicação DevIN: Declara seção temática. Inclui atributos de acessibilidade. -->
-            <div class="support-detail-head">
-                <h2 id="support-answer-title">Detalhes e resposta</h2>
-                <button type="button" class="support-secondary support-mobile-back" data-support-back>Voltar à lista</button>
-            </div> <!-- Explicação DevIN: Declara subtítulo de segundo nível. -->
+            <div class="support-detail-head"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                <h2 id="support-answer-title">Detalhes e resposta</h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. -->
+                <button type="button" class="support-secondary support-mobile-back" data-support-back>Voltar à lista</button> <!-- Explicação DevIN: Declara botão de ação. -->
+            </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
             <div data-support-detail class="support-ticket-detail"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                 <p class="support-hint">Escolha um chamado à esquerda para ler a descrição, ver anexos e responder.</p> <!-- Explicação DevIN: Declara parágrafo. -->
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->

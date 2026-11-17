@@ -25,61 +25,61 @@
     let selectedId = null; // Explicação DevIN: Declara variável JavaScript selectedId para reutilizar valor ou resultado.
 
     // Controla apenas a navegação visual; o servidor continua verificando permissões.
-    const mobilePanels = root.querySelector('[data-mobile-view]');
-    const mobileTabBar = root.querySelector('[data-support-mobile-tabs]');
-    const mobileMessage = root.querySelector('[data-support-mobile-message]');
-    const mobileTabs = [...root.querySelectorAll('[data-support-mobile-target]')];
-    const isMobile = () => Boolean(window.matchMedia?.('(max-width: 767px)').matches);
+    const mobilePanels = root.querySelector('[data-mobile-view]'); // Explicação DevIN: Declara variável JavaScript mobilePanels para reutilizar valor ou resultado.
+    const mobileTabBar = root.querySelector('[data-support-mobile-tabs]'); // Explicação DevIN: Declara variável JavaScript mobileTabBar para reutilizar valor ou resultado.
+    const mobileMessage = root.querySelector('[data-support-mobile-message]'); // Explicação DevIN: Declara variável JavaScript mobileMessage para reutilizar valor ou resultado.
+    const mobileTabs = [...root.querySelectorAll('[data-support-mobile-target]')]; // Explicação DevIN: Declara variável JavaScript mobileTabs para reutilizar valor ou resultado.
+    const isMobile = () => Boolean(window.matchMedia?.('(max-width: 767px)').matches); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
 
     // Uma área por vez no celular; desktop mantém o formulário e o histórico simultâneos.
-    function setMobileView(view, scroll = false) {
-        if (!mobilePanels || !mobileTabs.some(tab => tab.dataset.supportMobileTarget === view)) return;
-        mobilePanels.dataset.mobileView = view;
-        mobileTabs.forEach(tab => tab.setAttribute('aria-pressed',
-            String(tab.dataset.supportMobileTarget === view)));
-        if (scroll && isMobile() && mobileTabBar) {
-            const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-            mobileTabBar.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'});
-        }
-    }
-    mobileTabs.forEach(tab => tab.addEventListener('click',
-        () => setMobileView(tab.dataset.supportMobileTarget)));
-    root.querySelector('[data-support-back]')?.addEventListener('click',
-        () => setMobileView('inbox', true));
+    function setMobileView(view, scroll = false) { // Explicação DevIN: Declara função/método setMobileView, com seus parâmetros e comportamento.
+        if (!mobilePanels || !mobileTabs.some(tab => tab.dataset.supportMobileTarget === view)) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        mobilePanels.dataset.mobileView = view; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        mobileTabs.forEach(tab => tab.setAttribute('aria-pressed', // Explicação DevIN: Continua expressão ou bloco pertencente a função setMobileView.
+            String(tab.dataset.supportMobileTarget === view))); // Explicação DevIN: Continua expressão ou bloco pertencente a função setMobileView.
+        if (scroll && isMobile() && mobileTabBar) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            mobileTabBar.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'}); // Explicação DevIN: Continua expressão ou bloco pertencente a função setMobileView.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    mobileTabs.forEach(tab => tab.addEventListener('click', // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        () => setMobileView(tab.dataset.supportMobileTarget))); // Explicação DevIN: Continua expressão ou bloco pertencente a função setMobileView.
+    root.querySelector('[data-support-back]')?.addEventListener('click', // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        () => setMobileView('inbox', true)); // Explicação DevIN: Continua expressão ou bloco pertencente a função setMobileView.
 
     // O anexo é apenas descrito no navegador: seu conteúdo nunca é lido em JavaScript.
-    const attachmentInput = createForm?.querySelector('[name="attachment"]');
-    const attachmentPreview = createForm?.querySelector('[data-support-file-preview]');
-    const attachmentStatus = createForm?.querySelector('[data-support-attachment-status]');
-    const clearFile = createForm?.querySelector('[data-support-clear-file]');
-    const descriptionField = createForm?.querySelector('[name="description"]');
-    const descriptionCounter = createForm?.querySelector('[data-support-description-counter]');
+    const attachmentInput = createForm?.querySelector('[name="attachment"]'); // Explicação DevIN: Declara variável JavaScript attachmentInput para reutilizar valor ou resultado.
+    const attachmentPreview = createForm?.querySelector('[data-support-file-preview]'); // Explicação DevIN: Declara variável JavaScript attachmentPreview para reutilizar valor ou resultado.
+    const attachmentStatus = createForm?.querySelector('[data-support-attachment-status]'); // Explicação DevIN: Declara variável JavaScript attachmentStatus para reutilizar valor ou resultado.
+    const clearFile = createForm?.querySelector('[data-support-clear-file]'); // Explicação DevIN: Declara variável JavaScript clearFile para reutilizar valor ou resultado.
+    const descriptionField = createForm?.querySelector('[name="description"]'); // Explicação DevIN: Declara variável JavaScript descriptionField para reutilizar valor ou resultado.
+    const descriptionCounter = createForm?.querySelector('[data-support-description-counter]'); // Explicação DevIN: Declara variável JavaScript descriptionCounter para reutilizar valor ou resultado.
 
-    function updateAttachment() {
-        if (!attachmentInput || !attachmentPreview || !attachmentStatus) return;
-        const file = attachmentInput.files?.[0];
-        attachmentPreview.hidden = !file;
-        attachmentStatus.textContent = file
-            ? file.name + ' · ' + (file.size / (1024 * 1024)).toFixed(2) + ' MB'
-            : '';
-        if (file && file.size > 20 * 1024 * 1024) {
-            attachmentInput.value = '';
-            attachmentPreview.hidden = true;
-            attachmentStatus.textContent = '';
-            status('O anexo ultrapassa 20 MB. Escolha um arquivo menor.', true);
-        }
-    }
-    attachmentInput?.addEventListener('change', updateAttachment);
-    clearFile?.addEventListener('click', () => {
-        attachmentInput.value = '';
-        updateAttachment();
-    });
-    descriptionField?.addEventListener('input', () => {
-        if (descriptionCounter) {
-            descriptionCounter.textContent = Array.from(descriptionField.value).length
-                + ' / 4000 caracteres';
-        }
-    });
+    function updateAttachment() { // Explicação DevIN: Declara função/método updateAttachment, com seus parâmetros e comportamento.
+        if (!attachmentInput || !attachmentPreview || !attachmentStatus) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const file = attachmentInput.files?.[0]; // Explicação DevIN: Declara variável JavaScript file para reutilizar valor ou resultado.
+        attachmentPreview.hidden = !file; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        attachmentStatus.textContent = file // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            ? file.name + ' · ' + (file.size / (1024 * 1024)).toFixed(2) + ' MB' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            : ''; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        if (file && file.size > 20 * 1024 * 1024) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            attachmentInput.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            attachmentPreview.hidden = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            attachmentStatus.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            status('O anexo ultrapassa 20 MB. Escolha um arquivo menor.', true); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateAttachment.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    attachmentInput?.addEventListener('change', updateAttachment); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    clearFile?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        attachmentInput.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        updateAttachment(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateAttachment.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    descriptionField?.addEventListener('input', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (descriptionCounter) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            descriptionCounter.textContent = Array.from(descriptionField.value).length // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                + ' / 4000 caracteres'; // Explicação DevIN: Continua expressão ou bloco pertencente a função updateAttachment.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Consulta JSON autenticada ou FormData CSRF; erro HTTP nunca vira sucesso.
     async function request(query = {}, payload = null) { // Explicação DevIN: Declara função/método request, com seus parâmetros e comportamento.
@@ -107,14 +107,14 @@
         return element; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    function status(text, isError = false) {
+    function status(text, isError = false) { // Explicação DevIN: Declara função/método status, com seus parâmetros e comportamento.
         // A confirmação também aparece acima das abas quando o formulário está oculto.
-        for (const target of [feedback, mobileMessage]) {
-            if (!target) continue;
-            target.textContent = text;
-            target.classList.toggle('is-error', isError);
-        }
-    }
+        for (const target of [feedback, mobileMessage]) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            if (!target) continue; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            target.textContent = text; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            target.classList.toggle('is-error', isError); // Explicação DevIN: Continua expressão ou bloco pertencente a função status.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     function label(ticket) { // Explicação DevIN: Declara função/método label, com seus parâmetros e comportamento.
         return categories[ticket.category] || ticket.category; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -164,9 +164,9 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Reconsulta detalhes com verificação de propriedade no PHP.
-    async function loadDetail(id, revealMobile = false) {
+    async function loadDetail(id, revealMobile = false) { // Explicação DevIN: Declara função/método loadDetail, com seus parâmetros e comportamento.
         // Ao tocar em um cartão, mostrar o detalhe na segunda aba do celular.
-        if (revealMobile) setMobileView(admin ? 'detail' : 'history', true);
+        if (revealMobile) setMobileView(admin ? 'detail' : 'history', true); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         selectedId = id; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         renderList(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
         detail.hidden = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
