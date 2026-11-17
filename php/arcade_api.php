@@ -85,8 +85,11 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
     ensureArcadeProgressTable($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
 
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        if ($usuario['tipo'] === 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        // O escopo padrão de todos os perfis — inclusive ADM — é pessoal.
+        // A lista agregada só fica disponível com escopo explícito e conta ADM.
+        $overview = $usuario['tipo'] === 'adm' && ($_GET['escopo'] ?? '') === 'todos'; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if ($overview) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $result = $conn->query("
                 SELECT gp.perfil_tipo, gp.perfil_id, gp.jogo, gp.recorde, gp.maior_fase,
                        gp.ultima_atividade, COALESCE(p.nome, e.nome, a.nome, 'Conta removida') AS nome
@@ -111,11 +114,11 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         $rows = $result->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
-        if ($usuario['tipo'] !== 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (!$overview) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $conn->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
-        arcadeRespond(['sucesso' => true, 'progresso' => $rows]); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
+        arcadeRespond(['sucesso' => true, 'progresso' => $rows, 'escopo' => $overview ? 'todos' : 'proprio']); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -229,7 +232,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         $perfilId = filter_var($_POST['perfil_id'] ?? null, FILTER_VALIDATE_INT); // Explicação DevIN: Atribui um valor à variável PHP $perfilId.
         $game = requestString($_POST, 'jogo'); // Explicação DevIN: Atribui um valor à variável PHP $game.
         if (!in_array($perfilTipo, ['pessoa', 'empresa', 'adm'], true) || $perfilId === false || $perfilId <= 0 // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            || !in_array($game, ['maze', 'snake', 'tetris', 'breakout', 'memory', 'runner'], true) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            || !in_array($game, $allowedGames, true) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         ) { // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             $conn->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
             arcadeRespond(['sucesso' => false, 'mensagem' => 'Registro inválido.'], 422); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
