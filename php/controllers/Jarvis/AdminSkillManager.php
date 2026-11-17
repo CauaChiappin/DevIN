@@ -2,6 +2,17 @@
 declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 
 /**
+ * MÓDULO DEVIN — ADMIN SKILL MANAGER.
+ * Responsabilidade: parte do subsistema de orquestração das ferramentas e respostas do JARVIS para administradores.
+ * Leia os métodos abaixo em sequência: entrada validada -> processamento ->
+ * resposta ao chamador. Comentários detalhados descrevem decisões, limites
+ * e efeitos colaterais; os comentários gerados por linha foram preservados.
+ * Atenção: chamadas de banco e ações administrativas exigem autorização no
+ * endpoint controlador; métodos isolados não constituem permissão para a IA.
+ */
+
+
+/**
  * Adaptação pequena do SkillManager do JARVIS Code.
  * Somente orienta respostas; NUNCA executa ferramentas, SQL ou ações administrativas.
  */
@@ -32,6 +43,8 @@ final class AdminSkillManager // Explicação DevIN: Declara o tipo AdminSkillMa
         ], // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 
+    // Detalhamento DevIN: normaliza a operação «normalize» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     private static function normalize(string $value): string // Explicação DevIN: Declara função/método normalize, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $value = mb_strtolower($value, 'UTF-8'); // Explicação DevIN: Atribui um valor à variável PHP $value.
@@ -45,6 +58,8 @@ final class AdminSkillManager // Explicação DevIN: Declara o tipo AdminSkillMa
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** @return list<array{id:string,label:string,instruction:string}> */
+    // Detalhamento DevIN: seleciona a operação «select» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function select(string $message): array // Explicação DevIN: Declara função/método select, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $tokens = preg_split('/[^a-z0-9]+/', self::normalize(mb_substr($message, 0, 3000, 'UTF-8')), -1, PREG_SPLIT_NO_EMPTY) ?: []; // Explicação DevIN: Atribui um valor à variável PHP $tokens.
@@ -64,6 +79,8 @@ final class AdminSkillManager // Explicação DevIN: Declara o tipo AdminSkillMa
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** O gerente é sempre ativo, mesmo quando nenhuma habilidade é pertinente. */
+    // Detalhamento DevIN: centraliza a operação «prompt» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function prompt(array $selected): string // Explicação DevIN: Declara função/método prompt, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $base = 'Gerenciador administrativo ativo: ative no máximo duas orientações pertinentes por solicitação. ' // Explicação DevIN: Atribui um valor à variável PHP $base.
@@ -76,6 +93,8 @@ final class AdminSkillManager // Explicação DevIN: Declara o tipo AdminSkillMa
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /** @return list<array{id:string,label:string}> */
+    // Detalhamento DevIN: centraliza a operação «labels» no contexto de orquestração das ferramentas e respostas do JARVIS para administradores; os argumentos recebidos definem o alvo ou os dados processados, e o retorno/erro sinaliza o resultado ao chamador.
+    // Entrada e saída: confira a assinatura abaixo; falhas devem ser tratadas pelo controlador que chamou esta rotina.
     public static function labels(array $selected): array // Explicação DevIN: Declara função/método labels, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return array_map(static fn (array $skill): array => ['id' => $skill['id'], 'label' => $skill['label']], $selected); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
