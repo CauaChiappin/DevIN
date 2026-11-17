@@ -1,0 +1,147 @@
+name: DevIN - completar comentarios inline (temporario)
+on:
+  push:
+    branches: [docs/inline-detailed-all-modules-20261117]
+    paths: ['.github/workflows/one-time-annotate-all-modules.yml']
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Documentar codigo existente em JavaScript sem adicionar scripts
+        shell: bash
+        run: |
+          node <<'NODE'
+          
+          const fs=require('fs'),cp=require('child_process'),path=require('path');
+          const files=cp.execFileSync('git',['ls-files','-z']).toString().split('\0').filter(Boolean);
+          const exts=new Set(['.php','.js','.cjs','.mjs','.ts','.css','.html','.htm','.sql','.yml','.yaml','.sh','.svg','.xml']);
+          const purposes={
+          'AuthController':'autenticar usuários com validações e sessão','ChatStorage':'consultar e registrar mensagens de usuários',
+          'JobSchema':'adaptar consultas ao esquema real de vagas','JobReports':'processar denúncias relativas a anúncios',
+          'ModelRouter':'escolher modelos e aplicar regras de fallback','ModelProvider':'conectar provedores de IA e tratar respostas',
+          'JobLanguageAudit':'identificar termos potencialmente ofensivos sem alterar anúncios',
+          'JarvisModeration':'validar propostas de exclusão e registrar auditoria',
+          'JarvisAdminRecords':'consultar registros e ordenar resultados semelhantes',
+          'JarvisAdminActions':'preparar, revisar e entregar mensagens aprovadas',
+          'AdminStepUp':'validar segundo fator administrativo e sessão','AdminRolePolicy':'avaliar níveis de acesso dos administradores',
+          'AdminToken2Enrollment':'cadastrar e alterar segredos de administrador','AdminToken2Hasher':'armazenar hashes dos segredos administrativos',
+          'dashboard-i18n':'exibir traduções e variações de idioma','jarvis-admin':'tratar comandos do JARVIS e apresentar confirmações',
+          'mensagens_api':'operar mensagens do sistema','cadastro_empresa':'cadastrar dados de empresas',
+          'cadastro_pessoa':'cadastrar dados de candidatos'
+          };
+          function domain(f){return f.includes('/Privacy/')?'privacidade e proteção de dados':
+          f.includes('/Security/')?'controle de acesso':
+          f.includes('/Jarvis/')||f.toLowerCase().includes('jarvis')?'assistência administrativa':
+          f.startsWith('css/')?'estilos responsivos e aparência':
+          f.startsWith('js/')?'interações do navegador':
+          f.startsWith('database/')?'estrutura e integridade do banco':
+          f.startsWith('html/')?'páginas e formulários':
+          f.startsWith('tests/')?'testes e prevenção de regressões':
+          f.startsWith('.github/')?'integração contínua e validação':
+          f.startsWith('php/')?'processamento no servidor':'componentes compartilhados';}
+          function purpose(f){const n=path.basename(f,path.extname(f));return purposes[n]||n.replace(/[_-]/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2').toLowerCase();}
+          function method(n,f){const x=n.toLowerCase(),p=purpose(f);let detail=
+          /^(get|fetch|load|read|list|find|search|suggest)/.test(x)?'consulta e organiza dados sem presumir que o resultado seja único':
+          /^(create|insert|save|register)/.test(x)?'cria registros após checagem da entrada':
+          /^(update|edit|change|revise)/.test(x)?'modifica apenas os dados previstos pela operação':
+          /^(delete|remove|erase)/.test(x)?'trata remoção sujeita às permissões e integridade do banco':
+          /^(verify|validate|check|require|is|has|can|allowed)/.test(x)?'verifica condições antes de liberar o próximo passo':
+          /^(send|notify|dispatch)/.test(x)?'coordena entrega, limite de uso e tratamento de falhas':
+          /^(parse|normalize|sanitize|format|build|render)/.test(x)?'transforma ou normaliza dados para o formato esperado':
+          /^(log|audit|record)/.test(x)?'registra evidências para acompanhamento':
+          /^(handle|run|process|execute)/.test(x)?'orquestra uma etapa do fluxo e suas possíveis falhas':
+          /^(rank|score|calculate|sort)/.test(x)?'calcula ordenação indicativa, não uma garantia de identidade':
+          'encapsula uma responsabilidade reutilizável do módulo';
+          return 'Método '+n+': '+detail+' no contexto de '+p+'. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.';}
+          function transform(f,content){
+           if(content.includes('REVISÃO DETALHADA DEVIN —'))return null;
+           const ext=path.extname(f).toLowerCase();if(!exts.has(ext))return null;
+           const head=['REVISÃO DETALHADA DEVIN — '+f,'Finalidade: '+purpose(f)+'.',
+           'Domínio: '+domain(f)+'.','Percurso: entrada -> validação -> regra de negócio -> resposta ou efeito.',
+           'Os comentários ao lado de cada instrução são mantidos; as notas adicionais',
+           'explicam as decisões e os efeitos do bloco sem modificar o comportamento.'];
+           let lines=content.split('\n'),out=[],started=false,count=0,methods=0,special=0;
+           let purePHP=ext==='.php'&&!content.includes('?>')&&!content.includes('<!DOCTYPE')&&!content.includes('<html');
+           let canJS=['.js','.cjs','.mjs','.ts'].includes(ext)&&content.length<85000;
+           let shell=ext==='.sh',script=false,style=false;
+           for(let i=0;i<lines.length;i++){
+             let line=lines[i],v=line.trim(),indent=(line.match(/^\s*/)||[''])[0];
+             if(!started){
+               if(ext==='.php'&&v.startsWith('<?php')){
+                 out.push(line);
+                 if(!content.includes('declare(strict_types=')){
+                   out.push('/**',...head.map(x=>' * '+x),' */','');started=true;count++;
+                 }continue;
+               }
+               if(ext==='.php'&&v.startsWith('declare(strict_types=')){
+                 out.push(line,'/**',...head.map(x=>' * '+x),' */','');started=true;count++;continue;
+               }
+               if(['.js','.cjs','.mjs','.ts','.css'].includes(ext)&&(!line.startsWith('#!'))){
+                 out.push('/*',...head.map(x=>' * '+x),' */','');started=true;count++;
+               }else if(ext==='.sql'){out.push(...head.map(x=>'-- '+x),'');started=true;count++;
+               }else if(['.yml','.yaml','.sh'].includes(ext)&&!line.startsWith('#!')){out.push(...head.map(x=>'# '+x),'');started=true;count++;
+               }else if(['.html','.htm'].includes(ext)&&/^<!doctype/i.test(v)){out.push(line,'<!--',...head.map(x=>'  '+x),'-->','');started=true;count++;continue;
+               }else if(['.svg','.xml'].includes(ext)&&(/^\s*<\?xml/.test(v)||i===0)){
+                 if(v.startsWith('<?xml'))out.push(line);
+                 out.push('<!--',...head.map(x=>'  '+x),'-->','');started=true;count++;
+                 if(v.startsWith('<?xml'))continue;
+               }
+             }
+             if(/^(\/\/|\/\*|\*|#|<!--)/.test(v)){out.push(line);continue;}
+             let pm=purePHP&&line.match(/^\s*(?:(?:public|private|protected)\s+)?(?:static\s+)?function\s+([a-zA-Z_]\w*)\s*\(/);
+             let jm=canJS&&line.match(/^\s*(?:(?:export|async)\s+)*function\s+([a-zA-Z_$]\w*)\s*\(/);
+             if(pm||jm){out.push(indent+'// Detalhe DevIN: '+method((pm||jm)[1],f));count++;methods++;}
+             if(purePHP&&special<28&&/->prepare\(|->begin_transaction\(|->commit\(|->rollback\(|hash_equals\(|password_verify\(/.test(line)){
+               let why=line.includes('prepare(')?'Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.':
+               line.includes('begin_transaction')?'Inicia uma transação para manter alterações relacionadas consistentes.':
+               line.includes('commit')?'Confirma alterações realizadas no mesmo contexto transacional.':
+               line.includes('rollback')?'Desfaz alterações ainda não confirmadas quando ocorre falha.':
+               line.includes('hash_equals')?'Compara hashes ou segredos sem diferenças de tempo evitáveis.':
+               'Valida uma senha contra o hash armazenado sem recuperar a senha original.';
+               out.push(indent+'// Detalhe DevIN: '+why);count++;special++;
+             }
+             if(ext==='.css'&&special<25&&/[{]\s*$/.test(v)&&!/^(@|from\b|to\b|\d+%)/.test(v)){
+               if(special%3===0){out.push(indent+'/* Detalhe DevIN: Seletor '+v.replace(/\{\s*$/,'').slice(0,70)+': controla aparência e posicionamento; conferir cascata, acessibilidade e telas menores. */');count++;}
+               special++;
+             }
+             if(['.html','.htm'].includes(ext)){
+               if(/^<script\b/i.test(v))script=true;if(/^<\/script/i.test(v))script=false;
+               if(/^<style\b/i.test(v))style=true;if(/^<\/style/i.test(v))style=false;
+               if(!script&&!style&&special<15&&/^<(main|section|nav|form|header|footer)\b/i.test(v)){
+                 let tag=v.match(/^<(\w+)/)[1];
+                 out.push(indent+'<!-- Detalhe DevIN: Bloco '+tag+': organiza informação e controles; manter rótulos, ordem de foco e uso em celular. -->');count++;special++;
+               }
+             }
+             if(ext==='.sql'&&/^(CREATE TABLE|ALTER TABLE|CREATE INDEX)\b/i.test(v)){
+               out.push(indent+'-- Detalhe DevIN: Mudança estrutural; aplicar uma vez após backup e conferir restrições, chaves e índices.');count++;
+             }
+             out.push(line);
+           }
+           if(!started)return null;
+           return {content:out.join('\n'),count,methods};
+          }
+          let n=0,comments=0,methods=0,failed=[];
+          for(const f of files){
+           if(f.includes('one-time-annotate-all-modules.yml'))continue;
+           if(!exts.has(path.extname(f).toLowerCase()))continue;
+           try{
+            const original=fs.readFileSync(f,'utf8'),a=transform(f,original);
+            if(a&&a.content!==original){fs.writeFileSync(f,a.content,'utf8');n++;comments+=a.count;methods+=a.methods;}
+           }catch(e){failed.push({file:f,error:String(e)});}
+          }
+          console.log(JSON.stringify({updated:n,comments,methods,failed}));
+          
+          NODE
+      - name: Registrar comentarios nos arquivos originais
+        shell: bash
+        run: |
+          git add -u
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(devin): comentario contextual em todos os modulos existentes"
+            git push origin HEAD:docs/inline-detailed-all-modules-20261117
+          fi
