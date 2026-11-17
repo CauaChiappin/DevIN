@@ -87,8 +87,8 @@
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Detalhe DevIN: O catálogo externo acrescenta jogos originais sem criar novas permissões de banco.
-    const additionalCatalog = window.DevINArcadeExtraGames?.metadata || {};
-    Object.assign(games, additionalCatalog);
+    const additionalCatalog = window.DevINArcadeExtraGames?.metadata || {}; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    Object.assign(games, additionalCatalog); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     const cellRect = (x, y, size, left, top) => ({ // Explicação DevIN: Declara variável JavaScript cellRect para reutilizar valor ou resultado.
         x: left + x * size, y: top + y * size, size // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -663,14 +663,14 @@
 
     // Detalhe DevIN: Novos motores seguem o contrato key(), pointer(), update() e draw().
     // A persistência de recordes e a classificação seguem sob controle da API original.
-    const extraFactories = window.DevINArcadeExtraGames?.create({
-        ctx, canvas: activeCanvas, colors, gameOver, saveProgress
-    }).factories || {};
-    const factories = {
-        maze: mazeEngine, snake: snakeEngine, tetris: tetrisEngine,
-        breakout: breakoutEngine, memory: memoryEngine, runner: runnerEngine,
-        ...extraFactories
-    }; // Explicação DevIN: Declara variável JavaScript factories para reutilizar valor ou resultado.
+    const extraFactories = window.DevINArcadeExtraGames?.create({ // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        ctx, canvas: activeCanvas, colors, gameOver, saveProgress // Explicação DevIN: Continua expressão ou bloco pertencente a função runnerEngine.
+    }).factories || {}; // Explicação DevIN: Continua expressão ou bloco pertencente a função runnerEngine.
+    const factories = { // Explicação DevIN: Declara variável JavaScript factories para reutilizar valor ou resultado.
+        maze: mazeEngine, snake: snakeEngine, tetris: tetrisEngine, // Explicação DevIN: Continua expressão ou bloco pertencente a função runnerEngine.
+        breakout: breakoutEngine, memory: memoryEngine, runner: runnerEngine, // Explicação DevIN: Controla a continuação ou saída de laço/seleção.
+        ...extraFactories // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     async function launch(game) { // Explicação DevIN: Declara função/método launch, com seus parâmetros e comportamento.
         if (!factories[game]) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -846,25 +846,25 @@
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Arraste no canvas para posicionar a plataforma/cesta em dispositivos táteis.
-    activeCanvas.addEventListener('pointermove', (event) => {
-        if (!engine?.ended && event.buttons === 1) engine?.pointer?.(event);
-    });
+    activeCanvas.addEventListener('pointermove', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (!engine?.ended && event.buttons === 1) engine?.pointer?.(event); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Alternativa ao teclado físico para aparelhos com tela sensível ao toque.
-    document.querySelectorAll('[data-arcade-key]').forEach((button) => {
-        button.addEventListener('pointerdown', (event) => {
-            event.preventDefault();
-            if (!engine || engine.ended) return;
-            engine.key?.(button.dataset.arcadeKey);
-        });
-    });
-    document.querySelectorAll('[data-launch-game]').forEach((button) => {
-        button.addEventListener('click', () => {
-            document.querySelectorAll('[data-launch-game]').forEach((item) => {
-                item.classList.toggle('is-active', item === button);
-                item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
-            });
-        });
-    });
+    document.querySelectorAll('[data-arcade-key]').forEach((button) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        button.addEventListener('pointerdown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAdminProgress.
+            if (!engine || engine.ended) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            engine.key?.(button.dataset.arcadeKey); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAdminProgress.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    document.querySelectorAll('[data-launch-game]').forEach((button) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        button.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+            document.querySelectorAll('[data-launch-game]').forEach((item) => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+                item.classList.toggle('is-active', item === button); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAdminProgress.
+                item.setAttribute('aria-pressed', item === button ? 'true' : 'false'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAdminProgress.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     function frame(timestamp) { // Explicação DevIN: Declara função/método frame, com seus parâmetros e comportamento.
         const delta = lastFrame ? Math.min(timestamp - lastFrame, 80) : 16; // Explicação DevIN: Declara variável JavaScript delta para reutilizar valor ou resultado.
         lastFrame = timestamp; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.

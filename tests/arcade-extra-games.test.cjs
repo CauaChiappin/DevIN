@@ -3,75 +3,75 @@
  * Canvas falso não testa renderização pixel-a-pixel; garante que os motores
  * sejam instanciáveis e exponham contrato compatível com o Arcade existente.
  */
-const test = require('node:test'); // Explicação DevIN: Importa o executor de testes da plataforma Node.js.
-const assert = require('node:assert/strict'); // Explicação DevIN: Importa asserções estritas para validar comportamento.
-const fs = require('node:fs'); // Explicação DevIN: Permite ler os arquivos reais do projeto.
-const vm = require('node:vm'); // Explicação DevIN: Executa o módulo em ambiente isolado de testes.
-const path = require('node:path'); // Explicação DevIN: Monta caminhos independentes do sistema operacional.
-const root = path.join(__dirname, '..'); // Explicação DevIN: Define diretório principal do repositório.
-const read = (name) => fs.readFileSync(path.join(root, name), 'utf8'); // Explicação DevIN: Carrega texto para validação.
-const browser = { DevINArcadeExtraGames: null }; // Explicação DevIN: Imita o objeto window com o registro do módulo.
-vm.runInNewContext(read('js/arcade-extra-games.js'), { window: browser, Math }); // Explicação DevIN: Registra os jogos sem abrir um navegador.
-const registry = browser.DevINArcadeExtraGames; // Explicação DevIN: Obtém catálogo e fábrica registrados no window.
-const ids = ['pong','dodge','flappy','target','collector','racer','simon','basket']; // Explicação DevIN: Define lista esperada de minijogos.
-const ctx = {
-    fillRect(){}, beginPath(){}, arc(){}, fill(){}, moveTo(){}, lineTo(){}, stroke(){},
-    fillText(){}, closePath(){}, save(){}, restore(){},
-    set fillStyle(x){ this._fill = x; }, get fillStyle(){ return this._fill; },
-    set strokeStyle(x){ this._stroke = x; }, set font(x){ this._font = x; },
-    set textAlign(x){ this._align = x; }
-}; // Explicação DevIN: Emula os comandos Canvas usados pelos motores.
-const canvas = {getBoundingClientRect(){return {left:0,top:0,width:640,height:480};}}; // Explicação DevIN: Emula as dimensões do canvas.
+const test = require('node:test'); // Explicação DevIN: Declara variável JavaScript test para reutilizar valor ou resultado.
+const assert = require('node:assert/strict'); // Explicação DevIN: Declara variável JavaScript assert para reutilizar valor ou resultado.
+const fs = require('node:fs'); // Explicação DevIN: Declara variável JavaScript fs para reutilizar valor ou resultado.
+const vm = require('node:vm'); // Explicação DevIN: Declara variável JavaScript vm para reutilizar valor ou resultado.
+const path = require('node:path'); // Explicação DevIN: Declara variável JavaScript path para reutilizar valor ou resultado.
+const root = path.join(__dirname, '..'); // Explicação DevIN: Declara variável JavaScript root para reutilizar valor ou resultado.
+const read = (name) => fs.readFileSync(path.join(root, name), 'utf8'); // Explicação DevIN: Declara variável JavaScript read para reutilizar valor ou resultado.
+const browser = { DevINArcadeExtraGames: null }; // Explicação DevIN: Declara variável JavaScript browser para reutilizar valor ou resultado.
+vm.runInNewContext(read('js/arcade-extra-games.js'), { window: browser, Math }); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+const registry = browser.DevINArcadeExtraGames; // Explicação DevIN: Declara variável JavaScript registry para reutilizar valor ou resultado.
+const ids = ['pong','dodge','flappy','target','collector','racer','simon','basket']; // Explicação DevIN: Declara variável JavaScript ids para reutilizar valor ou resultado.
+const ctx = { // Explicação DevIN: Declara variável JavaScript ctx para reutilizar valor ou resultado.
+    fillRect(){}, beginPath(){}, arc(){}, fill(){}, moveTo(){}, lineTo(){}, stroke(){}, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    fillText(){}, closePath(){}, save(){}, restore(){}, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    set fillStyle(x){ this._fill = x; }, get fillStyle(){ return this._fill; }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    set strokeStyle(x){ this._stroke = x; }, set font(x){ this._font = x; }, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    set textAlign(x){ this._align = x; } // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+const canvas = {getBoundingClientRect(){return {left:0,top:0,width:640,height:480};}}; // Explicação DevIN: Declara variável JavaScript canvas para reutilizar valor ou resultado.
 
-test('catálogo apresenta exatamente os oito títulos extras', () => {
-    assert.deepEqual(Array.from(Object.keys(registry.metadata)).sort(), ids.slice().sort());
-    for (const id of ids) {
-        assert.ok(registry.metadata[id].title, 'Nome ausente: ' + id);
-        assert.ok(registry.metadata[id].hint, 'Controles ausentes: ' + id);
-    }
-});
+test('catálogo apresenta exatamente os oito títulos extras', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.deepEqual(Array.from(Object.keys(registry.metadata)).sort(), ids.slice().sort()); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    for (const id of ids) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+        assert.ok(registry.metadata[id].title, 'Nome ausente: ' + id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.ok(registry.metadata[id].hint, 'Controles ausentes: ' + id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('cada jogo possui motor compatível, desenha e recebe entradas', () => {
-    const context = { ctx, canvas, colors: {}, gameOver(){}, saveProgress(){} };
-    const engines = registry.create(context).factories;
-    for (const id of ids) {
-        assert.equal(typeof engines[id], 'function', id);
-        const engine = engines[id]();
-        assert.equal(engine.game, id);
-        assert.equal(engine.level, 1);
-        assert.equal(engine.score, 0);
-        for (const method of ['key','pointer','update','draw']) {
-            assert.equal(typeof engine[method], 'function', id + ' - ' + method);
-        }
-        assert.doesNotThrow(() => {
-            engine.key('ArrowLeft');
-            engine.key('ArrowRight');
-            engine.key('Space');
-            engine.pointer({clientX:300,clientY:200});
-            for (let i=0;i<12;i++) engine.update(16);
-            engine.draw();
-        }, 'Erro no motor '+id);
-        assert.ok(Number.isFinite(engine.score) && engine.score>=0, id);
-    }
-});
+test('cada jogo possui motor compatível, desenha e recebe entradas', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const context = { ctx, canvas, colors: {}, gameOver(){}, saveProgress(){} }; // Explicação DevIN: Declara variável JavaScript context para reutilizar valor ou resultado.
+    const engines = registry.create(context).factories; // Explicação DevIN: Declara variável JavaScript engines para reutilizar valor ou resultado.
+    for (const id of ids) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+        assert.equal(typeof engines[id], 'function', id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        const engine = engines[id](); // Explicação DevIN: Declara variável JavaScript engine para reutilizar valor ou resultado.
+        assert.equal(engine.game, id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.equal(engine.level, 1); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.equal(engine.score, 0); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        for (const method of ['key','pointer','update','draw']) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            assert.equal(typeof engine[method], 'function', id + ' - ' + method); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        assert.doesNotThrow(() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            engine.key('ArrowLeft'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            engine.key('ArrowRight'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            engine.key('Space'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            engine.pointer({clientX:300,clientY:200}); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            for (let i=0;i<12;i++) engine.update(16); // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            engine.draw(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        }, 'Erro no motor '+id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.ok(Number.isFinite(engine.score) && engine.score>=0, id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('HTML e backend registram todos os jogos com recordes', () => {
-    const html = read('php/arcade.php');
-    const api = read('php/arcade_api.php');
-    const driver = read('js/arcade-games.js');
-    for (const id of ids) {
-        assert.ok(html.includes('data-launch-game="'+id+'"'), 'Card não localizado: '+id);
-        assert.ok(api.includes("'"+id+"' =>"), 'Limites de placar ausentes: '+id);
-    }
-    assert.ok(html.includes('arcade-extra-games.js'));
-    assert.ok(html.includes('arcade-library.js'));
-    assert.ok(driver.includes('...extraFactories'));
-    assert.ok(html.indexOf('arcade-extra-games.js') < html.indexOf('arcade-games.js'));
-});
+test('HTML e backend registram todos os jogos com recordes', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const html = read('php/arcade.php'); // Explicação DevIN: Declara variável JavaScript html para reutilizar valor ou resultado.
+    const api = read('php/arcade_api.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+    const driver = read('js/arcade-games.js'); // Explicação DevIN: Declara variável JavaScript driver para reutilizar valor ou resultado.
+    for (const id of ids) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+        assert.ok(html.includes('data-launch-game="'+id+'"'), 'Card não localizado: '+id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.ok(api.includes("'"+id+"' =>"), 'Limites de placar ausentes: '+id); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    assert.ok(html.includes('arcade-extra-games.js')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.ok(html.includes('arcade-library.js')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.ok(driver.includes('...extraFactories')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.ok(html.indexOf('arcade-extra-games.js') < html.indexOf('arcade-games.js')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('catálogo suporta busca, filtros e escolha aleatória', () => {
-    const src = read('js/arcade-library.js');
-    assert.ok(src.includes('data-arcade-search'));
-    assert.ok(src.includes('data-arcade-filter'));
-    assert.ok(src.includes('data-random-game'));
-});
+test('catálogo suporta busca, filtros e escolha aleatória', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const src = read('js/arcade-library.js'); // Explicação DevIN: Declara variável JavaScript src para reutilizar valor ou resultado.
+    assert.ok(src.includes('data-arcade-search')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.ok(src.includes('data-arcade-filter')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.ok(src.includes('data-random-game')); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

@@ -248,373 +248,373 @@ body.game-page { /* Explicação DevIN: Inicia bloco de estilos associado ao sel
    pontual nos destaques. Os jogos mantêm o canvas escuro para
    contraste; esta seção não altera páginas públicas antigas.
    =============================================================== */
-body.arcade-portal {
-    --arcade-primary: #004a94;
-    --arcade-primary-light: #e9f3ff;
-    --arcade-surface: #ffffff;
-    --arcade-ink: #16314c;
-    --arcade-subtle: #526b83;
-    --arcade-border: #dce7f0;
-    background: #f8f7f2;
-    color: var(--arcade-ink);
-    font-family: "Inter", "Segoe UI", Arial, sans-serif;
-    min-height: 100dvh;
-}
-.arcade-portal .arcade-shell {
-    width: min(1440px, calc(100% - 44px));
-    padding-block: 22px 38px;
-}
-.arcade-portal .arcade-header {
-    background: #ffffff;
-    border: 1px solid var(--arcade-border);
-    box-shadow: 0 8px 32px rgba(18,58,98,.05);
-    border-radius: 20px;
-    padding: 15px clamp(16px,3vw,30px);
-}
-.arcade-portal .arcade-logo {
-    color: var(--arcade-primary);
-    font-weight: 850;
-    letter-spacing: -.055em;
-}
-.arcade-portal .arcade-logo span { color: #e6aa25; }
-.arcade-portal .arcade-nav { align-items: center; }
-.arcade-portal .arcade-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 10px 17px;
-    border-radius: 12px;
-    color: var(--arcade-primary);
-    background: var(--arcade-primary-light);
-    border: 1px solid #cadef3;
-    font-size: 13px;
-    font-weight: 750;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background .18s ease, transform .18s ease;
-}
-.arcade-portal .arcade-button:hover {
-    background: #dceefe;
-    transform: translateY(-1px);
-}
-.arcade-portal .portal-content { gap: 20px; margin-top: 24px; }
-.arcade-portal .portal-intro {
-    background:
-        radial-gradient(circle at 90% 30%, rgba(255,214,105,.14), transparent 32%),
-        linear-gradient(125deg,#004a94 0%,#1167b0 64%,#2482c5 100%);
-    color: #ffffff;
-    border: 0;
-    border-radius: 25px;
-    padding: clamp(25px,4vw,50px);
-    box-shadow: 0 18px 38px rgba(1,69,134,.13);
-    overflow: hidden;
-}
-.arcade-portal .portal-intro .portal-eyebrow {
-    color: #ffdf83;
-    letter-spacing: .15em;
-}
-.arcade-portal .portal-intro h1 {
-    max-width: 760px;
-    color: #ffffff;
-    font-size: clamp(31px,4.7vw,58px);
-    line-height: 1.06;
-    letter-spacing: -.055em;
-    margin: 12px 0 18px;
-}
-.arcade-portal .arcade-highlight { color: #ffe49a; }
-.arcade-portal .portal-intro > p:not(.portal-eyebrow) {
-    color: #e7f2fc;
-    max-width: 720px;
-    font-size: clamp(14px,1.35vw,17px);
-}
-.arcade-portal .arcade-quick-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 24px;
-}
-.arcade-portal .arcade-quick-stats > span {
-    background: rgba(255,255,255,.13);
-    border: 1px solid rgba(255,255,255,.25);
-    color: #fff;
-    border-radius: 999px;
-    padding: 8px 15px;
-    font-size: 12px;
-    font-weight: 650;
-}
-.arcade-portal .arcade-quick-stats strong { color: #ffe49a; font-size: 15px; }
-.arcade-portal .portal-layout {
-    grid-template-columns: minmax(300px,1fr) minmax(0,1.04fr);
-    gap: 20px;
-    align-items: start;
-}
-.arcade-portal .portal-library,
-.arcade-portal .arcade-play-panel,
-.arcade-portal .admin-progress {
-    background: var(--arcade-surface);
-    color: var(--arcade-ink);
-    border: 1px solid var(--arcade-border);
-    border-radius: 22px;
-    padding: clamp(16px,2.1vw,25px);
-    box-shadow: 0 8px 24px rgba(25,66,109,.045);
-}
-.arcade-portal .arcade-library-heading {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-}
-.arcade-portal .arcade-library-heading h2 {
-    color: var(--arcade-ink);
-    font-size: clamp(20px,2.2vw,26px);
-    letter-spacing: -.035em;
-    line-height: 1.2;
-    margin-top: 6px;
-}
-.arcade-portal .arcade-library-heading .portal-eyebrow {
-    color: var(--arcade-primary);
-    font-size: 10px;
-    letter-spacing: .13em;
-}
-.arcade-portal .arcade-random {
-    flex: 0 0 auto;
-    border: 1px solid #f0d995;
-    border-radius: 12px;
-    background: #fff5d7;
-    color: #704c00;
-    padding: 11px 13px;
-    min-height: 44px;
-    font-weight: 750;
-    font-size: 12px;
-    cursor: pointer;
-}
-.arcade-portal .arcade-random:hover { background: #ffe9ab; }
-.arcade-portal .arcade-random:disabled { opacity: .55; cursor: not-allowed; }
-.arcade-portal .arcade-search-label {
-    display: block;
-    font-size: 12px;
-    font-weight: 750;
-    margin-bottom: 8px;
-    color: var(--arcade-subtle);
-}
-.arcade-portal .arcade-search {
-    display: block;
-    width: 100%;
-    min-height: 47px;
-    border: 1px solid #c9dbea;
-    border-radius: 12px;
-    color: var(--arcade-ink);
-    background: #f8fbff;
-    font: inherit;
-    padding: 10px 14px;
-    outline-offset: 3px;
-}
-.arcade-portal .arcade-search:focus { border-color: var(--arcade-primary); background: #fff; }
-.arcade-portal .arcade-filters { display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 9px; }
-.arcade-portal .arcade-filter {
-    border: 1px solid #dfebf4;
-    background: #f4f8fc;
-    border-radius: 999px;
-    color: var(--arcade-subtle);
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: 750;
-    min-height: 34px;
-    padding: 7px 11px;
-}
-.arcade-portal .arcade-filter.is-selected {
-    background: var(--arcade-primary);
-    color: #fff;
-    border-color: var(--arcade-primary);
-}
-.arcade-portal .arcade-found {
-    color: #687f94;
-    font-size: 12px;
-    margin: 6px 0 12px;
-}
-.arcade-portal .portal-games {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: 11px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    max-height: min(78vh,900px);
-    overflow-y: auto;
-    scrollbar-color: #b5d1ed transparent;
-}
-.arcade-portal .portal-game-card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 7px;
-    min-width: 0;
-    border: 1px solid #dce7f2;
-    border-radius: 15px;
-    background: #f9fbfe;
-    color: var(--arcade-ink);
-    text-align: left;
-    padding: 15px;
-    min-height: 167px;
-    cursor: pointer;
-    transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
-}
-.arcade-portal .portal-game-card:hover,
-.arcade-portal .portal-game-card:focus-visible {
-    border-color: #7eaee1;
-    background: #eef6ff;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 18px rgba(7,67,120,.08);
-    outline-offset: 3px;
-}
-.arcade-portal .portal-game-card.is-active {
-    border-color: var(--arcade-primary);
-    background: #e9f3ff;
-    box-shadow: 0 0 0 2px rgba(0,74,148,.1);
-}
-.arcade-portal .portal-game-card[hidden],
-.arcade-portal .arcade-empty[hidden] { display:none !important; }
-.arcade-portal .portal-game-card .portal-game-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 43px;
-    height: 43px;
-    border-radius: 12px;
-    font-size: 23px;
-    color: var(--arcade-primary);
-    background: #e4f0fb;
-    grid-column: auto;
-    grid-row: auto;
-}
-.arcade-portal .portal-game-card strong {
-    font-size: 14px;
-    color: #143657;
-    grid-column: auto;
-}
-.arcade-portal .portal-game-card span:not(.portal-game-icon) {
-    font-size: 11px;
-    color: var(--arcade-subtle);
-    line-height: 1.48;
-    grid-column: auto;
-}
-.arcade-portal .arcade-tag {
-    color: #176ba4;
-    background: #e8f3fc;
-    padding: 5px 9px;
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 800;
-    margin-top: auto;
-}
-.arcade-portal .arcade-empty {
-    border: 1px dashed #b1cce4;
-    background: #f6faff;
-    color: var(--arcade-subtle);
-    border-radius: 13px;
-    font-size: 13px;
-    padding: 18px;
-}
-.arcade-portal .arcade-play-panel {
-    position: sticky;
-    top: 20px;
-    scroll-margin-top: 15px;
-    gap: 14px;
-}
-.arcade-portal .arcade-play-heading h2 {
-    color: #143657;
-    font-size: clamp(20px,2.25vw,27px);
-    line-height: 1.2;
-}
-.arcade-portal .arcade-play-heading p,
-.arcade-portal .admin-progress p { color: var(--arcade-subtle); }
-.arcade-portal .arcade-canvas-wrap {
-    border: 1px solid #174875;
-    border-radius: 15px;
-    background: #081c36;
-    box-shadow: 0 12px 28px rgba(5,40,75,.14);
-    touch-action: none;
-}
-.arcade-portal .arcade-overlay { background: rgba(5,22,43,.90); border-radius: 15px; }
-.arcade-portal .arcade-live-stats {
-    gap: 8px;
-    color: var(--arcade-subtle);
-    justify-content: space-between;
-}
-.arcade-portal .arcade-live-stats > span {
-    background: #edf5fd;
-    border: 1px solid #d9eaf9;
-    border-radius: 10px;
-    padding: 9px 12px;
-    font-size: 12px;
-    font-weight: 700;
-}
-.arcade-portal .arcade-live-stats strong { color: var(--arcade-primary); }
-.arcade-portal .arcade-feedback { color: var(--arcade-primary); }
-.arcade-portal .arcade-touch-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    border-top: 1px solid #e4edf6;
-    padding-top: 14px;
-}
-.arcade-portal .arcade-touch-controls button {
-    width: 53px;
-    height: 48px;
-    color: var(--arcade-primary);
-    background: #e9f3fc;
-    border: 1px solid #b8d3eb;
-    border-radius: 11px;
-    cursor: pointer;
-    font-size: 21px;
-    font-weight: 800;
-    user-select: none;
-    touch-action: manipulation;
-}
-.arcade-portal .arcade-touch-controls button:active { background: #cde8fc; transform: scale(.96); }
-.arcade-portal .admin-progress h2 { color: var(--arcade-primary); }
-.arcade-portal .admin-progress-grid th { color: var(--arcade-primary); }
-.arcade-portal .admin-progress-grid td { color: var(--arcade-ink); }
-.arcade-portal .arcade-footer {
-    color: #536c82;
-    padding: 18px 5px 0;
-    font-size: 12px;
-}
-.arcade-portal button:focus-visible,
-.arcade-portal a:focus-visible { outline: 3px solid #e5af38; outline-offset: 2px; }
+body.arcade-portal { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    --arcade-primary: #004a94; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-primary-light: #e9f3ff; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-surface: #ffffff; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-ink: #16314c; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-subtle: #526b83; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    --arcade-border: #dce7f0; /* Explicação DevIN: Define variável CSS customizada, reutilizada por outras regras. */
+    background: #f8f7f2; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: var(--arcade-ink); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-family: "Inter", "Segoe UI", Arial, sans-serif; /* Explicação DevIN: Define família tipográfica por meio da propriedade CSS font-family. */
+    min-height: 100dvh; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-shell { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: min(1440px, calc(100% - 44px)); /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    padding-block: 22px 38px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS padding-block. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-header { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #ffffff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid var(--arcade-border); /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    box-shadow: 0 8px 32px rgba(18,58,98,.05); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    border-radius: 20px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    padding: 15px clamp(16px,3vw,30px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-logo { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: var(--arcade-primary); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-weight: 850; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    letter-spacing: -.055em; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-logo span { color: #e6aa25; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-nav { align-items: center; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: inline-flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    padding: 10px 17px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 12px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: var(--arcade-primary); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    background: var(--arcade-primary-light); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid #cadef3; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 750; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    text-decoration: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
+    transition: background .18s ease, transform .18s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-button:hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #dceefe; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    transform: translateY(-1px); /* Explicação DevIN: Define transformação geométrica por meio da propriedade CSS transform. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-content { gap: 20px; margin-top: 24px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .portal-intro { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+        radial-gradient(circle at 90% 30%, rgba(255,214,105,.14), transparent 32%), /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+        linear-gradient(125deg,#004a94 0%,#1167b0 64%,#2482c5 100%); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    color: #ffffff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    border: 0; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 25px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    padding: clamp(25px,4vw,50px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    box-shadow: 0 18px 38px rgba(1,69,134,.13); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    overflow: hidden; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-intro .portal-eyebrow { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #ffdf83; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    letter-spacing: .15em; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-intro h1 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    max-width: 760px; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    color: #ffffff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: clamp(31px,4.7vw,58px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.06; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    letter-spacing: -.055em; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+    margin: 12px 0 18px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-highlight { color: #ffe49a; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .portal-intro > p:not(.portal-eyebrow) { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #e7f2fc; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    max-width: 720px; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    font-size: clamp(14px,1.35vw,17px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-quick-stats { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-wrap: wrap; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS flex-wrap. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    margin-top: 24px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-quick-stats > span { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: rgba(255,255,255,.13); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid rgba(255,255,255,.25); /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    color: #fff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    border-radius: 999px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    padding: 8px 15px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 650; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-quick-stats strong { color: #ffe49a; font-size: 15px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .portal-layout { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    grid-template-columns: minmax(300px,1fr) minmax(0,1.04fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    gap: 20px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    align-items: start; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-library, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-play-panel, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .admin-progress { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: var(--arcade-surface); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: var(--arcade-ink); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    border: 1px solid var(--arcade-border); /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 22px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    padding: clamp(16px,2.1vw,25px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    box-shadow: 0 8px 24px rgba(25,66,109,.045); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-library-heading { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    gap: 12px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    margin-bottom: 18px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-bottom. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-library-heading h2 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: var(--arcade-ink); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: clamp(20px,2.2vw,26px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    letter-spacing: -.035em; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+    line-height: 1.2; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    margin-top: 6px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-library-heading .portal-eyebrow { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: var(--arcade-primary); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 10px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    letter-spacing: .13em; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-random { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    flex: 0 0 auto; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    border: 1px solid #f0d995; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 12px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #fff5d7; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #704c00; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    padding: 11px 13px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    font-weight: 750; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-random:hover { background: #ffe9ab; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-random:disabled { opacity: .55; cursor: not-allowed; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-search-label { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 750; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    margin-bottom: 8px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-bottom. */
+    color: var(--arcade-subtle); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-search { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    min-height: 47px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    border: 1px solid #c9dbea; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 12px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: var(--arcade-ink); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    background: #f8fbff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    font: inherit; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font. */
+    padding: 10px 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    outline-offset: 3px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline-offset. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-search:focus { border-color: var(--arcade-primary); background: #fff; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-filters { display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 9px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-filter { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border: 1px solid #dfebf4; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    background: #f4f8fc; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border-radius: 999px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: var(--arcade-subtle); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    font-size: 11px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 750; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    min-height: 34px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    padding: 7px 11px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-filter.is-selected { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: var(--arcade-primary); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #fff; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    border-color: var(--arcade-primary); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-found { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #687f94; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    margin: 6px 0 12px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-games { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    grid-template-columns: repeat(2,minmax(0,1fr)); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    gap: 11px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    padding: 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    background: transparent; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: none; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    box-shadow: none; /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    max-height: min(78vh,900px); /* Explicação DevIN: Define altura máxima por meio da propriedade CSS max-height. */
+    overflow-y: auto; /* Explicação DevIN: Define transbordamento vertical por meio da propriedade CSS overflow-y. */
+    scrollbar-color: #b5d1ed transparent; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS scrollbar-color. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-game-card { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    align-items: flex-start; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    gap: 7px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    border: 1px solid #dce7f2; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 15px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #f9fbfe; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: var(--arcade-ink); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    text-align: left; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-align. */
+    padding: 15px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    min-height: 167px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-game-card:hover, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .portal-game-card:focus-visible { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border-color: #7eaee1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+    background: #eef6ff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    transform: translateY(-2px); /* Explicação DevIN: Define transformação geométrica por meio da propriedade CSS transform. */
+    box-shadow: 0 12px 18px rgba(7,67,120,.08); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    outline-offset: 3px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS outline-offset. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-game-card.is-active { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border-color: var(--arcade-primary); /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+    background: #e9f3ff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    box-shadow: 0 0 0 2px rgba(0,74,148,.1); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-game-card[hidden], /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-empty[hidden] { display:none !important; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .portal-game-card .portal-game-icon { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    width: 43px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 43px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    border-radius: 12px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    font-size: 23px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    color: var(--arcade-primary); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    background: #e4f0fb; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    grid-column: auto; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+    grid-row: auto; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-row. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-game-card strong { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    color: #143657; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    grid-column: auto; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .portal-game-card span:not(.portal-game-icon) { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 11px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    color: var(--arcade-subtle); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    line-height: 1.48; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    grid-column: auto; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-tag { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #176ba4; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    background: #e8f3fc; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    padding: 5px 9px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 999px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    font-size: 10px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 800; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    margin-top: auto; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS margin-top. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-empty { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border: 1px dashed #b1cce4; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    background: #f6faff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: var(--arcade-subtle); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    border-radius: 13px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    padding: 18px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-play-panel { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    position: sticky; /* Explicação DevIN: Define modo de posicionamento por meio da propriedade CSS position. */
+    top: 20px; /* Explicação DevIN: Define distância em relação à borda superior por meio da propriedade CSS top. */
+    scroll-margin-top: 15px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS scroll-margin-top. */
+    gap: 14px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-play-heading h2 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #143657; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: clamp(20px,2.25vw,27px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.2; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-play-heading p, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .admin-progress p { color: var(--arcade-subtle); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-canvas-wrap { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border: 1px solid #174875; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 15px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #081c36; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    box-shadow: 0 12px 28px rgba(5,40,75,.14); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    touch-action: none; /* Explicação DevIN: Define tratamento de gestos de toque por meio da propriedade CSS touch-action. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-overlay { background: rgba(5,22,43,.90); border-radius: 15px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-live-stats { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    color: var(--arcade-subtle); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-live-stats > span { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    background: #edf5fd; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid #d9eaf9; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 10px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    padding: 9px 12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-live-stats strong { color: var(--arcade-primary); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-feedback { color: var(--arcade-primary); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-touch-controls { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-wrap: wrap; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS flex-wrap. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    border-top: 1px solid #e4edf6; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-top. */
+    padding-top: 14px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS padding-top. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-touch-controls button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 53px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 48px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    color: var(--arcade-primary); /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    background: #e9f3fc; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid #b8d3eb; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 11px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+    font-size: 21px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 800; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    user-select: none; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS user-select. */
+    touch-action: manipulation; /* Explicação DevIN: Define tratamento de gestos de toque por meio da propriedade CSS touch-action. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal .arcade-touch-controls button:active { background: #cde8fc; transform: scale(.96); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .admin-progress h2 { color: var(--arcade-primary); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .admin-progress-grid th { color: var(--arcade-primary); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .admin-progress-grid td { color: var(--arcade-ink); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-footer { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #536c82; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    padding: 18px 5px 0; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.arcade-portal button:focus-visible, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal a:focus-visible { outline: 3px solid #e5af38; outline-offset: 2px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-@media (max-width: 1100px) {
-    .arcade-portal .portal-layout { grid-template-columns: minmax(275px,.88fr) minmax(0,1.12fr); }
-    .arcade-portal .portal-games { grid-template-columns: 1fr; max-height: 760px; }
-    .arcade-portal .portal-game-card { min-height: 126px; }
-}
-@media (max-width: 980px) {
-    .arcade-portal .portal-layout { grid-template-columns: 1fr; }
-    .arcade-portal .portal-games { grid-template-columns: repeat(2,minmax(0,1fr)); max-height: none; overflow: visible; }
-    .arcade-portal .arcade-play-panel { position: static; }
-}
-@media (max-width: 580px) {
-    .arcade-portal .arcade-shell { width: calc(100% - 20px); }
-    .arcade-portal .arcade-header { padding: 12px 15px; }
-    .arcade-portal .portal-intro { border-radius: 18px; padding: 23px 19px; }
-    .arcade-portal .portal-library, .arcade-portal .arcade-play-panel { border-radius: 17px; padding: 15px; }
-    .arcade-portal .portal-games { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
-    .arcade-portal .portal-game-card { min-height: 160px; padding: 12px; }
-    .arcade-portal .arcade-library-heading { align-items: flex-start; flex-direction: column; }
-    .arcade-portal .arcade-random { width: 100%; }
-    .arcade-portal .arcade-live-stats { gap: 6px; }
-    .arcade-portal .arcade-live-stats > span { flex:1; text-align:center; padding:8px 5px; }
-    .arcade-portal .arcade-touch-controls button { min-width: 48px; flex: 1; }
-}
-@media (max-width: 375px) {
-    .arcade-portal .portal-games { grid-template-columns: 1fr; }
-    .arcade-portal .portal-game-card { min-height: 115px; }
-}
-@media (prefers-reduced-motion: reduce) {
-    .arcade-portal .portal-game-card,
-    .arcade-portal .arcade-button { transition: none; }
-}
+@media (max-width: 1100px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .arcade-portal .portal-layout { grid-template-columns: minmax(275px,.88fr) minmax(0,1.12fr); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .portal-games { grid-template-columns: 1fr; max-height: 760px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .portal-game-card { min-height: 126px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (max-width: 980px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .arcade-portal .portal-layout { grid-template-columns: 1fr; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .portal-games { grid-template-columns: repeat(2,minmax(0,1fr)); max-height: none; overflow: visible; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .arcade-play-panel { position: static; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (max-width: 580px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .arcade-portal .arcade-shell { width: calc(100% - 20px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .arcade-header { padding: 12px 15px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .portal-intro { border-radius: 18px; padding: 23px 19px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .portal-library, .arcade-portal .arcade-play-panel { border-radius: 17px; padding: 15px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .portal-games { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .portal-game-card { min-height: 160px; padding: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .arcade-library-heading { align-items: flex-start; flex-direction: column; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .arcade-random { width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .arcade-live-stats { gap: 6px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .arcade-live-stats > span { flex:1; text-align:center; padding:8px 5px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .arcade-touch-controls button { min-width: 48px; flex: 1; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (max-width: 375px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .arcade-portal .portal-games { grid-template-columns: 1fr; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .portal-game-card { min-height: 115px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .arcade-portal .portal-game-card, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .arcade-portal .arcade-button { transition: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
