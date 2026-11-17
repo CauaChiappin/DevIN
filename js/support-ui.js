@@ -5,7 +5,6 @@
  */
 (() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     'use strict';
-    // Navegação por abas limitada às telas menores: a versão desktop mantém os dois painéis. // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     const root = document.querySelector('[data-support-root]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
     if (!root) return; // Não executar em outras páginas do portal.
     const admin = root.dataset.role === 'admin'; // Explicação DevIN: Declara variável JavaScript admin para reutilizar valor ou resultado.
