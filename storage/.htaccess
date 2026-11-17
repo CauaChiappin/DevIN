@@ -1,4 +1,0 @@
-# Arquivos de suporte e sessões não podem ser lidos via HTTP.
-# O PHP entrega anexos exclusivamente após autenticação e checagem de acesso.
-Require all denied # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
-Options -Indexes # Explicação DevIN: Configura diretiva do servidor Apache associada à segurança ou ao roteamento.
