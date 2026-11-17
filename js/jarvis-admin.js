@@ -283,6 +283,15 @@
    */
   // Detalhe DevIN: Transforma texto escrito no chat em intenção controlada; não consulta o banco nem permite que um modelo decida qual registro modificar.
   function parseAdminCommand(message) { // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
+    // O pedido explícito de suporte permite ao JARVIS consultar dados
+    // autorizados, sem passar nomes/e-mails de usuários ao modelo remoto.
+    const supportRequest = message.normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Explicação DevIN: Declara variável JavaScript supportRequest para reutilizar valor ou resultado.
+      .toLowerCase().replace(/^jarvis[,!: ]*/, '').trim(); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    if (/^(?:(?:mostre|mostrar|liste|listar|veja|ver|consulte|consultar|busque|buscar|quais sao)\s+)?(?:(?:os|as|meus)\s+)?(?:chamados?|tickets?|mensagens?)\s+(?:do\s+|de\s+)?suporte\b/.test(supportRequest) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        || /^(?:suporte|chamados de suporte)[.!?\s]*$/.test(supportRequest)) { // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+      return {type:'support',name:'suporte',id:0}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+ // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
     // Detalhe DevIN: Define expressões aceitas para vagas, pessoas e empresas, incluindo plural e variações com acentos; não permite nomes arbitrários de tabelas.
     const kindPattern='(vagas?|an[uú]ncios?|candidatos?|candidatas?|pessoas?|usu[aá]rios?|usu[aá]rias?|empresas?)'; // Explicação DevIN: Declara variável JavaScript kindPattern para reutilizar valor ou resultado.
     // Detalhe DevIN: Aceita formas educadas como Jarvis e por favor sem obrigar o ADM a decorar uma sintaxe rígida.
@@ -394,6 +403,39 @@
     // Detalhe DevIN: Exibe a pergunta do ADM somente uma vez; a seleção posterior não duplica a mensagem no histórico visual.
     if(!selected) addMessage('user',message); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Detalhe DevIN: Recusa categorias incompatíveis com a operação, como tentar enviar mensagem diretamente a uma vaga.
+    if(command.type==='support') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      // Esta consulta não executa ações de escrita nem expõe anexos ao modelo.
+      try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        const data=await api(root.dataset.tools+'?action=support'); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
+        const rows=data.tickets || []; // Explicação DevIN: Declara variável JavaScript rows para reutilizar valor ou resultado.
+        const card=chatActionCard(rows.length // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
+          ? 'Chamados de suporte recebidos: '+rows.length+' registros recentes.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+          : 'Não há chamados recentes no suporte.'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        const list=document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        list.className='jarvis-admin__tool-results'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        card.append(list); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        for(const ticket of rows){ // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+          const item=document.createElement('article'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          item.className='jarvis-admin__tool-card'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          const name=document.createElement('strong'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          name.textContent='#'+ticket.id+' · '+ticket.requester_name+' · '+ticket.requester_email; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          const description=document.createElement('p'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          description.textContent='Categoria: '+ticket.category+' · '+ticket.status+' · '+ticket.description; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          const details=actionButton('Ver respostas',async button=>{ // Explicação DevIN: Declara variável JavaScript details para reutilizar valor ou resultado.
+            button.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+              const response=await api(root.dataset.tools+'?action=support&id='+encodeURIComponent(ticket.id)); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
+              const replies=(response.replies||[]).map(r=>'ADM: '+r.message).join('\n\n'); // Explicação DevIN: Declara variável JavaScript replies para reutilizar valor ou resultado.
+              addMessage('assistant','Chamado #'+ticket.id+'\n'+response.ticket.description+ // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+                '\n\n'+(replies || 'Ainda sem respostas.')); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            } catch(error) { addMessage('assistant',error.message); } // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            finally { button.disabled=false; } // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+          }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          item.append(name,description,details);list.append(item); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      } catch(error) { addMessage('assistant','Não foi possível consultar o suporte: '+error.message); } // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if(command.type==='unsupported') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       addMessage('assistant','Mensagens podem ser enviadas a candidatos ou empresas, não a vagas.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
       return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.

@@ -31,7 +31,7 @@ if (!in_array($categoriaReport, $categoriasReport, true)) { // Explicação DevI
     $categoriaReport = 'vagas'; // Explicação DevIN: Atribui um valor à variável PHP $categoriaReport.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-$paginasPermitidas = ['inicio', 'candidatos', 'posts', 'reports', 'sobre', 'perfil']; // Explicação DevIN: Atribui um valor à variável PHP $paginasPermitidas.
+$paginasPermitidas = ['inicio', 'candidatos', 'posts', 'reports', 'suporte', 'sobre', 'perfil']; // Explicação DevIN: Atribui um valor à variável PHP $paginasPermitidas.
 if (!in_array($pagina, $paginasPermitidas, true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Usa uma lista permitida para evitar que a URL selecione páginas arbitrárias.
     $pagina = 'inicio'; // Explicação DevIN: Atribui um valor à variável PHP $pagina.
@@ -338,7 +338,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Posts das empresas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Pessoas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
-                <a class="<?= ativo($pagina, 'reports') ?>" href="adm.php?pagina=reports"><?= dashboardIcon('info') ?><span class="menu-text">Reports</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
+                <a class="<?= ativo($pagina, 'reports') ?>" href="adm.php?pagina=reports"><?= dashboardIcon('flag') ?><span class="menu-text">Reports</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
+                <!-- Suporte possui um ícone exclusivo de boia e exibe chamados dos usuários. -->
+                <a class="<?= ativo($pagina, 'suporte') ?>" href="adm.php?pagina=suporte"><?= dashboardIcon('lifebuoy') ?><span class="menu-text">Suporte</span><span data-support-menu-count class="message-unread-badge" hidden></span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="adm.php?pagina=sobre"><?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
             </nav> <!-- Explicação DevIN: Fecha elemento nav do documento. -->
 
@@ -369,7 +371,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
             <?php endif; ?>
 
-            <?php if ($pagina !== 'sobre'): ?>
+            <?php if (!in_array($pagina, ['sobre', 'suporte'], true)): ?>
                 <?= dashboardListHeader( // Explicação DevIN: Combina execução de código com conteúdo HTML gerado dinamicamente.
                     $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação button.
                     $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'posts' ? 'Posts das empresas' : ($pagina === 'reports' ? 'Reports de ' . $categoriaReport : ($pagina === 'perfil' ? 'Perfil' : 'Empresas'))), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
@@ -396,7 +398,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php if ($pagina === 'sobre'): ?>
+            <?php if ($pagina === 'suporte'): ?>
+                <?php require __DIR__ . '/components/support-admin.php'; ?>
+            <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
             <?php elseif ($pagina === 'perfil'): ?>
                 <section class="perfil-card"> <!-- Explicação DevIN: Declara seção temática. -->
@@ -729,7 +733,15 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     <link rel="stylesheet" href="../css/jarvis-admin.css?v=<?= filemtime(__DIR__ . '/../css/jarvis-admin.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/jarvis-dock.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-dock.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/jarvis-admin.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-admin.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
+    <!-- Suporte usa estilos isolados para não alterar os componentes existentes. -->
+    <?php if ($pagina === 'suporte'): ?>
+        <link rel="stylesheet" href="../css/support.css?v=<?= filemtime(__DIR__ . '/../css/support.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
+        <script src="../js/support-ui.js?v=<?= filemtime(__DIR__ . '/../js/support-ui.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
+    <?php endif; ?>
+ <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/site-navigation.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
+    <!-- Badge de atendimento visível em todas as telas do administrador. -->
+    <script src="../js/support-badge.js?v=<?= filemtime(__DIR__ . '/../js/support-badge.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/dashboard-menu.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->

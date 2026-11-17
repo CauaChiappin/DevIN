@@ -79,3 +79,10 @@ test('pesquisa geral por nome sem categoria',()=>{ // Explicação DevIN: Contin
   const x=parse('Pesquise Maria Souza'); // Explicação DevIN: Declara variável JavaScript x para reutilizar valor ou resultado.
   assert.equal(x.type,'search');assert.equal(x.kind,null);assert.equal(x.name,'Maria Souza'); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('JARVIS reconhece pedidos de chamados como consulta somente leitura',()=>{ // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
+  const x=parse('Jarvis, mostre os chamados de suporte'); // Explicação DevIN: Declara variável JavaScript x para reutilizar valor ou resultado.
+  assert.equal(x.type,'support'); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
+  assert.equal(parse('Listar tickets de suporte').type,'support'); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
+  assert.equal(parse('Mostre vagas disponíveis').type,'search'); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatActionCard.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

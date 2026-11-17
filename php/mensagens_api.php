@@ -251,7 +251,7 @@ function resumirArmazenamentoChat(array $ator): array // Explicação DevIN: Dec
 function buscarUsuarioChat(mysqli $conn, string $tipo, int $id): ?array // Explicação DevIN: Declara função/método buscarUsuarioChat, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if ($tipo === 'sistema' && $id === 0) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        return ['id' => 0, 'nome' => 'Support DevIN']; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        return ['id' => 0, 'nome' => 'Suporte DevIN']; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     if (!validarTipoChat($tipo) || $id < 1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

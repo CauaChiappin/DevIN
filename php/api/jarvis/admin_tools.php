@@ -16,6 +16,8 @@ require_once __DIR__ . '/../../controllers/Jarvis/JarvisAdminActions.php'; // Ex
 require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisModeration.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+// Leitura somente de chamados autenticada para o ADM/JARVIS.
+require_once __DIR__ . '/../../controllers/SupportDesk.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 $method=$_SERVER['REQUEST_METHOD'] ?? ''; // Explicação DevIN: Atribui um valor à variável PHP $method.
 if (!in_array($method,['GET','POST'],true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -42,6 +44,19 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         $action=$_GET['action'] ?? ''; // Explicação DevIN: Atribui um valor à variável PHP $action.
         $db=getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            if ($action==='support') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                // O JARVIS recebe somente dados de chamados que um ADM pode consultar.
+                // Nunca permite anexos diretos, envio, exclusão ou resposta pelo modelo.
+                $rawId = $_GET['id'] ?? null; // Explicação DevIN: Atribui um valor à variável PHP $rawId.
+                if ($rawId !== null) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                    $id = filter_var($rawId, FILTER_VALIDATE_INT); // Explicação DevIN: Atribui um valor à variável PHP $id.
+                    if (!$id || $id < 1) throw new InvalidArgumentException('ID de chamado inválido.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                    $detail = SupportDesk::detail($db, $id, ['tipo'=>'adm','id'=>$adminId]); // Explicação DevIN: Atribui um valor à variável PHP $detail.
+                    jarvisJson(200, ['success'=>true] + $detail); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                jarvisJson(200, ['success'=>true, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+                    'tickets'=>array_slice(SupportDesk::listAdmin($db), 0, 30)]); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             if ($action==='history') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 $rows=JarvisAdminActivity::latestAll($db); // Explicação DevIN: Atribui um valor à variável PHP $rows.
                 jarvisJson(200,['success'=>true,'events'=>$rows]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
