@@ -28,6 +28,11 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'php/mensagens_api.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/pessoa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/empresa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/components/profile-tools.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/EmploymentWorkflow.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'database/migrations/2026_11_18_006_employment_confirmation.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/employment_workflow_mysql.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis_locale_unit.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/helpers.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'js/mobile-arcade-secret.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'css/dashboard.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -81,6 +86,10 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php -l php/mensagens_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/pessoa.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/empresa.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/EmploymentWorkflow.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/components/profile-tools.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/employment_workflow_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/jarvis_locale_unit.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/helpers.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
           php -l php/arcade.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -115,6 +124,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php tests/arcade_progress_policy.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/job_language_audit_extended.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/resume_abnt_contract.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/jarvis_locale_unit.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/jarvis_openrouter_router.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
   mysql: # Explicação DevIN: Configura propriedade YAML (campo mysql).
@@ -181,3 +191,15 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_support_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           mysql -h 127.0.0.1 -u root devin_support_ci < database/migrations/2026_11_17_005_support_center.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/support_center_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+
+      - name: Employment confirmation - disposable MySQL database # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          HIRING_TEST_HOST: 127.0.0.1 # Explicação DevIN: Configura propriedade YAML (campo HIRING_TEST_HOST).
+          HIRING_TEST_DB: devin_hiring_ci # Explicação DevIN: Configura propriedade YAML (campo HIRING_TEST_DB).
+          HIRING_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo HIRING_TEST_USER).
+          HIRING_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo HIRING_TEST_PASSWORD).
+          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_PWD).
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_hiring_ci CHARACTER SET utf8mb4" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          mysql -h 127.0.0.1 -u root devin_hiring_ci < database/migrations/2026_11_18_006_employment_confirmation.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/employment_workflow_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.

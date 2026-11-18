@@ -4775,3 +4775,13 @@ body.account-deleting .dashboard-shell { /* Explicação DevIN: Inicia bloco de 
 @media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
     .sobre-secret-arcade-button, .sobre-secret-arcade-button.is-holding::after { animation: none !important; transition: none !important; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* Ações por tipo de perfil: links claros, flexíveis e acessíveis no celular. */
+.profile-tools { margin-top:18px; padding:17px; border:1px solid #c9dceb; border-radius:15px; background:#f6fbff; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.profile-tools h2 { font-size:17px; margin:0 0 7px; color:#174e7a; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.profile-tools p { color:#475d72; font-size:13px; line-height:1.5; margin:0 0 14px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.profile-tools__links { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.profile-tools__link { display:flex; align-items:center; min-height:44px; padding:11px 13px; border:1px solid #b6d3e8; background:#fff; border-radius:11px; text-decoration:none; font-weight:650; font-size:13px; color:#08568c; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.profile-tools__link:hover { background:#edf7ff; border-color:#478cc0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.profile-tools__link:focus-visible { outline:3px solid #edb447; outline-offset:3px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+@media(max-width:570px) { .profile-tools {padding:12px;} .profile-tools__links {grid-template-columns:1fr;} } /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
