@@ -30,9 +30,9 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'php/pessoa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/empresa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/components/profile-tools.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
-      - 'php/controllers/ProfileController.php' # Explicação DevIN: Monitora a correção do e-mail e das transações.
-      - 'tests/profile_email_change_mysql.php' # Explicação DevIN: Monitora os testes de identidade.
-      - 'tests/profile-email-ui.test.cjs' # Explicação DevIN: Monitora o formulário e a sessão dos três perfis.
+      - 'php/controllers/ProfileController.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/profile_email_change_mysql.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/profile-email-ui.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/EmploymentWorkflow.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'database/migrations/2026_11_18_006_employment_confirmation.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/employment_workflow_mysql.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -90,8 +90,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php -l php/mensagens_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/pessoa.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/empresa.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          php -l php/controllers/ProfileController.php # Explicação DevIN: Valida o controlador de perfil.
-          php -l tests/profile_email_change_mysql.php # Explicação DevIN: Valida sintaxe dos testes de identidade.
+          php -l php/controllers/ProfileController.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/profile_email_change_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/controllers/EmploymentWorkflow.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/components/profile-tools.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l tests/employment_workflow_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -118,7 +118,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           node --check js/support-locale.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/dashboard-i18n.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/support-ui.test.cjs tests/support-i18n.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          node --test tests/profile-email-ui.test.cjs # Explicação DevIN: Verifica os campos de senha e sessão nos três perfis.
+          node --test tests/profile-email-ui.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/mobile-arcade-secret.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/arcade-mobile-secret.test.cjs tests/arcade-konami-reset.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -212,15 +212,15 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_hiring_ci CHARACTER SET utf8mb4" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           mysql -h 127.0.0.1 -u root devin_hiring_ci < database/migrations/2026_11_18_006_employment_confirmation.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/employment_workflow_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-      - name: Install PHP dependencies for profile integration # Explicação DevIN: O login e o controlador carregam o autoload do Composer.
-        run: composer install --no-dev --prefer-dist --no-interaction --no-progress # Explicação DevIN: Instala dependências reais antes do teste de login.
-      - name: Email change regression in disposable MySQL # Explicação DevIN: Regressões reais de identidade nos três tipos de conta.
-        env: # Explicação DevIN: Configura exclusivamente o banco isolado do executor.
-          PROFILE_TEST_HOST: 127.0.0.1 # Explicação DevIN: Usa o serviço de teste.
-          PROFILE_TEST_DB: devin_profile_ci # Explicação DevIN: Limita a execução a um banco descartável.
-          PROFILE_TEST_USER: root # Explicação DevIN: Usa usuário do MySQL de CI.
-          PROFILE_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Usa senha fictícia de CI.
-          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Configura cliente de teste.
-        run: | # Explicação DevIN: Cria banco isolado e executa atualizações reais.
-          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_profile_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Nunca toca na base da Hostinger.
-          php tests/profile_email_change_mysql.php # Explicação DevIN: Valida transação, login e duplicidade.
+      - name: Install PHP dependencies for profile integration # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress # Explicação DevIN: Configura comando de execução (campo run).
+      - name: Email change regression in disposable MySQL # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          PROFILE_TEST_HOST: 127.0.0.1 # Explicação DevIN: Configura propriedade YAML (campo PROFILE_TEST_HOST).
+          PROFILE_TEST_DB: devin_profile_ci # Explicação DevIN: Configura propriedade YAML (campo PROFILE_TEST_DB).
+          PROFILE_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo PROFILE_TEST_USER).
+          PROFILE_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo PROFILE_TEST_PASSWORD).
+          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_PWD).
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_profile_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/profile_email_change_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
