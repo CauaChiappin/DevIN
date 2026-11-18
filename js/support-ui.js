@@ -9,9 +9,9 @@
     if (!root) return; // Não executar em outras páginas do portal.
     const admin = root.dataset.role === 'admin'; // Explicação DevIN: Declara variável JavaScript admin para reutilizar valor ou resultado.
     const endpoint = root.dataset.endpoint; // Explicação DevIN: Declara variável JavaScript endpoint para reutilizar valor ou resultado.
-    const csrf = root.dataset.csrf;
-    const t = text => typeof window.DevINTranslate === 'function' ? window.DevINTranslate(text) : text; // Explicação DevIN: Traduz apenas rótulos e mensagens do suporte.
-    const locale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR'; // Explicação DevIN: Ajusta datas e pesquisa ao idioma. // Explicação DevIN: Declara variável JavaScript csrf para reutilizar valor ou resultado.
+    const csrf = root.dataset.csrf; // Explicação DevIN: Declara variável JavaScript csrf para reutilizar valor ou resultado.
+    const t = text => typeof window.DevINTranslate === 'function' ? window.DevINTranslate(text) : text; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const locale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR'; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
     const list = root.querySelector('[data-support-list]'); // Explicação DevIN: Declara variável JavaScript list para reutilizar valor ou resultado.
     const detail = root.querySelector('[data-support-detail]'); // Explicação DevIN: Declara variável JavaScript detail para reutilizar valor ou resultado.
     const feedback = root.querySelector('[data-support-feedback]'); // Explicação DevIN: Declara variável JavaScript feedback para reutilizar valor ou resultado.

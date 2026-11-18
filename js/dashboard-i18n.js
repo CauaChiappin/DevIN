@@ -1606,109 +1606,109 @@
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     Object.assign(dictionary, newerTranslations[language] || {}); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
     // Tradução compartilhada da Central de Suporte em português, inglês e espanhol.
-    const supportTranslations = [ // Explicação DevIN: Mapeia rótulos do suporte conforme o idioma do dashboard.
-        ["Suporte", "Support", "Soporte"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["SUPORTE DEVIN", "DEVIN SUPPORT", "SOPORTE DEVIN"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["CENTRAL DE ATENDIMENTO · DEVIN", "DEVIN HELP DESK", "CENTRO DE ATENCIÓN · DEVIN"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Como podemos ajudar?", "How can we help?", "¿Cómo podemos ayudarte?"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Encontrou um erro ou tem alguma dúvida? Conte para nossa equipe.", "Found an error or have a question? Tell our team.", "¿Encontraste un error o tienes alguna pregunta? Cuéntaselo a nuestro equipo."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["A resposta aparecerá aqui, nas Mensagens e no seu e-mail.", "The reply will appear here, in Messages and in your email.", "La respuesta aparecerá aquí, en Mensajes y en tu correo electrónico."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Áreas da Central de Ajuda", "Help Center sections", "Secciones del centro de ayuda"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Novo chamado", "New request", "Nueva solicitud"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Meus chamados", "My requests", "Mis solicitudes"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Abrir chamado", "Submit a request", "Abrir una solicitud"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Atendimento associado à conta", "Support for account", "Atención asociada a la cuenta"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Qual é o assunto?", "What is this about?", "¿Cuál es el asunto?"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Selecione uma categoria", "Select a category", "Selecciona una categoría"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Erro no site", "Website error", "Error en el sitio"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Dúvida ou orientação", "Question or guidance", "Duda u orientación"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Dúvida", "Question", "Duda"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Conta e acesso", "Account and access", "Cuenta y acceso"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Vagas e candidaturas", "Jobs and applications", "Vacantes y postulaciones"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Segurança e privacidade", "Security and privacy", "Seguridad y privacidad"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Sugestão de melhoria", "Improvement suggestion", "Sugerencia de mejora"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Sugestão", "Suggestion", "Sugerencia"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Outros assuntos", "Other topics", "Otros asuntos"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Outro assunto", "Other topic", "Otro asunto"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Descreva o que aconteceu", "Describe what happened", "Describe lo que ocurrió"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Explique o problema, onde ocorreu e o que você esperava encontrar. Não envie senhas nem tokens.", "Explain the issue, where it occurred and what you expected. Do not send passwords or tokens.", "Explica el problema, dónde ocurrió y qué esperabas encontrar. No envíes contraseñas ni tokens."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["caracteres", "characters", "caracteres"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Anexo", "Attachment", "Adjunto"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["(opcional, até 20 MB)", "(optional, up to 20 MB)", "(opcional, hasta 20 MB)"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Remover", "Remove", "Quitar"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Formatos: PDF, PNG, JPG, WEBP, TXT, LOG, DOCX ou ZIP.", "Formats: PDF, PNG, JPG, WEBP, TXT, LOG, DOCX or ZIP.", "Formatos: PDF, PNG, JPG, WEBP, TXT, LOG, DOCX o ZIP."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Anexos são privados e acessíveis apenas ao dono do chamado e aos ADMs.", "Attachments are private and can only be accessed by the request owner and administrators.", "Los archivos adjuntos son privados y solo pueden acceder el titular de la solicitud y los administradores."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Enviar solicitação", "Submit request", "Enviar solicitud"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Acompanhe as respostas sem precisar reenviar o problema.", "Track replies without having to submit the issue again.", "Consulta las respuestas sin tener que volver a enviar el problema."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Carregando seus chamados...", "Loading your requests...", "Cargando tus solicitudes..."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["← Voltar aos meus chamados", "← Back to my requests", "← Volver a mis solicitudes"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Suporte aos usuários", "User support", "Atención a usuarios"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Chamados recebidos de candidatos e empresas, com acompanhamento, anexos e resposta individual.", "Requests from candidates and companies, with tracking, attachments and individual replies.", "Solicitudes de candidatos y empresas, con seguimiento, archivos adjuntos y respuestas individuales."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Carregando chamados...", "Loading requests...", "Cargando solicitudes..."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Atualizar", "Refresh", "Actualizar"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Áreas do atendimento", "Support sections", "Secciones de atención"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Caixa de entrada", "Inbox", "Bandeja de entrada"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Atendimento", "Support", "Atención"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Encontrar chamado", "Find a request", "Buscar una solicitud"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Nome, e-mail, categoria ou número...", "Name, email, category or number...", "Nombre, correo, categoría o número..."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Filtrar atendimento", "Filter requests", "Filtrar solicitudes"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Todos os chamados", "All requests", "Todas las solicitudes"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Aguardando resposta", "Awaiting reply", "Esperando respuesta"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Respondidos", "Answered", "Respondidas"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Encerrados", "Closed", "Cerradas"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Carregando solicitações...", "Loading requests...", "Cargando solicitudes..."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Detalhes e resposta", "Details and reply", "Detalles y respuesta"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Voltar à lista", "Back to list", "Volver a la lista"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Escolha um chamado à esquerda para ler a descrição, ver anexos e responder.", "Select a request on the left to read its description, view attachments and reply.", "Selecciona una solicitud a la izquierda para leer su descripción, ver archivos adjuntos y responder."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Responder como Suporte DevIN", "Reply as DevIN Support", "Responder como Soporte DevIN"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Escreva uma resposta clara e respeitosa. Não solicite senhas ou tokens.", "Write a clear and respectful reply. Never request passwords or tokens.", "Escribe una respuesta clara y respetuosa. No solicites contraseñas ni tokens."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Responder ao usuário", "Reply to user", "Responder al usuario"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Encerrar chamado", "Close request", "Cerrar solicitud"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Ao responder, o usuário recebe a mensagem na plataforma e uma tentativa de e-mail. Se o SMTP falhar, uma opção de reenvio ficará disponível.", "When you reply, the user receives an in-app message and an email is attempted. If SMTP fails, a retry option will be available.", "Al responder, el usuario recibe un mensaje en la plataforma y se intenta enviar un correo. Si falla SMTP, habrá una opción para reintentarlo."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Nenhum chamado encontrado.", "No requests found.", "No se encontraron solicitudes."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Buscando detalhes...", "Loading details...", "Cargando detalles..."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Descrição enviada", "Submitted description", "Descripción enviada"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Histórico do atendimento", "Support history", "Historial de atención"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Ainda não há respostas da equipe.", "No replies from the team yet.", "Todavía no hay respuestas del equipo."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Tentar entrega novamente", "Retry delivery", "Reintentar envío"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["O anexo ultrapassa 20 MB. Escolha um arquivo menor.", "The attachment exceeds 20 MB. Choose a smaller file.", "El archivo adjunto supera los 20 MB. Elige uno más pequeño."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["O anexo ultrapassa 20 MB.", "The attachment exceeds 20 MB.", "El archivo adjunto supera los 20 MB."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Enviando sua solicitação...", "Submitting your request...", "Enviando tu solicitud..."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Registrando a resposta...", "Saving the reply...", "Guardando la respuesta..."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Encerrar este chamado? As mensagens continuam registradas.", "Close this request? The messages will remain saved.", "¿Cerrar esta solicitud? Los mensajes permanecerán guardados."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Chamado encerrado.", "Request closed.", "Solicitud cerrada."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["O servidor não conseguiu atender agora.", "The server could not process your request right now.", "El servidor no pudo procesar tu solicitud en este momento."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["O suporte ainda não foi configurado no banco. Aplique a migração de suporte.", "Support is not yet configured in the database. Apply the support migration.", "El soporte aún no está configurado en la base de datos. Aplica la migración de soporte."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Não foi possível concluir a solicitação. Verifique a configuração do suporte.", "The request could not be completed. Check the support configuration.", "No se pudo completar la solicitud. Comprueba la configuración del soporte."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Respondido", "Answered", "Respondida"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Encerrado", "Closed", "Cerrada"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Usuário:", "User:", "Usuario:"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["E-mail:", "Email:", "Correo:"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Conta:", "Account:", "Cuenta:"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Candidato", "Candidate", "Candidato"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Empresa", "Company", "Empresa"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Aberto em:", "Opened on:", "Abierto el:"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Baixar anexo:", "Download attachment:", "Descargar adjunto:"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Suporte DevIN ·", "DevIN Support ·", "Soporte DevIN ·"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Entrega pendente:", "Delivery pending:", "Entrega pendiente:"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["mensagem interna", "in-app message", "mensaje interno"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Mensagens:", "Messages:", "Mensajes:"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["enviadas", "sent", "enviados"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["pendentes", "pending", "pendientes"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["enviado", "sent", "enviado"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["pendente", "pending", "pendiente"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["enviada", "sent", "enviada"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Chamado", "Request", "Solicitud"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["enviado com sucesso.", "submitted successfully.", "enviada correctamente."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["aguardando atendimento", "awaiting attention", "pendientes de atención"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["chamados exibidos", "requests shown", "solicitudes mostradas"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["Resposta registrada. Mensagem interna:", "Reply saved. In-app message:", "Respuesta guardada. Mensaje interno:"], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-        ["O chamado não existe ou já está fechado.", "This request does not exist or is already closed.", "Esta solicitud no existe o ya está cerrada."], // Explicação DevIN: Mantém os textos do atendimento traduzidos.
-    ]; // Explicação DevIN: Fecha a tabela de textos da central.
-    if (language !== 'pt-BR') { // Explicação DevIN: Mantém o português quando o idioma padrão está ativo.
-        const index = language === 'en' ? 1 : 2; // Explicação DevIN: Seleciona a coluna de inglês ou espanhol.
-        Object.assign(dictionary, Object.fromEntries(supportTranslations.map(item => [item[0], item[index]]))); // Explicação DevIN: Integra mensagens ao tradutor e ao observador de interface.
-    } // Explicação DevIN: Conclui a preparação de traduções.
+    const supportTranslations = [ // Explicação DevIN: Declara variável JavaScript supportTranslations para reutilizar valor ou resultado.
+        ["Suporte", "Support", "Soporte"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["SUPORTE DEVIN", "DEVIN SUPPORT", "SOPORTE DEVIN"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["CENTRAL DE ATENDIMENTO · DEVIN", "DEVIN HELP DESK", "CENTRO DE ATENCIÓN · DEVIN"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Como podemos ajudar?", "How can we help?", "¿Cómo podemos ayudarte?"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Encontrou um erro ou tem alguma dúvida? Conte para nossa equipe.", "Found an error or have a question? Tell our team.", "¿Encontraste un error o tienes alguna pregunta? Cuéntaselo a nuestro equipo."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["A resposta aparecerá aqui, nas Mensagens e no seu e-mail.", "The reply will appear here, in Messages and in your email.", "La respuesta aparecerá aquí, en Mensajes y en tu correo electrónico."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Áreas da Central de Ajuda", "Help Center sections", "Secciones del centro de ayuda"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Novo chamado", "New request", "Nueva solicitud"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Meus chamados", "My requests", "Mis solicitudes"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Abrir chamado", "Submit a request", "Abrir una solicitud"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Atendimento associado à conta", "Support for account", "Atención asociada a la cuenta"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Qual é o assunto?", "What is this about?", "¿Cuál es el asunto?"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Selecione uma categoria", "Select a category", "Selecciona una categoría"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Erro no site", "Website error", "Error en el sitio"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Dúvida ou orientação", "Question or guidance", "Duda u orientación"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Dúvida", "Question", "Duda"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Conta e acesso", "Account and access", "Cuenta y acceso"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Vagas e candidaturas", "Jobs and applications", "Vacantes y postulaciones"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Segurança e privacidade", "Security and privacy", "Seguridad y privacidad"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Sugestão de melhoria", "Improvement suggestion", "Sugerencia de mejora"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Sugestão", "Suggestion", "Sugerencia"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Outros assuntos", "Other topics", "Otros asuntos"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Outro assunto", "Other topic", "Otro asunto"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Descreva o que aconteceu", "Describe what happened", "Describe lo que ocurrió"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Explique o problema, onde ocorreu e o que você esperava encontrar. Não envie senhas nem tokens.", "Explain the issue, where it occurred and what you expected. Do not send passwords or tokens.", "Explica el problema, dónde ocurrió y qué esperabas encontrar. No envíes contraseñas ni tokens."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["caracteres", "characters", "caracteres"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Anexo", "Attachment", "Adjunto"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["(opcional, até 20 MB)", "(optional, up to 20 MB)", "(opcional, hasta 20 MB)"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Remover", "Remove", "Quitar"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Formatos: PDF, PNG, JPG, WEBP, TXT, LOG, DOCX ou ZIP.", "Formats: PDF, PNG, JPG, WEBP, TXT, LOG, DOCX or ZIP.", "Formatos: PDF, PNG, JPG, WEBP, TXT, LOG, DOCX o ZIP."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Anexos são privados e acessíveis apenas ao dono do chamado e aos ADMs.", "Attachments are private and can only be accessed by the request owner and administrators.", "Los archivos adjuntos son privados y solo pueden acceder el titular de la solicitud y los administradores."], // Explicação DevIN: Define membro, visibilidade ou método de uma classe.
+        ["Enviar solicitação", "Submit request", "Enviar solicitud"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Acompanhe as respostas sem precisar reenviar o problema.", "Track replies without having to submit the issue again.", "Consulta las respuestas sin tener que volver a enviar el problema."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Carregando seus chamados...", "Loading your requests...", "Cargando tus solicitudes..."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["← Voltar aos meus chamados", "← Back to my requests", "← Volver a mis solicitudes"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Suporte aos usuários", "User support", "Atención a usuarios"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Chamados recebidos de candidatos e empresas, com acompanhamento, anexos e resposta individual.", "Requests from candidates and companies, with tracking, attachments and individual replies.", "Solicitudes de candidatos y empresas, con seguimiento, archivos adjuntos y respuestas individuales."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Carregando chamados...", "Loading requests...", "Cargando solicitudes..."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Atualizar", "Refresh", "Actualizar"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Áreas do atendimento", "Support sections", "Secciones de atención"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Caixa de entrada", "Inbox", "Bandeja de entrada"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Atendimento", "Support", "Atención"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Encontrar chamado", "Find a request", "Buscar una solicitud"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Nome, e-mail, categoria ou número...", "Name, email, category or number...", "Nombre, correo, categoría o número..."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Filtrar atendimento", "Filter requests", "Filtrar solicitudes"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Todos os chamados", "All requests", "Todas las solicitudes"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Aguardando resposta", "Awaiting reply", "Esperando respuesta"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Respondidos", "Answered", "Respondidas"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Encerrados", "Closed", "Cerradas"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Carregando solicitações...", "Loading requests...", "Cargando solicitudes..."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Detalhes e resposta", "Details and reply", "Detalles y respuesta"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Voltar à lista", "Back to list", "Volver a la lista"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Escolha um chamado à esquerda para ler a descrição, ver anexos e responder.", "Select a request on the left to read its description, view attachments and reply.", "Selecciona una solicitud a la izquierda para leer su descripción, ver archivos adjuntos y responder."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Responder como Suporte DevIN", "Reply as DevIN Support", "Responder como Soporte DevIN"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Escreva uma resposta clara e respeitosa. Não solicite senhas ou tokens.", "Write a clear and respectful reply. Never request passwords or tokens.", "Escribe una respuesta clara y respetuosa. No solicites contraseñas ni tokens."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Responder ao usuário", "Reply to user", "Responder al usuario"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Encerrar chamado", "Close request", "Cerrar solicitud"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Ao responder, o usuário recebe a mensagem na plataforma e uma tentativa de e-mail. Se o SMTP falhar, uma opção de reenvio ficará disponível.", "When you reply, the user receives an in-app message and an email is attempted. If SMTP fails, a retry option will be available.", "Al responder, el usuario recibe un mensaje en la plataforma y se intenta enviar un correo. Si falla SMTP, habrá una opción para reintentarlo."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Nenhum chamado encontrado.", "No requests found.", "No se encontraron solicitudes."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Buscando detalhes...", "Loading details...", "Cargando detalles..."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Descrição enviada", "Submitted description", "Descripción enviada"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Histórico do atendimento", "Support history", "Historial de atención"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Ainda não há respostas da equipe.", "No replies from the team yet.", "Todavía no hay respuestas del equipo."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Tentar entrega novamente", "Retry delivery", "Reintentar envío"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["O anexo ultrapassa 20 MB. Escolha um arquivo menor.", "The attachment exceeds 20 MB. Choose a smaller file.", "El archivo adjunto supera los 20 MB. Elige uno más pequeño."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["O anexo ultrapassa 20 MB.", "The attachment exceeds 20 MB.", "El archivo adjunto supera los 20 MB."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Enviando sua solicitação...", "Submitting your request...", "Enviando tu solicitud..."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Registrando a resposta...", "Saving the reply...", "Guardando la respuesta..."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Encerrar este chamado? As mensagens continuam registradas.", "Close this request? The messages will remain saved.", "¿Cerrar esta solicitud? Los mensajes permanecerán guardados."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Chamado encerrado.", "Request closed.", "Solicitud cerrada."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["O servidor não conseguiu atender agora.", "The server could not process your request right now.", "El servidor no pudo procesar tu solicitud en este momento."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["O suporte ainda não foi configurado no banco. Aplique a migração de suporte.", "Support is not yet configured in the database. Apply the support migration.", "El soporte aún no está configurado en la base de datos. Aplica la migración de soporte."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Não foi possível concluir a solicitação. Verifique a configuração do suporte.", "The request could not be completed. Check the support configuration.", "No se pudo completar la solicitud. Comprueba la configuración del soporte."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Respondido", "Answered", "Respondida"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Encerrado", "Closed", "Cerrada"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Usuário:", "User:", "Usuario:"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["E-mail:", "Email:", "Correo:"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Conta:", "Account:", "Cuenta:"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Candidato", "Candidate", "Candidato"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Empresa", "Company", "Empresa"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Aberto em:", "Opened on:", "Abierto el:"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Baixar anexo:", "Download attachment:", "Descargar adjunto:"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Suporte DevIN ·", "DevIN Support ·", "Soporte DevIN ·"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Entrega pendente:", "Delivery pending:", "Entrega pendiente:"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["mensagem interna", "in-app message", "mensaje interno"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Mensagens:", "Messages:", "Mensajes:"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["enviadas", "sent", "enviados"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["pendentes", "pending", "pendientes"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["enviado", "sent", "enviado"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["pendente", "pending", "pendiente"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["enviada", "sent", "enviada"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Chamado", "Request", "Solicitud"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["enviado com sucesso.", "submitted successfully.", "enviada correctamente."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["aguardando atendimento", "awaiting attention", "pendientes de atención"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["chamados exibidos", "requests shown", "solicitudes mostradas"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Resposta registrada. Mensagem interna:", "Reply saved. In-app message:", "Respuesta guardada. Mensaje interno:"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["O chamado não existe ou já está fechado.", "This request does not exist or is already closed.", "Esta solicitud no existe o ya está cerrada."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+    ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+    if (language !== 'pt-BR') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const index = language === 'en' ? 1 : 2; // Explicação DevIN: Declara variável JavaScript index para reutilizar valor ou resultado.
+        Object.assign(dictionary, Object.fromEntries(supportTranslations.map(item => [item[0], item[index]]))); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     const translate = (value) => { // Explicação DevIN: Declara variável JavaScript translate para reutilizar valor ou resultado.
         const raw = String(value ?? ''); // Explicação DevIN: Declara variável JavaScript raw para reutilizar valor ou resultado.
         const trimmed = raw.trim(); // Explicação DevIN: Declara variável JavaScript trimmed para reutilizar valor ou resultado.
