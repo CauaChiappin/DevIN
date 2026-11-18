@@ -1606,22 +1606,22 @@
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     Object.assign(dictionary, newerTranslations[language] || {}); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
     // Tradução das validações de identidade e do formulário de edição de e-mail.
-    const profileEmailTranslations = [ // Explicação DevIN: Mantém os três idiomas para textos sensíveis de perfil.
-        ["Senha atual (somente para alterar e-mail)", "Current password (only to change email)", "Contraseña actual (solo para cambiar el correo)"], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["Confirme sua senha se mudar o e-mail", "Confirm your password if you change the email", "Confirma tu contraseña si cambias el correo"], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["Confirme sua senha atual para alterar o e-mail.", "Confirm your current password to change your email.", "Confirma tu contraseña actual para cambiar el correo."], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["Informe um nome e e-mail válidos (até 254 caracteres).", "Enter a valid name and email (up to 254 characters).", "Introduce un nombre y correo válidos (hasta 254 caracteres)."], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["Este e-mail já está em uso por outra conta.", "This email address is already used by another account.", "Este correo electrónico ya está en uso por otra cuenta."], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["O e-mail ultrapassa o tamanho permitido pelo cadastro. Informe um endereço menor.", "The email exceeds the account's maximum length. Enter a shorter address.", "El correo supera el tamaño permitido. Introduce una dirección más corta."], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["Outra atualização de e-mail está em andamento. Tente novamente.", "Another email update is in progress. Please try again.", "Hay otra actualización de correo en curso. Inténtalo de nuevo."], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["E-mail alterado com sucesso. No próximo acesso, entre com o novo endereço.", "Email changed successfully. Use the new address at your next sign-in.", "Correo actualizado correctamente. Usa la nueva dirección al iniciar sesión."], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["Não foi possível atualizar o perfil. Seus dados foram mantidos.", "Your profile could not be updated. Your data was kept unchanged.", "No se pudo actualizar tu perfil. Tus datos se mantuvieron sin cambios."], // Explicação DevIN: Tradução do formulário de e-mail.
-        ["Não foi possível salvar as alterações. O cadastro foi mantido.", "Changes could not be saved. Your account remains unchanged.", "No se pudieron guardar los cambios. Tu cuenta sigue sin cambios."], // Explicação DevIN: Tradução do formulário de e-mail.
-    ]; // Explicação DevIN: Fecha a tabela de textos do perfil.
-    if (language !== 'pt-BR') { // Explicação DevIN: Mantém a versão em português como padrão.
-        const column = language === 'en' ? 1 : 2; // Explicação DevIN: Seleciona inglês ou espanhol.
-        Object.assign(dictionary, Object.fromEntries(profileEmailTranslations.map(line => [line[0], line[column]]))); // Explicação DevIN: Integra rótulos e erros à tradução existente.
-    } // Explicação DevIN: Finaliza o mapeamento da identidade.
+    const profileEmailTranslations = [ // Explicação DevIN: Declara variável JavaScript profileEmailTranslations para reutilizar valor ou resultado.
+        ["Senha atual (somente para alterar e-mail)", "Current password (only to change email)", "Contraseña actual (solo para cambiar el correo)"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Confirme sua senha se mudar o e-mail", "Confirm your password if you change the email", "Confirma tu contraseña si cambias el correo"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Confirme sua senha atual para alterar o e-mail.", "Confirm your current password to change your email.", "Confirma tu contraseña actual para cambiar el correo."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Informe um nome e e-mail válidos (até 254 caracteres).", "Enter a valid name and email (up to 254 characters).", "Introduce un nombre y correo válidos (hasta 254 caracteres)."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Este e-mail já está em uso por outra conta.", "This email address is already used by another account.", "Este correo electrónico ya está en uso por otra cuenta."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["O e-mail ultrapassa o tamanho permitido pelo cadastro. Informe um endereço menor.", "The email exceeds the account's maximum length. Enter a shorter address.", "El correo supera el tamaño permitido. Introduce una dirección más corta."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Outra atualização de e-mail está em andamento. Tente novamente.", "Another email update is in progress. Please try again.", "Hay otra actualización de correo en curso. Inténtalo de nuevo."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["E-mail alterado com sucesso. No próximo acesso, entre com o novo endereço.", "Email changed successfully. Use the new address at your next sign-in.", "Correo actualizado correctamente. Usa la nueva dirección al iniciar sesión."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Não foi possível atualizar o perfil. Seus dados foram mantidos.", "Your profile could not be updated. Your data was kept unchanged.", "No se pudo actualizar tu perfil. Tus datos se mantuvieron sin cambios."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+        ["Não foi possível salvar as alterações. O cadastro foi mantido.", "Changes could not be saved. Your account remains unchanged.", "No se pudieron guardar los cambios. Tu cuenta sigue sin cambios."], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+    ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+    if (language !== 'pt-BR') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const column = language === 'en' ? 1 : 2; // Explicação DevIN: Declara variável JavaScript column para reutilizar valor ou resultado.
+        Object.assign(dictionary, Object.fromEntries(profileEmailTranslations.map(line => [line[0], line[column]]))); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Tradução compartilhada da Central de Suporte em português, inglês e espanhol.
     const supportTranslations = [ // Explicação DevIN: Declara variável JavaScript supportTranslations para reutilizar valor ou resultado.
         ["Atendimento associado à conta", "Support for account", "Atención asociada a la cuenta"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.

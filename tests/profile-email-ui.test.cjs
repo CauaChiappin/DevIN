@@ -2,36 +2,36 @@
  * Regressões do formulário de e-mail dos três painéis DevIN.
  * Não acessa banco de produção nem depende de credenciais reais.
  */
-const test = require('node:test'); // Explicação DevIN: Usa o executor Node.
-const assert = require('node:assert/strict'); // Explicação DevIN: Compara condições sem conversão implícita.
-const fs = require('node:fs'); // Explicação DevIN: Lê os arquivos sob teste.
-const path = require('node:path'); // Explicação DevIN: Resolve caminhos locais.
-const root = path.resolve(__dirname, '..'); // Explicação DevIN: Calcula raiz do repositório.
-const read = file => fs.readFileSync(path.join(root, file), 'utf8'); // Explicação DevIN: Examina código versionado.
+const test = require('node:test'); // Explicação DevIN: Declara variável JavaScript test para reutilizar valor ou resultado.
+const assert = require('node:assert/strict'); // Explicação DevIN: Declara variável JavaScript assert para reutilizar valor ou resultado.
+const fs = require('node:fs'); // Explicação DevIN: Declara variável JavaScript fs para reutilizar valor ou resultado.
+const path = require('node:path'); // Explicação DevIN: Declara variável JavaScript path para reutilizar valor ou resultado.
+const root = path.resolve(__dirname, '..'); // Explicação DevIN: Declara variável JavaScript root para reutilizar valor ou resultado.
+const read = file => fs.readFileSync(path.join(root, file), 'utf8'); // Explicação DevIN: Declara variável JavaScript read para reutilizar valor ou resultado.
 
-test('os três perfis exigem senha apenas na troca de e-mail', () => { // Explicação DevIN: Previne alteração de login sem confirmação.
-    const controller = read('php/controllers/ProfileController.php'); // Explicação DevIN: Inspeciona a rotina real de atualização.
-    assert.match(controller, /password_verify\(\$password/); // Explicação DevIN: Confirma a verificação de senha por hash.
-    assert.match(controller, /\$emailChanged/); // Explicação DevIN: Senha só é exigida ao mudar o endereço.
-    assert.match(controller, /begin_transaction\(\)/); // Explicação DevIN: Impede mudanças parciais.
-    assert.match(controller, /FOR UPDATE/); // Explicação DevIN: Evita alterações concorrentes da própria conta.
-    assert.match(controller, /ensureUniqueEmail\(\$tipo, \$id, \$email, \$conn\)/); // Explicação DevIN: Valida duplicidade na mesma conexão.
-    assert.match(controller, /getCode\(\) === 1062/); // Explicação DevIN: Mapeia colisões de índice único.
-    assert.match(controller, /\$conn->rollback\(\)/); // Explicação DevIN: Reverte falhas.
-    for (const role of ['pessoa', 'empresa', 'adm']) { // Explicação DevIN: Protege todos os dashboards.
-        const page = read('php/' + role + '.php'); // Explicação DevIN: Inspeciona o formulário do perfil.
-        assert.match(page, /name="senha_atual" type="password"/); // Explicação DevIN: Disponibiliza campo de confirmação.
-        assert.match(page, /maxlength="254" autocomplete="email"/); // Explicação DevIN: Impõe limite de entrada no navegador.
-        assert.match(page, /\$savedProfile\['email'\]/); // Explicação DevIN: Sessão usa o e-mail salvo, não POST não confiável.
-        assert.doesNotMatch(page, /\$_SESSION\['usuario_email'\]\s*=\s*trim\(requestString\(\$_POST/); // Explicação DevIN: Impede sessão divergente do banco.
-        assert.match(page, /&perfil=meu/); // Explicação DevIN: Mostra o resultado após salvar.
-    } // Explicação DevIN: Conclui revisão de pessoa, empresa e ADM.
-}); // Explicação DevIN: Encerra o teste do formulário.
+test('os três perfis exigem senha apenas na troca de e-mail', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const controller = read('php/controllers/ProfileController.php'); // Explicação DevIN: Declara variável JavaScript controller para reutilizar valor ou resultado.
+    assert.match(controller, /password_verify\(\$password/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(controller, /\$emailChanged/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(controller, /begin_transaction\(\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(controller, /FOR UPDATE/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(controller, /ensureUniqueEmail\(\$tipo, \$id, \$email, \$conn\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(controller, /getCode\(\) === 1062/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(controller, /\$conn->rollback\(\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    for (const role of ['pessoa', 'empresa', 'adm']) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+        const page = read('php/' + role + '.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
+        assert.match(page, /name="senha_atual" type="password"/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.match(page, /maxlength="254" autocomplete="email"/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.match(page, /\$savedProfile\['email'\]/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.doesNotMatch(page, /\$_SESSION\['usuario_email'\]\s*=\s*trim\(requestString\(\$_POST/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.match(page, /&perfil=meu/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('formulário e mensagens de validação acompanham o idioma selecionado', () => { // Explicação DevIN: Mantém interface multilíngue consistente.
-    const i18n = read('js/dashboard-i18n.js'); // Explicação DevIN: Usa o tradutor principal.
-    assert.match(i18n, /Senha atual \(somente para alterar e-mail\)/); // Explicação DevIN: Localiza nova orientação.
-    assert.match(i18n, /Current password \(only to change email\)/); // Explicação DevIN: Confirma inglês.
-    assert.match(i18n, /Contraseña actual \(solo para cambiar el correo\)/); // Explicação DevIN: Confirma espanhol.
-    assert.match(i18n, /O e-mail ultrapassa o tamanho permitido/); // Explicação DevIN: Traduz limites reais do esquema.
-}); // Explicação DevIN: Finaliza teste de idioma.
+test('formulário e mensagens de validação acompanham o idioma selecionado', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const i18n = read('js/dashboard-i18n.js'); // Explicação DevIN: Declara variável JavaScript i18n para reutilizar valor ou resultado.
+    assert.match(i18n, /Senha atual \(somente para alterar e-mail\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(i18n, /Current password \(only to change email\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(i18n, /Contraseña actual \(solo para cambiar el correo\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(i18n, /O e-mail ultrapassa o tamanho permitido/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
