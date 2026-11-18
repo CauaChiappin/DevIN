@@ -1556,55 +1556,55 @@
 
     // Complemento compartilhado por perfis e JARVIS, sem alterar traduções antigas.
     // As palavras ENVIAR e EXCLUIR permanecem intactas por serem confirmações seguras.
-    const newerTranslations = {
-        en: {
-            'Central da minha conta': 'My account hub',
-            'Gerencie seus dados, privacidade, atendimento e atividades sem sair do painel.': 'Manage your data, privacy, support and activities from your dashboard.',
-            'Configurações da conta': 'Account settings',
-            'Privacidade e dados': 'Privacy and data',
-            'Suporte DevIN': 'DevIN Support',
-            'Minhas candidaturas': 'My applications',
-            'Gerenciar candidatos': 'Manage applicants',
-            'JARVIS Admin': 'JARVIS Admin',
-            'Confirmar contratação': 'Confirm hiring',
-            'Confirmar minha contratação': 'Confirm my employment',
-            'Encerrar minhas outras candidaturas pendentes (opcional)': 'Withdraw my other pending applications (optional)',
-            'Contratação confirmada': 'Employment confirmed',
-            'Candidatura retirada após contratação': 'Application withdrawn after employment',
-            'Diagnóstico JARVIS': 'JARVIS diagnostics',
-            'Mensagens oficiais': 'Official messages',
-            'Atividades': 'Activities',
-            'Conversas': 'Conversations',
-            'Histórico': 'History',
-            'Consultas': 'Search tools',
-            'Resumo do DevIN': 'DevIN summary',
-            'Nenhuma vaga foi editada.': 'No job posting was modified.'
-        },
-        es: {
-            'Central da minha conta': 'Centro de mi cuenta',
-            'Gerencie seus dados, privacidade, atendimento e atividades sem sair do painel.': 'Gestiona tus datos, privacidad, soporte y actividades desde tu panel.',
-            'Configurações da conta': 'Configuración de la cuenta',
-            'Privacidade e dados': 'Privacidad y datos',
-            'Suporte DevIN': 'Soporte DevIN',
-            'Minhas candidaturas': 'Mis solicitudes',
-            'Gerenciar candidatos': 'Gestionar candidatos',
-            'JARVIS Admin': 'JARVIS Admin',
-            'Confirmar contratação': 'Confirmar contratación',
-            'Confirmar minha contratação': 'Confirmar mi contratación',
-            'Encerrar minhas outras candidaturas pendentes (opcional)': 'Retirar mis otras solicitudes pendientes (opcional)',
-            'Contratação confirmada': 'Contratación confirmada',
-            'Candidatura retirada após contratação': 'Solicitud retirada después de la contratación',
-            'Diagnóstico JARVIS': 'Diagnóstico JARVIS',
-            'Mensagens oficiais': 'Mensajes oficiales',
-            'Atividades': 'Actividades',
-            'Conversas': 'Conversaciones',
-            'Histórico': 'Historial',
-            'Consultas': 'Consultas',
-            'Resumo do DevIN': 'Resumen de DevIN',
-            'Nenhuma vaga foi editada.': 'Ninguna vacante fue modificada.'
-        }
-    };
-    Object.assign(dictionary, newerTranslations[language] || {});
+    const newerTranslations = { // Explicação DevIN: Declara variável JavaScript newerTranslations para reutilizar valor ou resultado.
+        en: { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+            'Central da minha conta': 'My account hub', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Gerencie seus dados, privacidade, atendimento e atividades sem sair do painel.': 'Manage your data, privacy, support and activities from your dashboard.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Configurações da conta': 'Account settings', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Privacidade e dados': 'Privacy and data', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Suporte DevIN': 'DevIN Support', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Minhas candidaturas': 'My applications', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Gerenciar candidatos': 'Manage applicants', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'JARVIS Admin': 'JARVIS Admin', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Confirmar contratação': 'Confirm hiring', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Confirmar minha contratação': 'Confirm my employment', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Encerrar minhas outras candidaturas pendentes (opcional)': 'Withdraw my other pending applications (optional)', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Contratação confirmada': 'Employment confirmed', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Candidatura retirada após contratação': 'Application withdrawn after employment', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Diagnóstico JARVIS': 'JARVIS diagnostics', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Mensagens oficiais': 'Official messages', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Atividades': 'Activities', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Conversas': 'Conversations', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Histórico': 'History', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Consultas': 'Search tools', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Resumo do DevIN': 'DevIN summary', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Nenhuma vaga foi editada.': 'No job posting was modified.' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        es: { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+            'Central da minha conta': 'Centro de mi cuenta', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Gerencie seus dados, privacidade, atendimento e atividades sem sair do painel.': 'Gestiona tus datos, privacidad, soporte y actividades desde tu panel.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Configurações da conta': 'Configuración de la cuenta', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Privacidade e dados': 'Privacidad y datos', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Suporte DevIN': 'Soporte DevIN', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Minhas candidaturas': 'Mis solicitudes', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Gerenciar candidatos': 'Gestionar candidatos', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'JARVIS Admin': 'JARVIS Admin', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Confirmar contratação': 'Confirmar contratación', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Confirmar minha contratação': 'Confirmar mi contratación', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Encerrar minhas outras candidaturas pendentes (opcional)': 'Retirar mis otras solicitudes pendientes (opcional)', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Contratação confirmada': 'Contratación confirmada', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Candidatura retirada após contratação': 'Solicitud retirada después de la contratación', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Diagnóstico JARVIS': 'Diagnóstico JARVIS', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Mensagens oficiais': 'Mensajes oficiales', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Atividades': 'Actividades', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Conversas': 'Conversaciones', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Histórico': 'Historial', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Consultas': 'Consultas', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Resumo do DevIN': 'Resumen de DevIN', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Nenhuma vaga foi editada.': 'Ninguna vacante fue modificada.' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    Object.assign(dictionary, newerTranslations[language] || {}); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
     const translate = (value) => { // Explicação DevIN: Declara variável JavaScript translate para reutilizar valor ou resultado.
         const raw = String(value ?? ''); // Explicação DevIN: Declara variável JavaScript raw para reutilizar valor ou resultado.
         const trimmed = raw.trim(); // Explicação DevIN: Declara variável JavaScript trimmed para reutilizar valor ou resultado.

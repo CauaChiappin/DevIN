@@ -13,7 +13,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/controllers/ProfileController.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/controllers/EmploymentWorkflow.php'; // Explicação DevIN: Distingue aprovação e contratação real.
+require_once __DIR__ . '/controllers/EmploymentWorkflow.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/controllers/JobSchema.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/controllers/ResumeDocument.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/helpers.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
@@ -71,20 +71,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvi
         $action = requestString($_POST, 'action'); // Explicação DevIN: Atribui um valor à variável PHP $action.
 
         // O próprio candidato confirma a contratação que a empresa já registrou.
-        if ($action === 'confirm_hiring') {
-            $applicationId = filter_var($_POST['id_candidatura'] ?? null, FILTER_VALIDATE_INT);
-            $closeOthers = ($_POST['close_others'] ?? '') === '1';
-            if (!$applicationId || $applicationId < 1) throw new InvalidArgumentException('Candidatura inválida.');
-            $db = getDatabaseConnection();
-            try {
-                $closed = EmploymentWorkflow::candidateConfirm($db, $idPessoaAtual, $applicationId, $closeOthers);
-            } finally {
-                $db->close();
-            }
-            $_SESSION['job_success'] = 'Contratação confirmada. Outras candidaturas pendentes encerradas: ' . $closed . '.';
-            header('Location: pessoa.php?pagina=vagas');
-            exit;
-        }
+        if ($action === 'confirm_hiring') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            $applicationId = filter_var($_POST['id_candidatura'] ?? null, FILTER_VALIDATE_INT); // Explicação DevIN: Atribui um valor à variável PHP $applicationId.
+            $closeOthers = ($_POST['close_others'] ?? '') === '1'; // Explicação DevIN: Atribui um valor à variável PHP $closeOthers.
+            if (!$applicationId || $applicationId < 1) throw new InvalidArgumentException('Candidatura inválida.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
+            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+                $closed = EmploymentWorkflow::candidateConfirm($db, $idPessoaAtual, $applicationId, $closeOthers); // Explicação DevIN: Atribui um valor à variável PHP $closed.
+            } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+                $db->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $_SESSION['job_success'] = 'Contratação confirmada. Outras candidaturas pendentes encerradas: ' . $closed . '.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            header('Location: pessoa.php?pagina=vagas'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
+            exit; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         if ($action === 'apply_job') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // A candidatura pertence ao ID da sessão; o cliente envia apenas qual vaga deseja solicitar.
@@ -302,30 +302,30 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         "); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         $stmt->bind_param('i', $idPessoaAtual); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
-        $minhasCandidaturas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $minhasCandidaturas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
         // Consultas complementares só ocorrem quando a migration está presente.
-        try {
-            EmploymentWorkflow::ensureInstalled($conn);
-            $employmentReady = true;
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            EmploymentWorkflow::ensureInstalled($conn); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            $employmentReady = true; // Explicação DevIN: Atribui um valor à variável PHP $employmentReady.
             $stmtConfirm = $conn->prepare('SELECT ec.application_id,ec.employer_confirmed_at,ec.candidate_confirmed_at
                 FROM devin_employment_confirmations ec JOIN candidatura c ON c.id_candidatura=ec.application_id
-                WHERE c.id_pessoa=?');
-            $stmtConfirm->bind_param('i',$idPessoaAtual);
-            $stmtConfirm->execute();
-            foreach ($stmtConfirm->get_result()->fetch_all(MYSQLI_ASSOC) as $confirmation) {
-                $employmentConfirmations[(int)$confirmation['application_id']]=$confirmation;
-            }
-            $stmtConfirm->close();
-            $stmtWithdraw = $conn->prepare('SELECT application_id FROM devin_application_withdrawals WHERE candidate_id=?');
-            $stmtWithdraw->bind_param('i',$idPessoaAtual);
-            $stmtWithdraw->execute();
-            foreach ($stmtWithdraw->get_result()->fetch_all(MYSQLI_ASSOC) as $withdrawn) {
-                $applicationWithdrawals[(int)$withdrawn['application_id']] = true;
-            }
-            $stmtWithdraw->close();
-        } catch (RuntimeException $notInstalled) {
-            $employmentReady = false;
-        }
+                WHERE c.id_pessoa=?'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            $stmtConfirm->bind_param('i',$idPessoaAtual); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmtConfirm->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            foreach ($stmtConfirm->get_result()->fetch_all(MYSQLI_ASSOC) as $confirmation) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+                $employmentConfirmations[(int)$confirmation['application_id']]=$confirmation; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $stmtConfirm->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            $stmtWithdraw = $conn->prepare('SELECT application_id FROM devin_application_withdrawals WHERE candidate_id=?'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmtWithdraw->bind_param('i',$idPessoaAtual); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmtWithdraw->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            foreach ($stmtWithdraw->get_result()->fetch_all(MYSQLI_ASSOC) as $withdrawn) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+                $applicationWithdrawals[(int)$withdrawn['application_id']] = true; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            $stmtWithdraw->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } catch (RuntimeException $notInstalled) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            $employmentReady = false; // Explicação DevIN: Atribui um valor à variável PHP $employmentReady.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
  // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
         $stmt->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
@@ -735,7 +735,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
                             <small><?= h($email) ?></small> <!-- Explicação DevIN: Declara elemento de marcação. Contém dado dinâmico processado pelo PHP. -->
                         </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
                     </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
-                    <button class="btn primary" type="button" data-open-profile>Editar perfil</button>
+                    <button class="btn primary" type="button" data-open-profile>Editar perfil</button> <!-- Explicação DevIN: Declara botão de ação. -->
                     <!-- Ferramentas de conta compartilhadas e autorizadas por tipo. -->
                     <?php require __DIR__ . '/components/profile-tools.php'; ?>
  <!-- Explicação DevIN: Declara botão de ação. -->
@@ -761,22 +761,22 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
                         <?php $applicationId = (int)$vaga['id_candidatura']; ?>
                         <?php $employment = $employmentConfirmations[$applicationId] ?? null; ?>
                         <?php if (isset($applicationWithdrawals[$applicationId])): ?>
-                            <span class="status">Candidatura retirada após contratação</span>
+                            <span class="status">Candidatura retirada após contratação</span> <!-- Explicação DevIN: Declara trecho em linha. -->
                         <?php elseif (!empty($employment['candidate_confirmed_at'])): ?>
-                            <span class="status aprovado">Contratação confirmada</span>
+                            <span class="status aprovado">Contratação confirmada</span> <!-- Explicação DevIN: Declara trecho em linha. -->
                         <?php else: ?>
-                            <span class="status <?= $vaga['status'] === 'aprovado' ? 'aprovado' : ($vaga['status'] === 'recusado' ? 'reprovado' : 'analise') ?>"><?= h(ucfirst($vaga['status'])) ?></span>
+                            <span class="status <?= $vaga['status'] === 'aprovado' ? 'aprovado' : ($vaga['status'] === 'recusado' ? 'reprovado' : 'analise') ?>"><?= h(ucfirst($vaga['status'])) ?></span> <!-- Explicação DevIN: Declara trecho em linha. Contém dado dinâmico processado pelo PHP. -->
                         <?php endif; ?>
-                        <?php if ($employmentReady && $vaga['status'] === 'aprovado'
+                        <?php if ($employmentReady && $vaga['status'] === 'aprovado' // Explicação DevIN: Abre código PHP interpretado no servidor.
                             && !empty($employment['employer_confirmed_at']) && empty($employment['candidate_confirmed_at'])): ?>
-                            <form method="post" onsubmit="return confirm('Confirmar que você foi contratado(a)? Suas outras candidaturas pendentes só serão encerradas se selecionar a opção abaixo.');">
-                                <input type="hidden" name="action" value="confirm_hiring">
-                                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
-                                <input type="hidden" name="id_candidatura" value="<?= $applicationId ?>">
-                                <label><input type="checkbox" name="close_others" value="1"> Encerrar minhas outras candidaturas pendentes (opcional)</label>
-                                <button class="btn success" type="submit">Confirmar minha contratação</button>
-                            </form>
-                        <?php endif; ?> <!-- Explicação DevIN: Declara trecho em linha. Contém dado dinâmico processado pelo PHP. -->
+                            <form method="post" onsubmit="return confirm('Confirmar que você foi contratado(a)? Suas outras candidaturas pendentes só serão encerradas se selecionar a opção abaixo.');"> <!-- Explicação DevIN: Declara formulário de entrada de dados. Vincula um evento da interface. -->
+                                <input type="hidden" name="action" value="confirm_hiring"> <!-- Explicação DevIN: Declara campo de entrada. -->
+                                <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>"> <!-- Explicação DevIN: Declara campo de entrada. Contém dado dinâmico processado pelo PHP. -->
+                                <input type="hidden" name="id_candidatura" value="<?= $applicationId ?>"> <!-- Explicação DevIN: Declara campo de entrada. Contém dado dinâmico processado pelo PHP. -->
+                                <label><input type="checkbox" name="close_others" value="1"> Encerrar minhas outras candidaturas pendentes (opcional)</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. A linha reúne múltiplos elementos. -->
+                                <button class="btn success" type="submit">Confirmar minha contratação</button> <!-- Explicação DevIN: Declara botão de ação. -->
+                            </form> <!-- Explicação DevIN: Fecha elemento form do documento. -->
+                        <?php endif; ?>
                     </article> <!-- Explicação DevIN: Fecha elemento article do documento. -->
                 <?php endforeach; ?>
             <?php else: ?>

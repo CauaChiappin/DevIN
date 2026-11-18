@@ -13,9 +13,9 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 require_once __DIR__ . '/../../controllers/Jarvis/Api.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/ConversationRepository.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/../../controllers/Jarvis/JobLanguageAudit.php';
+require_once __DIR__ . '/../../controllers/Jarvis/JobLanguageAudit.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisLocale.php'; // Política comum de idioma JARVIS.
-require_once __DIR__ . '/../../controllers/ProfileLanguagePreference.php'; // Recupera preferência persistida do ADM. // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/../../controllers/ProfileLanguagePreference.php'; // Recupera preferência persistida do ADM.
 require_once __DIR__ . '/../../controllers/Jarvis/AdminSkillManager.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -31,18 +31,18 @@ if (!in_array($mode, ['chat', 'summary'], true)) { // Explicação DevIN: Inicia
     jarvisJson(400, ['success' => false, 'message' => 'Modo não permitido.']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 // O idioma vem da preferência já salva no banco e não de parâmetro fornecido à IA.
-$jarvisLanguage = 'pt-BR';
-try {
-    $localeDb = getDatabaseConnection();
-    try {
-        $jarvisLanguage = JarvisLocale::normalize(ProfileLanguagePreference::load($localeDb,'adm',$adminId));
-    } finally {
-        $localeDb->close();
-    }
-} catch (Throwable $localeError) {
+$jarvisLanguage = 'pt-BR'; // Explicação DevIN: Atribui um valor à variável PHP $jarvisLanguage.
+try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+    $localeDb = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $localeDb.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        $jarvisLanguage = JarvisLocale::normalize(ProfileLanguagePreference::load($localeDb,'adm',$adminId)); // Explicação DevIN: Atribui um valor à variável PHP $jarvisLanguage.
+    } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+        $localeDb->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+} catch (Throwable $localeError) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     // A indisponibilidade da preferência não deve impedir o chat em português.
-    $jarvisLanguage = 'pt-BR';
-}
+    $jarvisLanguage = 'pt-BR'; // Explicação DevIN: Atribui um valor à variável PHP $jarvisLanguage.
+} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 session_write_close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
 if ($mode === 'summary') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
