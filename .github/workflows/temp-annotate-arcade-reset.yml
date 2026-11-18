@@ -1,0 +1,28 @@
+name: DevIN - ajustar comentarios do reset Arcade (temporario)
+on:
+  push:
+    branches: [fix/arcade-secret-reset-quietly-20261117]
+    paths: ['.github/workflows/temp-annotate-arcade-reset.yml']
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Aplicar padrao de comentarios inline sem alterar comportamento
+        run: python3 scripts/line_explanations.py --write
+      - name: Atualizar somente os quatro arquivos de codigo/testes alterados
+        run: |
+          git add js/konami-arcade.js js/mobile-arcade-secret.js tests/arcade-konami-reset.test.cjs tests/arcade-mobile-secret.test.cjs
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(arcade): comentarios padronizados para os resets silenciosos"
+            git push origin HEAD:fix/arcade-secret-reset-quietly-20261117
+          fi
