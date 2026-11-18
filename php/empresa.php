@@ -283,10 +283,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvi
 
         // Operações de perfil reutilizam validações comuns e mantêm os dados da sessão atualizados.
         if ($action === 'update_profile') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-            $_SESSION['usuario_email']   = trim(requestString($_POST, 'email')); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            $_SESSION['profile_success'] = 'Perfil atualizado com sucesso.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            header('Location: empresa.php?pagina=' . rawurlencode($pagina)); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
+            $savedProfile = updateProfile($tipo, (int) $_SESSION['usuario_id'], $_POST, $_FILES['foto'] ?? null); // Explicação DevIN: Recebe o cadastro confirmado após a transação MySQL. // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            $_SESSION['usuario_nome'] = $savedProfile['nome']; // Explicação DevIN: Atualiza o cabeçalho com o nome persistido.
+            $_SESSION['usuario_email'] = $savedProfile['email']; // Explicação DevIN: Mantém login e sessão sincronizados somente após commit. // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            $_SESSION['profile_success'] = !empty($savedProfile['email_alterado']) // Explicação DevIN: Diferencia troca de login de uma edição comum.
+                ? 'E-mail alterado com sucesso. No próximo acesso, entre com o novo endereço.' // Explicação DevIN: Orienta a entrar com o endereço atualizado.
+                : 'Perfil atualizado com sucesso.'; // Explicação DevIN: Confirma mudanças que não alteram o login. // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            header('Location: empresa.php?pagina=' . rawurlencode($pagina) . '&perfil=meu'); // Explicação DevIN: Reabre o modal para mostrar o resultado da atualização. // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
             exit; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
@@ -308,8 +311,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvi
         error_log('Erro no dashboard empresa: ' . $exception->getMessage()); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
         if ($action === 'update_profile') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            $_SESSION['profile_error'] = 'Não foi possível atualizar o perfil. Tente novamente.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            header('Location: empresa.php?pagina=' . rawurlencode($pagina)); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
+            $_SESSION['profile_error'] = $exception instanceof InvalidArgumentException // Explicação DevIN: Informa erros corrigíveis sem divulgar SQL.
+                ? $exception->getMessage() // Explicação DevIN: Exibe confirmação de senha ou e-mail duplicado.
+                : 'Não foi possível atualizar o perfil. Seus dados foram mantidos.'; // Explicação DevIN: Explica que nenhuma atualização parcial foi confirmada. // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            header('Location: empresa.php?pagina=' . rawurlencode($pagina) . '&perfil=meu'); // Explicação DevIN: Reabre o formulário exibindo o erro de validação. // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
             exit; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
@@ -905,7 +910,8 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
 
             <div class="profile-fields"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                 <label>Nome da empresa<input name="nome" type="text" value="<?= h($perfilAtual['nome']) ?>" readonly aria-readonly="true"></label> <!-- Explicação DevIN: Declara rótulo associado a um campo. Inclui atributos de acessibilidade. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
-                <label>E-mail da conta<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" required></label> <!-- Explicação DevIN: Declara rótulo associado a um campo. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
+                <label>E-mail da conta<input name="email" type="email" value="<?= h($perfilAtual['email']) ?>" maxlength="254" autocomplete="email" required></label>
+                <label>Senha atual (somente para alterar e-mail)<input name="senha_atual" type="password" autocomplete="current-password" maxlength="256" placeholder="Confirme sua senha se mudar o e-mail"></label> <!-- Explicação DevIN: Confirma identidade antes de trocar o endereço usado no login. --> <!-- Explicação DevIN: Declara rótulo associado a um campo. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <label>Celular<input name="telefone" type="tel" value="<?= h($perfilAtual['telefone'] ?? '') ?>" required></label> <!-- Explicação DevIN: Declara rótulo associado a um campo. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <label>CEP<input name="cep" type="text" value="<?= h($perfilAtual['cep'] ?? '') ?>" required></label> <!-- Explicação DevIN: Declara rótulo associado a um campo. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
