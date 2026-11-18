@@ -46,6 +46,12 @@ hiringAssert($withdrawals===2,'retirar exatamente as duas pendentes'); // Explic
 hiringAssert(EmploymentWorkflow::candidateConfirm($db,20,1,true)===0,'reenvio idempotente'); // Explicação DevIN: Continua expressão ou bloco pertencente a função hiringReject.
 hiringAssert((int)$db->query('SELECT COUNT(*) FROM candidatura')->fetch_row()[0]===4, // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
     'nenhuma candidatura deve ser excluída'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+hiringAssert(EmploymentWorkflow::isWithdrawn($db,2),'empresa deve reconhecer candidatura retirada');
+hiringAssert(!EmploymentWorkflow::isWithdrawn($db,3),'aprovada de outra empresa não é retirada');
+$companyTwo = EmploymentWorkflow::withdrawnForCompany($db,2);
+hiringAssert(isset($companyTwo[2]) && !isset($companyTwo[4]),'IDs retirados isolados pela empresa');
+$companyOne = EmploymentWorkflow::withdrawnForCompany($db,1);
+hiringAssert(isset($companyOne[4]) && !isset($companyOne[2]),'empresa vê apenas retiradas de suas vagas');
 hiringAssert((int)$db->query('SELECT COUNT(*) FROM devin_application_withdrawals')->fetch_row()[0]===2, // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
     'duas retiradas com histórico'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 hiringAssert((int)$db->query('SELECT COUNT(*) FROM devin_application_withdrawals WHERE application_id=3')->fetch_row()[0]===0, // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
