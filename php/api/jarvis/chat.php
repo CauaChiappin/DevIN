@@ -13,7 +13,9 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 require_once __DIR__ . '/../../controllers/Jarvis/Api.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/ConversationRepository.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/../../controllers/Jarvis/JobLanguageAudit.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/../../controllers/Jarvis/JobLanguageAudit.php';
+require_once __DIR__ . '/../../controllers/Jarvis/JarvisLocale.php'; // Política comum de idioma JARVIS.
+require_once __DIR__ . '/../../controllers/ProfileLanguagePreference.php'; // Recupera preferência persistida do ADM. // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/AdminSkillManager.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -28,6 +30,19 @@ $mode = $payload['mode'] ?? null; // Explicação DevIN: Atribui um valor à var
 if (!in_array($mode, ['chat', 'summary'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     jarvisJson(400, ['success' => false, 'message' => 'Modo não permitido.']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+// O idioma vem da preferência já salva no banco e não de parâmetro fornecido à IA.
+$jarvisLanguage = 'pt-BR';
+try {
+    $localeDb = getDatabaseConnection();
+    try {
+        $jarvisLanguage = JarvisLocale::normalize(ProfileLanguagePreference::load($localeDb,'adm',$adminId));
+    } finally {
+        $localeDb->close();
+    }
+} catch (Throwable $localeError) {
+    // A indisponibilidade da preferência não deve impedir o chat em português.
+    $jarvisLanguage = 'pt-BR';
+}
 session_write_close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
 if ($mode === 'summary') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -41,20 +56,20 @@ if ($mode === 'summary') { // Explicação DevIN: Inicia desvio condicional: exe
             ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
             $counts = []; // Explicação DevIN: Atribui um valor à variável PHP $counts.
             foreach ($queries as $label => $sql) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
-                $counts[] = $label . ': ' . (int) $db->query($sql)->fetch_row()[0]; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+                $counts[$label] = (int) $db->query($sql)->fetch_row()[0]; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             foreach (['reports_vagas' => 'Denúncias de vagas pendentes', 'reports_perfis' => 'Denúncias de perfis pendentes'] as $table => $label) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
                 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
                     $row = $db->query("SELECT COUNT(*) FROM {$table} WHERE status = 'pendente'")->fetch_row(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
-                    $counts[] = $label . ': ' . (int) $row[0]; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                    $counts[$label] = (int) $row[0]; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                 } catch (mysqli_sql_exception $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-                    $counts[] = $label . ': indisponível'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                    $counts[$label] = 'indisponível'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
             $db->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        jarvisJson(200, ['success' => true, 'reply' => "Resumo atual do DevIN:\n" . implode("\n", $counts), 'source' => 'local']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        jarvisJson(200, ['success' => true, 'reply' => JarvisLocale::summary($jarvisLanguage, $counts), 'source' => 'local']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
         error_log('JARVIS summary: ' . $exception->getMessage()); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         jarvisJson(503, ['success' => false, 'message' => 'Não foi possível consultar indicadores.']); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
@@ -119,7 +134,7 @@ if ($auditRequested) { // Explicação DevIN: Inicia desvio condicional: executa
 $pages = ['inicio', 'candidatos', 'posts', 'reports', 'sobre', 'perfil']; // Explicação DevIN: Atribui um valor à variável PHP $pages.
 $page = $payload['page'] ?? 'inicio'; // Explicação DevIN: Atribui um valor à variável PHP $page.
 if (!is_string($page) || !in_array($page, $pages, true)) $page = 'inicio'; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-$system = 'Você é JARVIS Admin, assistente do DevIN. Responda objetivamente em português. ' // Explicação DevIN: Atribui um valor à variável PHP $system.
+$system = 'Você é JARVIS Admin, assistente do DevIN. ' . JarvisLocale::instruction($jarvisLanguage) . ' ' // Explicação DevIN: Atribui um valor à variável PHP $system.
     . 'Você NÃO tem acesso irrestrito ao banco, nem permissão para executar ou confirmar alterações administrativas. ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     . 'A área Atividades é uma lista de planejamento; aprovar ou concluir tarefas NUNCA altera dados de vagas, usuários ou reports. ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     . 'Nunca afirme ter executado uma ação que não realizou. ' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
