@@ -1,0 +1,61 @@
+# Pipeline isolado da versão comercial; não ativa pagamento nem toca no servidor real.
+name: Commercial branch - draft safety checks # Explicação DevIN: Configura nome identificador (campo name).
+on: # Explicação DevIN: Configura acionadores do workflow (campo on).
+  push: # Explicação DevIN: Configura propriedade YAML (campo push).
+    branches: [production/monetization] # Explicação DevIN: Configura filtro de branches (campo branches).
+  workflow_dispatch: # Explicação DevIN: Configura propriedade YAML (campo workflow_dispatch).
+permissions: # Explicação DevIN: Configura permissões do workflow (campo permissions).
+  contents: read # Explicação DevIN: Configura propriedade YAML (campo contents).
+jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo jobs).
+  php: # Explicação DevIN: Configura propriedade YAML (campo php).
+    runs-on: ubuntu-latest # Explicação DevIN: Configura ambiente executor (campo runs-on).
+    strategy: # Explicação DevIN: Configura propriedade YAML (campo strategy).
+      matrix: # Explicação DevIN: Configura propriedade YAML (campo matrix).
+        php-version: ['8.1', '8.5'] # Explicação DevIN: Configura propriedade YAML (campo php-version).
+    steps: # Explicação DevIN: Configura sequência de etapas (campo steps).
+      - uses: actions/checkout@v4 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - uses: shivammathur/setup-php@v2 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        with: # Explicação DevIN: Configura propriedade YAML (campo with).
+          php-version: ${{ matrix.php-version }} # Explicação DevIN: Configura propriedade YAML (campo php-version).
+          extensions: curl, mbstring, mysqli # Explicação DevIN: Configura propriedade YAML (campo extensions).
+      - name: Syntax and local financial tests # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          php -l php/controllers/BrazilianRegistry.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/CommercialEntitlements.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/CommercialPlanCatalog.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/api/commercial/plans.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/commercial_basics.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/commercial_basics.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+  mysql: # Explicação DevIN: Configura propriedade YAML (campo mysql).
+    runs-on: ubuntu-latest # Explicação DevIN: Configura ambiente executor (campo runs-on).
+    services: # Explicação DevIN: Configura serviços auxiliares (campo services).
+      mysql: # Explicação DevIN: Configura propriedade YAML (campo mysql).
+        image: mysql:8.0 # Explicação DevIN: Configura propriedade YAML (campo image).
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          MYSQL_ROOT_PASSWORD: commercial-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_ROOT_PASSWORD).
+        ports: # Explicação DevIN: Configura propriedade YAML (campo ports).
+          - 3306:3306 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        options: >- # Explicação DevIN: Configura propriedade YAML (campo options).
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pcommercial-ci-only"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    steps: # Explicação DevIN: Configura sequência de etapas (campo steps).
+      - uses: actions/checkout@v4 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - uses: shivammathur/setup-php@v2 # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        with: # Explicação DevIN: Configura propriedade YAML (campo with).
+          php-version: '8.5' # Explicação DevIN: Configura propriedade YAML (campo php-version).
+          extensions: curl, mbstring, mysqli # Explicação DevIN: Configura propriedade YAML (campo extensions).
+      - name: Validate plans in disposable MySQL # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          COMMERCIAL_TEST_HOST: 127.0.0.1 # Explicação DevIN: Configura propriedade YAML (campo COMMERCIAL_TEST_HOST).
+          COMMERCIAL_TEST_DB: devin_commercial_ci # Explicação DevIN: Configura propriedade YAML (campo COMMERCIAL_TEST_DB).
+          COMMERCIAL_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo COMMERCIAL_TEST_USER).
+          COMMERCIAL_TEST_PASSWORD: commercial-ci-only # Explicação DevIN: Configura propriedade YAML (campo COMMERCIAL_TEST_PASSWORD).
+          MYSQL_PWD: commercial-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_PWD).
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          sudo apt-get update -qq # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          sudo apt-get install -y default-mysql-client # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_commercial_ci CHARACTER SET utf8mb4" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          mysql -h 127.0.0.1 -u root devin_commercial_ci < database/migrations/2026_11_18_007_commercial_draft.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/commercial_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
