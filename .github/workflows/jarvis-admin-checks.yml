@@ -102,8 +102,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           node --check js/support-ui.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/support-ui.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/mobile-arcade-secret.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          node --test tests/arcade-mobile-secret.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          node --test tests/arcade-konami-reset.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/arcade-mobile-secret.test.cjs tests/arcade-konami-reset.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-extra-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-library.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
