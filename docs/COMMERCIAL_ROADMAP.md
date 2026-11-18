@@ -19,7 +19,7 @@ Valores mensais ainda devem ser definidos (monthly_price_cents é NULL, is_publi
 | Pessoa | 2 Inteligente | — | 40 | nenhuma | sem anúncios, busca por vagas automatizada **com consentimento** |
 | Pessoa | 3 Pro | — | ilimitadas | nenhuma | sem anúncios, busca avançada e recursos premium de IA planejados |
 
-Plano gratuito preliminar: empresas 2 vagas ativas e pessoas 10 candidaturas por mês.
+Plano gratuito preliminar: empresas 2 vagas ativas e pessoas **15 candidaturas por mês** (decisão confirmada para desenvolvimento). Como o Nível 1 pago também está em 15 no rascunho, seu diferencial por enquanto é retirar anúncios; limites pagos finais dependem de testes e validação comercial.
 Números são exemplos ajustáveis por ADM após análise de mercado. Os planos são individuais por público.
 **Nenhum plano é público ou vendável até configurar preço, pagamento e termos.**
 
@@ -39,6 +39,8 @@ Números são exemplos ajustáveis por ADM após análise de mercado. Os planos 
 - Não enviar currículos, CPF e dados pessoais a serviços externos sem informar finalidade e base legal.
 
 ## Identificação, CPF/CNPJ e CEP
+**Decisão de 17/11/2026:** não ativar nem introduzir consultas externas de CPF/CNPJ/CEP na `main` durante os testes escolares. Este módulo permanece isolado na branch comercial e NÃO deve ser implantado na Hostinger neste ciclo.
+
 - CPF e CNPJ locais: validar apenas **estrutura e dígitos verificadores**, não existência nem identidade do titular.
 - Validação cadastral real de CNPJ deve usar provedor autorizado (por exemplo serviço comercial SERPRO), com contrato, custo, limite e chave somente no backend.
 - CEP: formato de oito dígitos; consulta HTTPS fixa ao ViaCEP, com timeout, TLS, sem redirects e tratamento de CEP inexistente. Não prova endereço exato de alguém.
