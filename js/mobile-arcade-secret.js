@@ -64,7 +64,7 @@
                     cancel(); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
                     button.setAttribute('aria-label', 'Não foi possível abrir o Arcade. Tente novamente.'); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
                 } // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
-            } // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            } // Encerra a tentativa assíncrona de abertura do Arcade.
         }, 260); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
