@@ -1,0 +1,30 @@
+# Mantém a branch comercial atualizada com tudo o que entrar na main.
+# Não aplica squash nem force push; divergências são preservadas e conflitos falham.
+name: Sync main into commercial production branch # Explicação DevIN: Nome do workflow que monitora alterações na main.
+on: # Explicação DevIN: Define eventos capazes de acionar a sincronização.
+  push: # Explicação DevIN: Executa a rotina em todo push/merge na branch principal.
+    branches: [main] # Explicação DevIN: Nunca sincroniza uma branch comercial para a main.
+  workflow_dispatch: # Explicação DevIN: Permite reexecutar manualmente em caso de falha temporária.
+permissions: # Explicação DevIN: Permissões mínimas para gravar somente a branch alvo.
+  contents: write # Explicação DevIN: Permite enviar o commit merge de main para a branch de monetização.
+concurrency: # Explicação DevIN: Impede corridas entre dois merges simultâneos de main.
+  group: sync-main-to-commercial # Explicação DevIN: Uma sincronização por vez.
+  cancel-in-progress: false # Explicação DevIN: Não cancela mesclagens já iniciadas.
+jobs: # Explicação DevIN: Contém as etapas de atualização versionada.
+  sync: # Explicação DevIN: Atualiza a branch comercial sem forçar alterações.
+    runs-on: ubuntu-latest # Explicação DevIN: Executa em Linux disponibilizado pelo GitHub.
+    steps: # Explicação DevIN: Lista de passos usados pela rotina.
+      - uses: actions/checkout@v4 # Explicação DevIN: Obtém o código da própria branch comercial.
+        with: # Explicação DevIN: Personaliza a origem do checkout.
+          ref: production/monetization # Explicação DevIN: Preserva commits exclusivos e não substitui o trabalho comercial.
+          fetch-depth: 0 # Explicação DevIN: Necessário para localizar histórico e ancestrais comuns.
+          persist-credentials: true # Explicação DevIN: Permite autenticação ao fazer o push autorizado.
+      - name: Incorporate latest main without rewriting commercial history # Explicação DevIN: Mescla somente alterações verificadas da main.
+        shell: bash # Explicação DevIN: Executa os comandos em shell Bash com erros propagados.
+        run: | # Explicação DevIN: Falhas interrompem a sincronização e deixam a main intacta.
+          set -euo pipefail # Explicação DevIN: Impede seguir após erro ou variável ausente.
+          git config user.name 'github-actions[bot]' # Explicação DevIN: Identifica o autor técnico da sincronização.
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com' # Explicação DevIN: Usa e-mail público do bot para o commit de merge.
+          git fetch origin main production/monetization # Explicação DevIN: Atualiza as referências remotas sem modificar arquivos.
+          git merge --no-edit origin/main # Explicação DevIN: Incorpora main e falha em conflitos, sem nunca usar --force.
+          git push origin HEAD:production/monetization # Explicação DevIN: Envia somente quando a mesclagem foi concluída.
