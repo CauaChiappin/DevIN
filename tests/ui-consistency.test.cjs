@@ -56,27 +56,27 @@ test('camada responsiva preserva campos sem scroll lateral e estados ocultos', (
     assert.match(css, /candidate-filters/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('Full HD e 4K sem quebrar as grades especiais dos dashboards', () => { // Explicação DevIN: Confere os três níveis de layout para displays grandes.
-    const css = read('css/ui-consistency.css'); // Explicação DevIN: Obtém a camada de estilos compartilhada.
-    assert.match(css, /@media screen and \(min-width: 1600px\) and \(min-height: 800px\)/); // Explicação DevIN: Protege configuração para TV Full HD.
-    assert.match(css, /@media screen and \(min-width: 2400px\) and \(min-height: 1000px\)/); // Explicação DevIN: Protege configuração para tela 4K e ultra-wide.
-    assert.match(css, /\.dashboard-shell:not\(\.menu-fechado\)/); // Explicação DevIN: Preserva a sidebar recolhida.
-    assert.match(css, /:not\(\.page-mensagens\):not\(\.page-suporte\):not\(\.page-curriculo\)/); // Explicação DevIN: Não transforma chat e suporte em três colunas.
-    assert.match(css, /\.dashboard-shell\.page-mensagens \.chat-app/); // Explicação DevIN: Mantém contatos e conversa lado a lado.
-    assert.match(css, /\.dashboard-shell\.page-suporte \.support-main/); // Explicação DevIN: Usa área da central de chamados sem afetar navegação.
-    assert.match(css, /\.dashboard-shell \.compact-list-header \.filter-menu/); // Explicação DevIN: Confere filtros ampliados e roláveis.
-    assert.match(css, /\.dashboard-shell \.item-card h2/); // Explicação DevIN: Amplia a tipografia de vagas e candidatos.
-    assert.match(css, /\.arcade-portal \.portal-layout/); // Explicação DevIN: Confere equilíbrio da biblioteca de jogos.
-    assert.match(css, /\.jarvis-admin \.jarvis-admin__panel\.is-expanded/); // Explicação DevIN: Impede um JARVIS ilegível em displays amplos.
-}); // Explicação DevIN: Encerra regressão de grandes displays.
+test('Full HD e 4K sem quebrar as grades especiais dos dashboards', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const css = read('css/ui-consistency.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    assert.match(css, /@media screen and \(min-width: 1600px\) and \(min-height: 800px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /@media screen and \(min-width: 2400px\) and \(min-height: 1000px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell:not\(\.menu-fechado\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /:not\(\.page-mensagens\):not\(\.page-suporte\):not\(\.page-curriculo\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-mensagens \.chat-app/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-suporte \.support-main/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell \.compact-list-header \.filter-menu/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell \.item-card h2/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.arcade-portal \.portal-layout/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.jarvis-admin \.jarvis-admin__panel\.is-expanded/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('lousas sensíveis ao toque têm áreas acionáveis e foco legível', () => { // Explicação DevIN: Protege interação de telas grandes por toque e controle remoto.
-    const css = read('css/ui-consistency.css'); // Explicação DevIN: Inspeciona regras de interação.
-    assert.match(css, /@media screen and \(min-width: 1024px\) and \(pointer: coarse\)/); // Explicação DevIN: Confere detecção de telas com apontamento por toque.
-    assert.match(css, /min-height: 56px/); // Explicação DevIN: Preserva alvos mais confortáveis.
-    assert.match(css, /\.chat-message-menu summary/); // Explicação DevIN: Torna menus de mensagens alcançáveis ao toque.
-    assert.match(css, /\.jarvis-admin \.jarvis-admin__icon-button/); // Explicação DevIN: Inclui ações da IA no modo lousa.
-    assert.match(css, /touch-action: manipulation/); // Explicação DevIN: Evita atraso de gestos em controles.
-    assert.match(css, /:focus-visible \{ outline: 3px solid/); // Explicação DevIN: Mantém foco perceptível para teclado e controle remoto.
-    assert.match(css, /max-height: min\(72dvh, 760px\)/); // Explicação DevIN: Filtros não ficam inacessíveis por falta de altura.
-}); // Explicação DevIN: Finaliza regressão de lousas digitais.
+test('lousas sensíveis ao toque têm áreas acionáveis e foco legível', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const css = read('css/ui-consistency.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    assert.match(css, /@media screen and \(min-width: 1024px\) and \(pointer: coarse\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /min-height: 56px/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.chat-message-menu summary/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.jarvis-admin \.jarvis-admin__icon-button/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /touch-action: manipulation/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /:focus-visible \{ outline: 3px solid/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /max-height: min\(72dvh, 760px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
