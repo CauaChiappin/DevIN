@@ -224,6 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvi
     <link rel="icon" type="image/png" href="../img/favicon.png"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
     <link rel="stylesheet" href="../css/cadastrostyle.css?v=<?= filemtime(__DIR__ . '/../css/cadastrostyle.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <link rel="stylesheet" href="../css/site-navigation.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="stylesheet" href="../css/ui-consistency.css?v=<?= filemtime(__DIR__ . '/../css/ui-consistency.css') ?>"> <!-- Explicação DevIN: Padroniza responsividade, busca e campos do portal. -->
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
 <body class="cadastro-page"> <!-- Explicação DevIN: Declara corpo visível da página. -->
 

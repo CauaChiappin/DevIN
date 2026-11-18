@@ -79,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvi
     <script src="../js/index-language.js"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. -->
     <title>DevIN | Login</title> <!-- Explicação DevIN: Declara elemento de marcação. -->
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="stylesheet" href="../css/ui-consistency.css?v=<?= filemtime(__DIR__ . '/../css/ui-consistency.css') ?>"> <!-- Explicação DevIN: Padroniza responsividade, busca e campos do portal. -->
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
 
 <body> <!-- Explicação DevIN: Declara corpo visível da página. -->
