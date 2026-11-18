@@ -1554,6 +1554,57 @@
         ...(publicTranslations[language] ?? {}) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Complemento compartilhado por perfis e JARVIS, sem alterar traduções antigas.
+    // As palavras ENVIAR e EXCLUIR permanecem intactas por serem confirmações seguras.
+    const newerTranslations = {
+        en: {
+            'Central da minha conta': 'My account hub',
+            'Gerencie seus dados, privacidade, atendimento e atividades sem sair do painel.': 'Manage your data, privacy, support and activities from your dashboard.',
+            'Configurações da conta': 'Account settings',
+            'Privacidade e dados': 'Privacy and data',
+            'Suporte DevIN': 'DevIN Support',
+            'Minhas candidaturas': 'My applications',
+            'Gerenciar candidatos': 'Manage applicants',
+            'JARVIS Admin': 'JARVIS Admin',
+            'Confirmar contratação': 'Confirm hiring',
+            'Confirmar minha contratação': 'Confirm my employment',
+            'Encerrar minhas outras candidaturas pendentes (opcional)': 'Withdraw my other pending applications (optional)',
+            'Contratação confirmada': 'Employment confirmed',
+            'Candidatura retirada após contratação': 'Application withdrawn after employment',
+            'Diagnóstico JARVIS': 'JARVIS diagnostics',
+            'Mensagens oficiais': 'Official messages',
+            'Atividades': 'Activities',
+            'Conversas': 'Conversations',
+            'Histórico': 'History',
+            'Consultas': 'Search tools',
+            'Resumo do DevIN': 'DevIN summary',
+            'Nenhuma vaga foi editada.': 'No job posting was modified.'
+        },
+        es: {
+            'Central da minha conta': 'Centro de mi cuenta',
+            'Gerencie seus dados, privacidade, atendimento e atividades sem sair do painel.': 'Gestiona tus datos, privacidad, soporte y actividades desde tu panel.',
+            'Configurações da conta': 'Configuración de la cuenta',
+            'Privacidade e dados': 'Privacidad y datos',
+            'Suporte DevIN': 'Soporte DevIN',
+            'Minhas candidaturas': 'Mis solicitudes',
+            'Gerenciar candidatos': 'Gestionar candidatos',
+            'JARVIS Admin': 'JARVIS Admin',
+            'Confirmar contratação': 'Confirmar contratación',
+            'Confirmar minha contratação': 'Confirmar mi contratación',
+            'Encerrar minhas outras candidaturas pendentes (opcional)': 'Retirar mis otras solicitudes pendientes (opcional)',
+            'Contratação confirmada': 'Contratación confirmada',
+            'Candidatura retirada após contratação': 'Solicitud retirada después de la contratación',
+            'Diagnóstico JARVIS': 'Diagnóstico JARVIS',
+            'Mensagens oficiais': 'Mensajes oficiales',
+            'Atividades': 'Actividades',
+            'Conversas': 'Conversaciones',
+            'Histórico': 'Historial',
+            'Consultas': 'Consultas',
+            'Resumo do DevIN': 'Resumen de DevIN',
+            'Nenhuma vaga foi editada.': 'Ninguna vacante fue modificada.'
+        }
+    };
+    Object.assign(dictionary, newerTranslations[language] || {});
     const translate = (value) => { // Explicação DevIN: Declara variável JavaScript translate para reutilizar valor ou resultado.
         const raw = String(value ?? ''); // Explicação DevIN: Declara variável JavaScript raw para reutilizar valor ou resultado.
         const trimmed = raw.trim(); // Explicação DevIN: Declara variável JavaScript trimmed para reutilizar valor ou resultado.
