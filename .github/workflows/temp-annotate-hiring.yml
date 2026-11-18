@@ -1,0 +1,26 @@
+name: DevIN annotate hiring (temporary)
+on:
+  push:
+    branches: [feat/hiring-confirmation-profile-jarvis-l10n-20261118]
+    paths: ['.github/workflows/temp-annotate-hiring.yml']
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Complementar comentarios inline sem alterar a regra de negocio
+        run: python3 scripts/line_explanations.py --write
+      - name: Registrar somente arquivos da funcionalidade
+        run: |
+          git add css/dashboard.css database/migrations/2026_11_18_006_employment_confirmation.sql js/dashboard-i18n.js php/adm.php php/api/jarvis/chat.php php/api/jarvis/readiness.php php/components/profile-tools.php php/controllers/EmploymentWorkflow.php php/controllers/Jarvis/JarvisLocale.php php/empresa.php php/pessoa.php tests/employment_workflow_mysql.php tests/jarvis_locale_unit.php
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(hiring): completar comentarios por linha em perfis, contratacao e JARVIS"
+            git push origin HEAD:feat/hiring-confirmation-profile-jarvis-l10n-20261118
+          fi
