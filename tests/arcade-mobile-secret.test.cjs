@@ -15,7 +15,8 @@ function simulate(touch = true) { // Explicação DevIN: Declara função/métod
     const handlers = {}; // Explicação DevIN: Declara variável JavaScript handlers para reutilizar valor ou resultado.
     const timers = new Map(); // Explicação DevIN: Declara variável JavaScript timers para reutilizar valor ou resultado.
     const classes = new Set(); // Explicação DevIN: Declara variável JavaScript classes para reutilizar valor ou resultado.
-    const redirects = []; // Explicação DevIN: Declara variável JavaScript redirects para reutilizar valor ou resultado.
+    const redirects = [];
+    const requests = []; // Explicação DevIN: Declara variável JavaScript redirects para reutilizar valor ou resultado.
     let nextTimer = 1; // Explicação DevIN: Declara variável JavaScript nextTimer para reutilizar valor ou resultado.
     const button = { // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
         addEventListener(name, callback) { handlers[name] = callback; }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
@@ -37,13 +38,20 @@ function simulate(touch = true) { // Explicação DevIN: Declara função/métod
             addEventListener: (name, callback) => { windowListeners[name] = callback; }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
             location: { href: 'https://example.org/Trabalhos/3D/DevIN/php/pessoa.php?pagina=sobre', assign: url => redirects.push(url) }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
         }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        navigator: { vibrate() {} }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+        navigator: { vibrate() {} },
+        fetch: async (url, options) => {
+            requests.push({ url, options });
+            return { ok: true, json: async () => url.includes('csrf.php')
+                ? { sucesso: true, token: 'csrf-test' }
+                : { sucesso: true, url: '/Trabalhos/3D/DevIN/php/arcade.php' } };
+        },
+        URLSearchParams, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
         URL, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
         Math, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     vm.runInNewContext(read('js/mobile-arcade-secret.js'), context); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     return { // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-        handlers, timers, classes, redirects, documentListeners, windowListeners, context, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+        handlers, timers, classes, redirects, requests, documentListeners, windowListeners, context, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
         advance(ms) { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
             const hit = [...timers.entries()].find(([, value]) => value.ms === ms); // Explicação DevIN: Declara variável JavaScript hit para reutilizar valor ou resultado.
             assert.ok(hit, 'temporizador esperado: ' + ms); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
@@ -65,13 +73,14 @@ test('o segredo fica no card Time fundador e carrega nos três painéis', () => 
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('um toque contínuo de 3000ms abre a rota autenticada do Arcade', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+test('um toque contínuo de 3000ms abre a rota autenticada do Arcade', async () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     const env = simulate(true); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
     env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     assert.ok(env.classes.has('is-holding')); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     assert.deepEqual(env.redirects, []); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     env.advance(260); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    await new Promise(resolve => setImmediate(resolve));
     assert.equal(env.redirects.length, 1); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     assert.ok(env.redirects[0].endsWith('/php/arcade.php')); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -105,7 +114,7 @@ test('mouse de desktop nunca agenda o segredo e CSS oculta o botão', () => { //
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 
-test('soltar mesmo após completar três segundos, antes da navegação, descarta a tentativa e permite recomeçar', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+test('soltar mesmo após completar três segundos, antes da navegação, descarta a tentativa e permite recomeçar', async () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     const env = simulate(true); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
     env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
@@ -116,5 +125,26 @@ test('soltar mesmo após completar três segundos, antes da navegação, descart
     env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     env.advance(260); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    await new Promise(resolve => setImmediate(resolve));
     assert.equal(env.redirects.length, 1); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+
+test('os menus de pessoa, empresa e ADM não exibem entrada pública para o Arcade', () => {
+    for (const page of ['pessoa', 'empresa', 'adm']) {
+        const source = read('php/' + page + '.php');
+        assert.doesNotMatch(source, /class="menu-arcade"|Jogos DevIN|href="arcade\.php"/);
+        assert.match(source, /konami-arcade\.js/);
+        assert.match(source, /mobile-arcade-secret\.js/);
+    }
+});
+
+test('página e API exigem liberação secreta no backend', () => {
+    for (const page of ['arcade.php', 'arcade_api.php']) {
+        const source = read('php/' + page);
+        assert.match(source, /ArcadeAccess::isUnlocked\(\$usuario\)/);
+    }
+    const mobile = read('js/mobile-arcade-secret.js');
+    assert.match(mobile, /arcade_unlock\.php/);
+    assert.match(mobile, /modo:\s*'toque'/);
+});

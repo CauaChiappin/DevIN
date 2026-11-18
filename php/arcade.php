@@ -13,9 +13,15 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/controllers/ProfileLanguagePreference.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
+require_once __DIR__ . '/controllers/ArcadeAccess.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 $usuario = requireWebAuth(); // Explicação DevIN: Atribui um valor à variável PHP $usuario.
+if (!ArcadeAccess::isUnlocked($usuario)) {
+    header('Cache-Control: no-store, private');
+    header('Location: ' . APP_BASE_URL . '/php/' . ($usuario['tipo'] === 'adm' ? 'adm.php' : ($usuario['tipo'] === 'empresa' ? 'empresa.php' : 'pessoa.php')));
+    exit;
+}
 $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $idiomaAtual = ProfileLanguagePreference::load($conn, $usuario['tipo'], (int) $usuario['id']); // Explicação DevIN: Atribui um valor à variável PHP $idiomaAtual.
@@ -24,9 +30,8 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 $_SESSION['idioma'] = $idiomaAtual; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 
-// O Arcade é acessível a qualquer usuário autenticado do DevIN.
-// A sequência secreta anterior permanece como atalho opcional no dashboard,
-// mas não deve impedir que candidatos ou empresas encontrem os jogos.
+// O Arcade exige sessão autenticada e liberação temporária por atalho secreto.
+// Não há links públicos para o Arcade nos menus dos dashboards.
 $csrfToken = csrfToken(); // Explicação DevIN: Atribui um valor à variável PHP $csrfToken.
 $isAdmin = $usuario['tipo'] === 'adm'; // Explicação DevIN: Atribui um valor à variável PHP $isAdmin.
 ?>
