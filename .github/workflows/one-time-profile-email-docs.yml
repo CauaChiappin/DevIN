@@ -22,7 +22,8 @@ jobs: # Explicação DevIN: Define as tarefas de manutenção.
         shell: bash # Explicação DevIN: Executa comandos bash.
         run: | # Explicação DevIN: Inicia o script de commit.
           set -euo pipefail # Explicação DevIN: Interrompe o job ao encontrar erro.
-          git add .github/workflows/jarvis-admin-checks.yml js/dashboard-i18n.js php/adm.php php/controllers/ProfileController.php php/empresa.php php/pessoa.php tests/profile-email-ui.test.cjs tests/profile_email_change_mysql.php # Explicação DevIN: Inclui somente os arquivos da correção.
+          git diff -- .github/workflows/jarvis-admin-checks.yml # Explicação DevIN: Mostra a diferença do workflow para ajuste autorizado separado.
+          git add js/dashboard-i18n.js php/adm.php php/controllers/ProfileController.php php/empresa.php php/pessoa.php tests/profile-email-ui.test.cjs tests/profile_email_change_mysql.php # Explicação DevIN: Evita falta de permissão de workflow no token do GitHub Actions.
           if ! git diff --cached --quiet; then # Explicação DevIN: Evita commit vazio.
             git config user.name 'github-actions[bot]' # Explicação DevIN: Identifica o autor técnico.
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com' # Explicação DevIN: Usa identidade pública do bot.
