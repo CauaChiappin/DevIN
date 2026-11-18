@@ -24,6 +24,9 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php -l php/controllers/CommercialEntitlements.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/controllers/CommercialPlanCatalog.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/api/commercial/plans.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/commercial_admin.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/components/profile-tools.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --check js/commercial-admin.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l tests/commercial_basics.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/commercial_basics.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
   mysql: # Explicação DevIN: Configura propriedade YAML (campo mysql).
