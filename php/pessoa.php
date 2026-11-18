@@ -45,7 +45,7 @@ unset( // Explicação DevIN: Participa da instrução atual, ajustando cálculo
 ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 $pagina        = requestString($_GET, 'pagina'); // Explicação DevIN: Atribui um valor à variável PHP $pagina.
 
-$paginasPermitidas = ['inicio', 'vagas', 'curriculo', 'sobre', 'perfil', 'mensagens']; // Explicação DevIN: Atribui um valor à variável PHP $paginasPermitidas.
+$paginasPermitidas = ['inicio', 'vagas', 'curriculo', 'sobre', 'perfil', 'mensagens', 'suporte']; // Explicação DevIN: Atribui um valor à variável PHP $paginasPermitidas.
 if (!in_array($pagina, $paginasPermitidas, true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Aceita apenas as seções válidas do painel do candidato.
     $pagina = 'inicio'; // Explicação DevIN: Atribui um valor à variável PHP $pagina.
@@ -398,7 +398,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
     <?php if ($pagina === 'mensagens'): ?>
         <link rel="stylesheet" href="../css/chat.css?v=<?= filemtime(__DIR__ . '/../css/chat.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
-    <?php if ($pagina === 'sobre'): ?>
+    <?php if (in_array($pagina, ['sobre', 'suporte'], true)): ?>
     <link rel="stylesheet" href="../css/support.css?v=<?= filemtime(__DIR__ . '/../css/support.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
@@ -458,7 +458,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
                     <?= dashboardIcon('users') ?><span class="menu-text">Mensagens</span><span class="message-unread-badge" data-message-unread-badge hidden></span>
                 </a> <!-- Explicação DevIN: Fecha elemento a do documento. -->
                 <!-- A boia identifica o suporte, diferente do ícone de denúncias. -->
-                <a href="suporte.php" aria-label="Abrir central de suporte do DevIN"><?= dashboardIcon('lifebuoy') ?><span class="menu-text">Suporte</span></a> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
+                <a class="<?= ativo($pagina, 'suporte') ?>" href="pessoa.php?pagina=suporte" aria-label="Abrir central de suporte do DevIN"><?= dashboardIcon('lifebuoy') ?><span class="menu-text">Suporte</span></a> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'sobre') ?>" href="pessoa.php?pagina=sobre"> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. -->
                     <?= dashboardIcon('info') ?><span class="menu-text">Sobre nós</span>
                 </a> <!-- Explicação DevIN: Fecha elemento a do documento. -->
@@ -488,7 +488,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
         </aside> <!-- Explicação DevIN: Fecha elemento aside do documento. -->
 
         <section class="lista-area"> <!-- Explicação DevIN: Declara seção temática. -->
-            <?php if (!in_array($pagina, ['sobre', 'mensagens', 'curriculo'], true)): ?>
+            <?php if (!in_array($pagina, ['sobre', 'mensagens', 'curriculo', 'suporte'], true)): ?>
                 <?= dashboardListHeader( // Explicação DevIN: Combina execução de código com conteúdo HTML gerado dinamicamente.
                     $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação section.
                     $pagina === 'vagas' ? 'Minhas candidaturas' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas'), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
@@ -504,7 +504,9 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php if ($pagina === 'mensagens'): ?>
+            <?php if ($pagina === 'suporte'): ?>
+                <?php require __DIR__ . '/components/support-user.php'; // Reutiliza o formulário e o histórico dentro do painel. ?>
+            <?php elseif ($pagina === 'mensagens'): ?>
                 <section class="chat-app" data-chat-app data-api="../php/mensagens_api.php" data-csrf="<?= h(csrfToken()) ?>"> <!-- Explicação DevIN: Declara seção temática. Contém dado dinâmico processado pelo PHP. -->
                     <aside class="chat-contacts"> <!-- Explicação DevIN: Declara conteúdo auxiliar. -->
                         <div class="chat-contacts-heading"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
@@ -720,7 +722,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
             <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
                 <!-- Acesso flutuante rápido na seção Sobre nós; destino exige login. -->
-                <a class="support-floating-help" href="suporte.php" aria-label="Pedir ajuda ao Suporte DevIN"> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. -->
+                <a class="support-floating-help" href="pessoa.php?pagina=suporte" aria-label="Pedir ajuda ao Suporte DevIN"> <!-- Explicação DevIN: Declara link de navegação. Inclui atributos de acessibilidade. -->
                     <?= dashboardIcon('lifebuoy') ?><span>Ajuda</span>
                 </a> <!-- Explicação DevIN: Fecha elemento a do documento. -->
             <?php elseif ($pagina === 'perfil'): ?>
@@ -842,9 +844,9 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
             <?php endif; ?>
         </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
 
-        <?php if (!in_array($pagina, ['sobre', 'perfil', 'mensagens', 'curriculo'], true)): ?>
+        <?php if (!in_array($pagina, ['sobre', 'perfil', 'mensagens', 'curriculo', 'suporte'], true)): ?>
             <?= dashboardDetailPanel() ?>
-        <?php elseif ($pagina !== 'mensagens'): ?>
+        <?php elseif ($pagina !== 'mensagens' && $pagina !== 'suporte'): ?>
             <aside class="detalhe-area"> <!-- Explicação DevIN: Declara conteúdo auxiliar. -->
                 <?php if ($pagina === 'sobre'): ?>
                     <h2>Contato</h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. -->
@@ -940,6 +942,9 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
     <?php endif; ?>
     <?php if ($pagina === 'curriculo'): ?>
         <script src="../js/curriculo.js?v=<?= filemtime(__DIR__ . '/../js/curriculo.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
+    <?php endif; ?>
+    <?php if ($pagina === 'suporte'): ?>
+        <script src="../js/support-ui.js?v=<?= filemtime(__DIR__ . '/../js/support-ui.js') ?>" defer></script> <!-- Inicializa o suporte sem sair do dashboard. -->
     <?php endif; ?>
     <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
 </body> <!-- Explicação DevIN: Fecha elemento body do documento. -->

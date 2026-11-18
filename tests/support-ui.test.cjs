@@ -10,7 +10,7 @@ const root = path.resolve(__dirname,'..'); // Localiza o repositório.
 const read = name => fs.readFileSync(path.join(root,name),'utf8'); // Carrega arquivo.
 
 test('interface exige assunto e descrição e anexo opcional de 20 MB', () => { // Explicação DevIN: Declara o tipo exige e inicia sua estrutura.
-    const page = read('php/suporte.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
+    const page = read('php/components/support-user.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
     const js = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript js para reutilizar valor ou resultado.
     assert.match(page, /name="category"\s+required/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(page, /name="description"[\s\S]*?required/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
@@ -27,11 +27,22 @@ test('ADM e usuários acessam suporte por menu e botão de Ajuda', () => { // Ex
     assert.match(admin,/dashboardIcon\('flag'\)[\s\S]*?Reports/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     for(const page of ['pessoa','empresa']) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
         const html = read('php/'+page+'.php'); // Explicação DevIN: Declara variável JavaScript html para reutilizar valor ou resultado.
-        assert.match(html,/href="suporte\.php"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+        assert.match(html, new RegExp('href="'+page+'\\.php\\?pagina=suporte"')); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
         assert.match(html,/class="support-floating-help"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
         assert.match(html,/dashboardIcon\('lifebuoy'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('Central de Ajuda preserva a sidebar e redireciona acessos antigos', () => { // Verifica regressões na integração ao dashboard.
+    const redirect = read('php/suporte.php'); // Compatibilidade com links de suporte já enviados.
+    assert.match(redirect, /pagina=suporte/); // Links antigos abrem a área integrada.
+    for (const account of ['pessoa', 'empresa']) { // Os dois tipos de usuário devem conservar o menu.
+        const dashboard = read('php/' + account + '.php'); // Inspeciona o layout real.
+        assert.match(dashboard, /components\/support-user\.php/); // Renderiza o formulário dentro do painel.
+        assert.match(dashboard, /class="sidebar"/); // O menu continua presente.
+        assert.match(dashboard, /support-ui\.js/); // O histórico de chamados continua funcionando.
+    } // Finaliza a verificação dos dashboards.
+}); // Finaliza o teste de integração visual.
 
 test('anexos privados e exibição de texto sem HTML dinâmico', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     const src=read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript src para reutilizar valor ou resultado.
@@ -73,7 +84,7 @@ test('JARVIS só consulta a central, sem escrever ou baixar anexos', () => { // 
  * horizontal e devem permitir navegação por botões acessíveis ao toque.
  */
 test('central do usuário usa abas de chamado e histórico em celulares', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
-    const page = read('php/suporte.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
+    const page = read('php/components/support-user.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
     const script = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript script para reutilizar valor ou resultado.
     assert.match(page, /data-support-mobile-tabs/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(page, /data-support-mobile-target="create"/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
@@ -111,7 +122,7 @@ test('layout responsivo possui teclado legível e proteção da barra inferior',
  * e o administrador deve poder filtrar a fila e responder com contador claro.
  */
 test('a leitura de um chamado recolhe a lista longa somente no celular', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
-    const user = read('php/suporte.php'); // Explicação DevIN: Declara variável JavaScript user para reutilizar valor ou resultado.
+    const user = read('php/components/support-user.php'); // Explicação DevIN: Declara variável JavaScript user para reutilizar valor ou resultado.
     const code = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript code para reutilizar valor ou resultado.
     const css = read('css/support.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
     assert.match(user, /data-support-history-overview/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.

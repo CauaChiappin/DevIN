@@ -4785,3 +4785,18 @@ body.account-deleting .dashboard-shell { /* Explicação DevIN: Inicia bloco de 
 .profile-tools__link:hover { background:#edf7ff; border-color:#478cc0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .profile-tools__link:focus-visible { outline:3px solid #edb447; outline-offset:3px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 @media(max-width:570px) { .profile-tools {padding:12px;} .profile-tools__links {grid-template-columns:1fr;} } /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+
+/* Suporte acompanha o mesmo painel lateral dos demais módulos DevIN. */
+.dashboard-shell.page-suporte { grid-template-columns: var(--sidebar-width) minmax(0, 1fr); } /* Ocupa o espaço da lista e do antigo painel de detalhes. */
+.dashboard-shell.page-suporte .lista-area { width: 100%; min-width: 0; box-sizing: border-box; padding: 26px clamp(14px, 3vw, 38px); background: #f8f7f2; border-right: 0; overflow-y: auto; } /* Mantém a central ao lado do menu. */
+.dashboard-shell.page-suporte .support-main { box-sizing: border-box; width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 0 44px; } /* Aproveita a largura do painel. */
+.dashboard-shell.page-suporte .detalhe-area { display: none; } /* Suporte não necessita coluna de detalhes. */
+.dashboard-shell.page-suporte [hidden] { display: none !important; } /* Respeita estados das abas e dos anexos. */
+@media (max-width: 980px) { /* Continua responsivo em tablets. */
+    .dashboard-shell.page-suporte .lista-area { height: auto; min-height: 100dvh; overflow: visible; } /* Evita duas barras de rolagem. */
+} /* Finaliza os ajustes de tablet. */
+@media (max-width: 720px) { /* Mantém a navegação original do celular. */
+    .dashboard-shell.page-suporte { grid-template-columns: minmax(0, 1fr); } /* Sidebar continua no fluxo do dashboard. */
+    .dashboard-shell.page-suporte .lista-area { grid-column: 1; padding: 16px 10px 30px; } /* Central usa a largura integral. */
+    .dashboard-shell.page-suporte .support-main { padding: 0 0 28px; } /* Remove margens duplicadas da página antiga. */
+} /* Finaliza os ajustes de celular. */
