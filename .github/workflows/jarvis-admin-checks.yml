@@ -212,6 +212,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_hiring_ci CHARACTER SET utf8mb4" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           mysql -h 127.0.0.1 -u root devin_hiring_ci < database/migrations/2026_11_18_006_employment_confirmation.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/employment_workflow_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+      - name: Install PHP dependencies for profile integration # Explicação DevIN: O login e o controlador carregam o autoload do Composer.
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress # Explicação DevIN: Instala dependências reais antes do teste de login.
       - name: Email change regression in disposable MySQL # Explicação DevIN: Regressões reais de identidade nos três tipos de conta.
         env: # Explicação DevIN: Configura exclusivamente o banco isolado do executor.
           PROFILE_TEST_HOST: 127.0.0.1 # Explicação DevIN: Usa o serviço de teste.
