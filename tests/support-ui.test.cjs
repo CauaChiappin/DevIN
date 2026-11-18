@@ -151,34 +151,34 @@ test('resposta administrativa tem contagem e área de ações móvel', () => { /
     assert.match(css, /support-admin-view \.support-actions\s*\{\s*position:\s*sticky/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('tradução do suporte é única e mantém nome, relatos e arquivo privados', () => { // Explicação DevIN: Evita retorno de interface misturada.
-    const root = read('php/components/support-user.php'); // Explicação DevIN: Analisa a área de pessoa e empresa.
-    const admin = read('php/components/support-admin.php'); // Explicação DevIN: Analisa a área do administrador.
-    const locale = read('js/support-locale.js'); // Explicação DevIN: Inspeciona o tradutor exclusivo.
-    const global = read('js/dashboard-i18n.js'); // Explicação DevIN: Inspeciona o observador de idioma principal.
-    assert.match(root, /translate="no" data-support-root/); // Explicação DevIN: Evita tradução nativa parcial do navegador.
-    assert.match(admin, /translate="no" data-support-root/); // Explicação DevIN: Aplica a mesma regra aos ADMs.
-    assert.match(locale, /DevINTranslate/); // Explicação DevIN: Usa o idioma configurado no DevIN.
-    assert.match(locale, /data-support-list/); // Explicação DevIN: Não traduz relatos apresentados pelo servidor.
-    assert.match(locale, /tagName === 'STRONG'/); // Explicação DevIN: Preserva o nome da conta.
-    assert.match(global, /script, style, textarea, input, \[data-support-root\]/); // Explicação DevIN: Impede tradução dupla pelo observador.
-    assert.match(root, /data-support-file-name/); // Explicação DevIN: Nome do arquivo é exibido em controle traduzível.
-    assert.match(root, /support-file-picker-action/); // Explicação DevIN: Botão não depende de idioma nativo do Chrome.
-    for (const role of ['empresa', 'pessoa', 'adm']) { // Explicação DevIN: Garante localização nos três painéis.
-        assert.match(read('php/' + role + '.php'), /support-locale\.js/); // Explicação DevIN: Confirma carregamento do tradutor.
-    } // Explicação DevIN: Finaliza os três tipos de conta.
-}); // Explicação DevIN: Encerra verificação da tradução.
+test('tradução do suporte é única e mantém nome, relatos e arquivo privados', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const root = read('php/components/support-user.php'); // Explicação DevIN: Declara variável JavaScript root para reutilizar valor ou resultado.
+    const admin = read('php/components/support-admin.php'); // Explicação DevIN: Declara variável JavaScript admin para reutilizar valor ou resultado.
+    const locale = read('js/support-locale.js'); // Explicação DevIN: Declara variável JavaScript locale para reutilizar valor ou resultado.
+    const global = read('js/dashboard-i18n.js'); // Explicação DevIN: Declara variável JavaScript global para reutilizar valor ou resultado.
+    assert.match(root, /translate="no" data-support-root/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(admin, /translate="no" data-support-root/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(locale, /DevINTranslate/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(locale, /data-support-list/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(locale, /tagName === 'STRONG'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(global, /script, style, textarea, input, \[data-support-root\]/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(root, /data-support-file-name/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(root, /support-file-picker-action/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    for (const role of ['empresa', 'pessoa', 'adm']) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+        assert.match(read('php/' + role + '.php'), /support-locale\.js/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('erro do banco identifica migração pendente sem duplicar alerta de formulário', () => { // Explicação DevIN: Diferencia erro de ambiente de falha visual.
-    const api = read('php/support_api.php'); // Explicação DevIN: Analisa a resposta JSON do servidor.
-    const service = read('php/controllers/SupportDesk.php'); // Explicação DevIN: Analisa a regra de diagnóstico de tabelas.
-    const ui = read('js/support-ui.js'); // Explicação DevIN: Analisa o feedback do navegador.
-    assert.match(api, /SUPPORT_SCHEMA_MISSING/); // Explicação DevIN: Identifica a falta de tabela.
-    assert.match(api, /SUPPORT_UNAVAILABLE/); // Explicação DevIN: Diferencia demais falhas no servidor.
-    assert.match(service, /SupportSchemaMissingException/); // Explicação DevIN: Detecta somente erro de esquema.
-    assert.match(service, /getCode\(\) === 1146/); // Explicação DevIN: Não confunde permissões com ausência de tabela.
-    assert.match(ui, /Não foi possível carregar os chamados/); // Explicação DevIN: Mostra falha junto ao histórico.
-    assert.match(ui, /list\.append\(button\(t\('Tentar novamente'/); // Explicação DevIN: Permite repetir consulta sem atualizar a página.
-    assert.match(ui, /mobilePanels\?\.dataset\.mobileView !== 'create'/); // Explicação DevIN: Mantém um único feedback visível.
-    assert.match(read('database/migrations/2026_11_17_005_support_center.sql'), /CREATE TABLE IF NOT EXISTS support_tickets/); // Explicação DevIN: Migração oficial permanece disponível.
-}); // Explicação DevIN: Encerra o contrato de diagnóstico seguro.
+test('erro do banco identifica migração pendente sem duplicar alerta de formulário', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const api = read('php/support_api.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+    const service = read('php/controllers/SupportDesk.php'); // Explicação DevIN: Declara variável JavaScript service para reutilizar valor ou resultado.
+    const ui = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript ui para reutilizar valor ou resultado.
+    assert.match(api, /SUPPORT_SCHEMA_MISSING/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(api, /SUPPORT_UNAVAILABLE/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(service, /SupportSchemaMissingException/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(service, /getCode\(\) === 1146/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /Não foi possível carregar os chamados/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /list\.append\(button\(t\('Tentar novamente'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /mobilePanels\?\.dataset\.mobileView !== 'create'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(read('database/migrations/2026_11_17_005_support_center.sql'), /CREATE TABLE IF NOT EXISTS support_tickets/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
