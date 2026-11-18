@@ -13,7 +13,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/controllers/ArcadeProgressPolicy.php';
+require_once __DIR__ . '/controllers/ArcadeProgressPolicy.php'; // Exige uma sessão com desbloqueio válido para a API dos jogos.
 require_once __DIR__ . '/controllers/ArcadeAccess.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -69,9 +69,9 @@ function arcadeGameLimits(): array // Explicação DevIN: Declara função/méto
 
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $usuario = requireWebAuth(); // Explicação DevIN: Atribui um valor à variável PHP $usuario.
-    if (!ArcadeAccess::isUnlocked($usuario)) {
-        arcadeRespond(['sucesso' => false, 'mensagem' => 'Arcade não liberado nesta sessão.'], 403);
-    }
+    if (!ArcadeAccess::isUnlocked($usuario)) { // Exige uma sessão com desbloqueio válido para a API dos jogos.
+        arcadeRespond(['sucesso' => false, 'mensagem' => 'Arcade não liberado nesta sessão.'], 403); // Exige uma sessão com desbloqueio válido para a API dos jogos.
+    } // Exige uma sessão com desbloqueio válido para a API dos jogos.
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
     ensureArcadeProgressTable($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
 

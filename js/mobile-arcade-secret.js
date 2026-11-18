@@ -42,28 +42,28 @@
             if (!opening) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             navigationTimer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             trackingPointer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            try {
-                const csrfResponse = await fetch(new URL('csrf.php', window.location.href).toString(), { credentials: 'same-origin' });
-                const csrfData = await csrfResponse.json();
-                if (!csrfResponse.ok || csrfData.sucesso !== true || typeof csrfData.token !== 'string') {
-                    throw new Error('Não foi possível validar a sessão.');
-                }
-                const response = await fetch(new URL('arcade_unlock.php', window.location.href).toString(), {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-                    body: new URLSearchParams({ csrf_token: csrfData.token, modo: 'toque' })
-                });
-                const result = await response.json();
-                if (!response.ok || result.sucesso !== true || typeof result.url !== 'string') {
-                    throw new Error(result.mensagem || 'Não foi possível liberar os jogos.');
-                }
-                if (opening) window.location.assign(result.url);
-            } catch (error) {
-                if (opening) {
-                    cancel();
-                    button.setAttribute('aria-label', 'Não foi possível abrir o Arcade. Tente novamente.');
-                }
+            try { // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                const csrfResponse = await fetch(new URL('csrf.php', window.location.href).toString(), { credentials: 'same-origin' }); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                const csrfData = await csrfResponse.json(); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                if (!csrfResponse.ok || csrfData.sucesso !== true || typeof csrfData.token !== 'string') { // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                    throw new Error('Não foi possível validar a sessão.'); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                } // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                const response = await fetch(new URL('arcade_unlock.php', window.location.href).toString(), { // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                    method: 'POST', // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                    credentials: 'same-origin', // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                    body: new URLSearchParams({ csrf_token: csrfData.token, modo: 'toque' }) // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                }); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                const result = await response.json(); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                if (!response.ok || result.sucesso !== true || typeof result.url !== 'string') { // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                    throw new Error(result.mensagem || 'Não foi possível liberar os jogos.'); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                } // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                if (opening) window.location.assign(result.url); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+            } catch (error) { // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                if (opening) { // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                    cancel(); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                    button.setAttribute('aria-label', 'Não foi possível abrir o Arcade. Tente novamente.'); // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
+                } // Valida o desbloqueio por toque longo antes de navegar ao Arcade.
             } // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         }, 260); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
