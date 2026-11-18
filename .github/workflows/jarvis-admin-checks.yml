@@ -192,14 +192,14 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           mysql -h 127.0.0.1 -u root devin_support_ci < database/migrations/2026_11_17_005_support_center.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/support_center_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
-      - name: Employment confirmation - disposable MySQL database
-        env:
-          HIRING_TEST_HOST: 127.0.0.1
-          HIRING_TEST_DB: devin_hiring_ci
-          HIRING_TEST_USER: root
-          HIRING_TEST_PASSWORD: jarvis-ci-only
-          MYSQL_PWD: jarvis-ci-only
-        run: |
-          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_hiring_ci CHARACTER SET utf8mb4"
-          mysql -h 127.0.0.1 -u root devin_hiring_ci < database/migrations/2026_11_18_006_employment_confirmation.sql
-          php tests/employment_workflow_mysql.php
+      - name: Employment confirmation - disposable MySQL database # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          HIRING_TEST_HOST: 127.0.0.1 # Explicação DevIN: Configura propriedade YAML (campo HIRING_TEST_HOST).
+          HIRING_TEST_DB: devin_hiring_ci # Explicação DevIN: Configura propriedade YAML (campo HIRING_TEST_DB).
+          HIRING_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo HIRING_TEST_USER).
+          HIRING_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo HIRING_TEST_PASSWORD).
+          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_PWD).
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_hiring_ci CHARACTER SET utf8mb4" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          mysql -h 127.0.0.1 -u root devin_hiring_ci < database/migrations/2026_11_18_006_employment_confirmation.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/employment_workflow_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
