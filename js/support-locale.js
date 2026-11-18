@@ -25,4 +25,6 @@
             if (translated !== original) element.setAttribute(name, translated); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    const counter = root.querySelector('[data-support-description-counter]'); // Explicação DevIN: Declara variável JavaScript counter para reutilizar valor ou resultado.
+    if (counter) counter.textContent = counter.textContent.replace(/caracteres$/, translate('caracteres')); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 })(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
