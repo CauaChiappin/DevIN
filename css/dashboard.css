@@ -4754,24 +4754,24 @@ body.account-deleting .dashboard-shell { /* Explicação DevIN: Inicia bloco de 
  * comum de jogos fica oculto para que o pequeno controle seja uma descoberta.
  * A autenticação de php/arcade.php não muda; esconder menu não é segurança.
  */
-.sobre-secret-arcade { display: none; } /* Explicação DevIN: Mantém o easter egg completamente invisível em navegadores desktop com mouse. */
+.sobre-secret-arcade { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-@media (hover: none) and (pointer: coarse) and (max-width: 1024px) { /* Explicação DevIN: Habilita o segredo somente em celulares e tablets de toque, não no computador. */
-    .menu-principal .menu-arcade { display: none !important; } /* Explicação DevIN: Oculta apenas o link comum de jogos no menu mobile, preservando acesso pelo gesto e desktop. */
-    .sobre-team-card .sobre-secret-arcade { display: flex; justify-content: flex-end; margin-top: 10px; border-top: 1px solid #e7dfd5; padding-top: 9px; } /* Explicação DevIN: Coloca o pequeno controle após a lista de fundadores, alinhado à direita. */
-    .sobre-secret-arcade-button { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; padding: 9px; border: 1px solid #c8d8e8; border-radius: 13px; color: #245d93; background: #eff6fc; cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: background-color .18s, color .18s, transform .18s; } /* Explicação DevIN: Cria alvo tátil de 45px sem interferir na rolagem do resto da página. */
-    .sobre-secret-arcade-button svg { width: 24px; height: 24px; pointer-events: none; } /* Explicação DevIN: Mantém o ícone proporcional e direciona o toque ao botão pai. */
-    .sobre-secret-arcade-spark { position: absolute; top: 1px; right: 3px; font-size: 11px; color: #d4982d; pointer-events: none; } /* Explicação DevIN: Oferece uma pequena pista visual de descoberta, sem texto chamativo. */
-    .sobre-secret-arcade-button.is-holding { background: #dbeeff; color: #004d8f; transform: scale(.98); } /* Explicação DevIN: Indica que o gesto prolongado foi reconhecido pelo navegador. */
-    .sobre-secret-arcade-button.is-holding::after { content: ""; position: absolute; inset: -4px; border-radius: 16px; border: 2px solid transparent; border-top-color: #0059a8; border-right-color: #d4982d; animation: devin-arcade-secret-spin .8s linear infinite; pointer-events: none; } /* Explicação DevIN: Exibe contorno animado enquanto aguarda três segundos completos. */
-    .sobre-secret-arcade-button.is-discovered { background: #0059a8; color: white; } /* Explicação DevIN: Confirma visualmente a descoberta antes da navegação autenticada. */
-    .sobre-secret-arcade-button:focus-visible { outline: 3px solid #e4a83f; outline-offset: 3px; } /* Explicação DevIN: Preserva descoberta por teclado assistivo com foco acessível. */
-} /* Explicação DevIN: Finaliza as regras destinadas exclusivamente a telas sensíveis ao toque. */
+@media (hover: none) and (pointer: coarse) and (max-width: 1024px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .menu-principal .menu-arcade { display: none !important; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .sobre-team-card .sobre-secret-arcade { display: flex; justify-content: flex-end; margin-top: 10px; border-top: 1px solid #e7dfd5; padding-top: 9px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .sobre-secret-arcade-button { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; padding: 9px; border: 1px solid #c8d8e8; border-radius: 13px; color: #245d93; background: #eff6fc; cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: background-color .18s, color .18s, transform .18s; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .sobre-secret-arcade-button svg { width: 24px; height: 24px; pointer-events: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .sobre-secret-arcade-spark { position: absolute; top: 1px; right: 3px; font-size: 11px; color: #d4982d; pointer-events: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .sobre-secret-arcade-button.is-holding { background: #dbeeff; color: #004d8f; transform: scale(.98); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .sobre-secret-arcade-button.is-holding::after { content: ""; position: absolute; inset: -4px; border-radius: 16px; border: 2px solid transparent; border-top-color: #0059a8; border-right-color: #d4982d; animation: devin-arcade-secret-spin .8s linear infinite; pointer-events: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .sobre-secret-arcade-button.is-discovered { background: #0059a8; color: white; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .sobre-secret-arcade-button:focus-visible { outline: 3px solid #e4a83f; outline-offset: 3px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@keyframes devin-arcade-secret-spin { /* Explicação DevIN: Define feedback visual contínuo durante a pressão longa. */
-    to { transform: rotate(360deg); } /* Explicação DevIN: Gira apenas o contorno, mantendo ícone e texto estáveis. */
-} /* Explicação DevIN: Finaliza a animação do contorno secreto. */
+@keyframes devin-arcade-secret-spin { /* Explicação DevIN: Define sequência de quadros de uma animação CSS. */
+    to { transform: rotate(360deg); } /* Explicação DevIN: Declara etapa de uma animação ou transição CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
-@media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Respeita usuários que optaram por menos movimento no aparelho. */
-    .sobre-secret-arcade-button, .sobre-secret-arcade-button.is-holding::after { animation: none !important; transition: none !important; } /* Explicação DevIN: Remove giro e transição, mantendo o gesto funcional e o feedback de cor. */
-} /* Explicação DevIN: Encerra as preferências de acessibilidade para movimento reduzido. */
+@media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .sobre-secret-arcade-button, .sobre-secret-arcade-button.is-holding::after { animation: none !important; transition: none !important; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
