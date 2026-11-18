@@ -10,6 +10,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
  * Uma resposta é gravada antes de notificar; falhas de SMTP são registradas
  * separadamente para permitir uma nova tentativa sem duplicar a resposta.
  */
+final class SupportSchemaMissingException extends RuntimeException {} // Explicação DevIN: Distingue tabelas ausentes de falhas comuns do MySQL.
 final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Limite solicitado: 20 MiB reais, validado no servidor além do HTML.
@@ -39,11 +40,12 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             $db->query('SELECT id FROM support_tickets LIMIT 0'); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
             $db->query('SELECT id FROM support_replies LIMIT 0'); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
-        } catch (mysqli_sql_exception $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-            throw new RuntimeException( // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
-                'O suporte ainda não foi configurado no banco. Aplique a migração de suporte.', 0, $error // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-            ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        } catch (mysqli_sql_exception $error) { // Explicação DevIN: Captura falhas ao consultar a estrutura do suporte.
+            if ((int) $error->getCode() === 1146) { // Explicação DevIN: Identifica somente a ausência de tabela no MySQL.
+                throw new SupportSchemaMissingException('Tabelas de suporte ausentes.', 0, $error); // Explicação DevIN: Expõe erro específico sem vazar SQL ao navegador.
+            } // Explicação DevIN: Conclui a identificação de tabela não encontrada.
+            throw $error; // Explicação DevIN: Mantém outros erros para diagnóstico seguro em log.
+        } // Explicação DevIN: Conclui a verificação do esquema.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Obtém a identidade a partir da conta real; jamais confia no nome/e-mail do POST.

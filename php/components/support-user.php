@@ -9,7 +9,7 @@ if (!in_array($actor['tipo'], ['pessoa', 'empresa'], true)) { // Impede uso do f
     exit('Tipo de conta não autorizado.'); // Não processa dados sem permissão.
 } // Conclui a validação do tipo de conta.
 ?>
-<div class="support-main" data-support-root data-role="user"
+<div class="support-main" translate="no" data-support-root data-role="user"
           data-endpoint="support_api.php" data-csrf="<?= h(csrfToken()) ?>">
         <div class="support-hero"> <!-- Nota DevIN: Declara agrupamento de elementos. -->
             <span class="support-eyebrow">SUPORTE DEVIN</span> <!-- Nota DevIN: Declara trecho em linha. -->
@@ -46,9 +46,15 @@ if (!in_array($actor['tipo'], ['pessoa', 'empresa'], true)) { // Impede uso do f
                               placeholder="Explique o problema, onde ocorreu e o que você esperava encontrar. Não envie senhas nem tokens."></textarea>
                     <div class="support-counter" data-support-description-counter aria-live="off">0 / 4000 caracteres</div> <!-- Nota DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
                     <label for="support-attachment">Anexo <small>(opcional, até 20 MB)</small></label> <!-- Nota DevIN: Declara rótulo associado a um campo. A linha reúne múltiplos elementos. -->
-                    <input id="support-attachment" name="attachment" type="file"
-                           accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.log,.docx,.zip"
-                           aria-describedby="support-attachment-status">
+                    <div class="support-file-control"> <!-- Nota DevIN: Substitui os textos nativos do navegador por rótulos traduzíveis. -->
+                        <input id="support-attachment" class="support-file-native" name="attachment" type="file"
+                               accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.log,.docx,.zip"
+                               aria-describedby="support-attachment-status">
+                        <label for="support-attachment" class="support-file-picker"> <!-- Nota DevIN: Permite abrir o seletor pelo rótulo acessível. -->
+                            <span class="support-file-picker-action">Escolher arquivo</span> <!-- Nota DevIN: Ação de escolha traduzível. -->
+                            <span class="support-file-picker-name" data-support-file-name>Nenhum arquivo selecionado</span> <!-- Nota DevIN: Nome atualizado após selecionar um arquivo. -->
+                        </label> <!-- Nota DevIN: Fecha o controle visual do anexo. -->
+                    </div> <!-- Nota DevIN: Fecha a área de escolha de arquivo. -->
                     <!-- Feedback de seleção é atualizado no próprio aparelho, antes do envio. -->
                     <div class="support-file-preview" data-support-file-preview hidden> <!-- Nota DevIN: Declara agrupamento de elementos. -->
                         <span id="support-attachment-status" data-support-attachment-status aria-live="polite"></span> <!-- Nota DevIN: Declara trecho em linha. Inclui atributos de acessibilidade. -->

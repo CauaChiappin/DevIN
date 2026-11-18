@@ -737,6 +737,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     <!-- Suporte usa estilos isolados para não alterar os componentes existentes. -->
     <?php if ($pagina === 'suporte'): ?>
         <link rel="stylesheet" href="../css/support.css?v=<?= filemtime(__DIR__ . '/../css/support.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
+        <script src="../js/support-locale.js?v=<?= filemtime(__DIR__ . '/../js/support-locale.js') ?>" defer></script> <!-- Explicação DevIN: Aplica tradução do Suporte sem alterar dados privados. -->
         <script src="../js/support-ui.js?v=<?= filemtime(__DIR__ . '/../js/support-ui.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
  <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->

@@ -1607,6 +1607,17 @@
     Object.assign(dictionary, newerTranslations[language] || {}); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
     // Tradução compartilhada da Central de Suporte em português, inglês e espanhol.
     const supportTranslations = [ // Explicação DevIN: Declara variável JavaScript supportTranslations para reutilizar valor ou resultado.
+        ["Atendimento associado à conta", "Support for account", "Atención asociada a la cuenta"], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["Anexos são privados e acessíveis apenas ao dono do chamado e aos ADMs.", "Attachments are private and available only to the request owner and administrators.", "Los archivos adjuntos son privados y solo están disponibles para el titular de la solicitud y los administradores."], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["Escolher arquivo", "Choose file", "Elegir archivo"], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["Nenhum arquivo selecionado", "No file selected", "Ningún archivo seleccionado"], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["Tentar novamente", "Try again", "Reintentar"], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["Não foi possível carregar os chamados.", "Could not load requests.", "No se pudieron cargar las solicitudes."], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["A Central de Suporte está temporariamente indisponível. Tente novamente mais tarde.", "The Support Center is temporarily unavailable. Please try again later.", "El centro de soporte no está disponible temporalmente. Inténtalo de nuevo más tarde."], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["As tabelas do suporte não estão instaladas. Execute a migração de suporte.", "The support tables are not installed. Run the support migration.", "Las tablas de soporte no están instaladas. Ejecuta la migración de soporte."], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["Ocorreu um problema com o servidor. Tente novamente mais tarde.", "There was a server problem. Please try again later.", "Se produjo un problema en el servidor. Inténtalo de nuevo más tarde."], // Explicação DevIN: Traduz um texto fixo do Suporte.
+        ["Falha ao enviar chamado.", "Could not submit request.", "No se pudo enviar la solicitud."], // Explicação DevIN: Traduz um texto fixo do Suporte.
+
         ["Suporte", "Support", "Soporte"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
         ["SUPORTE DEVIN", "DEVIN SUPPORT", "SOPORTE DEVIN"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
         ["CENTRAL DE ATENDIMENTO · DEVIN", "DEVIN HELP DESK", "CENTRO DE ATENCIÓN · DEVIN"], // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
@@ -1804,7 +1815,7 @@
 
     const translatedAttributes = ['placeholder', 'aria-label', 'title', 'alt', 'data-confirm-logout']; // Explicação DevIN: Declara variável JavaScript translatedAttributes para reutilizar valor ou resultado.
     const translateTextNode = (node) => { // Explicação DevIN: Declara variável JavaScript translateTextNode para reutilizar valor ou resultado.
-        if (node.parentElement && node.parentElement.closest('script, style, textarea, input')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (node.parentElement && node.parentElement.closest('script, style, textarea, input, [data-support-root]')) return; // Explicação DevIN: O suporte traduz seus próprios textos para impedir idiomas misturados.
         const translated = translate(node.nodeValue); // Explicação DevIN: Declara variável JavaScript translated para reutilizar valor ou resultado.
         if (translated !== node.nodeValue) node.nodeValue = translated; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -1813,6 +1824,7 @@
             translatedAttributes.map((attribute) => `[${attribute}]`).join(',') // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
         )]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
         elements.forEach((target) => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo da.
+            if (target.closest?.('[data-support-root]')) return; // Explicação DevIN: Evita retraduzir rótulos da Central de Suporte.
             for (const attribute of translatedAttributes) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
                 if (!target.hasAttribute(attribute)) continue; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 const value = target.getAttribute(attribute); // Explicação DevIN: Declara variável JavaScript value para reutilizar valor ou resultado.
@@ -1822,6 +1834,7 @@
         }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     const translateElement = (element) => { // Explicação DevIN: Declara variável JavaScript translateElement para reutilizar valor ou resultado.
+        if (element.closest?.('[data-support-root]')) return; // Explicação DevIN: Isola a Central para localização consistente.
         const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         let node; // Explicação DevIN: Declara variável JavaScript node para reutilizar valor ou resultado.
         while ((node = walker.nextNode())) translateTextNode(node); // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
@@ -1847,6 +1860,7 @@
 
             if (mutation.type === 'attributes' && translatedAttributes.includes(mutation.attributeName)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 const element = mutation.target; // Explicação DevIN: Declara variável JavaScript element para reutilizar valor ou resultado.
+                if (element.closest?.('[data-support-root]')) continue; // Explicação DevIN: Não altera atributos gerenciados pelo suporte.
                 const value = element.getAttribute(mutation.attributeName); // Explicação DevIN: Declara variável JavaScript value para reutilizar valor ou resultado.
                 const translated = translate(value); // Explicação DevIN: Declara variável JavaScript translated para reutilizar valor ou resultado.
                 if (translated !== value) element.setAttribute(mutation.attributeName, translated); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
