@@ -113,6 +113,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvi
                     throw new RuntimeException('Candidatura não encontrada.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
                 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+                // Não aprovar nem recusar uma candidatura que a pessoa retirou.
+                // Conferir no servidor após o lock, mesmo se o botão antigo permanecer aberto.
+                if (EmploymentWorkflow::isWithdrawn($conn, $idCandidatura)) {
+                    throw new DomainException('Esta pessoa retirou a candidatura após confirmar outra contratação.');
+                }
                 if ($status === 'aprovado' && $candidatura['status'] !== 'aprovado') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                     $stmt = $conn->prepare('SELECT id_candidatura FROM candidatura WHERE id_vaga = ? AND status = "aprovado" FOR UPDATE'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
                     $stmt->bind_param('i', $vagaId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
@@ -413,7 +418,13 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         if ($stmtCandidatos) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $stmtCandidatos->bind_param('i', $empresaId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmtCandidatos->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
-            $candidatos = $stmtCandidatos->get_result()->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+            $candidatos = $stmtCandidatos->get_result()->fetch_all(MYSQLI_ASSOC);
+            // A lista de empresa não oferece ações sobre inscrições encerradas pelo candidato.
+            // A migração é opcional no legado; em banco novo a tabela de retiradas é consultada.
+            $withdrawnIds = EmploymentWorkflow::withdrawnForCompany($conn, $empresaId);
+            $candidatos = array_values(array_filter($candidatos, static fn(array $candidate): bool =>
+                !isset($withdrawnIds[(int) $candidate['id_candidatura']])));
+ // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
             $stmtCandidatos->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
