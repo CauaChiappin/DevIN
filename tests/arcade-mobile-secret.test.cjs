@@ -1,150 +1,90 @@
 /**
- * Testes do atalho secreto para dispositivos touch dentro de "Sobre nós".
- * O navegador é simulado para provar que mouse, arrasto ou toque curto não
- * abrem o Arcade, enquanto pressão de três segundos mantém o Konami desktop.
+ * Testes do segredo mobile com cinco toques, usando eventos click reais simulados.
+ * Não depende de pointer:coarse, long-press nem de botão público.
  */
-const test = require('node:test'); // Explicação DevIN: Declara variável JavaScript test para reutilizar valor ou resultado.
-const assert = require('node:assert/strict'); // Explicação DevIN: Declara variável JavaScript assert para reutilizar valor ou resultado.
-const fs = require('node:fs'); // Explicação DevIN: Declara variável JavaScript fs para reutilizar valor ou resultado.
-const path = require('node:path'); // Explicação DevIN: Declara variável JavaScript path para reutilizar valor ou resultado.
-const vm = require('node:vm'); // Explicação DevIN: Declara variável JavaScript vm para reutilizar valor ou resultado.
-const root = path.resolve(__dirname, '..'); // Explicação DevIN: Declara variável JavaScript root para reutilizar valor ou resultado.
-const read = file => fs.readFileSync(path.join(root, file), 'utf8'); // Explicação DevIN: Declara variável JavaScript read para reutilizar valor ou resultado.
+const test = require('node:test'); // Explicação DevIN: Disponibiliza o runner padrão Node.
+const assert = require('node:assert/strict'); // Explicação DevIN: Compara resultados sem coerções.
+const fs = require('node:fs'); // Explicação DevIN: Lê arquivos do código versionado.
+const path = require('node:path'); // Explicação DevIN: Resolve caminhos do repositório.
+const vm = require('node:vm'); // Explicação DevIN: Simula o navegador com isolamento.
+const root = path.resolve(__dirname, '..'); // Explicação DevIN: Localiza a raiz DevIN.
+const read = name => fs.readFileSync(path.join(root,name),'utf8'); // Explicação DevIN: Obtém conteúdo sem rede.
 
-function simulate(touch = true) { // Explicação DevIN: Declara função/método simulate, com seus parâmetros e comportamento.
-    const handlers = {}; // Explicação DevIN: Declara variável JavaScript handlers para reutilizar valor ou resultado.
-    const timers = new Map(); // Explicação DevIN: Declara variável JavaScript timers para reutilizar valor ou resultado.
-    const classes = new Set(); // Explicação DevIN: Declara variável JavaScript classes para reutilizar valor ou resultado.
-    const redirects = []; // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    const requests = []; // Armazena as requisições simuladas do desbloqueio secreto.
-    let nextTimer = 1; // Explicação DevIN: Declara variável JavaScript nextTimer para reutilizar valor ou resultado.
-    const button = { // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
-        addEventListener(name, callback) { handlers[name] = callback; }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        classList: { add(name) { classes.add(name); }, remove(name) { classes.delete(name); } }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        setAttribute() {}, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    const documentListeners = {}; // Explicação DevIN: Declara variável JavaScript documentListeners para reutilizar valor ou resultado.
-    const windowListeners = {}; // Explicação DevIN: Declara variável JavaScript windowListeners para reutilizar valor ou resultado.
-    const context = { // Explicação DevIN: Declara variável JavaScript context para reutilizar valor ou resultado.
-        document: { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            querySelector: selector => selector === '[data-mobile-arcade-secret]' ? button : null, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            addEventListener: (name, callback) => { documentListeners[name] = callback; }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            hidden: false, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        window: { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            matchMedia: () => ({ matches: touch }), // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            setTimeout: (fn, ms) => { const id = nextTimer++; timers.set(id, { fn, ms }); return id; }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            clearTimeout: id => timers.delete(id), // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            addEventListener: (name, callback) => { windowListeners[name] = callback; }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            location: { href: 'https://example.org/Trabalhos/3D/DevIN/php/pessoa.php?pagina=sobre', assign: url => redirects.push(url) }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        navigator: { vibrate() {} }, // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        fetch: async (url, options) => { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-            requests.push({ url, options }); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-            return { ok: true, json: async () => url.includes('csrf.php') // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-                ? { sucesso: true, token: 'csrf-test' } // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-                : { sucesso: true, url: '/Trabalhos/3D/DevIN/php/arcade.php' } }; // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        }, // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        URLSearchParams, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        URL, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        Math, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    vm.runInNewContext(read('js/mobile-arcade-secret.js'), context); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    return { // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-        handlers, timers, classes, redirects, requests, documentListeners, windowListeners, context, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        advance(ms) { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            const hit = [...timers.entries()].find(([, value]) => value.ms === ms); // Explicação DevIN: Declara variável JavaScript hit para reutilizar valor ou resultado.
-            assert.ok(hit, 'temporizador esperado: ' + ms); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            timers.delete(hit[0]); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-            hit[1].fn(); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+function simulate(hasTarget = true, failRequest = false) { // Explicação DevIN: Cria contexto de teste para a interface secreta.
+    const handlers = {}; // Explicação DevIN: Armazena os eventos inscritos no título.
+    const events = {}; // Explicação DevIN: Armazena eventos globais de visibilidade.
+    const calls = []; // Explicação DevIN: Registra somente as requisições efetuadas.
+    const redirects = []; // Explicação DevIN: Registra navegação autorizada.
+    const alerts = []; // Explicação DevIN: Captura falhas de abertura.
+    let clock = 1000; // Explicação DevIN: Permite simular intervalos sem aguardar tempo real.
+    const title = { addEventListener: (name, fn) => { handlers[name] = fn; } }; // Explicação DevIN: Representa o título Time fundador.
+    const document = { // Explicação DevIN: Oferece apenas os recursos usados pelo módulo.
+        hidden: false, // Explicação DevIN: Inicia em uma página visível.
+        querySelector: selector => selector === '[data-mobile-arcade-secret]' && hasTarget ? title : null, // Explicação DevIN: Seleciona o título pelo atributo.
+        addEventListener: (name, fn) => { events[name] = fn; } // Explicação DevIN: Observa ocultação da página.
+    }; // Explicação DevIN: Conclui a simulação do documento.
+    const window = { // Explicação DevIN: Simula navegação e aviso no navegador.
+        location: { href: 'https://example.org/Trabalhos/3D/DevIN/php/pessoa.php?pagina=sobre', assign: link => redirects.push(link) }, // Explicação DevIN: Armazena o destino usado.
+        alert: message => alerts.push(message) // Explicação DevIN: Captura feedback caso a rede falhe.
+    }; // Explicação DevIN: Conclui a simulação da janela.
+    const fetch = async (url, options) => { // Explicação DevIN: Simula respostas HTTP sem usar o servidor.
+        calls.push({ url: String(url), options }); // Explicação DevIN: Inspeciona CSRF e caminho da API.
+        if (failRequest) throw new Error('Rede indisponível'); // Explicação DevIN: Simula uma falha recuperável.
+        return { ok: true, json: async () => String(url).includes('csrf.php') // Explicação DevIN: Oferece token na primeira chamada.
+            ? { sucesso: true, token: 'csrf-local' } // Explicação DevIN: Usa token fictício para teste.
+            : { sucesso: true, url: '/Trabalhos/3D/DevIN/php/arcade.php' } }; // Explicação DevIN: Confirma liberação pelo backend.
+    }; // Explicação DevIN: Conclui o transporte simulado.
+    vm.runInNewContext(read('js/mobile-arcade-secret.js'), {document, window, fetch, URL, URLSearchParams, Date: {now: () => clock}}); // Explicação DevIN: Executa o módulo dentro do navegador simulado.
+    return {handlers, events, document, calls, redirects, alerts, tick: ms => {clock += ms;}, tap: () => handlers.click()}; // Explicação DevIN: Expõe eventos ao teste.
+} // Explicação DevIN: Finaliza a fábrica do contexto.
 
-const down = (pointerType = 'touch') => ({ pointerId: 9, pointerType, button: 0, clientX: 100, clientY: 100 }); // Explicação DevIN: Declara variável JavaScript down para reutilizar valor ou resultado.
+test('o título Time fundador é o único acesso alternativo, sem ícone visível', () => { // Explicação DevIN: Confere o novo segredo no HTML real.
+    const html = read('php/helpers.php'); // Explicação DevIN: Lê a seção Sobre nós compartilhada.
+    assert.match(html, /<h2 class="team-header" data-mobile-arcade-secret>Time fundador<\/h2>/); // Explicação DevIN: Usa título existente.
+    assert.doesNotMatch(html, /sobre-secret-arcade-button/); // Explicação DevIN: Impede o retorno do botão público.
+    assert.doesNotMatch(read('css/dashboard.css'), /\.sobre-secret-arcade-button/); // Explicação DevIN: Remove CSS do botão antigo.
+    for (const account of ['pessoa', 'empresa', 'adm']) { // Explicação DevIN: Verifica os três painéis autenticados.
+        assert.match(read('php/' + account + '.php'), /mobile-arcade-secret\.js/); // Explicação DevIN: Mantém script do segredo em cada painel.
+        assert.match(read('php/' + account + '.php'), /konami-arcade\.js/); // Explicação DevIN: Preserva a sequência do computador.
+    } // Explicação DevIN: Conclui a verificação dos perfis.
+}); // Explicação DevIN: Encerra o teste do template.
 
-test('o segredo fica no card Time fundador e carrega nos três painéis', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    const about = read('php/helpers.php'); // Explicação DevIN: Declara variável JavaScript about para reutilizar valor ou resultado.
-    assert.match(about, /sobre-team-card[\s\S]*data-mobile-arcade-secret[\s\S]*<\/section>/); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    for (const page of ['pessoa', 'empresa', 'adm']) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
-        const source = read('php/' + page + '.php'); // Explicação DevIN: Declara variável JavaScript source para reutilizar valor ou resultado.
-        assert.match(source, /mobile-arcade-secret\.js/); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-        assert.match(source, /konami-arcade\.js/); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+test('cinco toques sucessivos liberam sessão via CSRF e navegam ao Arcade', async () => { // Explicação DevIN: Exige desbloqueio pelo backend.
+    const env = simulate(); // Explicação DevIN: Inicializa uma página com título.
+    for (let i = 0; i < 4; i++) { env.tap(); env.tick(260); } // Explicação DevIN: Executa quatro toques incompletos.
+    assert.equal(env.calls.length, 0); // Explicação DevIN: Nenhuma chamada antes do último toque.
+    env.tap(); // Explicação DevIN: Completa a sequência de cinco toques.
+    await new Promise(resolve => setImmediate(resolve)); // Explicação DevIN: Escoa promessas do fluxo assíncrono.
+    assert.equal(env.calls.length, 2); // Explicação DevIN: Busca CSRF e depois solicita desbloqueio.
+    assert.ok(env.calls[0].url.endsWith('/php/csrf.php')); // Explicação DevIN: Confirma endereço da proteção.
+    assert.ok(env.calls[1].url.endsWith('/php/arcade_unlock.php')); // Explicação DevIN: Confirma endpoint secreto.
+    assert.equal(env.calls[1].options.body.get('csrf_token'), 'csrf-local'); // Explicação DevIN: Confirma token encaminhado.
+    assert.equal(env.calls[1].options.body.get('modo'), 'toque'); // Explicação DevIN: Mantém protocolo de sessão existente.
+    assert.ok(env.redirects[0].endsWith('/php/arcade.php')); // Explicação DevIN: Só navega com confirmação do servidor.
+}); // Explicação DevIN: Encerra o teste de sucesso.
 
-test('um toque contínuo de 3000ms abre a rota autenticada do Arcade', async () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    const env = simulate(true); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
-    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.ok(env.classes.has('is-holding')); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.deepEqual(env.redirects, []); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.advance(260); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    await new Promise(resolve => setImmediate(resolve)); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    assert.equal(env.redirects.length, 1); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.ok(env.redirects[0].endsWith('/php/arcade.php')); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+test('intervalo grande e saída da página reiniciam a sequência', () => { // Explicação DevIN: Evita liberação acidental.
+    const env = simulate(); // Explicação DevIN: Cria contexto independente.
+    for (let i = 0; i < 4; i++) { env.tap(); env.tick(200); } // Explicação DevIN: Executa sequência parcial.
+    env.tick(1800); env.tap(); // Explicação DevIN: Um intervalo maior reinicia o contador.
+    assert.equal(env.calls.length, 0); // Explicação DevIN: Não libera por toques distantes.
+    env.tap(); env.document.hidden = true; env.events.visibilitychange(); // Explicação DevIN: Limpa sequência ao ocultar aba.
+    env.document.hidden = false; env.tap(); env.tap(); env.tap(); // Explicação DevIN: Retoma sequência curta.
+    assert.equal(env.calls.length, 0); // Explicação DevIN: Não herda toques antes da ocultação.
+}); // Explicação DevIN: Encerra o teste de reinício.
 
-test('toque curto, movimento de rolagem e segundo plano cancelam o segredo', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    const env = simulate(true); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
-    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.handlers.pointerup(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.timers.size, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.handlers.pointermove({ pointerId: 9, clientX: 120, clientY: 100 }); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.timers.size, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.windowListeners.scroll(); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.timers.size, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.context.document.hidden = true; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-    env.documentListeners.visibilitychange(); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.timers.size, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.redirects.length, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+test('falha de rede mostra mensagem e permite tentar novamente', async () => { // Explicação DevIN: Confere recuperação sem tela de erro crua.
+    const env = simulate(true, true); // Explicação DevIN: Simula conexão indisponível.
+    for (let i = 0; i < 5; i++) env.tap(); // Explicação DevIN: Completa a sequência secreta.
+    await new Promise(resolve => setImmediate(resolve)); // Explicação DevIN: Aguarda captura da falha.
+    assert.equal(env.redirects.length, 0); // Explicação DevIN: Bloqueia navegação sem validação.
+    assert.equal(env.alerts.length, 1); // Explicação DevIN: Mostra mensagem legível.
+    for (let i = 0; i < 5; i++) env.tap(); // Explicação DevIN: Refaz o segredo após erro.
+    assert.equal(env.calls.length, 2); // Explicação DevIN: Permite nova tentativa.
+}); // Explicação DevIN: Encerra o teste de erro.
 
-test('mouse de desktop nunca agenda o segredo e CSS oculta o botão', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    const env = simulate(false); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
-    env.handlers.pointerdown(down('mouse')); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.timers.size, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    const css = read('css/dashboard.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
-    assert.match(css, /\.sobre-secret-arcade\s*\{\s*display:\s*none/); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.match(css, /@media\s*\(hover:\s*none\)\s*and\s*\(pointer:\s*coarse\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.match(css, /\.menu-principal\s+\.menu-arcade\s*\{\s*display:\s*none/); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-
-test('soltar mesmo após completar três segundos, antes da navegação, descarta a tentativa e permite recomeçar', async () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    const env = simulate(true); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
-    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.handlers.pointerup(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.timers.size, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.redirects.length, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    assert.equal(env.classes.has('is-discovered'), false); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    env.advance(260); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    await new Promise(resolve => setImmediate(resolve)); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    assert.equal(env.redirects.length, 1); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-
-test('os menus de pessoa, empresa e ADM não exibem entrada pública para o Arcade', () => { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    for (const page of ['pessoa', 'empresa', 'adm']) { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        const source = read('php/' + page + '.php'); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        assert.doesNotMatch(source, /class="menu-arcade"|Jogos DevIN|href="arcade\.php"/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        assert.match(source, /konami-arcade\.js/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        assert.match(source, /mobile-arcade-secret\.js/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    } // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-}); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-
-test('página e API exigem liberação secreta no backend', () => { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    for (const page of ['arcade.php', 'arcade_api.php']) { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        const source = read('php/' + page); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-        assert.match(source, /ArcadeAccess::isUnlocked\(\$usuario\)/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    } // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    const mobile = read('js/mobile-arcade-secret.js'); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    assert.match(mobile, /arcade_unlock\.php/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-    assert.match(mobile, /modo:\s*'toque'/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
-}); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+test('fora de Sobre nós o segredo não instala handlers', () => { // Explicação DevIN: Mantém outras páginas sem entrada visível.
+    const env = simulate(false); // Explicação DevIN: Simula página sem título fundador.
+    assert.equal(Object.keys(env.handlers).length, 0); // Explicação DevIN: Nenhuma ação secreta é instalada.
+    assert.equal(env.calls.length, 0); // Explicação DevIN: Não aciona nenhuma requisição.
+}); // Explicação DevIN: Encerra o teste de ausência.
