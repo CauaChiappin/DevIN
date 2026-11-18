@@ -15,7 +15,7 @@ $destinations = [ // Explicação DevIN: Atribui um valor à variável PHP $dest
 if ($profileKind === 'pessoa') $destinations[] = ['Minhas candidaturas', 'pessoa.php?pagina=vagas']; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 if ($profileKind === 'empresa') $destinations[] = ['Gerenciar candidatos', 'empresa.php?pagina=candidatos']; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 if ($profileKind === 'adm') $destinations[] = ['JARVIS Admin', 'adm.php?pagina=inicio#jarvisAdmin']; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-if ($profileKind === 'adm') $destinations[] = ['Diagnóstico JARVIS', 'api/jarvis/readiness.php'];
+if ($profileKind === 'adm') $destinations[] = ['Diagnóstico JARVIS', 'api/jarvis/readiness.php']; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 // A versão comercial adiciona console de planos rascunho sem liberar compras.
 if ($profileKind === 'adm') $destinations[] = ['Gestão comercial', 'commercial_admin.php']; // API retorna somente status, sem chaves ou credenciais.
 ?>
