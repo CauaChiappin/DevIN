@@ -69,7 +69,8 @@
     // O anexo é apenas descrito no navegador: seu conteúdo nunca é lido em JavaScript.
     const attachmentInput = createForm?.querySelector('[name="attachment"]'); // Explicação DevIN: Declara variável JavaScript attachmentInput para reutilizar valor ou resultado.
     const attachmentPreview = createForm?.querySelector('[data-support-file-preview]'); // Explicação DevIN: Declara variável JavaScript attachmentPreview para reutilizar valor ou resultado.
-    const attachmentStatus = createForm?.querySelector('[data-support-attachment-status]'); // Explicação DevIN: Declara variável JavaScript attachmentStatus para reutilizar valor ou resultado.
+    const attachmentStatus = createForm?.querySelector('[data-support-attachment-status]');
+    const attachmentName = createForm?.querySelector('[data-support-file-name]'); // Explicação DevIN: Atualiza nome do arquivo no seletor traduzível. // Explicação DevIN: Declara variável JavaScript attachmentStatus para reutilizar valor ou resultado.
     const clearFile = createForm?.querySelector('[data-support-clear-file]'); // Explicação DevIN: Declara variável JavaScript clearFile para reutilizar valor ou resultado.
     const descriptionField = createForm?.querySelector('[name="description"]'); // Explicação DevIN: Declara variável JavaScript descriptionField para reutilizar valor ou resultado.
     const descriptionCounter = createForm?.querySelector('[data-support-description-counter]'); // Explicação DevIN: Declara variável JavaScript descriptionCounter para reutilizar valor ou resultado.
@@ -77,6 +78,7 @@
     function updateAttachment() { // Explicação DevIN: Declara função/método updateAttachment, com seus parâmetros e comportamento.
         if (!attachmentInput || !attachmentPreview || !attachmentStatus) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         const file = attachmentInput.files?.[0]; // Explicação DevIN: Declara variável JavaScript file para reutilizar valor ou resultado.
+        if (attachmentName) attachmentName.textContent = file ? file.name : t('Nenhum arquivo selecionado'); // Explicação DevIN: Mostra arquivo ou estado vazio no idioma da conta.
         attachmentPreview.hidden = !file; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         attachmentStatus.textContent = file // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             ? file.name + ' · ' + (file.size / (1024 * 1024)).toFixed(2) + ' MB' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -85,6 +87,7 @@
             attachmentInput.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             attachmentPreview.hidden = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             attachmentStatus.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            if (attachmentName) attachmentName.textContent = t('Nenhum arquivo selecionado'); // Explicação DevIN: Restaura rótulo após recusar arquivo grande.
             status('O anexo ultrapassa 20 MB. Escolha um arquivo menor.', true); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateAttachment.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -134,14 +137,18 @@
         return element; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    function status(text, isError = false) { // Explicação DevIN: Declara função/método status, com seus parâmetros e comportamento.
-        // A confirmação também aparece acima das abas quando o formulário está oculto.
-        for (const target of [feedback, mobileMessage]) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
-            if (!target) continue; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            target.textContent = t(text); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            target.classList.toggle('is-error', isError); // Explicação DevIN: Continua expressão ou bloco pertencente a função status.
-        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    function status(text, isError = false) { // Explicação DevIN: Exibe uma única mensagem visível para a ação atual.
+        const message = t(text); // Explicação DevIN: Traduz o feedback para o idioma selecionado.
+        if (feedback) { // Explicação DevIN: O formulário possui área própria de feedback.
+            feedback.textContent = message; // Explicação DevIN: Exibe o estado junto ao botão enviar.
+            feedback.classList.toggle('is-error', isError); // Explicação DevIN: Diferencia visualmente falhas de sucessos.
+        } // Explicação DevIN: Finaliza feedback do formulário.
+        if (mobileMessage) { // Explicação DevIN: Área superior serve a abas sem formulário visível.
+            const visible = admin || mobilePanels?.dataset.mobileView !== 'create'; // Explicação DevIN: Evita avisos repetidos na aba Nova solicitação.
+            mobileMessage.textContent = visible ? message : ''; // Explicação DevIN: Não duplica mensagens na mesma tela.
+            mobileMessage.classList.toggle('is-error', isError); // Explicação DevIN: Aplica a semântica visual correta.
+        } // Explicação DevIN: Finaliza o aviso no celular.
+    } // Explicação DevIN: Encerra a rotina de feedback.
 
     function label(ticket) { // Explicação DevIN: Declara função/método label, com seus parâmetros e comportamento.
         return t(categories[ticket.category] || ticket.category); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -173,7 +180,7 @@
             count.textContent = open + ' ' + t('aguardando atendimento') + ' · ' + tickets.length + ' ' + t('chamados exibidos'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!visible.length) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            list.append(node('p', 'Nenhum chamado encontrado.', 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
+            list.append(node('p', t('Nenhum chamado encontrado.'), 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
             return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         visible.forEach(ticket => { // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
@@ -185,8 +192,8 @@
                     ? (ticket.requester_name + ' · ' + ticket.requester_email) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                     : new Date(ticket.created_at.replace(' ', 'T')).toLocaleDateString(locale)), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 node('span', (ticket.description || '').slice(0,130), 'support-ticket-snippet'), // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
-                node('em', ticket.status === 'aberto' ? 'Aguardando resposta' // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
-                    : ticket.status === 'respondido' ? 'Respondido' : 'Encerrado', // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                node('em', t(ticket.status === 'aberto' ? 'Aguardando resposta' // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
+                    : ticket.status === 'respondido' ? 'Respondido' : 'Encerrado'), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                     'support-ticket-state state-' + ticket.status) // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             list.append(item); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
@@ -203,7 +210,7 @@
         selectedId = id; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         renderList(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
         detail.hidden = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        detail.replaceChildren(node('p','Buscando detalhes...','support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+        detail.replaceChildren(node('p',t('Buscando detalhes...'),'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
         if (messageForm) messageForm.hidden = true; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             const { ticket, replies } = await request({action:'detail', id}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
@@ -217,7 +224,7 @@
                 ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             detail.append(node('p', t('Aberto em:') + ' ' + ticket.created_at, 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-            detail.append(node('h4','Descrição enviada')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+            detail.append(node('h4',t('Descrição enviada'))); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             detail.append(node('p', ticket.description, 'support-description')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             if (ticket.attachment_name) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 const link = node('a',t('Baixar anexo:') + ' ' + ticket.attachment_name, 'support-download'); // Explicação DevIN: Declara variável JavaScript link para reutilizar valor ou resultado.
@@ -228,8 +235,8 @@
                 link.rel = 'nofollow'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                 detail.append(link); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-            detail.append(node('h4','Histórico do atendimento')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-            if (!replies.length) detail.append(node('p','Ainda não há respostas da equipe.','support-hint')); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            detail.append(node('h4',t('Histórico do atendimento'))); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+            if (!replies.length) detail.append(node('p',t('Ainda não há respostas da equipe.'),'support-hint')); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             replies.forEach(reply => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                 const box = node('article','','support-answer'); // Explicação DevIN: Declara variável JavaScript box para reutilizar valor ou resultado.
                 box.append( // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
@@ -240,7 +247,7 @@
                     const channels = (!reply.chat_sent_at ? t('mensagem interna') + ' ' : '') // Explicação DevIN: Declara variável JavaScript channels para reutilizar valor ou resultado.
                         + (!reply.email_sent_at ? 'e-mail ' : ''); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                     box.append(node('small',t('Entrega pendente:') + ' ' + channels, 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-                    box.append(button('Tentar entrega novamente', async event => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+                    box.append(button(t('Tentar entrega novamente'), async event => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                         event.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
                             const payload = new FormData(); // Explicação DevIN: Declara variável JavaScript payload para reutilizar valor ou resultado.
@@ -277,9 +284,9 @@
             if (selectedId && tickets.some(t=>Number(t.id)===selectedId)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 await loadDetail(selectedId); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-            list.replaceChildren(node('p', error.message, 'support-error')); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
-            status(error.message, true); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+        } catch (error) { // Explicação DevIN: Falha de consulta não bloqueia formulário nem duplica erro.
+            list.replaceChildren(node('p', t('Não foi possível carregar os chamados.') + ' ' + t(error.message), 'support-error')); // Explicação DevIN: Mostra a causa apenas na aba Meus chamados.
+            list.append(button(t('Tentar novamente'), () => refresh())); // Explicação DevIN: Oferece nova tentativa após correção do servidor.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 

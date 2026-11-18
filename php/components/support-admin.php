@@ -5,7 +5,7 @@
  * Nomes, e-mails e descrições são exibidos como texto, sem HTML dinâmico.
  */
 ?>
-<section class="support-admin-view" data-support-root data-role="admin"
+<section class="support-admin-view" translate="no" data-support-root data-role="admin"
          data-endpoint="support_api.php" data-csrf="<?= h(csrfToken()) ?>">
     <header class="support-admin-head"> <!-- Explicação DevIN: Declara cabeçalho da seção ou página. -->
         <span class="support-eyebrow">CENTRAL DE ATENDIMENTO · DEVIN</span> <!-- Explicação DevIN: Declara trecho em linha. -->

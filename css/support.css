@@ -190,3 +190,11 @@
     .support-admin-view .support-panel select { width: 100%; min-height: 48px; font-size: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     .support-admin-view .support-counter { padding-right: 3px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* A seleção de arquivo usa textos do idioma da conta, não os rótulos nativos do navegador. */
+.support-panel input.support-file-native { position:absolute; width:1px; height:1px; padding:0; border:0; opacity:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; } /* Mantém acesso por teclado e leitor de tela. */
+.support-file-control { position:relative; min-width:0; } /* Preserva o formulário em telas estreitas. */
+.support-file-picker { display:flex; align-items:center; flex-wrap:wrap; gap:12px; min-height:46px; padding:8px 12px; border:1px solid #c9dceb; border-radius:12px; background:#f8fbfd; cursor:pointer; } /* Torna a área de upload inteira clicável. */
+.support-file-picker-action { border:1px solid #b6d3e8; border-radius:9px; background:#e8f3ff; color:#07588b; padding:8px 12px; font-weight:650; } /* Exibe ação traduzível nas cores DevIN. */
+.support-file-picker-name { min-width:0; flex:1; color:#425e74; overflow-wrap:anywhere; font-size:14px; } /* Evita corte do nome de arquivos longos. */
+.support-panel input.support-file-native:focus-visible + .support-file-picker { outline:3px solid #478cc0; outline-offset:2px; } /* Mantém foco visível para acessibilidade. */
