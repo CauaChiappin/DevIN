@@ -412,7 +412,10 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                             <small><?= h($email) ?></small> <!-- Explicação DevIN: Declara elemento de marcação. Contém dado dinâmico processado pelo PHP. -->
                         </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
                     </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
-                    <button class="btn primary" type="button" data-open-profile>Editar perfil</button> <!-- Explicação DevIN: Declara botão de ação. -->
+                    <button class="btn primary" type="button" data-open-profile>Editar perfil</button>
+                    <!-- Ferramentas de conta compartilhadas e autorizadas por tipo. -->
+                    <?php require __DIR__ . '/components/profile-tools.php'; ?>
+ <!-- Explicação DevIN: Declara botão de ação. -->
                 </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
             <?php elseif ($pagina === 'candidatos'): ?>
                 <?php if (!$usuariosAdmin): ?><p class="empty-state">Nenhum candidato cadastrado.</p><?php endif; ?>
