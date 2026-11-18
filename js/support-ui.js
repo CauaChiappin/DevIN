@@ -9,7 +9,9 @@
     if (!root) return; // Não executar em outras páginas do portal.
     const admin = root.dataset.role === 'admin'; // Explicação DevIN: Declara variável JavaScript admin para reutilizar valor ou resultado.
     const endpoint = root.dataset.endpoint; // Explicação DevIN: Declara variável JavaScript endpoint para reutilizar valor ou resultado.
-    const csrf = root.dataset.csrf; // Explicação DevIN: Declara variável JavaScript csrf para reutilizar valor ou resultado.
+    const csrf = root.dataset.csrf;
+    const t = text => typeof window.DevINTranslate === 'function' ? window.DevINTranslate(text) : text; // Explicação DevIN: Traduz apenas rótulos e mensagens do suporte.
+    const locale = document.documentElement.lang === 'en' ? 'en-US' : document.documentElement.lang === 'es' ? 'es-ES' : 'pt-BR'; // Explicação DevIN: Ajusta datas e pesquisa ao idioma. // Explicação DevIN: Declara variável JavaScript csrf para reutilizar valor ou resultado.
     const list = root.querySelector('[data-support-list]'); // Explicação DevIN: Declara variável JavaScript list para reutilizar valor ou resultado.
     const detail = root.querySelector('[data-support-detail]'); // Explicação DevIN: Declara variável JavaScript detail para reutilizar valor ou resultado.
     const feedback = root.querySelector('[data-support-feedback]'); // Explicação DevIN: Declara variável JavaScript feedback para reutilizar valor ou resultado.
@@ -94,7 +96,7 @@
     descriptionField?.addEventListener('input', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
         if (descriptionCounter) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             descriptionCounter.textContent = Array.from(descriptionField.value).length // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-                + ' / 4000 caracteres'; // Explicação DevIN: Continua expressão ou bloco pertencente a função updateAttachment.
+                + ' / 4000 ' + t('caracteres'); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateAttachment.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
@@ -102,7 +104,7 @@
     // Contador de resposta acompanha o maxlength do navegador, inclusive emojis compostos.
     function updateReplyCounter() { // Explicação DevIN: Declara função/método updateReplyCounter, com seus parâmetros e comportamento.
         if (replyField && replyCounter) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            replyCounter.textContent = replyField.value.length + ' / 3000 caracteres'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            replyCounter.textContent = replyField.value.length + ' / 3000 ' + t('caracteres'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     replyField?.addEventListener('input', updateReplyCounter); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
@@ -119,7 +121,7 @@
         const response = await fetch(url.toString(), options); // Explicação DevIN: Inicia solicitação HTTP assíncrona a um endereço configurado.
         const data = await response.json().catch(() => null); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
         if (!response.ok || !data?.sucesso) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            throw new Error(data?.mensagem || 'O servidor não conseguiu atender agora.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+            throw new Error(t(data?.mensagem || 'O servidor não conseguiu atender agora.')); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return data; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -136,13 +138,13 @@
         // A confirmação também aparece acima das abas quando o formulário está oculto.
         for (const target of [feedback, mobileMessage]) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
             if (!target) continue; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            target.textContent = text; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            target.textContent = t(text); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             target.classList.toggle('is-error', isError); // Explicação DevIN: Continua expressão ou bloco pertencente a função status.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     function label(ticket) { // Explicação DevIN: Declara função/método label, com seus parâmetros e comportamento.
-        return categories[ticket.category] || ticket.category; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        return t(categories[ticket.category] || ticket.category); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     function button(text, onclick, className = 'support-secondary') { // Explicação DevIN: Declara função/método button, com seus parâmetros e comportamento.
@@ -157,18 +159,18 @@
     function renderList() { // Explicação DevIN: Declara função/método renderList, com seus parâmetros e comportamento.
         if (!list) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         list.replaceChildren(); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
-        const term = (search?.value || '').trim().toLocaleLowerCase('pt-BR'); // Explicação DevIN: Declara variável JavaScript term para reutilizar valor ou resultado.
+        const term = (search?.value || '').trim().toLocaleLowerCase(locale); // Explicação DevIN: Declara variável JavaScript term para reutilizar valor ou resultado.
         // O filtro por situação é local aos chamados autorizados já retornados pela API.
         const desiredStatus = statusFilter?.value || 'all'; // Explicação DevIN: Declara variável JavaScript desiredStatus para reutilizar valor ou resultado.
         const visible = tickets.filter(item => (desiredStatus === 'all' || item.status === desiredStatus) && // Explicação DevIN: Declara variável JavaScript visible para reutilizar valor ou resultado.
             (!term || [ // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                 item.id, item.requester_name || '', item.requester_email || '', // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                 label(item), item.description || '' // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
-            ].join(' ').toLocaleLowerCase('pt-BR').includes(term))); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
+            ].join(' ').toLocaleLowerCase(locale).includes(term))); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
         const count = root.querySelector('[data-support-stat-open]'); // Explicação DevIN: Declara variável JavaScript count para reutilizar valor ou resultado.
         if (count) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             const open = tickets.filter(item => item.status === 'aberto').length; // Explicação DevIN: Declara variável JavaScript open para reutilizar valor ou resultado.
-            count.textContent = open + ' aguardando atendimento · ' + tickets.length + ' chamados exibidos'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            count.textContent = open + ' ' + t('aguardando atendimento') + ' · ' + tickets.length + ' ' + t('chamados exibidos'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (!visible.length) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             list.append(node('p', 'Nenhum chamado encontrado.', 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
@@ -181,7 +183,7 @@
                 node('strong', '#' + ticket.id + ' · ' + label(ticket)), // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                 node('small', admin // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                     ? (ticket.requester_name + ' · ' + ticket.requester_email) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-                    : new Date(ticket.created_at.replace(' ', 'T')).toLocaleDateString('pt-BR')), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    : new Date(ticket.created_at.replace(' ', 'T')).toLocaleDateString(locale)), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 node('span', (ticket.description || '').slice(0,130), 'support-ticket-snippet'), // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                 node('em', ticket.status === 'aberto' ? 'Aguardando resposta' // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                     : ticket.status === 'respondido' ? 'Respondido' : 'Encerrado', // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -209,16 +211,16 @@
             detail.append(node('h3','#' + ticket.id + ' · ' + label(ticket))); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             if (admin) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 detail.append( // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-                    node('p', 'Usuário: ' + ticket.requester_name), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-                    node('p', 'E-mail: ' + ticket.requester_email), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-                    node('p','Conta: ' + (ticket.requester_type === 'pessoa' ? 'Candidato' : 'Empresa')) // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+                    node('p', t('Usuário:') + ' ' + ticket.requester_name), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+                    node('p', t('E-mail:') + ' ' + ticket.requester_email), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+                    node('p', t('Conta:') + ' ' + t(ticket.requester_type === 'pessoa' ? 'Candidato' : 'Empresa')) // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                 ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-            detail.append(node('p', 'Aberto em: ' + ticket.created_at, 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+            detail.append(node('p', t('Aberto em:') + ' ' + ticket.created_at, 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             detail.append(node('h4','Descrição enviada')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             detail.append(node('p', ticket.description, 'support-description')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             if (ticket.attachment_name) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                const link = node('a','Baixar anexo: ' + ticket.attachment_name, 'support-download'); // Explicação DevIN: Declara variável JavaScript link para reutilizar valor ou resultado.
+                const link = node('a',t('Baixar anexo:') + ' ' + ticket.attachment_name, 'support-download'); // Explicação DevIN: Declara variável JavaScript link para reutilizar valor ou resultado.
                 const url = new URL(endpoint, location.href); // Explicação DevIN: Declara variável JavaScript url para reutilizar valor ou resultado.
                 url.searchParams.set('action','download'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                 url.searchParams.set('id', String(id)); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
@@ -231,13 +233,13 @@
             replies.forEach(reply => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                 const box = node('article','','support-answer'); // Explicação DevIN: Declara variável JavaScript box para reutilizar valor ou resultado.
                 box.append( // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-                    node('strong','Suporte DevIN · ' + reply.created_at), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+                    node('strong',t('Suporte DevIN ·') + ' ' + reply.created_at), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                     node('p',reply.message, 'support-description') // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                 ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
                 if (admin && (!reply.chat_sent_at || !reply.email_sent_at)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                    const channels = (!reply.chat_sent_at ? 'mensagem interna ' : '') // Explicação DevIN: Declara variável JavaScript channels para reutilizar valor ou resultado.
+                    const channels = (!reply.chat_sent_at ? t('mensagem interna') + ' ' : '') // Explicação DevIN: Declara variável JavaScript channels para reutilizar valor ou resultado.
                         + (!reply.email_sent_at ? 'e-mail ' : ''); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-                    box.append(node('small','Entrega pendente: ' + channels, 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+                    box.append(node('small',t('Entrega pendente:') + ' ' + channels, 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                     box.append(button('Tentar entrega novamente', async event => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                         event.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
@@ -245,8 +247,8 @@
                             payload.set('action','retry'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                             payload.set('reply_id',String(reply.id)); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                             const result = await request({},payload); // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
-                            status('Mensagens: ' + (result.chat_sent ? 'enviadas' : 'pendentes') // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
-                                + ' · E-mail: ' + (result.email_sent ? 'enviado' : 'pendente')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+                            status(t('Mensagens:') + ' ' + t(result.chat_sent ? 'enviadas' : 'pendentes') // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
+                                + ' · ' + t('E-mail:') + ' ' + t(result.email_sent ? 'enviado' : 'pendente')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                             await loadDetail(id); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                         } catch(error) { status(error.message, true); } // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
                         finally { event.disabled = false; } // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
@@ -298,7 +300,7 @@
             const response = await request({},data); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
             createForm.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             updateAttachment(); // Remove a prévia do arquivo que foi enviado com sucesso.
-            status('Chamado #' + response.id + ' enviado com sucesso.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+            status(t('Chamado') + ' #' + response.id + ' ' + t('enviado com sucesso.')); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             await refresh(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             await loadDetail(response.id, true); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
         } catch (error) { status(error.message, true); } // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
@@ -319,8 +321,8 @@
             const result = await request({},payload); // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
             messageForm.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             updateReplyCounter(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
-            status('Resposta registrada. Mensagem interna: ' + (result.chat_sent ? 'enviada' : 'pendente') // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
-                + '. E-mail: ' + (result.email_sent ? 'enviado' : 'pendente') + '.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+            status(t('Resposta registrada. Mensagem interna:') + ' ' + t(result.chat_sent ? 'enviada' : 'pendente') // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+                + '. ' + t('E-mail:') + ' ' + t(result.email_sent ? 'enviado' : 'pendente') + '.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             await refresh(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
         } catch (error) { status(error.message, true); } // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
         finally { send.disabled = false; } // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
@@ -328,7 +330,7 @@
 
     // Encerrar também exige confirmação do ADM e validação server-side.
     root.querySelector('[data-support-close]')?.addEventListener('click', async () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-        if (!selectedId || !window.confirm('Encerrar este chamado? As mensagens continuam registradas.')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (!selectedId || !window.confirm(t('Encerrar este chamado? As mensagens continuam registradas.'))) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         const payload = new FormData(); // Explicação DevIN: Declara variável JavaScript payload para reutilizar valor ou resultado.
         payload.set('action','close');payload.set('id',String(selectedId)); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
         try { await request({},payload);status('Chamado encerrado.');await refresh(); } // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.

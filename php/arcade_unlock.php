@@ -36,7 +36,7 @@ $sequenciaEsperada = [ // Explicação DevIN: Atribui um valor à variável PHP 
 $modo = requestString($_POST, 'modo'); // Libera a entrada secreta do Arcade após autenticação e CSRF.
 $sequenciaRecebida = json_decode(requestString($_POST, 'sequencia'), true); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
 
-// O teclado exige Konami; o gesto mobile só envia após pressionar por três segundos.
+// O teclado exige Konami; no celular a sequência de cinco toques ativa o modo secreto.
 // Nos dois casos, sessão autenticada e CSRF continuam obrigatórios.
 if ($modo !== 'toque' && (!is_array($sequenciaRecebida) || $sequenciaRecebida !== $sequenciaEsperada)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     http_response_code(403); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
