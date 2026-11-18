@@ -27,7 +27,7 @@ unset($_SESSION['erro_recuperacao'], $_SESSION['sucesso_recuperacao']); // Expli
     <title>DevIN | Recuperação de Senha</title> <!-- Explicação DevIN: Declara elemento de marcação. -->
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
     <link rel="stylesheet" href="../css/recuperacao.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
-    <link rel="stylesheet" href="../css/ui-consistency.css?v=<?= filemtime(__DIR__ . '/../css/ui-consistency.css') ?>"> <!-- Explicação DevIN: Padroniza responsividade e campos da interface. -->
+    <link rel="stylesheet" href="../css/ui-consistency.css?v=<?= filemtime(__DIR__ . '/../css/ui-consistency.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
 <body> <!-- Explicação DevIN: Declara corpo visível da página. -->
     <main class="recovery-wrapper"> <!-- Explicação DevIN: Declara conteúdo principal da página. -->

@@ -653,9 +653,9 @@
     // Busca local sem enviar uma nova requisição a cada tecla.
     const searchInput = document.querySelector('.busca input[type="search"]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
     const filterButton = document.querySelector('[data-toggle-filters]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-    const filterMenu = document.querySelector('[data-filter-menu]');
-    const resetFiltersButton = document.querySelector('[data-reset-filters]'); // Explicação DevIN: Permite limpar busca e filtros pelo mesmo controle em todos os perfis.
-    const resultLive = document.querySelector('[data-visible-results]'); // Explicação DevIN: Informa quantidade filtrada ao leitor de tela. // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const filterMenu = document.querySelector('[data-filter-menu]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const resetFiltersButton = document.querySelector('[data-reset-filters]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    const resultLive = document.querySelector('[data-visible-results]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
     const filterSelect = document.querySelector('[data-card-filter]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
     const candidateListSearch = searchInput?.hasAttribute('data-candidate-list-search') === true; // Explicação DevIN: Declara variável JavaScript candidateListSearch para reutilizar valor ou resultado.
     const globalEducationFilter = document.querySelector('[data-candidate-global-education]'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
@@ -733,15 +733,15 @@
 
         const hasActiveSearch = hasGlobalCandidateFilters || (!candidateListSearch && (term !== '' || activeFilter !== '')); // Explicação DevIN: Declara variável JavaScript hasActiveSearch para reutilizar valor ou resultado.
         const hasVisibleCards = detailCards.some((card) => !card.hidden); // Explicação DevIN: Declara variável JavaScript hasVisibleCards para reutilizar valor ou resultado.
-        const visibleCardCount = detailCards.filter((card) => !card.hidden).length; // Explicação DevIN: Conta somente itens exibidos após filtros.
-        const localCandidateFilterActive = candidatePanels.some((panel) => [...panel.querySelectorAll('[data-candidate-search], [data-candidate-education], [data-candidate-course], [data-candidate-skill], [data-candidate-experience]')].some((field) => String(field.value || '').trim() !== '')); // Explicação DevIN: Detecta filtros internos sem perder os filtros globais.
-        const anyFilterActive = term !== '' || activeFilter !== '' || globalCurriculumTerm !== '' || globalEducation !== '' || localCandidateFilterActive; // Explicação DevIN: Consolida pesquisa e seleção de todos os tipos de filtro.
-        if (resetFiltersButton) resetFiltersButton.disabled = !anyFilterActive; // Explicação DevIN: Desabilita limpeza quando não há filtros ativos.
-        if (resultLive) { // Explicação DevIN: Atualiza um contador legível de resultados.
-            const lang = document.documentElement.lang; // Explicação DevIN: Usa o idioma atual do painel.
-            const word = lang === 'en' ? (visibleCardCount === 1 ? 'result' : 'results') : (visibleCardCount === 1 ? 'resultado' : 'resultados'); // Explicação DevIN: Ajusta pluralização em português, inglês e espanhol.
-            resultLive.textContent = anyFilterActive ? visibleCardCount + ' ' + word : ''; // Explicação DevIN: Não duplica o contador total sem filtro.
-        } // Explicação DevIN: Conclui o contador acessível.
+        const visibleCardCount = detailCards.filter((card) => !card.hidden).length; // Explicação DevIN: Declara variável JavaScript visibleCardCount para reutilizar valor ou resultado.
+        const localCandidateFilterActive = candidatePanels.some((panel) => [...panel.querySelectorAll('[data-candidate-search], [data-candidate-education], [data-candidate-course], [data-candidate-skill], [data-candidate-experience]')].some((field) => String(field.value || '').trim() !== '')); // Explicação DevIN: Declara variável JavaScript localCandidateFilterActive para reutilizar valor ou resultado.
+        const anyFilterActive = term !== '' || activeFilter !== '' || globalCurriculumTerm !== '' || globalEducation !== '' || localCandidateFilterActive; // Explicação DevIN: Declara variável JavaScript anyFilterActive para reutilizar valor ou resultado.
+        if (resetFiltersButton) resetFiltersButton.disabled = !anyFilterActive; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (resultLive) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            const lang = document.documentElement.lang; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            const word = lang === 'en' ? (visibleCardCount === 1 ? 'result' : 'results') : (visibleCardCount === 1 ? 'resultado' : 'resultados'); // Explicação DevIN: Declara variável JavaScript word para reutilizar valor ou resultado.
+            resultLive.textContent = anyFilterActive ? visibleCardCount + ' ' + word : ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if (searchEmptyState) searchEmptyState.hidden = !hasActiveSearch || hasVisibleCards; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         candidatePanels.forEach((panel) => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             const candidateCards = [...panel.querySelectorAll('.item-card[data-candidate-name-email]')]; // Explicação DevIN: Declara variável JavaScript candidateCards para reutilizar valor ou resultado.
@@ -830,34 +830,34 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     globalCurriculumFilter?.addEventListener('input', updateCardVisibility); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-    const setFilterMenuOpen = (open) => { // Explicação DevIN: Centraliza o estado do painel de filtros.
-        if (!filterMenu || !filterButton) return; // Explicação DevIN: Funciona mesmo em páginas sem filtros.
-        filterMenu.hidden = !open; // Explicação DevIN: Usa o atributo nativo hidden para controlar a apresentação.
-        filterButton.setAttribute('aria-expanded', String(open)); // Explicação DevIN: Mantém acessibilidade sincronizada com o painel.
-    }; // Explicação DevIN: Finaliza controle da abertura.
-    filterButton?.addEventListener('click', () => { // Explicação DevIN: Alterna filtros por mouse ou toque.
-        setFilterMenuOpen(Boolean(filterMenu?.hidden)); // Explicação DevIN: Usa a mesma lógica para todas as contas.
-    }); // Explicação DevIN: Finaliza o evento de filtros.
-    document.addEventListener('keydown', (event) => { // Explicação DevIN: Suporta teclado físico e leitores de tela.
-        if (event.key !== 'Escape' || !filterMenu || filterMenu.hidden) return; // Explicação DevIN: Intervém somente quando a lista está aberta.
-        setFilterMenuOpen(false); // Explicação DevIN: Fecha o painel pelo teclado.
-        filterButton?.focus(); // Explicação DevIN: Devolve o foco ao botão que abriu o menu.
-    }); // Explicação DevIN: Finaliza interação por teclado.
-    document.addEventListener('pointerdown', (event) => { // Explicação DevIN: Fecha filtros ao tocar fora sem impedir outros botões.
-        if (!filterMenu || filterMenu.hidden) return; // Explicação DevIN: Ignora quando já está fechado.
-        if (event.target instanceof Node && !filterMenu.contains(event.target) && !filterButton?.contains(event.target)) setFilterMenuOpen(false); // Explicação DevIN: Mantém pesquisa e controles externos clicáveis.
-    }); // Explicação DevIN: Finaliza fechamento ao tocar fora.
-    resetFiltersButton?.addEventListener('click', () => { // Explicação DevIN: Zera todos os filtros sem recarregar a página.
-        for (const field of [searchInput, filterSelect, globalEducationFilter, globalCurriculumFilter]) { // Explicação DevIN: Limpa pesquisa, status, educação e currículo globais.
-            if (field) field.value = ''; // Explicação DevIN: Usa valor vazio correspondente à opção Todos.
-        } // Explicação DevIN: Finaliza os campos globais.
-        for (const panel of candidatePanels) { // Explicação DevIN: Inclui os filtros avançados internos da empresa.
-            panel.querySelectorAll('[data-candidate-search], [data-candidate-education], [data-candidate-course], [data-candidate-skill], [data-candidate-experience]').forEach((field) => { field.value = ''; }); // Explicação DevIN: Restaura cada seleção ao padrão.
-        } // Explicação DevIN: Finaliza os filtros locais.
-        updateCardVisibility(); // Explicação DevIN: Devolve todos os cards disponíveis sem alterar banco.
-        setFilterMenuOpen(false); // Explicação DevIN: Fecha opções após limpar a pesquisa.
-        searchInput?.focus(); // Explicação DevIN: Facilita iniciar nova busca.
-    }); // Explicação DevIN: Finaliza o botão de limpeza.
+    const setFilterMenuOpen = (open) => { // Explicação DevIN: Declara variável JavaScript setFilterMenuOpen para reutilizar valor ou resultado.
+        if (!filterMenu || !filterButton) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        filterMenu.hidden = !open; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        filterButton.setAttribute('aria-expanded', String(open)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    filterButton?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        setFilterMenuOpen(Boolean(filterMenu?.hidden)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    document.addEventListener('keydown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (event.key !== 'Escape' || !filterMenu || filterMenu.hidden) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        setFilterMenuOpen(false); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        filterButton?.focus(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    document.addEventListener('pointerdown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (!filterMenu || filterMenu.hidden) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (event.target instanceof Node && !filterMenu.contains(event.target) && !filterButton?.contains(event.target)) setFilterMenuOpen(false); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    resetFiltersButton?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        for (const field of [searchInput, filterSelect, globalEducationFilter, globalCurriculumFilter]) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            if (field) field.value = ''; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        for (const panel of candidatePanels) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            panel.querySelectorAll('[data-candidate-search], [data-candidate-education], [data-candidate-course], [data-candidate-skill], [data-candidate-experience]').forEach((field) => { field.value = ''; }); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        updateCardVisibility(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        setFilterMenuOpen(false); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        searchInput?.focus(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     searchInput?.addEventListener('input', updateCardVisibility); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     updateCardVisibility(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.

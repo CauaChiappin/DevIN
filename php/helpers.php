@@ -51,13 +51,13 @@ function dashboardListHeader(string $pagina, string $titulo, string $placeholder
         . '<input type="hidden" name="pagina" value="' . h($pagina) . '">' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         . '<label class="compact-search-field"><span class="sr-only">Pesquisar</span>' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         . '<input type="search" name="q" maxlength="120" autocomplete="off" placeholder="' . h($placeholder) . '"' . ($filtrosCandidatos ? ' data-candidate-list-search' : '') . '></label>' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        . '<button class="filter-button" type="button" data-toggle-filters aria-controls="devin-filters-' . h($pagina) . '" aria-expanded="false">Filtros</button>' // Explicação DevIN: Conecta botão e opções para leitores de tela.
-        . '<button class="filter-reset-button" type="button" data-reset-filters disabled>Limpar filtros</button>' // Explicação DevIN: Oferece limpeza comum sem apagar dados no servidor. // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        . '<button class="filter-button" type="button" data-toggle-filters aria-controls="devin-filters-' . h($pagina) . '" aria-expanded="false">Filtros</button>' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        . '<button class="filter-reset-button" type="button" data-reset-filters disabled>Limpar filtros</button>' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         . '<div id="devin-filters-' . h($pagina) . '" class="filter-menu' . ($filtrosCandidatos ? ' candidate-global-filters' : '') . '" data-filter-menu hidden>' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         . $candidateFilters // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         . '</div>' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         . '</form>' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        . '<span class="filter-result-live" data-visible-results role="status" aria-live="polite"></span>' // Explicação DevIN: Anuncia quantidade visível quando há filtro ativo.
+        . '<span class="filter-result-live" data-visible-results role="status" aria-live="polite"></span>' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         . $countMarkup // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         . '</header>'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
