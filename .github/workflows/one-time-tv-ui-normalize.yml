@@ -1,0 +1,31 @@
+# Manutenção temporária de comentários exigidos pelo projeto.
+name: DevIN temporary TV UI comments # Explicação DevIN: Identifica a operação de documentação.
+on: # Explicação DevIN: Define evento do workflow.
+  push: # Explicação DevIN: Executa no commit de criação.
+    branches: [main] # Explicação DevIN: Usa somente a main.
+    paths: ['.github/workflows/one-time-tv-ui-normalize.yml'] # Explicação DevIN: Evita reexecução a cada nova mudança.
+permissions: # Explicação DevIN: Define os acessos da rotina.
+  contents: write # Explicação DevIN: Permite commitar somente fontes autorizadas.
+jobs: # Explicação DevIN: Declara tarefas do fluxo.
+  annotate: # Explicação DevIN: Roda normalização de arquivos alterados.
+    runs-on: ubuntu-latest # Explicação DevIN: Usa executor Linux.
+    steps: # Explicação DevIN: Executa os passos.
+      - uses: actions/checkout@v4 # Explicação DevIN: Recupera o código da main.
+        with: # Explicação DevIN: Configura as credenciais do checkout.
+          persist-credentials: true # Explicação DevIN: Permite push automático seguro.
+      - uses: actions/setup-python@v5 # Explicação DevIN: Instala o interpretador.
+        with: # Explicação DevIN: Define opções do Python.
+          python-version: '3.12' # Explicação DevIN: Compatível com script do repositório.
+      - name: Normalize explanatory comments # Explicação DevIN: Aplica padronização oficial de comentários.
+        run: python3 scripts/line_explanations.py --write # Explicação DevIN: Usa apenas o script de documentação local.
+      - name: Commit only TV and whiteboard files # Explicação DevIN: Restringe o escopo ao ajuste solicitado.
+        shell: bash # Explicação DevIN: Executa shell.
+        run: | # Explicação DevIN: Inicia sequência de comandos.
+          set -euo pipefail # Explicação DevIN: Para na primeira falha.
+          git add css/ui-consistency.css tests/ui-consistency.test.cjs # Explicação DevIN: Inclui apenas os dois arquivos de layout e teste.
+          if ! git diff --cached --quiet; then # Explicação DevIN: Verifica se houve modificações.
+            git config user.name 'github-actions[bot]' # Explicação DevIN: Define a autoria da normalização.
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com' # Explicação DevIN: Registra conta de automação.
+            git commit -m "docs: normalize TV and whiteboard UI comments" # Explicação DevIN: Registra documentação de fontes.
+            git push origin HEAD:main # Explicação DevIN: Atualiza apenas a main.
+          fi # Explicação DevIN: Encerra a condição de commit.
