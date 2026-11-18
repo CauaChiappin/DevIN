@@ -32,6 +32,7 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'js/mobile-arcade-secret.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'css/dashboard.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/arcade-mobile-secret.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/arcade-konami-reset.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'database/migrations/2026_11_17_005_support_center.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/support*.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/support*.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -102,6 +103,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           node --test tests/support-ui.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/mobile-arcade-secret.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/arcade-mobile-secret.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/arcade-konami-reset.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-extra-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-library.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
