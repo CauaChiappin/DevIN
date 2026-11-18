@@ -41,7 +41,7 @@ $isAdmin = $usuario['tipo'] === 'adm'; // Explicação DevIN: Atribui um valor �
     <meta charset="UTF-8"> <!-- Explicação DevIN: Declara metadado de navegação. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Explicação DevIN: Declara metadado de navegação. -->
     <title>DevIN Arcade</title> <!-- Explicação DevIN: Declara elemento de marcação. -->
-    <link rel="stylesheet" href="../css/jogos.css?v=<?= filemtime(__DIR__ . '/../css/jogos.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="stylesheet" href="../css/jogos.css?v=<?= filemtime(__DIR__ . '/../css/jogos.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <link rel="stylesheet" href="../css/site-navigation.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
