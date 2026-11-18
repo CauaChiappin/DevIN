@@ -4750,14 +4750,14 @@ body.account-deleting .dashboard-shell { /* Explicação DevIN: Inicia bloco de 
 
 /*
  * EASTER EGG MOBILE — Arcade escondido no card "Time fundador" de Sobre nós.
- * O código Konami para teclado permanece independente. No celular, o link
- * comum de jogos fica oculto para que o pequeno controle seja uma descoberta.
- * A autenticação de php/arcade.php não muda; esconder menu não é segurança.
+ * O código Konami para teclado e o toque prolongado no celular permanecem.
+ * O menu visível foi removido nos três dashboards, e o backend valida
+ * a liberação temporária na sessão antes de permitir acesso ao Arcade.
  */
+.menu-principal .menu-arcade { display: none !important; } /* Fallback caso HTML antigo seja servido por cache. */
 .sobre-secret-arcade { display: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 @media (hover: none) and (pointer: coarse) and (max-width: 1024px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
-    .menu-principal .menu-arcade { display: none !important; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     .sobre-team-card .sobre-secret-arcade { display: flex; justify-content: flex-start; margin-top: 10px; border-top: 1px solid #e7dfd5; padding-top: 9px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     .sobre-secret-arcade-button { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; padding: 9px; border: 1px solid #c8d8e8; border-radius: 13px; color: #245d93; background: #eff6fc; cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: background-color .18s, color .18s, transform .18s; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     .sobre-secret-arcade-button svg { width: 24px; height: 24px; pointer-events: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */

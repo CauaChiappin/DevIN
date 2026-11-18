@@ -2,7 +2,7 @@
  * Segredo do Arcade para celulares na seção "Sobre nós" de todos os dashboards.
  * Um toque contínuo de três segundos no pequeno controle abre php/arcade.php.
  * O desktop conserva o código Konami em konami-arcade.js, sem alterações.
- * Este gesto é somente uma surpresa visual; o servidor continua exigindo login.
+ * O gesto libera uma sessão temporária no backend, que exige login e CSRF.
  */
 (() => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     'use strict'; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
@@ -38,11 +38,33 @@
         button.classList.add('is-discovered'); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
         button.setAttribute('aria-label', 'Arcade encontrado! Abrindo jogos DevIN'); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
         if (typeof navigator.vibrate === 'function') navigator.vibrate(45); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        navigationTimer = window.setTimeout(() => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        navigationTimer = window.setTimeout(async () => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
             if (!opening) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             navigationTimer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             trackingPointer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            window.location.assign(new URL('arcade.php', window.location.href).toString()); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            try {
+                const csrfResponse = await fetch(new URL('csrf.php', window.location.href).toString(), { credentials: 'same-origin' });
+                const csrfData = await csrfResponse.json();
+                if (!csrfResponse.ok || csrfData.sucesso !== true || typeof csrfData.token !== 'string') {
+                    throw new Error('Não foi possível validar a sessão.');
+                }
+                const response = await fetch(new URL('arcade_unlock.php', window.location.href).toString(), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                    body: new URLSearchParams({ csrf_token: csrfData.token, modo: 'toque' })
+                });
+                const result = await response.json();
+                if (!response.ok || result.sucesso !== true || typeof result.url !== 'string') {
+                    throw new Error(result.mensagem || 'Não foi possível liberar os jogos.');
+                }
+                if (opening) window.location.assign(result.url);
+            } catch (error) {
+                if (opening) {
+                    cancel();
+                    button.setAttribute('aria-label', 'Não foi possível abrir o Arcade. Tente novamente.');
+                }
+            } // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         }, 260); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 

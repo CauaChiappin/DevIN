@@ -13,7 +13,8 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/controllers/ArcadeProgressPolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/controllers/ArcadeProgressPolicy.php';
+require_once __DIR__ . '/controllers/ArcadeAccess.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
 header('Cache-Control: no-store, private'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -26,8 +27,7 @@ function arcadeRespond(array $data, int $status = 200): void // Explicação Dev
     exit; // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeRespond.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-// Login permanece obrigatório. O código secreto é somente um atalho
-// opcional; o menu Jogos permite acesso direto de pessoas, empresas e ADMs.
+// A API do Arcade exige login e liberação secreta na mesma sessão.
 function ensureArcadeProgressTable(mysqli $conn): void // Explicação DevIN: Declara função/método ensureArcadeProgressTable, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $conn->query('
@@ -69,7 +69,9 @@ function arcadeGameLimits(): array // Explicação DevIN: Declara função/méto
 
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $usuario = requireWebAuth(); // Explicação DevIN: Atribui um valor à variável PHP $usuario.
-    // A autenticação de sessão já foi validada por requireWebAuth().
+    if (!ArcadeAccess::isUnlocked($usuario)) {
+        arcadeRespond(['sucesso' => false, 'mensagem' => 'Arcade não liberado nesta sessão.'], 403);
+    }
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
     ensureArcadeProgressTable($conn); // Explicação DevIN: Continua expressão ou bloco pertencente a função arcadeGameLimits.
 
