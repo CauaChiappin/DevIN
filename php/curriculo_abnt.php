@@ -31,7 +31,7 @@ if (($_SESSION['resume_abnt_consent'] ?? false) !== true) { // Explicação DevI
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
     <link rel="stylesheet" href="../css/cadastrostyle.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
     <link rel="stylesheet" href="../css/curriculo.css?v=<?= filemtime(__DIR__ . '/../css/curriculo.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
-    <link rel="stylesheet" href="../css/ui-consistency.css?v=<?= filemtime(__DIR__ . '/../css/ui-consistency.css') ?>"> <!-- Explicação DevIN: Padroniza responsividade e campos da interface. -->
+    <link rel="stylesheet" href="../css/ui-consistency.css?v=<?= filemtime(__DIR__ . '/../css/ui-consistency.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
 
 <body class="curriculo-page resume-onboarding-page"> <!-- Explicação DevIN: Declara corpo visível da página. -->

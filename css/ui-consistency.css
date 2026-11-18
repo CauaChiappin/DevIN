@@ -3,70 +3,70 @@
  * Referência: filtros completos de candidatos do painel Empresa e cabeçalhos dos dashboards.
  * Nunca altera visibilidade por si só: JavaScript controla [hidden], seleção e dados.
  */
-:root { --devin-ui-accent: #00549f; --devin-ui-accent-hover: #003f79; --devin-ui-border: #d5e2ee; --devin-ui-focus: #2583cc; --devin-ui-surface: #ffffff; --devin-ui-muted: #526579; } /* Explicação DevIN: Padroniza cores de controles nos módulos. */
+:root { --devin-ui-accent: #00549f; --devin-ui-accent-hover: #003f79; --devin-ui-border: #d5e2ee; --devin-ui-focus: #2583cc; --devin-ui-surface: #ffffff; --devin-ui-muted: #526579; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login, .resume-onboarding-page) :is(input, select, textarea, button) { box-sizing: border-box; max-width: 100%; min-width: 0; } /* Explicação DevIN: Evita ultrapassar a largura do container. */
-:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login, .resume-onboarding-page) :is(input, select, textarea, button, a):focus-visible { outline: 3px solid var(--devin-ui-focus); outline-offset: 2px; } /* Explicação DevIN: Garante foco visível também pelo teclado. */
-:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login, .resume-onboarding-page) :is(input, select, textarea) { accent-color: var(--devin-ui-accent); } /* Explicação DevIN: Unifica foco e seleção sem alterar dados. */
-:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login) :is(input[type="search"], input[type="text"], input[type="email"], textarea) { overflow-wrap: anywhere; } /* Explicação DevIN: Impede textos longos de alargar painéis. */
-:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal) [hidden] { display: none !important; } /* Explicação DevIN: Respeita estados de filtros, histórico e anexos em todas as áreas. */
+:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login, .resume-onboarding-page) :is(input, select, textarea, button) { box-sizing: border-box; max-width: 100%; min-width: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login, .resume-onboarding-page) :is(input, select, textarea, button, a):focus-visible { outline: 3px solid var(--devin-ui-focus); outline-offset: 2px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login, .resume-onboarding-page) :is(input, select, textarea) { accent-color: var(--devin-ui-accent); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login) :is(input[type="search"], input[type="text"], input[type="email"], textarea) { overflow-wrap: anywhere; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+:where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal) [hidden] { display: none !important; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 /* Cabeçalho de pesquisa comum aos três tipos de conta. */
-.dashboard-shell .compact-list-header .busca { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; max-width: 100%; } /* Explicação DevIN: Compartilha o layout de busca e filtros entre pessoa, empresa e ADM. */
-.dashboard-shell .compact-list-header .compact-search-field { flex: 1 1 160px; min-width: 0; } /* Explicação DevIN: Prioriza espaço para escrever a pesquisa. */
-.dashboard-shell .compact-list-header .compact-search-field input[type="search"] { width: 100%; min-width: 0; font-size: 14px; } /* Explicação DevIN: Preserva leitura sem corte horizontal. */
-.dashboard-shell .compact-list-header .filter-button,
-.dashboard-shell .compact-list-header .filter-reset-button { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-height: 40px; padding: 8px 12px; border: 1px solid var(--devin-ui-border); border-radius: 9px; background: var(--devin-ui-surface); color: var(--devin-ui-accent); font-size: 13px; font-weight: 650; cursor: pointer; } /* Explicação DevIN: Mantém ações de pesquisar e limpar na mesma família visual. */
-.dashboard-shell .compact-list-header .filter-button[aria-expanded="true"] { background: #eaf4ff; border-color: #9dc5e6; } /* Explicação DevIN: Diferencia filtros ativos e painel aberto. */
-.dashboard-shell .compact-list-header .filter-reset-button:disabled { opacity: .48; cursor: not-allowed; } /* Explicação DevIN: Mostra que não há filtros para limpar. */
-.dashboard-shell .compact-list-header .filter-menu { max-width: min(640px, calc(100dvw - 32px)); max-height: min(65dvh, 540px); overflow: auto; overscroll-behavior: contain; } /* Explicação DevIN: Mantém todos os filtros acessíveis até em celulares estreitos. */
-.dashboard-shell .compact-list-header .filter-menu label,
-.dashboard-shell .compact-list-header .filter-menu input,
-.dashboard-shell .compact-list-header .filter-menu select { min-width: 0; max-width: 100%; } /* Explicação DevIN: Remove pressão por largura fixa de selects. */
-.dashboard-shell .compact-list-header .filter-result-live { font-size: 12px; color: var(--devin-ui-muted); font-weight: 600; } /* Explicação DevIN: Indica resultados ao filtrar sem alterar o contador total. */
+.dashboard-shell .compact-list-header .busca { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .compact-search-field { flex: 1 1 160px; min-width: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .compact-search-field input[type="search"] { width: 100%; min-width: 0; font-size: 14px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-button, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-reset-button { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-height: 40px; padding: 8px 12px; border: 1px solid var(--devin-ui-border); border-radius: 9px; background: var(--devin-ui-surface); color: var(--devin-ui-accent); font-size: 13px; font-weight: 650; cursor: pointer; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-button[aria-expanded="true"] { background: #eaf4ff; border-color: #9dc5e6; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-reset-button:disabled { opacity: .48; cursor: not-allowed; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-menu { max-width: min(640px, calc(100dvw - 32px)); max-height: min(65dvh, 540px); overflow: auto; overscroll-behavior: contain; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-menu label, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-menu input, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-menu select { min-width: 0; max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .compact-list-header .filter-result-live { font-size: 12px; color: var(--devin-ui-muted); font-weight: 600; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 /* Filtros de candidatos usam a experiência mais completa, preservando os campos específicos. */
-.dashboard-shell .candidate-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); align-items: end; gap: 10px; min-width: 0; } /* Explicação DevIN: Reorganiza curso, habilidade, escolaridade e experiência automaticamente. */
-.dashboard-shell .candidate-filters label { min-width: 0; max-width: 100%; } /* Explicação DevIN: Impede campos longos de expandir os painéis. */
-.dashboard-shell .candidate-filters :is(input, select) { width: 100%; max-width: 100%; min-width: 0; min-height: 42px; border-radius: 9px; } /* Explicação DevIN: Padroniza dimensão dos campos de candidatos. */
-.dashboard-shell .candidate-vacancy-panel,
-.dashboard-shell .candidate-vacancy-list { min-width: 0; max-width: 100%; } /* Explicação DevIN: Mantém a lista dentro da área de empresa. */
+.dashboard-shell .candidate-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); align-items: end; gap: 10px; min-width: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .candidate-filters label { min-width: 0; max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .candidate-filters :is(input, select) { width: 100%; max-width: 100%; min-width: 0; min-height: 42px; border-radius: 9px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .candidate-vacancy-panel, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell .candidate-vacancy-list { min-width: 0; max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 /* Chat, Central de Suporte e Arcade preservam identidades próprias com os mesmos controles. */
-.chat-app .chat-search input,
-.support-main :is(input[type="search"], select, textarea),
-.support-admin-view :is(input[type="search"], select, textarea),
-.arcade-portal .arcade-search { min-width: 0; max-width: 100%; border-radius: 10px; } /* Explicação DevIN: Compartilha proporções e cantos de campos de busca. */
-.chat-app .chat-search input:focus-visible,
-.arcade-portal .arcade-search:focus-visible { outline: 3px solid var(--devin-ui-focus); outline-offset: 2px; } /* Explicação DevIN: Harmoniza foco acessível em módulos de descoberta. */
-.arcade-portal .arcade-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 100%; } /* Explicação DevIN: Mantém todas as categorias visíveis sem ultrapassar a largura. */
-.arcade-portal .arcade-filter { min-height: 40px; } /* Explicação DevIN: Aumenta área de toque sem afetar o desbloqueio secreto. */
-.support-admin-view .support-admin-grid,
-.support-main .support-columns,
-.chat-app { min-width: 0; max-width: 100%; } /* Explicação DevIN: Evita largura intrínseca excessiva em telas estreitas. */
+.chat-app .chat-search input, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-main :is(input[type="search"], select, textarea), /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-admin-view :is(input[type="search"], select, textarea), /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-search { min-width: 0; max-width: 100%; border-radius: 10px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-app .chat-search input:focus-visible, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-search:focus-visible { outline: 3px solid var(--devin-ui-focus); outline-offset: 2px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.arcade-portal .arcade-filter { min-height: 40px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-admin-view .support-admin-grid, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-main .support-columns, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.chat-app { min-width: 0; max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
 /* Login, cadastro e formulários têm alvos de toque e largura consistentes. */
-.cadastro-page :is(.register-form, .left-side, .main-container),
-.conteudo-login :is(.area-login, form),
-.resume-onboarding-page :is(form, section) { min-width: 0; max-width: 100%; } /* Explicação DevIN: Preserva formulários responsivos com dados extensos. */
-.cadastro-page :is(button[type="submit"], input[type="submit"]),
-.conteudo-login :is(button[type="submit"], input[type="submit"]) { min-height: 44px; } /* Explicação DevIN: Adota área de toque confortável em autenticação. */
+.cadastro-page :is(.register-form, .left-side, .main-container), /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.conteudo-login :is(.area-login, form), /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.resume-onboarding-page :is(form, section) { min-width: 0; max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.cadastro-page :is(button[type="submit"], input[type="submit"]), /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.conteudo-login :is(button[type="submit"], input[type="submit"]) { min-height: 44px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 
-@media (max-width: 720px) { /* Explicação DevIN: Aplicação unificada para telas móveis. */
-    :where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login, .resume-onboarding-page) :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) { font-size: 16px; } /* Explicação DevIN: Evita zoom involuntário em navegadores móveis. */
-    .dashboard-shell .compact-list-header .busca { width: 100%; min-width: 0; gap: 8px; } /* Explicação DevIN: Permite quebra natural dos controles. */
-    .dashboard-shell .compact-list-header .filter-button,
-    .dashboard-shell .compact-list-header .filter-reset-button { min-height: 44px; flex: 0 0 auto; } /* Explicação DevIN: Torna filtros e limpar confortáveis ao toque. */
-    .dashboard-shell .compact-list-header .filter-menu { width: min(440px, calc(100dvw - 28px)); right: 0; max-width: 100%; max-height: min(60dvh, 460px); } /* Explicação DevIN: Limita o painel à janela e mantém a rolagem. */
-    .dashboard-shell .compact-list-header .filter-menu :is(input, select) { font-size: 16px; min-height: 44px; width: 100%; max-width: 100%; } /* Explicação DevIN: Evita zoom em selects e busca por currículo. */
-    .dashboard-shell .candidate-filters { grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); } /* Explicação DevIN: Ajusta colunas à largura disponível. */
-}
-@media (max-width: 400px) { /* Explicação DevIN: Evita falhas em celulares estreitos. */
-    .dashboard-shell .compact-list-header .compact-search-field { flex: 1 1 100%; } /* Explicação DevIN: Busca ocupa linha exclusiva quando necessário. */
-    .dashboard-shell .compact-list-header .filter-menu { display: flex; flex-direction: column; align-items: stretch; gap: 10px; } /* Explicação DevIN: Organiza opções verticalmente. */
-    .dashboard-shell .compact-list-header .filter-menu label { width: 100%; } /* Explicação DevIN: Ocupa a linha toda com cada filtro. */
-    .dashboard-shell .candidate-filters { grid-template-columns: minmax(0, 1fr); } /* Explicação DevIN: Evita dois campos comprimidos em telas de 320 px. */
-}
-@media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Respeita preferência de acessibilidade do usuário. */
-    .dashboard-shell .filter-button, .dashboard-shell .filter-reset-button { transition: none; } /* Explicação DevIN: Remove movimento desnecessário em controles. */
-}
+@media (max-width: 720px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    :where(.dashboard-shell, .chat-app, .support-main, .support-admin-view, .arcade-portal, .cadastro-page, .conteudo-login, .resume-onboarding-page) :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) { font-size: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .compact-list-header .busca { width: 100%; min-width: 0; gap: 8px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .compact-list-header .filter-button, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .compact-list-header .filter-reset-button { min-height: 44px; flex: 0 0 auto; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .compact-list-header .filter-menu { width: min(440px, calc(100dvw - 28px)); right: 0; max-width: 100%; max-height: min(60dvh, 460px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .compact-list-header .filter-menu :is(input, select) { font-size: 16px; min-height: 44px; width: 100%; max-width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .candidate-filters { grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (max-width: 400px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .dashboard-shell .compact-list-header .compact-search-field { flex: 1 1 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .compact-list-header .filter-menu { display: flex; flex-direction: column; align-items: stretch; gap: 10px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .compact-list-header .filter-menu label { width: 100%; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell .candidate-filters { grid-template-columns: minmax(0, 1fr); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .dashboard-shell .filter-button, .dashboard-shell .filter-reset-button { transition: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
