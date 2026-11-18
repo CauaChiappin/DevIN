@@ -18,7 +18,7 @@
     justify-content:space-between;gap:14px; } /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
 .support-brand { font-weight:850;font-size:27px;letter-spacing:-1.3px;color:var(--support-blue); /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     text-decoration:none; } /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS text-decoration. */
-.support-brand span {color:#de9b19;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-brand span {color:#4a9fe7;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .support-top-links {display:flex;flex-wrap:wrap;gap:14px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .support-top-links a {text-decoration:none;font-size:14px;font-weight:650;color:var(--support-blue);} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .support-main {max-width:1240px;margin:auto;padding:6px 26px 64px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
@@ -27,7 +27,7 @@
 .support-hero h1,.support-admin-head h1 {font-size:clamp(29px,4vw,42px);font-weight:820; /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
     letter-spacing:-.04em;line-height:1.12;margin:7px 0 13px;color:#fff;} /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
 .support-hero p,.support-admin-head p {font-size:14px;line-height:1.65;color:#edf6ff;max-width:740px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
-.support-eyebrow {font-weight:780;font-size:11px;letter-spacing:.13em;color:#ffdf89;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.support-eyebrow {font-weight:780;font-size:11px;letter-spacing:.13em;color:#d7edff;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .support-columns {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:20px;align-items:start;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .support-admin-view {padding:16px 18px 40px;max-width:1400px;margin:auto;color:var(--support-ink);} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 .support-admin-grid {display:grid;grid-template-columns:minmax(260px,.85fr) minmax(0,1.15fr);gap:18px;} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
