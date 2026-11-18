@@ -21,7 +21,7 @@ final class CommercialEntitlements // Explicação DevIN: Declara o tipo Commerc
         return $ownerType === 'empresa' // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
             ? ['max_active_jobs'=>2,'max_applications_month'=>null,'placement_fee_bps'=>500, // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 'hide_ads'=>false,'auto_search'=>false,'auto_apply'=>false,'advanced_ai'=>false] // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-            : ['max_active_jobs'=>null,'max_applications_month'=>10,'placement_fee_bps'=>0, // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            : ['max_active_jobs'=>null,'max_applications_month'=>15,'placement_fee_bps'=>0, // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 'hide_ads'=>false,'auto_search'=>false,'auto_apply'=>false,'advanced_ai'=>false]; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
