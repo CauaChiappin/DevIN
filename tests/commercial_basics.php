@@ -25,5 +25,5 @@ must(CommercialPlanCatalog::employerPlacementFee(10000,300)===300,'3% de serviç
 must(CommercialPlanCatalog::employerPlacementFee(10000,100)===100,'1% de serviço B2B'); // Explicação DevIN: Continua expressão ou bloco pertencente a função must.
 must(!CommercialEntitlements::enabled(),'monetização desligada sem configuração explícita'); // Explicação DevIN: Continua expressão ou bloco pertencente a função must.
 must(CommercialEntitlements::freeLimits('empresa')['max_active_jobs']===2,'cota de exemplo empresa'); // Explicação DevIN: Continua expressão ou bloco pertencente a função must.
-must(CommercialEntitlements::freeLimits('pessoa')['max_applications_month']===10,'cota de exemplo pessoa'); // Explicação DevIN: Continua expressão ou bloco pertencente a função must.
+must(CommercialEntitlements::freeLimits('pessoa')['max_applications_month']===15,'cota de exemplo pessoa'); // Explicação DevIN: Continua expressão ou bloco pertencente a função must.
 echo "DevIN commercial unit: OK\n"; // Explicação DevIN: Produz saída ou conteúdo da resposta do programa.
