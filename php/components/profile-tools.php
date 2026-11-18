@@ -15,6 +15,7 @@ $destinations = [
 if ($profileKind === 'pessoa') $destinations[] = ['Minhas candidaturas', 'pessoa.php?pagina=vagas'];
 if ($profileKind === 'empresa') $destinations[] = ['Gerenciar candidatos', 'empresa.php?pagina=candidatos'];
 if ($profileKind === 'adm') $destinations[] = ['JARVIS Admin', 'adm.php?pagina=inicio#jarvisAdmin'];
+if ($profileKind === 'adm') $destinations[] = ['Diagnóstico JARVIS', 'api/jarvis/readiness.php']; // API retorna somente status, sem chaves ou credenciais.
 ?>
 <nav class="profile-tools" aria-label="Ações da conta">
     <h2>Central da minha conta</h2>
