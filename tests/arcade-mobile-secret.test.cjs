@@ -103,3 +103,18 @@ test('mouse de desktop nunca agenda o segredo e CSS oculta o botão', () => { //
     assert.match(css, /@media\s*\(hover:\s*none\)\s*and\s*\(pointer:\s*coarse\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     assert.match(css, /\.menu-principal\s+\.menu-arcade\s*\{\s*display:\s*none/); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+
+test('soltar mesmo após completar três segundos, antes da navegação, descarta a tentativa e permite recomeçar', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    const env = simulate(true); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
+    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    env.handlers.pointerup(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    assert.equal(env.timers.size, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    assert.equal(env.redirects.length, 0); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    assert.equal(env.classes.has('is-discovered'), false); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    env.advance(260); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+    assert.equal(env.redirects.length, 1); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

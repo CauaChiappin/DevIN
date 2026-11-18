@@ -66,7 +66,11 @@
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     document.addEventListener('keydown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-        if (unlocking || event.repeat || isTyping(event.target)) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (unlocking || event.repeat) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (isTyping(event.target)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            position = 0; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         const key = event.code; // Explicação DevIN: Declara variável JavaScript key para reutilizar valor ou resultado.
         if (key === sequence[position]) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -75,8 +79,6 @@
                 event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
                 position = 0; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                 unlock(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-            } else if (position < 8) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

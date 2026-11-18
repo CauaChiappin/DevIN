@@ -12,6 +12,7 @@
     const holdMilliseconds = 3000; // Explicação DevIN: Declara variável JavaScript holdMilliseconds para reutilizar valor ou resultado.
     const moveTolerancePixels = 14; // Explicação DevIN: Declara variável JavaScript moveTolerancePixels para reutilizar valor ou resultado.
     let timer = null; // Explicação DevIN: Declara variável JavaScript timer para reutilizar valor ou resultado.
+    let navigationTimer = null; // Explicação DevIN: Declara variável JavaScript navigationTimer para reutilizar valor ou resultado.
     let trackingPointer = null; // Explicação DevIN: Declara variável JavaScript trackingPointer para reutilizar valor ou resultado.
     let startX = 0; // Explicação DevIN: Declara variável JavaScript startX para reutilizar valor ou resultado.
     let startY = 0; // Explicação DevIN: Declara variável JavaScript startY para reutilizar valor ou resultado.
@@ -19,19 +20,28 @@
 
     function cancel() { // Explicação DevIN: Declara função/método cancel, com seus parâmetros e comportamento.
         if (timer !== null) window.clearTimeout(timer); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (navigationTimer !== null) window.clearTimeout(navigationTimer); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         timer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        navigationTimer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         trackingPointer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        opening = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         button.classList.remove('is-holding'); // Explicação DevIN: Continua expressão ou bloco pertencente a função cancel.
+        button.classList.remove('is-discovered'); // Explicação DevIN: Continua expressão ou bloco pertencente a função cancel.
+        button.setAttribute('aria-label', 'Segredo do DevIN: mantenha pressionado por três segundos para abrir os jogos'); // Explicação DevIN: Continua expressão ou bloco pertencente a função cancel.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     function openArcade() { // Explicação DevIN: Declara função/método openArcade, com seus parâmetros e comportamento.
         if (opening || !coarseTouch.matches) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         opening = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        cancel(); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
+        timer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        button.classList.remove('is-holding'); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
         button.classList.add('is-discovered'); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
         button.setAttribute('aria-label', 'Arcade encontrado! Abrindo jogos DevIN'); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
         if (typeof navigator.vibrate === 'function') navigator.vibrate(45); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        window.setTimeout(() => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        navigationTimer = window.setTimeout(() => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+            if (!opening) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            navigationTimer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            trackingPointer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             window.location.assign(new URL('arcade.php', window.location.href).toString()); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
         }, 260); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
