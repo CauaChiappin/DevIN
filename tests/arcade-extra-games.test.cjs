@@ -93,15 +93,17 @@ test('todos os 14 jogos podem ter recordes removidos por ADM', () => { // Explic
     assert.doesNotMatch(api, /!in_array\(\$game,\s*\['maze',\s*'snake'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('arcade permanece protegido por login mas não exige código secreto', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+test('arcade exige login, desbloqueio secreto e não publica link no menu', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     const page = read('php/arcade.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
     const api = read('php/arcade_api.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+    const unlock = read('php/arcade_unlock.php'); // Confirma que os atalhos liberam a sessão via servidor.
     assert.match(page, /\$usuario\s*=\s*requireWebAuth\(\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(api, /\$usuario\s*=\s*requireWebAuth\(\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.doesNotMatch(api, /requireArcadeUnlock\(\$usuario\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.doesNotMatch(page, /\$_SESSION\['arcade_unlock'\]/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(page, /ArcadeAccess::isUnlocked\(\$usuario\)/); // A página exige liberação secreta válida.
+    assert.match(api, /ArcadeAccess::isUnlocked\(\$usuario\)/); // A API compartilha a mesma proteção.
+    assert.match(unlock, /ArcadeAccess::grant\(\$usuario\)/); // A liberação ocorre somente no endpoint autenticado.
     for (const name of ['pessoa','empresa','adm']) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
-        assert.match(read('php/'+name+'.php'), /href="arcade\.php"/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        assert.doesNotMatch(read('php/'+name+'.php'), /href="arcade\.php"|menu-arcade/); // Nenhum dashboard anuncia a entrada do Arcade.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 

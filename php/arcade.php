@@ -13,15 +13,15 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/config/security.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/controllers/ProfileLanguagePreference.php';
+require_once __DIR__ . '/controllers/ProfileLanguagePreference.php'; // Bloqueia acesso direto quando não houve desbloqueio por gesto secreto.
 require_once __DIR__ . '/controllers/ArcadeAccess.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 $usuario = requireWebAuth(); // Explicação DevIN: Atribui um valor à variável PHP $usuario.
-if (!ArcadeAccess::isUnlocked($usuario)) {
-    header('Cache-Control: no-store, private');
-    header('Location: ' . APP_BASE_URL . '/php/' . ($usuario['tipo'] === 'adm' ? 'adm.php' : ($usuario['tipo'] === 'empresa' ? 'empresa.php' : 'pessoa.php')));
-    exit;
-}
+if (!ArcadeAccess::isUnlocked($usuario)) { // Bloqueia acesso direto quando não houve desbloqueio por gesto secreto.
+    header('Cache-Control: no-store, private'); // Bloqueia acesso direto quando não houve desbloqueio por gesto secreto.
+    header('Location: ' . APP_BASE_URL . '/php/' . ($usuario['tipo'] === 'adm' ? 'adm.php' : ($usuario['tipo'] === 'empresa' ? 'empresa.php' : 'pessoa.php'))); // Bloqueia acesso direto quando não houve desbloqueio por gesto secreto.
+    exit; // Bloqueia acesso direto quando não houve desbloqueio por gesto secreto.
+} // Bloqueia acesso direto quando não houve desbloqueio por gesto secreto.
 $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $idiomaAtual = ProfileLanguagePreference::load($conn, $usuario['tipo'], (int) $usuario['id']); // Explicação DevIN: Atribui um valor à variável PHP $idiomaAtual.

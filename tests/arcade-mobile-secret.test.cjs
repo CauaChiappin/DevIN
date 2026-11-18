@@ -15,7 +15,7 @@ function simulate(touch = true) { // Explicação DevIN: Declara função/métod
     const handlers = {}; // Explicação DevIN: Declara variável JavaScript handlers para reutilizar valor ou resultado.
     const timers = new Map(); // Explicação DevIN: Declara variável JavaScript timers para reutilizar valor ou resultado.
     const classes = new Set(); // Explicação DevIN: Declara variável JavaScript classes para reutilizar valor ou resultado.
-    const redirects = [];
+    const redirects = []; // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
     const requests = []; // Explicação DevIN: Declara variável JavaScript redirects para reutilizar valor ou resultado.
     let nextTimer = 1; // Explicação DevIN: Declara variável JavaScript nextTimer para reutilizar valor ou resultado.
     const button = { // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
@@ -38,13 +38,13 @@ function simulate(touch = true) { // Explicação DevIN: Declara função/métod
             addEventListener: (name, callback) => { windowListeners[name] = callback; }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
             location: { href: 'https://example.org/Trabalhos/3D/DevIN/php/pessoa.php?pagina=sobre', assign: url => redirects.push(url) }, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
         }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        navigator: { vibrate() {} },
-        fetch: async (url, options) => {
-            requests.push({ url, options });
-            return { ok: true, json: async () => url.includes('csrf.php')
-                ? { sucesso: true, token: 'csrf-test' }
-                : { sucesso: true, url: '/Trabalhos/3D/DevIN/php/arcade.php' } };
-        },
+        navigator: { vibrate() {} }, // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+        fetch: async (url, options) => { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+            requests.push({ url, options }); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+            return { ok: true, json: async () => url.includes('csrf.php') // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+                ? { sucesso: true, token: 'csrf-test' } // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+                : { sucesso: true, url: '/Trabalhos/3D/DevIN/php/arcade.php' } }; // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+        }, // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
         URLSearchParams, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
         URL, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
         Math, // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
@@ -80,7 +80,7 @@ test('um toque contínuo de 3000ms abre a rota autenticada do Arcade', async () 
     env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     assert.deepEqual(env.redirects, []); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     env.advance(260); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    await new Promise(resolve => setImmediate(resolve));
+    await new Promise(resolve => setImmediate(resolve)); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
     assert.equal(env.redirects.length, 1); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     assert.ok(env.redirects[0].endsWith('/php/arcade.php')); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -125,26 +125,26 @@ test('soltar mesmo após completar três segundos, antes da navegação, descart
     env.handlers.pointerdown(down()); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     env.advance(3000); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
     env.advance(260); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
-    await new Promise(resolve => setImmediate(resolve));
+    await new Promise(resolve => setImmediate(resolve)); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
     assert.equal(env.redirects.length, 1); // Explicação DevIN: Continua expressão ou bloco pertencente a função simulate.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 
-test('os menus de pessoa, empresa e ADM não exibem entrada pública para o Arcade', () => {
-    for (const page of ['pessoa', 'empresa', 'adm']) {
-        const source = read('php/' + page + '.php');
-        assert.doesNotMatch(source, /class="menu-arcade"|Jogos DevIN|href="arcade\.php"/);
-        assert.match(source, /konami-arcade\.js/);
-        assert.match(source, /mobile-arcade-secret\.js/);
-    }
-});
+test('os menus de pessoa, empresa e ADM não exibem entrada pública para o Arcade', () => { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+    for (const page of ['pessoa', 'empresa', 'adm']) { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+        const source = read('php/' + page + '.php'); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+        assert.doesNotMatch(source, /class="menu-arcade"|Jogos DevIN|href="arcade\.php"/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+        assert.match(source, /konami-arcade\.js/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+        assert.match(source, /mobile-arcade-secret\.js/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+    } // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+}); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
 
-test('página e API exigem liberação secreta no backend', () => {
-    for (const page of ['arcade.php', 'arcade_api.php']) {
-        const source = read('php/' + page);
-        assert.match(source, /ArcadeAccess::isUnlocked\(\$usuario\)/);
-    }
-    const mobile = read('js/mobile-arcade-secret.js');
-    assert.match(mobile, /arcade_unlock\.php/);
-    assert.match(mobile, /modo:\s*'toque'/);
-});
+test('página e API exigem liberação secreta no backend', () => { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+    for (const page of ['arcade.php', 'arcade_api.php']) { // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+        const source = read('php/' + page); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+        assert.match(source, /ArcadeAccess::isUnlocked\(\$usuario\)/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+    } // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+    const mobile = read('js/mobile-arcade-secret.js'); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+    assert.match(mobile, /arcade_unlock\.php/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+    assert.match(mobile, /modo:\s*'toque'/); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.
+}); // Confere a ativação secreta do Arcade e os fluxos dos dashboards.

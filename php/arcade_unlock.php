@@ -12,7 +12,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 
 require_once __DIR__ . '/middlewares/auth.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
-require_once __DIR__ . '/config/security.php';
+require_once __DIR__ . '/config/security.php'; // Libera a entrada secreta do Arcade após autenticação e CSRF.
 require_once __DIR__ . '/controllers/ArcadeAccess.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
@@ -33,7 +33,7 @@ $sequenciaEsperada = [ // Explicação DevIN: Atribui um valor à variável PHP 
     'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     'KeyB', 'KeyA', 'Enter', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
-$modo = requestString($_POST, 'modo');
+$modo = requestString($_POST, 'modo'); // Libera a entrada secreta do Arcade após autenticação e CSRF.
 $sequenciaRecebida = json_decode(requestString($_POST, 'sequencia'), true); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
 
 // O teclado exige Konami; o gesto mobile só envia após pressionar por três segundos.
@@ -44,7 +44,7 @@ if ($modo !== 'toque' && (!is_array($sequenciaRecebida) || $sequenciaRecebida !=
     exit; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-ArcadeAccess::grant($usuario);
+ArcadeAccess::grant($usuario); // Libera a entrada secreta do Arcade após autenticação e CSRF.
 
 echo json_encode([ // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
     'sucesso' => true, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
