@@ -61,8 +61,8 @@ assertCommercial(CommercialEntitlements::forAccount($db,'empresa',20)['max_activ
     'sem assinatura ativa mantém apenas cota gratuita'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 expectDenied(static fn()=>CommercialEntitlements::assertMayPostJob($db,20), // Explicação DevIN: Continua expressão ou bloco pertencente a função expectDenied.
     'empresa gratuita com duas vagas ativas'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-assertCommercial(CommercialEntitlements::forAccount($db,'pessoa',5)['max_applications_month']===10, // Explicação DevIN: Continua expressão ou bloco pertencente a função expectDenied.
-    'pessoa sem assinatura ativa mantém cota de exemplo'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+assertCommercial(CommercialEntitlements::forAccount($db,'pessoa',5)['max_applications_month']===15, // Explicação DevIN: Continua expressão ou bloco pertencente a função expectDenied.
+    'pessoa gratuita deve ter 15 candidaturas mensais conforme decisão aprovada'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 assertCommercial(CommercialEntitlements::forAccount($db,'pessoa',5)['auto_apply']===false, // Explicação DevIN: Continua expressão ou bloco pertencente a função expectDenied.
     'inscrição automática nunca habilitada por tabela'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 $db->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função expectDenied.
