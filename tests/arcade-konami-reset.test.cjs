@@ -3,72 +3,72 @@
  * setas ou teclado de formulários. Executa o script real com DOM simulado;
  * apenas fetch usa resposta falsa para não depender do servidor remoto.
  */
-const test = require('node:test'); // Explicação DevIN: Registra cenários independentes de comportamento.
-const assert = require('node:assert/strict'); // Explicação DevIN: Compara efeitos observáveis sem coerção.
-const fs = require('node:fs'); // Explicação DevIN: Lê o JavaScript versionado em vez de duplicar sua lógica.
-const path = require('node:path'); // Explicação DevIN: Resolve o caminho relativo do projeto.
-const vm = require('node:vm'); // Explicação DevIN: Executa o navegador mínimo do teste em sandbox.
+const test = require('node:test'); // Explicação DevIN: Declara variável JavaScript test para reutilizar valor ou resultado.
+const assert = require('node:assert/strict'); // Explicação DevIN: Declara variável JavaScript assert para reutilizar valor ou resultado.
+const fs = require('node:fs'); // Explicação DevIN: Declara variável JavaScript fs para reutilizar valor ou resultado.
+const path = require('node:path'); // Explicação DevIN: Declara variável JavaScript path para reutilizar valor ou resultado.
+const vm = require('node:vm'); // Explicação DevIN: Declara variável JavaScript vm para reutilizar valor ou resultado.
 
-const sequence = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA','Enter']; // Explicação DevIN: Sequência pública do Konami que deve continuar funcionando.
-function browser() { // Explicação DevIN: Monta o ambiente isolado para observar teclado e navegação.
-    const listeners = {}; // Explicação DevIN: Armazena o listener de tecla do programa real.
-    const notifications = []; // Explicação DevIN: Detecta qualquer notificação DOM indevida ao errar.
-    const requests = []; // Explicação DevIN: Registra os endpoints acionados após sequência completa.
-    const redirects = []; // Explicação DevIN: Captura navegação sem acessar site de produção.
-    class HTMLElement { constructor(tagName='DIV', editable=false) { this.tagName=tagName; this.isContentEditable=editable; } } // Explicação DevIN: Reproduz a verificação de alvo editável.
-    const context = { // Explicação DevIN: Só oferece as APIs exigidas pelo código testado.
-        HTMLElement, // Explicação DevIN: Permite identificar campos reais simulados por instanceof.
-        document: { // Explicação DevIN: Representa a página e seus elementos.
-            addEventListener(name, callback) { listeners[name] = callback; }, // Explicação DevIN: Captura eventos keydown e de foco.
-            querySelector() { return null; }, // Explicação DevIN: Nunca existe notificação prévia.
-            createElement() { return {dataset:{},setAttribute(){},className:'',textContent:'',hidden:true}; }, // Explicação DevIN: Permite detectar criação de notificações.
-            body: {appendChild(item) { notifications.push(item); }}, // Explicação DevIN: Registra qualquer mensagem exibida.
-            hidden: false, // Explicação DevIN: Começa com a página visível.
-        }, // Explicação DevIN: Encerra a página de testes.
-        window: { location: { assign(url) { redirects.push(url); } }, addEventListener(name,fn) { listeners[name]=fn; } }, // Explicação DevIN: Registra destino e eventos de janela.
-        fetch: async url => { // Explicação DevIN: Simula somente a API HTTP de sessão e desbloqueio.
-            requests.push(url); // Explicação DevIN: Conta quantas requisições ocorreram.
-            return {ok:true, json:async()=>url.includes('csrf.php') ? {sucesso:true,token:'local-test'} : {sucesso:true,url:'/php/arcade.php'}}; // Explicação DevIN: Mantém o contrato das respostas do PHP.
-        }, // Explicação DevIN: Finaliza o substituto de rede.
-        URLSearchParams, // Explicação DevIN: Codifica o POST do script sem modificação.
-        JSON, // Explicação DevIN: Serializa a combinação correta para o backend.
-        Error, // Explicação DevIN: Permite exceções JavaScript sem efeitos extras.
-    }; // Explicação DevIN: Finaliza o contexto.
-    vm.runInNewContext(fs.readFileSync(path.resolve(__dirname,'../js/konami-arcade.js'),'utf8'), context); // Explicação DevIN: Executa o arquivo real do Konami.
-    function press(code,target=new HTMLElement()) { // Explicação DevIN: Simula o efeito público de pressionar uma tecla.
-        let prevented=false; // Explicação DevIN: Inicia sem bloqueio do comportamento padrão.
-        listeners.keydown({code,target,repeat:false,preventDefault(){prevented=true;}}); // Explicação DevIN: Envia evento diretamente ao listener instalado.
-        return prevented; // Explicação DevIN: Informa se a navegação normal do teclado foi bloqueada.
-    } // Explicação DevIN: Finaliza o auxiliar de interação.
-    return {press,HTMLElement,requests,redirects,notifications}; // Explicação DevIN: Expõe somente os resultados observáveis do script.
-} // Explicação DevIN: Finaliza a construção do ambiente falso.
+const sequence = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA','Enter']; // Explicação DevIN: Declara variável JavaScript sequence para reutilizar valor ou resultado.
+function browser() { // Explicação DevIN: Declara função/método browser, com seus parâmetros e comportamento.
+    const listeners = {}; // Explicação DevIN: Declara variável JavaScript listeners para reutilizar valor ou resultado.
+    const notifications = []; // Explicação DevIN: Declara variável JavaScript notifications para reutilizar valor ou resultado.
+    const requests = []; // Explicação DevIN: Declara variável JavaScript requests para reutilizar valor ou resultado.
+    const redirects = []; // Explicação DevIN: Declara variável JavaScript redirects para reutilizar valor ou resultado.
+    class HTMLElement { constructor(tagName='DIV', editable=false) { this.tagName=tagName; this.isContentEditable=editable; } } // Explicação DevIN: Declara o tipo HTMLElement e inicia sua estrutura.
+    const context = { // Explicação DevIN: Declara variável JavaScript context para reutilizar valor ou resultado.
+        HTMLElement, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+        document: { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+            addEventListener(name, callback) { listeners[name] = callback; }, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+            querySelector() { return null; }, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+            createElement() { return {dataset:{},setAttribute(){},className:'',textContent:'',hidden:true}; }, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+            body: {appendChild(item) { notifications.push(item); }}, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+            hidden: false, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+        }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        window: { location: { assign(url) { redirects.push(url); } }, addEventListener(name,fn) { listeners[name]=fn; } }, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+        fetch: async url => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+            requests.push(url); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+            return {ok:true, json:async()=>url.includes('csrf.php') ? {sucesso:true,token:'local-test'} : {sucesso:true,url:'/php/arcade.php'}}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        URLSearchParams, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+        JSON, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+        Error, // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+    }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    vm.runInNewContext(fs.readFileSync(path.resolve(__dirname,'../js/konami-arcade.js'),'utf8'), context); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo HTMLElement.
+    function press(code,target=new HTMLElement()) { // Explicação DevIN: Declara função/método press, com seus parâmetros e comportamento.
+        let prevented=false; // Explicação DevIN: Declara variável JavaScript prevented para reutilizar valor ou resultado.
+        listeners.keydown({code,target,repeat:false,preventDefault(){prevented=true;}}); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+        return prevented; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    return {press,HTMLElement,requests,redirects,notifications}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('errar uma tecla reinicia sem banner, rede ou bloqueio de setas', () => { // Explicação DevIN: Erro de sequência nunca afeta site normal.
-    const env=browser(); // Explicação DevIN: Isola uma tentativa.
-    assert.equal(env.press('ArrowUp'),false); // Explicação DevIN: A primeira seta também pode rolar a página normalmente.
-    assert.equal(env.press('ArrowUp'),false); // Explicação DevIN: A segunda seta também não é capturada pelo Arcade.
-    assert.equal(env.press('ArrowLeft'),false); // Explicação DevIN: Uma seta errada cancela silenciosamente a tentativa.
-    for (const code of sequence.slice(2)) env.press(code); // Explicação DevIN: Continuação da sequência parcial não deve desbloquear.
-    assert.equal(env.requests.length,0); // Explicação DevIN: Não acessa a API quando a sequência contém erro.
-    assert.equal(env.notifications.length,0); // Explicação DevIN: Não exibe aviso de erro nem notificação.
-}); // Explicação DevIN: Encerra o teste de reset silencioso.
+test('errar uma tecla reinicia sem banner, rede ou bloqueio de setas', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    const env=browser(); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
+    assert.equal(env.press('ArrowUp'),false); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    assert.equal(env.press('ArrowUp'),false); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    assert.equal(env.press('ArrowLeft'),false); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    for (const code of sequence.slice(2)) env.press(code); // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+    assert.equal(env.requests.length,0); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    assert.equal(env.notifications.length,0); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('após erro, uma nova sequência correta funciona sem recarregar a página', async () => { // Explicação DevIN: O teclado continua utilizável após tentativa inválida.
-    const env=browser(); // Explicação DevIN: Cria sessão isolada.
-    env.press('ArrowUp'); env.press('KeyX'); // Explicação DevIN: Inicia e erra de propósito.
-    for (const code of sequence.slice(0,-1)) assert.equal(env.press(code),false); // Explicação DevIN: Nenhuma tecla intermediária bloqueia navegação.
-    assert.equal(env.press('Enter'),true); // Explicação DevIN: Apenas Enter final é capturado para evitar enviar formulário.
-    await new Promise(resolve=>setImmediate(resolve)); // Explicação DevIN: Aguarda a operação assíncrona real do JavaScript.
-    assert.equal(env.requests.length,2); // Explicação DevIN: CSRF e desbloqueio são enviados uma única vez.
-    assert.equal(env.redirects.length,1); // Explicação DevIN: Uma combinação correta abre o Arcade.
-    assert.equal(env.notifications.length,0); // Explicação DevIN: Não mostra banner antes de navegar.
-}); // Explicação DevIN: Encerra o teste de recomeço.
+test('após erro, uma nova sequência correta funciona sem recarregar a página', async () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    const env=browser(); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
+    env.press('ArrowUp'); env.press('KeyX'); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    for (const code of sequence.slice(0,-1)) assert.equal(env.press(code),false); // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+    assert.equal(env.press('Enter'),true); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    await new Promise(resolve=>setImmediate(resolve)); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    assert.equal(env.requests.length,2); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    assert.equal(env.redirects.length,1); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    assert.equal(env.notifications.length,0); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('digitar num campo durante a sequência cancela o progresso anterior', () => { // Explicação DevIN: Interação com formulário não pode ficar presa no estado parcial.
-    const env=browser(); // Explicação DevIN: Cria navegador isolado.
-    env.press('ArrowUp'); env.press('ArrowUp'); // Explicação DevIN: Avança duas teclas fora do formulário.
-    env.press('KeyX',new env.HTMLElement('INPUT')); // Explicação DevIN: Digita em um input e interrompe o código.
-    for (const code of sequence.slice(2)) env.press(code); // Explicação DevIN: Tenta completar apenas o restante, o que não deve funcionar.
-    assert.equal(env.requests.length,0); // Explicação DevIN: O estado parcial não causa desbloqueio inesperado.
-    assert.equal(env.notifications.length,0); // Explicação DevIN: Não mostra mensagem sobre o reset.
-}); // Explicação DevIN: Encerra o teste de entrada de texto.
+test('digitar num campo durante a sequência cancela o progresso anterior', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    const env=browser(); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
+    env.press('ArrowUp'); env.press('ArrowUp'); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    env.press('KeyX',new env.HTMLElement('INPUT')); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    for (const code of sequence.slice(2)) env.press(code); // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+    assert.equal(env.requests.length,0); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+    assert.equal(env.notifications.length,0); // Explicação DevIN: Continua expressão ou bloco pertencente a função press.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

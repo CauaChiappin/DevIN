@@ -66,11 +66,11 @@
     }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     document.addEventListener('keydown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-        if (unlocking || event.repeat) return; // Explicação DevIN: Evita repetições involuntárias ou solicitações simultâneas; não bloqueia o teclado normal.
-        if (isTyping(event.target)) { // Explicação DevIN: Qualquer interação com formulário interrompe a sequência secreta anterior.
-            position = 0; // Explicação DevIN: Reinicia o código do início sem emitir alertas nem interferir no campo digitado.
-            return; // Explicação DevIN: Mantém os atalhos e textos do formulário funcionando normalmente.
-        } // Explicação DevIN: Fecha a verificação de campos editáveis.
+        if (unlocking || event.repeat) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (isTyping(event.target)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            position = 0; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         const key = event.code; // Explicação DevIN: Declara variável JavaScript key para reutilizar valor ou resultado.
         if (key === sequence[position]) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -79,10 +79,10 @@
                 event.preventDefault(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
                 position = 0; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                 unlock(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-            } // Explicação DevIN: Não cancelar as setas parciais: a página pode rolar normalmente mesmo durante o Konami.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        position = key === sequence[0] ? 1 : 0; // Explicação DevIN: Qualquer erro reinicia sem aviso; uma nova seta para cima pode começar nova sequência.
+        position = key === sequence[0] ? 1 : 0; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 })(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
