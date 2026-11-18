@@ -871,6 +871,7 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
     <script src="../js/dashboard-i18n.js?v=<?= filemtime(__DIR__ . '/../js/dashboard-i18n.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/dashboard.js?v=<?= filemtime(__DIR__ . '/../js/dashboard.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <script src="../js/konami-arcade.js?v=<?= filemtime(__DIR__ . '/../js/konami-arcade.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
+    <script src="../js/mobile-arcade-secret.js?v=<?= filemtime(__DIR__ . '/../js/mobile-arcade-secret.js') ?>" defer></script> <!-- Explicação DevIN: Ativa o toque secreto de três segundos em Sobre nós somente em dispositivos de toque; não modifica Konami desktop. -->
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
