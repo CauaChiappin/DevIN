@@ -29,9 +29,9 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'php/pessoa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/empresa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/helpers.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
-      - 'js/mobile-arcade-secret.js' # Explicação DevIN: Dispara a CI ao mudar o gesto secreto de celulares.
-      - 'css/dashboard.css' # Explicação DevIN: Dispara os testes ao mudar a exibição mobile e ocultação do menu.
-      - 'tests/arcade-mobile-secret.test.cjs' # Explicação DevIN: Dispara os testes ao atualizar os cenários do gesto de 3 segundos.
+      - 'js/mobile-arcade-secret.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'css/dashboard.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/arcade-mobile-secret.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'database/migrations/2026_11_17_005_support_center.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/support*.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/support*.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -100,8 +100,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           node --check js/jarvis-admin.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/support-ui.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/support-ui.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
-          node --check js/mobile-arcade-secret.js # Explicação DevIN: Valida a sintaxe do módulo touch sem carregar o navegador.
-          node --test tests/arcade-mobile-secret.test.cjs # Explicação DevIN: Simula pressão longa, rolagem, mouse e cancelamentos.
+          node --check js/mobile-arcade-secret.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/arcade-mobile-secret.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-extra-games.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/arcade-library.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
