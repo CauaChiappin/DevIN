@@ -462,6 +462,7 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
     <?php if (in_array($pagina, ['sobre', 'suporte'], true)): ?>
     <link rel="stylesheet" href="../css/support.css?v=<?= filemtime(__DIR__ . '/../css/support.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
+    <link rel="stylesheet" href="../css/ui-consistency.css?v=<?= filemtime(__DIR__ . '/../css/ui-consistency.css') ?>"> <!-- Explicação DevIN: Padroniza responsividade, busca e campos do portal. -->
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
 <body> <!-- Explicação DevIN: Declara corpo visível da página. -->
     <main class="dashboard-shell empresa-dashboard page-<?= h($pagina) ?>" data-tipo="<?= h($tipo) ?>"> <!-- Explicação DevIN: Declara conteúdo principal da página. Contém dado dinâmico processado pelo PHP. -->

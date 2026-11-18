@@ -44,6 +44,7 @@ $isAdmin = $usuario['tipo'] === 'adm'; // Explicação DevIN: Atribui um valor �
     <link rel="stylesheet" href="../css/jogos.css?v=<?= filemtime(__DIR__ . '/../css/jogos.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <link rel="stylesheet" href="../css/site-navigation.css"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
+    <link rel="stylesheet" href="../css/ui-consistency.css?v=<?= filemtime(__DIR__ . '/../css/ui-consistency.css') ?>"> <!-- Explicação DevIN: Padroniza responsividade e campos da interface. -->
 </head> <!-- Explicação DevIN: Fecha elemento head do documento. -->
 <body class="game-page arcade-portal" data-arcade-api="arcade_api.php" data-admin="<?= $isAdmin ? 'true' : 'false' ?>"> <!-- Explicação DevIN: Declara corpo visível da página. Contém dado dinâmico processado pelo PHP. -->
     <div class="arcade-shell"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
