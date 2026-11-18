@@ -12,28 +12,38 @@
     const holdMilliseconds = 3000; // Explicação DevIN: Declara variável JavaScript holdMilliseconds para reutilizar valor ou resultado.
     const moveTolerancePixels = 14; // Explicação DevIN: Declara variável JavaScript moveTolerancePixels para reutilizar valor ou resultado.
     let timer = null; // Explicação DevIN: Declara variável JavaScript timer para reutilizar valor ou resultado.
+    let navigationTimer = null; // Explicação DevIN: Guarda o redirecionamento pendente após os três segundos, que ainda pode ser cancelado ao soltar o dedo.
     let trackingPointer = null; // Explicação DevIN: Declara variável JavaScript trackingPointer para reutilizar valor ou resultado.
     let startX = 0; // Explicação DevIN: Declara variável JavaScript startX para reutilizar valor ou resultado.
     let startY = 0; // Explicação DevIN: Declara variável JavaScript startY para reutilizar valor ou resultado.
     let opening = false; // Explicação DevIN: Declara variável JavaScript opening para reutilizar valor ou resultado.
 
     function cancel() { // Explicação DevIN: Declara função/método cancel, com seus parâmetros e comportamento.
-        if (timer !== null) window.clearTimeout(timer); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        timer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        trackingPointer = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        button.classList.remove('is-holding'); // Explicação DevIN: Continua expressão ou bloco pertencente a função cancel.
+        if (timer !== null) window.clearTimeout(timer); // Explicação DevIN: Cancela a contagem se o dedo sair antes dos três segundos.
+        if (navigationTimer !== null) window.clearTimeout(navigationTimer); // Explicação DevIN: Cancela também a navegação agendada se soltar o dedo durante o feedback.
+        timer = null; // Explicação DevIN: Zera o temporizador da pressão.
+        navigationTimer = null; // Explicação DevIN: Zera o temporizador da navegação.
+        trackingPointer = null; // Explicação DevIN: Descarta o dedo associado à tentativa anterior.
+        opening = false; // Explicação DevIN: Permite recomeçar uma nova tentativa sem recarregar o site.
+        button.classList.remove('is-holding'); // Explicação DevIN: Remove o progresso visual de pressionar.
+        button.classList.remove('is-discovered'); // Explicação DevIN: Remove também o feedback de descoberta após uma soltura.
+        button.setAttribute('aria-label', 'Segredo do DevIN: mantenha pressionado por três segundos para abrir os jogos'); // Explicação DevIN: Restaura o texto inicial de acessibilidade sem emitir notificação.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     function openArcade() { // Explicação DevIN: Declara função/método openArcade, com seus parâmetros e comportamento.
         if (opening || !coarseTouch.matches) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        opening = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        cancel(); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
+        opening = true; // Explicação DevIN: Marca que o tempo mínimo terminou, sem liberar o dedo ainda.
+        timer = null; // Explicação DevIN: Contagem concluída; não descartar trackingPointer até concluir a navegação.
+        button.classList.remove('is-holding'); // Explicação DevIN: Remove o progresso antes de mostrar a descoberta.
         button.classList.add('is-discovered'); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
         button.setAttribute('aria-label', 'Arcade encontrado! Abrindo jogos DevIN'); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
         if (typeof navigator.vibrate === 'function') navigator.vibrate(45); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        window.setTimeout(() => { // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-            window.location.assign(new URL('arcade.php', window.location.href).toString()); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-        }, 260); // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
+        navigationTimer = window.setTimeout(() => { // Explicação DevIN: Agenda a navegação, que continua cancelável até executar.
+            if (!opening) return; // Explicação DevIN: Impede navegação quando scroll, soltura ou perda de foco resetou a tentativa.
+            navigationTimer = null; // Explicação DevIN: Limpa referência ao timer que acabou de executar.
+            trackingPointer = null; // Explicação DevIN: Libera o contato ao concluir o gesto completo.
+            window.location.assign(new URL('arcade.php', window.location.href).toString()); // Explicação DevIN: Abre a rota autenticada do Arcade apenas após pressão mantida e feedback.
+        }, 260); // Explicação DevIN: Conserva a pequena transição sem impedir reset durante a espera. // Explicação DevIN: Continua expressão ou bloco pertencente a função openArcade.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     button.addEventListener('pointerdown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
