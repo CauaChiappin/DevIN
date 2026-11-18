@@ -118,14 +118,14 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     supportJson(422, ['sucesso'=>false,'mensagem'=>$error->getMessage()]); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
 } catch (DomainException $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     supportJson(403, ['sucesso'=>false,'mensagem'=>$error->getMessage()]); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
-} catch (SupportSchemaMissingException $error) { // Explicação DevIN: Identifica exclusivamente tabelas do Suporte ainda não instaladas.
-    error_log('Falha Suporte DevIN: migração support_tickets/support_replies pendente.'); // Explicação DevIN: Registra diagnóstico sem dados pessoais.
-    supportJson(503, ['sucesso'=>false, 'codigo'=>'SUPPORT_SCHEMA_MISSING', // Explicação DevIN: Entrega código estável ao frontend.
-        'mensagem'=>$actor['tipo'] === 'adm' // Explicação DevIN: Somente ADM recebe instrução de administração.
-            ? 'As tabelas do suporte não estão instaladas. Execute a migração de suporte.' // Explicação DevIN: Orienta responsável técnico sem exibir credenciais.
-            : 'A Central de Suporte está temporariamente indisponível. Tente novamente mais tarde.']); // Explicação DevIN: Preserva detalhes de infraestrutura.
-} catch (Throwable $error) { // Explicação DevIN: Captura falhas restantes de servidor, permissão ou conexão.
-    error_log('Falha Suporte DevIN: ' . get_class($error) . ': ' . $error->getMessage()); // Explicação DevIN: Mantém detalhes apenas nos logs privados.
-    supportJson(503, ['sucesso'=>false, 'codigo'=>'SUPPORT_UNAVAILABLE', // Explicação DevIN: Diferencia falha genérica de tabela ausente.
-        'mensagem'=>'Ocorreu um problema com o servidor. Tente novamente mais tarde.']); // Explicação DevIN: Evita revelar SQL e paths aos usuários.
-} // Explicação DevIN: Conclui o tratamento seguro de falhas.
+} catch (SupportSchemaMissingException $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+    error_log('Falha Suporte DevIN: migração support_tickets/support_replies pendente.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+    supportJson(503, ['sucesso'=>false, 'codigo'=>'SUPPORT_SCHEMA_MISSING', // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+        'mensagem'=>$actor['tipo'] === 'adm' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            ? 'As tabelas do suporte não estão instaladas. Execute a migração de suporte.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            : 'A Central de Suporte está temporariamente indisponível. Tente novamente mais tarde.']); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+} catch (Throwable $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+    error_log('Falha Suporte DevIN: ' . get_class($error) . ': ' . $error->getMessage()); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+    supportJson(503, ['sucesso'=>false, 'codigo'=>'SUPPORT_UNAVAILABLE', // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+        'mensagem'=>'Ocorreu um problema com o servidor. Tente novamente mais tarde.']); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

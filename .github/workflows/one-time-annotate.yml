@@ -1,0 +1,31 @@
+# Uso temporário para atualizar comentários explicativos, removido após a conclusão.
+name: DevIN temporary support comment normalization # Explicação DevIN: Configura nome do fluxo de manutenção.
+on: # Explicação DevIN: Define os eventos que acionam o fluxo.
+  push: # Explicação DevIN: Responde ao commit de criação do próprio fluxo.
+    branches: [main] # Explicação DevIN: Executa somente na branch principal.
+    paths: ['.github/workflows/one-time-annotate.yml'] # Explicação DevIN: Não executa a cada modificação futura.
+permissions: # Explicação DevIN: Define as permissões do GitHub Actions.
+  contents: write # Explicação DevIN: Permite apenas registrar a normalização na branch.
+jobs: # Explicação DevIN: Agrupa os passos da manutenção.
+  normalize: # Explicação DevIN: Executa o único trabalho temporário.
+    runs-on: ubuntu-latest # Explicação DevIN: Usa executor Linux gerenciado.
+    steps: # Explicação DevIN: Define etapas necessárias.
+      - uses: actions/checkout@v4 # Explicação DevIN: Carrega a versão atual da main.
+        with: # Explicação DevIN: Informa configuração de checkout.
+          persist-credentials: true # Explicação DevIN: Autoriza apenas o push da tarefa.
+      - uses: actions/setup-python@v5 # Explicação DevIN: Prepara o Python.
+        with: # Explicação DevIN: Seleciona a versão de Python.
+          python-version: '3.12' # Explicação DevIN: Compatível com o verificador do projeto.
+      - name: Normalize required inline documentation # Explicação DevIN: Identifica o tratamento de comentários.
+        run: python3 scripts/line_explanations.py --write # Explicação DevIN: Executa normalização já existente no repositório.
+      - name: Commit only modified support files # Explicação DevIN: Registra apenas os arquivos desta correção.
+        shell: bash # Explicação DevIN: Utiliza shell Bash.
+        run: | # Explicação DevIN: Inicia os comandos para o único commit.
+          set -euo pipefail # Explicação DevIN: Interrompe em qualquer falha.
+          git add js/dashboard-i18n.js js/support-ui.js js/support-locale.js php/adm.php php/controllers/SupportDesk.php php/empresa.php php/pessoa.php php/support_api.php tests/support-ui.test.cjs # Explicação DevIN: Seleciona somente as mudanças solicitadas.
+          if ! git diff --cached --quiet; then # Explicação DevIN: Evita commit vazio.
+            git config user.name 'github-actions[bot]' # Explicação DevIN: Registra autoria do GitHub Actions.
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com' # Explicação DevIN: Configura e-mail do bot.
+            git commit -m "docs: normalize support i18n and diagnostics inline comments" # Explicação DevIN: Documenta o ajuste técnico.
+            git push origin HEAD:main # Explicação DevIN: Atualiza apenas a branch main.
+          fi # Explicação DevIN: Finaliza a condição de commit.
