@@ -20,6 +20,53 @@ final class EmploymentWorkflow // Explicação DevIN: Declara o tipo EmploymentW
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    /**
+     * Verifica marcação histórica de retirada sem exigir migração em sites antigos.
+     * A tabela não existente significa que não houve retiradas registradas pelo recurso.
+     */
+    private static function withdrawalsAvailable(mysqli $db): bool
+    {
+        $stmt = $db->prepare('SELECT COUNT(*) AS existing FROM information_schema.TABLES
+            WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME="devin_application_withdrawals"');
+        $stmt->execute();
+        $present = (int) $stmt->get_result()->fetch_assoc()['existing'];
+        $stmt->close();
+        return $present === 1;
+    }
+
+    /** Bloqueia novas decisões de empresas sobre candidatura voluntariamente retirada. */
+    public static function isWithdrawn(mysqli $db, int $applicationId): bool
+    {
+        if ($applicationId < 1) throw new InvalidArgumentException('Candidatura inválida.');
+        if (!self::withdrawalsAvailable($db)) return false;
+        $stmt = $db->prepare('SELECT application_id FROM devin_application_withdrawals
+            WHERE application_id=? LIMIT 1');
+        $stmt->bind_param('i', $applicationId);
+        $stmt->execute();
+        $withdrawn = $stmt->get_result()->num_rows > 0;
+        $stmt->close();
+        return $withdrawn;
+    }
+
+    /** Retorna IDs retirados somente de vagas pertencentes à empresa autenticada. */
+    public static function withdrawnForCompany(mysqli $db, int $employerId): array
+    {
+        if ($employerId < 1) throw new InvalidArgumentException('Empresa inválida.');
+        if (!self::withdrawalsAvailable($db)) return [];
+        $stmt = $db->prepare('SELECT w.application_id FROM devin_application_withdrawals w
+            JOIN candidatura c ON c.id_candidatura=w.application_id
+            JOIN vagas v ON v.id_vaga=c.id_vaga
+            WHERE v.id_empresa=?');
+        $stmt->bind_param('i', $employerId);
+        $stmt->execute();
+        $ids = [];
+        foreach ($stmt->get_result()->fetch_all(MYSQLI_ASSOC) as $row) {
+            $ids[(int) $row['application_id']] = true;
+        }
+        $stmt->close();
+        return $ids;
+    }
+
     public static function employerConfirm(mysqli $db, int $employerId, int $applicationId): void // Explicação DevIN: Declara função/método employerConfirm, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         self::ensureInstalled($db); // Explicação DevIN: Continua expressão ou bloco pertencente a função employerConfirm.
