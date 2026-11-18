@@ -1,0 +1,29 @@
+# Ferramenta de manutencao temporaria: padroniza comentarios; removida apos completar.
+name: Commercial - padronizar comentarios temporariamente
+on:
+  push:
+    branches: [production/monetization]
+    paths: ['.github/workflows/temp-annotate-commercial.yml']
+permissions:
+  contents: write
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Atualizar comentarios inline sem modificar comportamento
+        run: python3 scripts/line_explanations.py --write
+      - name: Atualizar apenas arquivos comerciais modificados
+        run: |
+          git add css/commercial-admin.css js/commercial-admin.js php/commercial_admin.php php/components/profile-tools.php php/controllers/CommercialEntitlements.php tests/commercial_mysql.php
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(commercial): corrigir comentarios inline na branch isolada"
+            git push origin HEAD:production/monetization
+          fi
