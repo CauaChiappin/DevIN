@@ -45,7 +45,7 @@ if (!in_array($pagina, $paginasPermitidas, true)) { // Explicação DevIN: Inici
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Toda alteração administrativa precisa trazer o token associado à sessão atual.
-    requireValidCsrf(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    requireValidCsrf(false); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     // Gate obrigatório no backend: não depende de JS nem do modal de exclusão.
     AdminGate::interceptAdminPost(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 

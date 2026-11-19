@@ -31,7 +31,7 @@ $emailDigitado = ''; // Explicação DevIN: Atribui um valor à variável PHP $e
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         // Rejeita envio forjado e limita tentativas por endereço de rede e identidade informada.
-        requireValidCsrf(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+        requireValidCsrf(false); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
         $emailDigitado = requestString($_POST, 'email'); // Explicação DevIN: Atribui um valor à variável PHP $emailDigitado.
         $senhaDigitada = requestString($_POST, 'senha'); // Explicação DevIN: Atribui um valor à variável PHP $senhaDigitada.
