@@ -91,7 +91,7 @@ function verifyCsrfToken(?string $token): bool // Explicação DevIN: Declara fu
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 // Detalhe DevIN: Método requireValidCsrf: verifica condições antes de liberar o próximo passo no contexto de security. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
-function requireValidCsrf(): void // Explicação DevIN: Declara função/método requireValidCsrf, com seus parâmetros e comportamento.
+function requireValidCsrf(bool $asJson = true): void // Explicação DevIN: Declara função/método requireValidCsrf, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     // Tenta obter o token do POST ou dos cabeçalhos HTTP (para solicitações AJAX)
     $token = $_POST['csrf_token']  // Explicação DevIN: Atribui um valor à variável PHP $token.
@@ -100,13 +100,31 @@ function requireValidCsrf(): void // Explicação DevIN: Declara função/métod
         ?? null; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
 
     if (!is_string($token) || !verifyCsrfToken($token)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        http_response_code(403); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
-        header('Content-Type: application/json; charset=utf-8'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
-        echo json_encode([ // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
-            'sucesso' => false, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-            'mensagem' => 'Solicitação inválida ou token CSRF expirado. Atualize a página e tente novamente.' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
-        exit; // Explicação DevIN: Continua expressão ou bloco pertencente a função requireValidCsrf.
+        // PHP descarta POST e token CSRF se post_max_size for excedido.
+        $serverLimit = trim((string) ini_get('post_max_size')); // Lê o limite de upload do servidor.
+        $unit = strtoupper(substr($serverLimit, -1)); // Extrai a unidade.
+        $multiplier = match ($unit) { 'K' => 1024, 'M' => 1048576, 'G' => 1073741824, default => 1 }; // Calcula bytes.
+        $limitBytes = (int) ((float) $serverLimit * $multiplier); // Zero representa limite não definido.
+        $requestTooLarge = $limitBytes > 0 && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $limitBytes; // Identifica envio acima do limite.
+        $message = $requestTooLarge // Prepara mensagem segura para erro de envio.
+            ? 'O envio ultrapassou o limite do servidor. Tente com uma imagem menor ou contate o suporte.' // Explica tamanho.
+            : 'Sua sessão expirou ou a página ficou desatualizada. Recarregue a página e tente novamente.'; // Explica token.
+        http_response_code($requestTooLarge ? 413 : 403); // Define status HTTP adequado.
+        header('Cache-Control: no-store'); // Evita cache de respostas de erro.
+        if (!$asJson) { // Formulários normais não devem mostrar JSON bruto.
+            header('Content-Type: text/html; charset=utf-8'); // Responde com HTML acessível.
+            $back = basename((string) ($_SERVER['SCRIPT_NAME'] ?? 'login.php')); // Usa caminho local seguro.
+            if (!preg_match('/^[a-z0-9_-]+\\.php$/i', $back)) $back = 'login.php'; // Impede link externo.
+            $safeBack = htmlspecialchars($back, ENT_QUOTES, 'UTF-8'); // Escapa URL local.
+            $safeMessage = htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); // Escapa texto.
+            echo '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DevIN | Falha no envio</title>'
+                . '<style>body{font:16px/1.55 system-ui,sans-serif;background:#f1f6fc;color:#123457;min-height:100vh;display:grid;place-items:center;margin:0;padding:20px;box-sizing:border-box}main{width:min(100%,490px);background:white;padding:28px;border-radius:16px;box-shadow:0 8px 28px #0b46751a}h1{font-size:22px;margin:0 0 12px}p{margin:0 0 20px}a{display:inline-block;background:#09529a;color:white;padding:11px 18px;border-radius:9px;text-decoration:none}</style></head>'
+                . '<body><main><h1>Não foi possível concluir a solicitação</h1><p role="alert">' . $safeMessage . '</p><a href="' . $safeBack . '">Voltar ao DevIN</a></main></body></html>'; // Exibe recuperação.
+            exit; // Não prossegue sem token CSRF.
+        } // Fim do HTML específico para formulários.
+        header('Content-Type: application/json; charset=utf-8'); // Preserva a resposta das APIs.
+        echo json_encode(['sucesso' => false, 'mensagem' => $message], JSON_UNESCAPED_UNICODE); // Envia erro JSON.
+        exit; // Não prossegue com a ação.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
