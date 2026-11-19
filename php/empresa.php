@@ -47,7 +47,7 @@ if (!in_array($pagina, $paginasPermitidas, true)) { // Explicação DevIN: Inici
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Toda ação que altera vaga, candidatura ou perfil exige token CSRF válido.
-    requireValidCsrf(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    requireValidCsrf(false); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
     $action = requestString($_POST, 'action'); // Explicação DevIN: Atribui um valor à variável PHP $action.
 
