@@ -239,15 +239,15 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         $usuariosAdmin  = $resultPessoas ? $resultPessoas->fetch_all(MYSQLI_ASSOC) : []; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
 
         // Consulta as vagas apenas na aba responsável por moderá-las.
-        if ($pagina === 'posts') { // Explicação DevIN: Mantém Empresas independente de vagas.
+        if ($pagina === 'posts') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $resultVagas = $conn->query("
                 SELECT v.id_vaga AS id, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa
                 FROM vagas v
                 INNER JOIN empresa e ON e.id_empresa = v.id_empresa
                 ORDER BY v.id_vaga DESC
-            "); // Explicação DevIN: Busca as vagas apenas na aba Vagas.
-            $vagasAdmin = $resultVagas ? $resultVagas->fetch_all(MYSQLI_ASSOC) : []; // Explicação DevIN: Carrega registros da aba Vagas sem duplicar na aba Empresas.
-        } // Explicação DevIN: Finaliza o carregamento condicional de vagas.
+            "); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            $vagasAdmin = $resultVagas ? $resultVagas->fetch_all(MYSQLI_ASSOC) : []; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
         ensureJobReportsSchema($conn); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
@@ -380,7 +380,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 <?= dashboardListHeader( // Explicação DevIN: Combina execução de código com conteúdo HTML gerado dinamicamente.
                     $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação button.
                     $pagina === 'candidatos' ? 'Pessoas' : ($pagina === 'posts' ? 'Vagas' : ($pagina === 'reports' ? 'Reports de ' . $categoriaReport : ($pagina === 'perfil' ? 'Perfil' : 'Empresas'))), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
-                    $pagina === 'inicio' ? 'Pesquisar empresas por nome ou e-mail...' : ($pagina === 'posts' ? 'Pesquisar vagas por título ou empresa...' : 'Pesquisar por nome ou habilidade...'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    $pagina === 'inicio' ? 'Pesquisar empresas por nome ou e-mail...' : ($pagina === 'posts' ? 'Pesquisar vagas por título ou empresa...' : 'Pesquisar por nome ou habilidade...'), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
                     $pagina === 'candidatos' ? count($usuariosAdmin) . ' candidatos' : ($pagina === 'posts' ? count($vagasAdmin) . ' vagas' : ($pagina === 'reports' ? $totalReportsAdmin . ' reports' : ($pagina === 'inicio' ? count($empresasAdmin) . ' empresas' : ''))) // Explicação DevIN: Atribui um valor à variável PHP $pagina.
                 ) ?>
                 <?php if (in_array($pagina, ['inicio', 'candidatos', 'posts', 'reports'], true)): ?>

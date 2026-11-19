@@ -10,8 +10,8 @@ const read = name => fs.readFileSync(path.join(__dirname, '..', name), 'utf8'); 
 const adm = read('php/adm.php'); // Explicação DevIN: Declara variável JavaScript adm para reutilizar valor ou resultado.
 
 test('Empresas mostra somente contas empresariais, sem vagas duplicadas', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    const begin = adm.indexOf('<?php if (!$empresasAdmin): ?>'); // Explicação DevIN: Declara variável JavaScript begin para reutilizar valor ou resultado.
-    const end = adm.indexOf("<?php if ($pagina === 'sobre'): ?>", begin); // Explicação DevIN: Declara variável JavaScript end para reutilizar valor ou resultado.
+    const begin = adm.indexOf('<?php if (!$empresasAdmin): ?>'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    const end = adm.indexOf("<?php if ($pagina === 'sobre'): ?>", begin); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     assert.ok(begin > 0 && end > begin, 'Não encontrou a seção Empresas'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     const block = adm.slice(begin, end); // Explicação DevIN: Declara variável JavaScript block para reutilizar valor ou resultado.
     assert.match(block, /foreach \(\$empresasAdmin as \$empresa\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
