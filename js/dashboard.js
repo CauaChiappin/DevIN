@@ -140,12 +140,12 @@
     // Sidebar: preferência fica salva somente no navegador deste usuário.
     if (dashboardShell && menuToggle) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         // A correção restaura o menu expandido uma única vez para limpar o estado antigo deixado pela regressão.
-        const menuLayoutResetKey = 'devin-menu-layout-restaurado-20261119'; // Explicação DevIN: Identifica a migração de preferência visual executada uma vez.
-        if (localStorage.getItem(menuLayoutResetKey) !== '1') { // Explicação DevIN: Evita repetir a redefinição após o primeiro acesso.
-            localStorage.removeItem('devin-menu-fechado'); // Explicação DevIN: Remove somente a preferência antiga de sidebar recolhida.
-            localStorage.setItem(menuLayoutResetKey, '1'); // Explicação DevIN: Preserva novas escolhas do usuário nas próximas visitas.
-        } // Explicação DevIN: Finaliza a correção pontual de preferência do menu.
-        let fechado = localStorage.getItem('devin-menu-fechado') === 'true'; // Explicação DevIN: Guarda estado atualizável do menu para redimensionamento.
+        const menuLayoutResetKey = 'devin-menu-layout-restaurado-20261119'; // Explicação DevIN: Declara variável JavaScript menuLayoutResetKey para reutilizar valor ou resultado.
+        if (localStorage.getItem(menuLayoutResetKey) !== '1') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            localStorage.removeItem('devin-menu-fechado'); // Explicação DevIN: Lê ou atualiza preferências guardadas no armazenamento local do navegador.
+            localStorage.setItem(menuLayoutResetKey, '1'); // Explicação DevIN: Lê ou atualiza preferências guardadas no armazenamento local do navegador.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        let fechado = localStorage.getItem('devin-menu-fechado') === 'true'; // Explicação DevIN: Lê ou atualiza preferências guardadas no armazenamento local do navegador.
         const mobileMenu = window.DevINDashboardMenu?.init({ // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
             shell: dashboardShell, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             toggle: menuToggle, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
@@ -174,7 +174,7 @@
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
             const novoEstado = dashboardShell.classList.toggle('menu-fechado'); // Explicação DevIN: Declara variável JavaScript novoEstado para reutilizar valor ou resultado.
-            fechado = novoEstado; // Explicação DevIN: Atualiza o estado usado pelo redimensionamento para não reabrir ou recolher por engano.
+            fechado = novoEstado; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             menuToggle.setAttribute('aria-expanded', String(!novoEstado)); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             localStorage.setItem('devin-menu-fechado', String(novoEstado)); // Explicação DevIN: Lê ou atualiza preferências guardadas no armazenamento local do navegador.
         }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

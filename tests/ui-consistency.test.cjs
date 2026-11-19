@@ -56,31 +56,31 @@ test('camada responsiva preserva campos sem scroll lateral e estados ocultos', (
     assert.match(css, /candidate-filters/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('layout desktop usa grade original e preserva painel de estatísticas', () => { // Explicação DevIN: Protege o tamanho padrão dos dashboards em notebooks e PCs.
-    const css = read('css/ui-consistency.css'); // Explicação DevIN: Examina a camada compartilhada.
-    const dashboardCss = read('css/dashboard.css'); // Explicação DevIN: Examina a folha original do dashboard.
-    assert.match(dashboardCss, /--sidebar-width:\s*240px/); // Explicação DevIN: Mantém sidebar desktop original de 240px.
-    assert.match(dashboardCss, /--sidebar-width:\s*82px/); // Explicação DevIN: Preserva opção de sidebar compacta quando escolhida.
-    assert.match(dashboardCss, /@media \(min-width: 981px\)/); // Explicação DevIN: Mantém distribuição de colunas do computador.
-    assert.match(css, /\.dashboard-shell\.page-estatisticas \{ grid-template-columns: var\(--sidebar-width\) minmax\(0, 1fr\); \}/); // Explicação DevIN: Preserva tela especial de métricas ADM.
-    assert.doesNotMatch(css, /DEVIN LARGE DISPLAYS 2026/); // Explicação DevIN: Evita reintroduzir estilos que distorceram a tela.
-    assert.doesNotMatch(css, /@media screen and \(min-width: 1600px\)/); // Explicação DevIN: Não força escala de TV no desktop comum.
-    assert.doesNotMatch(css, /@media screen and \(min-width: 2400px\)/); // Explicação DevIN: Não altera grades de páginas em resolução 4K.
-}); // Explicação DevIN: Finaliza contrato de layout original.
+test('layout desktop usa grade original e preserva painel de estatísticas', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const css = read('css/ui-consistency.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    const dashboardCss = read('css/dashboard.css'); // Explicação DevIN: Declara variável JavaScript dashboardCss para reutilizar valor ou resultado.
+    assert.match(dashboardCss, /--sidebar-width:\s*240px/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(dashboardCss, /--sidebar-width:\s*82px/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(dashboardCss, /@media \(min-width: 981px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-estatisticas \{ grid-template-columns: var\(--sidebar-width\) minmax\(0, 1fr\); \}/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.doesNotMatch(css, /DEVIN LARGE DISPLAYS 2026/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.doesNotMatch(css, /@media screen and \(min-width: 1600px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.doesNotMatch(css, /@media screen and \(min-width: 2400px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('sidebar mantém o estado após redimensionar e restaura expansão inicial', () => { // Explicação DevIN: Impede reativação involuntária do menu colapsado.
-    const script = read('js/dashboard.js'); // Explicação DevIN: Examina o código de interação do menu.
-    assert.match(script, /devin-menu-layout-restaurado-20261119/); // Explicação DevIN: Migra uma única vez a preferência de layout anterior.
-    assert.match(script, /let fechado = localStorage\.getItem\('devin-menu-fechado'\)/); // Explicação DevIN: Permite atualizar o estado.
-    assert.match(script, /fechado = novoEstado/); // Explicação DevIN: Impede que resize volte ao estado anterior ao clique.
-    assert.match(script, /dashboardShell\.classList\.toggle\('menu-fechado', fechado\)/); // Explicação DevIN: Usa o valor sincronizado na mudança de viewport.
-    assert.match(script, /localStorage\.setItem\('devin-menu-fechado', String\(novoEstado\)\)/); // Explicação DevIN: Preserva novas escolhas depois da correção.
-}); // Explicação DevIN: Finaliza teste de estado do menu.
+test('sidebar mantém o estado após redimensionar e restaura expansão inicial', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const script = read('js/dashboard.js'); // Explicação DevIN: Declara variável JavaScript script para reutilizar valor ou resultado.
+    assert.match(script, /devin-menu-layout-restaurado-20261119/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(script, /let fechado = localStorage\.getItem\('devin-menu-fechado'\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(script, /fechado = novoEstado/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(script, /dashboardShell\.classList\.toggle\('menu-fechado', fechado\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(script, /localStorage\.setItem\('devin-menu-fechado', String\(novoEstado\)\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('ajustes móveis não modificam grades globais nem dependem de lousas', () => { // Explicação DevIN: Preserva correções úteis sem a regressão em monitores.
-    const css = read('css/ui-consistency.css'); // Explicação DevIN: Examina regras de campos e responsividade móvel.
-    assert.match(css, /@media \(max-width: 720px\)/); // Explicação DevIN: Mantém campos adequados a celulares.
-    assert.match(css, /@media \(max-width: 400px\)/); // Explicação DevIN: Mantém suporte a telas estreitas.
-    assert.match(css, /\[hidden\] \{ display: none !important; \}/); // Explicação DevIN: Mantém menus ocultos quando fechados.
-    assert.doesNotMatch(css, /@media screen and \(min-width: 1024px\) and \(pointer: coarse\)/); // Explicação DevIN: Remove ajustes amplos que afetavam desktops com touchscreen.
-}); // Explicação DevIN: Finaliza contrato móvel.
+test('ajustes móveis não modificam grades globais nem dependem de lousas', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const css = read('css/ui-consistency.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    assert.match(css, /@media \(max-width: 720px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /@media \(max-width: 400px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\[hidden\] \{ display: none !important; \}/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.doesNotMatch(css, /@media screen and \(min-width: 1024px\) and \(pointer: coarse\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
