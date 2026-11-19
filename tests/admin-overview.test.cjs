@@ -32,5 +32,5 @@ test('Layout de métricas se adapta aos dispositivos', () => { // Explicação D
     const css = read('css/ui-consistency.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
     assert.match(css, /\.dashboard-shell\.page-estatisticas\s*\{/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(css, /\.admin-overview-grid/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(css, /:not\(\.page-estatisticas\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-estatisticas \{ grid-template-columns: var\(--sidebar-width\) minmax\(0, 1fr\); \}/); // Explicação DevIN: Mantém estatísticas ADM em duas colunas sem depender das regras de TV.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
