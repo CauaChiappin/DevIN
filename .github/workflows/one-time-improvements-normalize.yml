@@ -1,0 +1,33 @@
+# Uso único para normalizar documentação e seguir a política do DevIN.
+name: DevIN temporary improvements normalizer # Explicação DevIN: Declara a rotina temporária de normalização.
+on: # Explicação DevIN: Define o acionamento por push.
+  push: # Explicação DevIN: Executa quando o arquivo for criado.
+    branches: [main] # Explicação DevIN: Limita a execução à branch main.
+    paths: ['.github/workflows/one-time-improvements-normalize.yml'] # Explicação DevIN: Evita ciclos durante outros commits.
+permissions: # Explicação DevIN: Restringe escopo das permissões.
+  contents: write # Explicação DevIN: Autoriza apenas o commit de comentários no repositório.
+jobs: # Explicação DevIN: Declara os trabalhos.
+  normalize: # Explicação DevIN: Agrupa o trabalho de documentação.
+    runs-on: ubuntu-latest # Explicação DevIN: Usa runner Linux.
+    steps: # Explicação DevIN: Define ações na ordem.
+      - uses: actions/checkout@v4 # Explicação DevIN: Recupera fontes da main.
+        with: # Explicação DevIN: Define opção do checkout.
+          persist-credentials: true # Explicação DevIN: Permite publicar os comentários.
+      - uses: actions/setup-python@v5 # Explicação DevIN: Configura Python.
+        with: # Explicação DevIN: Define a versão da linguagem.
+          python-version: '3.12' # Explicação DevIN: Usa Python compatível com o script.
+      - name: Run project explanation formatter # Explicação DevIN: Normaliza documentação dos arquivos alterados.
+        run: python3 scripts/line_explanations.py --write # Explicação DevIN: Executa ferramenta oficial do repositório.
+      - name: Show workflow formatting diff # Explicação DevIN: Permite corrigir o workflow manualmente sem elevar permissões do bot.
+        run: git diff -- .github/workflows/jarvis-admin-checks.yml # Explicação DevIN: Mostra somente diffs YAML nos logs.
+      - name: Commit affected files except workflows # Explicação DevIN: Evita alterações de workflows sem permissão explícita.
+        shell: bash # Explicação DevIN: Usa shell.
+        run: | # Explicação DevIN: Abre sequência de comandos.
+          set -euo pipefail # Explicação DevIN: Para diante de falhas.
+          git add .env.example css/ui-consistency.css database/migrations/2026_11_19_007_chat_mysql_state.sql js/jarvis-admin.js php/adm.php php/api/jarvis/admin_tools.php php/components/admin-overview.php php/controllers/AdminOverview.php php/controllers/ChatStorage.php tests/admin-overview.test.cjs tests/chat_mysql_storage.php # Explicação DevIN: Estagia somente fontes e testes da entrega.
+          if ! git diff --cached --quiet; then # Explicação DevIN: Impede commit vazio.
+            git config user.name 'github-actions[bot]' # Explicação DevIN: Identifica autora automatizada.
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com' # Explicação DevIN: Usa e-mail público do bot.
+            git commit -m "docs: normalize chat, admin and Jarvis improvements" # Explicação DevIN: Registra apenas comentários.
+            git push origin HEAD:main # Explicação DevIN: Publica na main.
+          fi # Explicação DevIN: Encerra publicação de comentários.
