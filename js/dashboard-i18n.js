@@ -859,7 +859,10 @@
             'Reports de vagas': 'Job reports', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Denúncias recebidas': 'Received reports', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Disponíveis': 'Available', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-            'Nenhum registro disponível.': 'No records available.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Nenhum registro disponível.': 'No records available.',
+            'Nenhuma empresa cadastrada.': 'No companies registered.', // Explicação DevIN: Localiza o estado vazio da aba Empresas.
+            'Pesquisar empresas por nome ou e-mail...': 'Search companies by name or email...', // Explicação DevIN: Traduz a busca exclusiva de empresas.
+            'Pesquisar vagas por título ou empresa...': 'Search jobs by title or company...', // Explicação DevIN: Traduz a busca exclusiva de vagas. // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Nenhum candidato cadastrado.': 'No candidates registered.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Nenhuma vaga publicada.': 'No jobs posted.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Nenhuma vaga foi denunciada.': 'No jobs have been reported.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
@@ -1167,7 +1170,10 @@
             'Reports de vagas': 'Denuncias de empleos', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Denúncias recebidas': 'Denuncias recibidas', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Disponíveis': 'Disponibles', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-            'Nenhum registro disponível.': 'No hay registros disponibles.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'Nenhum registro disponível.': 'No hay registros disponibles.',
+            'Nenhuma empresa cadastrada.': 'No hay empresas registradas.', // Explicação DevIN: Localiza o estado vazio da aba Empresas.
+            'Pesquisar empresas por nome ou e-mail...': 'Buscar empresas por nombre o correo...', // Explicação DevIN: Traduz a busca exclusiva de empresas.
+            'Pesquisar vagas por título ou empresa...': 'Buscar empleos por título o empresa...', // Explicação DevIN: Traduz a busca exclusiva de vagas. // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Nenhum candidato cadastrado.': 'No hay candidatos registrados.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Nenhuma vaga publicada.': 'No hay empleos publicados.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             'Nenhuma vaga foi denunciada.': 'No se han denunciado empleos.', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
