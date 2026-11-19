@@ -65,7 +65,7 @@ if ($gerarCurriculoAutomaticamente) { // Explicação DevIN: Inicia desvio condi
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Valida CSRF antes de aceitar candidatura ou alteração de perfil.
-    requireValidCsrf(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    requireValidCsrf(false); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         $action = requestString($_POST, 'action'); // Explicação DevIN: Atribui um valor à variável PHP $action.
