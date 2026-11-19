@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvi
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
             $_SESSION['admin_success'] = 'Registro excluído com sucesso.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : 'candidatos')); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
+            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : ($action === 'admin_delete_empresa' ? 'inicio' : 'candidatos'))); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
             exit; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvi
             header('Location: adm.php?pagina=' . rawurlencode($pagina) . '&configuracoes=1'); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
         } elseif (str_starts_with($action, 'admin_delete_')) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $_SESSION['admin_error'] = 'Não foi possível excluir o registro. Ele pode possuir dados vinculados no sistema.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : 'candidatos')); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
+            header('Location: adm.php?pagina=' . ($action === 'admin_delete_vaga' ? 'posts' : ($action === 'admin_delete_empresa' ? 'inicio' : 'candidatos'))); // Explicação DevIN: Ajusta cabeçalho, sessão ou resposta HTTP do servidor.
         } elseif ($action === 'resolve_job_report') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $_SESSION['admin_error'] = $exception instanceof InvalidArgumentException // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                 ? $exception->getMessage() // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -238,14 +238,16 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         '); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         $usuariosAdmin  = $resultPessoas ? $resultPessoas->fetch_all(MYSQLI_ASSOC) : []; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
 
-        // INNER JOIN associa cada vaga ao nome da empresa que a publicou.
-        $resultVagas    = $conn->query("
-            SELECT v.id_vaga AS id, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa
-            FROM vagas v
-            INNER JOIN empresa e ON e.id_empresa = v.id_empresa
-            ORDER BY v.id_vaga DESC
-        "); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-        $vagasAdmin     = $resultVagas ? $resultVagas->fetch_all(MYSQLI_ASSOC) : []; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+        // Consulta as vagas apenas na aba responsável por moderá-las.
+        if ($pagina === 'posts') { // Explicação DevIN: Mantém Empresas independente de vagas.
+            $resultVagas = $conn->query("
+                SELECT v.id_vaga AS id, v.titulo, COALESCE(v.descricao, '') AS descricao, e.nome AS empresa
+                FROM vagas v
+                INNER JOIN empresa e ON e.id_empresa = v.id_empresa
+                ORDER BY v.id_vaga DESC
+            "); // Explicação DevIN: Busca as vagas apenas na aba Vagas.
+            $vagasAdmin = $resultVagas ? $resultVagas->fetch_all(MYSQLI_ASSOC) : []; // Explicação DevIN: Carrega registros da aba Vagas sem duplicar na aba Empresas.
+        } // Explicação DevIN: Finaliza o carregamento condicional de vagas.
 
         ensureJobReportsSchema($conn); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
@@ -339,7 +341,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 
             <nav class="menu-principal" aria-label="Menu principal"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
                 <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
-                <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Posts das empresas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
+                <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Vagas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Pessoas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'reports') ?>" href="adm.php?pagina=reports"><?= dashboardIcon('flag') ?><span class="menu-text">Reports</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <!-- Suporte possui um ícone exclusivo de boia e exibe chamados dos usuários. -->
@@ -377,9 +379,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             <?php if (!in_array($pagina, ['sobre', 'suporte'], true)): ?>
                 <?= dashboardListHeader( // Explicação DevIN: Combina execução de código com conteúdo HTML gerado dinamicamente.
                     $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação button.
-                    $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'posts' ? 'Posts das empresas' : ($pagina === 'reports' ? 'Reports de ' . $categoriaReport : ($pagina === 'perfil' ? 'Perfil' : 'Empresas'))), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
-                    'Pesquisar por nome ou habilidade...', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                    $pagina === 'candidatos' ? count($usuariosAdmin) . ' candidatos' : ($pagina === 'posts' ? count($vagasAdmin) . ' posts' : ($pagina === 'reports' ? $totalReportsAdmin . ' reports' : ($pagina === 'inicio' ? (count($empresasAdmin) + count($vagasAdmin)) . ' registros' : ''))) // Explicação DevIN: Atribui um valor à variável PHP $pagina.
+                    $pagina === 'candidatos' ? 'Pessoas' : ($pagina === 'posts' ? 'Vagas' : ($pagina === 'reports' ? 'Reports de ' . $categoriaReport : ($pagina === 'perfil' ? 'Perfil' : 'Empresas'))), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
+                    $pagina === 'inicio' ? 'Pesquisar empresas por nome ou e-mail...' : ($pagina === 'posts' ? 'Pesquisar vagas por título ou empresa...' : 'Pesquisar por nome ou habilidade...'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    $pagina === 'candidatos' ? count($usuariosAdmin) . ' candidatos' : ($pagina === 'posts' ? count($vagasAdmin) . ' vagas' : ($pagina === 'reports' ? $totalReportsAdmin . ' reports' : ($pagina === 'inicio' ? count($empresasAdmin) . ' empresas' : ''))) // Explicação DevIN: Atribui um valor à variável PHP $pagina.
                 ) ?>
                 <?php if (in_array($pagina, ['inicio', 'candidatos', 'posts', 'reports'], true)): ?>
                     <?php if ($pagina === 'reports'): ?>
@@ -593,7 +595,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                     <?php endforeach; ?>
                 <?php endif; ?>
             <?php else: ?>
-                <?php if (!$empresasAdmin && !$vagasAdmin): ?><p class="empty-state">Nenhum registro disponível.</p><?php endif; ?>
+                <?php if (!$empresasAdmin): ?><p class="empty-state">Nenhuma empresa cadastrada.</p><?php endif; ?>
                 <?php foreach ($empresasAdmin as $empresa): ?>
                     <article class="item-card" data-detail="<?= h('E-mail: ' . $empresa['email'] . ' | CNPJ: ' . $empresa['cnpj']) ?>" data-detail-role="Empresa cadastrada" data-detail-tags="Empresa|Perfil ativo" data-detail-experience="<?= h('Cadastro na plataforma::CNPJ ' . $empresa['cnpj']) ?>" data-detail-action-label="Excluir registro"> <!-- Explicação DevIN: Declara conteúdo independente. Contém dado dinâmico processado pelo PHP. -->
                         <span class="card-avatar"><?= dashboardIcon('building') ?></span> <!-- Explicação DevIN: Declara trecho em linha. Contém dado dinâmico processado pelo PHP. -->
@@ -610,22 +612,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                         </form> <!-- Explicação DevIN: Fecha elemento form do documento. -->
                     </article> <!-- Explicação DevIN: Fecha elemento article do documento. -->
                 <?php endforeach; ?>
-                <?php foreach ($vagasAdmin as $vaga): ?>
-                    <article class="item-card" data-detail="<?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?>" data-job-title="<?= h($vaga['titulo']) ?>" data-detail-role="<?= h('Vaga publicada por ' . $vaga['empresa']) ?>" data-detail-tags="Vaga|<?= h($vaga['empresa']) ?>" data-detail-experience="Publicação::Registro da vaga na plataforma" data-detail-action-label="Excluir vaga"> <!-- Explicação DevIN: Declara conteúdo independente. Contém dado dinâmico processado pelo PHP. -->
-                        <span class="card-avatar"><?= dashboardIcon('briefcase') ?></span> <!-- Explicação DevIN: Declara trecho em linha. Contém dado dinâmico processado pelo PHP. -->
-                        <div> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
-                            <h2><?= h($vaga['empresa']) ?></h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. Contém dado dinâmico processado pelo PHP. -->
-                            <p><?= h($vaga['titulo']) ?> · <?= h($vaga['descricao'] ?: 'Sem descrição informada.') ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
-                            <?= dashboardCardTags('Vaga|' . $vaga['empresa']) ?>
-                        </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
-                        <form method="post" onsubmit="return confirm('Excluir esta vaga?');"> <!-- Explicação DevIN: Declara formulário de entrada de dados. Vincula um evento da interface. -->
-                            <input type="hidden" name="action" value="admin_delete_vaga"> <!-- Explicação DevIN: Declara campo de entrada. -->
-                            <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>"> <!-- Explicação DevIN: Declara campo de entrada. Contém dado dinâmico processado pelo PHP. -->
-                            <input type="hidden" name="id" value="<?= (int) $vaga['id'] ?>"> <!-- Explicação DevIN: Declara campo de entrada. Contém dado dinâmico processado pelo PHP. -->
-                            <button class="btn danger" type="submit" data-detail-action-target>Excluir vaga</button> <!-- Explicação DevIN: Declara botão de ação. -->
-                        </form> <!-- Explicação DevIN: Fecha elemento form do documento. -->
-                    </article> <!-- Explicação DevIN: Fecha elemento article do documento. -->
-                <?php endforeach; ?>
+
             <?php endif; ?>
             <?php if ($pagina === 'sobre'): ?>
                 <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
