@@ -233,7 +233,7 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateProfile.
         $persistedColumns = $tipo === 'adm' ? 'nome, email' : 'nome, email, foto'; // Admin não possui coluna de foto.
-        $stmt = $conn->prepare("SELECT {$persistedColumns} FROM {$table} WHERE {$idColumn} = ? LIMIT 1"); // Confere a foto além do nome/e-mail. // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        $stmt = $conn->prepare("SELECT {$persistedColumns} FROM {$table} WHERE {$idColumn} = ? LIMIT 1"); // Confere a foto além do nome/e-mail.
         $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $persisted = $stmt->get_result()->fetch_assoc(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.

@@ -426,8 +426,8 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         $conn->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-    error_log('Erro ao carregar dados do dashboard empresa: ' . $exception->getMessage());
-    $dashboardLoadError = 'Não foi possível carregar as vagas e os candidatos da empresa. Atualize a página ou tente novamente em alguns minutos.'; // Exibe a falha em vez de mostrar zero registros. // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    error_log('Erro ao carregar dados do dashboard empresa: ' . $exception->getMessage()); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    $dashboardLoadError = 'Não foi possível carregar as vagas e os candidatos da empresa. Atualize a página ou tente novamente em alguns minutos.'; // Exibe a falha em vez de mostrar zero registros.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 foreach ($empresaPosts as &$post) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
@@ -517,30 +517,30 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
         </aside> <!-- Explicação DevIN: Fecha elemento aside do documento. -->
 
-        <section class="lista-area">
+        <section class="lista-area"> <!-- Explicação DevIN: Declara seção temática. -->
             <!-- Feedback de perfil sempre visível, mesmo se a janela modal não abrir. -->
             <?php if (!empty($_SESSION['profile_error'])): ?>
-                <div class="dashboard-toast dashboard-toast--error" role="alert">
-                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h((string) $_SESSION['profile_error']) ?></p>
-                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
-                </div>
+                <div class="dashboard-toast dashboard-toast--error" role="alert"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h((string) $_SESSION['profile_error']) ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
+                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
             <?php endif; ?>
             <?php if (!empty($_SESSION['profile_success'])): ?>
-                <div class="dashboard-toast dashboard-toast--success" role="status" aria-live="polite">
-                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h((string) $_SESSION['profile_success']) ?></p>
-                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
-                </div>
+                <div class="dashboard-toast dashboard-toast--success" role="status" aria-live="polite"> <!-- Explicação DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h((string) $_SESSION['profile_success']) ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
+                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
             <?php endif; ?>
             <?php if ($dashboardLoadError !== ''): ?>
-                <div class="dashboard-toast dashboard-toast--error" role="alert">
-                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h($dashboardLoadError) ?></p>
-                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button>
-                </div>
+                <div class="dashboard-toast dashboard-toast--error" role="alert"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h($dashboardLoadError) ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
+                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
             <?php endif; ?>
  <!-- Explicação DevIN: Declara seção temática. -->
             <?php if (!in_array($pagina, ['sobre', 'mensagens', 'suporte'], true)): ?>
                 <?= dashboardListHeader( // Explicação DevIN: Combina execução de código com conteúdo HTML gerado dinamicamente.
-                    $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação section.
+                    $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação button.
                     $pagina === 'candidatos' ? 'Candidatos' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas publicadas'), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
                     $pagina === 'candidatos' ? 'Pesquisar por nome ou e-mail...' : 'Pesquisar por nome ou habilidade...', // Explicação DevIN: Atribui um valor à variável PHP $pagina.
                     $pagina === 'candidatos' ? count($candidatos) . ' candidatos' : ($pagina === 'inicio' ? count($empresaPosts) . ' vagas' : ''), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
