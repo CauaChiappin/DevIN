@@ -65,7 +65,7 @@ if ($gerarCurriculoAutomaticamente) { // Explicação DevIN: Inicia desvio condi
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Valida CSRF antes de aceitar candidatura ou alteração de perfil.
-    requireValidCsrf(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    requireValidCsrf(false); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         $action = requestString($_POST, 'action'); // Explicação DevIN: Atribui um valor à variável PHP $action.
@@ -259,6 +259,7 @@ if (!$perfilAtual) { // Explicação DevIN: Inicia desvio condicional: executa r
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 $idiomaAtual = getProfileLanguage($tipo, $idPessoaAtual); // Explicação DevIN: Atribui um valor à variável PHP $idiomaAtual.
 
+$dashboardLoadError = ''; // Expõe falhas de carregamento sem mascará-las como listas vazias.
 $vagasDisponiveis  = []; // Explicação DevIN: Atribui um valor à variável PHP $vagasDisponiveis.
 $minhasCandidaturas = []; // Explicação DevIN: Atribui um valor à variável PHP $minhasCandidaturas.
 $employmentReady = false; // Sem migração, a interface de contratação permanece indisponível sem quebrar o site.
@@ -355,7 +356,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     error_log('Erro ao carregar vagas da pessoa: ' . $exception->getMessage()); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    $_SESSION['job_error'] = 'Não foi possível carregar as vagas agora.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    $dashboardLoadError = 'Não foi possível carregar os dados de vagas e candidaturas. Atualize a página ou tente novamente em alguns minutos.'; // Exibe um aviso persistente na área principal.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 foreach ($vagasDisponiveis as &$vaga) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
@@ -493,9 +494,29 @@ $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN
         </aside> <!-- Explicação DevIN: Fecha elemento aside do documento. -->
 
         <section class="lista-area"> <!-- Explicação DevIN: Declara seção temática. -->
+            <!-- Feedback de perfil sempre visível, mesmo se a janela modal não abrir. -->
+            <?php if (!empty($_SESSION['profile_error'])): ?>
+                <div class="dashboard-toast dashboard-toast--error" role="alert"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h((string) $_SESSION['profile_error']) ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
+                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+            <?php endif; ?>
+            <?php if (!empty($_SESSION['profile_success'])): ?>
+                <div class="dashboard-toast dashboard-toast--success" role="status" aria-live="polite"> <!-- Explicação DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
+                    <p class="dashboard-toast__msg dashboard-toast__msg--success"><?= h((string) $_SESSION['profile_success']) ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
+                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+            <?php endif; ?>
+            <?php if ($dashboardLoadError !== ''): ?>
+                <div class="dashboard-toast dashboard-toast--error" role="alert"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
+                    <p class="dashboard-toast__msg dashboard-toast__msg--error"><?= h($dashboardLoadError) ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
+                    <button class="dashboard-toast__close" type="button" data-toast-close aria-label="Fechar">×</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. -->
+                </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
+            <?php endif; ?>
+ <!-- Explicação DevIN: Declara seção temática. -->
             <?php if (!in_array($pagina, ['sobre', 'mensagens', 'curriculo', 'suporte'], true)): ?>
                 <?= dashboardListHeader( // Explicação DevIN: Combina execução de código com conteúdo HTML gerado dinamicamente.
-                    $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação section.
+                    $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação button.
                     $pagina === 'vagas' ? 'Minhas candidaturas' : ($pagina === 'perfil' ? 'Perfil' : 'Vagas'), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
                     'Pesquisar por vaga ...', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     $pagina === 'vagas' // Explicação DevIN: Atribui um valor à variável PHP $pagina.

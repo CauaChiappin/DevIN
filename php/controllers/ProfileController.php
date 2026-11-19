@@ -64,9 +64,21 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload): ?string // Exp
         return null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    if (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK || !is_uploaded_file($upload['tmp_name'])) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        throw new RuntimeException('Não foi possível enviar a foto.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    $uploadError = (int) ($upload['error'] ?? UPLOAD_ERR_NO_FILE); // Distingue erro de PHP de um arquivo inválido.
+    if ($uploadError !== UPLOAD_ERR_OK) { // Interrompe antes de usar arquivo temporário incompleto.
+        $message = match ($uploadError) { // Traduz código sem expor caminhos do servidor.
+            UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'Foto acima do limite de envio do servidor. Escolha uma imagem menor.', // Limite do PHP.
+            UPLOAD_ERR_PARTIAL => 'A foto foi enviada apenas parcialmente. Verifique a conexão e tente novamente.', // Falha de rede.
+            UPLOAD_ERR_NO_TMP_DIR, UPLOAD_ERR_CANT_WRITE => 'O servidor não conseguiu armazenar a foto. Avise o suporte DevIN.', // Armazenamento.
+            UPLOAD_ERR_EXTENSION => 'O servidor bloqueou o upload. Avise o suporte DevIN.', // Extensão do PHP.
+            default => 'Não foi possível receber a foto. Tente novamente.', // Erros de upload restantes.
+        }; // Finaliza a tradução.
+        error_log('DevIN: upload de foto recusado pelo PHP (código ' . $uploadError . ').'); // Registra só código técnico.
+        throw new InvalidArgumentException($message); // Exibe aviso no formulário.
+    } // Finaliza a verificação do código do PHP.
+    if (empty($upload['tmp_name']) || !is_uploaded_file((string) $upload['tmp_name'])) { // Bloqueia arquivo ausente.
+        throw new RuntimeException('Não foi possível receber a foto enviada. Tente novamente.'); // Indica falha recuperável.
+    } // Finaliza a validação do arquivo temporário.
 
     $maxBytes = 5 * 1024 * 1024; // Limitado a 5 MB
     if (($upload['size'] ?? 0) <= 0 || ($upload['size'] ?? 0) > $maxBytes) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -86,16 +98,25 @@ function saveProfilePhoto(string $tipo, int $id, ?array $upload): ?string // Exp
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     $uploadDirectory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads'; // Explicação DevIN: Atribui um valor à variável PHP $uploadDirectory.
-    if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0750, true) && !is_dir($uploadDirectory)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0755, true) && !is_dir($uploadDirectory)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         throw new RuntimeException('Não foi possível preparar o armazenamento da foto.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    if (!is_writable($uploadDirectory)) { // Evita aceitar upload quando a pasta está sem permissão.
+        error_log('DevIN: diretório de fotos sem permissão de escrita.'); // Diagnóstico sem nomes pessoais.
+        throw new RuntimeException('O servidor está sem permissão para armazenar fotos. Avise o suporte DevIN.'); // Erro compreensível.
+    } // Finaliza a validação do armazenamento.
     $fileName = 'profile-' . $tipo . '-' . $id . '-' . bin2hex(random_bytes(8)) . '.' . $extensions[$mime]; // Explicação DevIN: Atribui um valor à variável PHP $fileName.
     $filePath = $uploadDirectory . DIRECTORY_SEPARATOR . $fileName; // Explicação DevIN: Atribui um valor à variável PHP $filePath.
     if (!move_uploaded_file($upload['tmp_name'], $filePath)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         throw new RuntimeException('Não foi possível salvar a foto enviada.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    @chmod($filePath, 0644); // Permite que o servidor web sirva a imagem pública do avatar.
+    if (!is_file($filePath) || !is_readable($filePath)) { // Confirma que a imagem permaneceu no disco.
+        @unlink($filePath); // Remove upload inválido.
+        throw new RuntimeException('A foto não ficou acessível no armazenamento. Avise o suporte DevIN.'); // Evita falso sucesso.
+    } // Finaliza a checagem da foto gravada.
     return 'uploads/' . $fileName; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
@@ -211,7 +232,8 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateProfile.
-        $stmt = $conn->prepare("SELECT nome, email FROM {$table} WHERE {$idColumn} = ? LIMIT 1"); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        $persistedColumns = $tipo === 'adm' ? 'nome, email' : 'nome, email, foto'; // Admin não possui coluna de foto.
+        $stmt = $conn->prepare("SELECT {$persistedColumns} FROM {$table} WHERE {$idColumn} = ? LIMIT 1"); // Confere a foto além do nome/e-mail.
         $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $persisted = $stmt->get_result()->fetch_assoc(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
@@ -219,6 +241,9 @@ function updateProfile(string $tipo, int $id, array $data, ?array $upload = null
         if (!$persisted || $persisted['email'] !== $email || $persisted['nome'] !== $nome) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             throw new RuntimeException('O banco não confirmou os dados do perfil. Nenhuma alteração foi aplicada.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if ($foto !== null && (string) ($persisted['foto'] ?? '') !== $foto) { // Valida persistência do caminho da foto.
+            throw new RuntimeException('O banco não confirmou a foto enviada. Tente novamente.'); // Evita sucesso falso.
+        } // Finaliza verificação de persistência.
         $conn->commit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função updateProfile.
         $transaction = false; // Explicação DevIN: Atribui um valor à variável PHP $transaction.
         $saved = true; // Explicação DevIN: Atribui um valor à variável PHP $saved.

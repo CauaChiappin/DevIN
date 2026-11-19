@@ -35,3 +35,31 @@ test('formulário e mensagens de validação acompanham o idioma selecionado', (
     assert.match(i18n, /Contraseña actual \(solo para cambiar el correo\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(i18n, /O e-mail ultrapassa o tamanho permitido/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('fotos do perfil distinguem falhas e confirmam a persistência', () => { // Protege feedback e armazenamento de avatares.
+    const controller = read('php/controllers/ProfileController.php'); // Carrega controlador compartilhado.
+    assert.match(controller, /UPLOAD_ERR_PARTIAL/); // Verifica detecção de envio parcial.
+    assert.match(controller, /UPLOAD_ERR_INI_SIZE/); // Verifica detecção do limite PHP.
+    assert.match(controller, /mkdir\(\$uploadDirectory, 0755, true\)/); // Confere pasta pública acessível.
+    assert.match(controller, /is_writable\(\$uploadDirectory\)/); // Confere escrita.
+    assert.match(controller, /\$persisted\['foto'\]/); // Confirmação no banco.
+    assert.match(controller, /\$conn->rollback\(\)/); // Falha não conclui transação.
+    for (const role of ['pessoa', 'empresa']) { // Garante tratamento nos dois perfis com foto editável.
+        const page = read('php/' + role + '.php'); // Inspeciona página.
+        assert.match(page, /enctype="multipart\/form-data"/); // Envia bytes e campos.
+        assert.match(page, /name="foto" type="file"/); // Exibe seletor.
+        assert.match(page, /\$dashboardLoadError/); // Falhas de carregamento visíveis.
+        assert.match(page, /dashboard-toast--error/); // Alerta no próprio painel.
+    } // Finaliza perfis com foto.
+}); // Finaliza contrato de upload.
+
+test('formulários mostram erro CSRF legível sem alterar API JSON', () => { // Evita falha silenciosa ao entrar ou salvar.
+    const security = read('php/config/security.php'); // Carrega validação de sessão.
+    assert.match(security, /function requireValidCsrf\(bool \$asJson = true\)/); // JSON continua padrão para APIs.
+    assert.match(security, /Content-Type: application\/json/); // Resposta JSON preservada.
+    assert.match(security, /Content-Type: text\/html/); // Resposta HTML para formulários.
+    assert.match(security, /post_max_size/); // Detecta POST acima do limite.
+    for (const role of ['login', 'pessoa', 'empresa', 'adm']) { // Página usa feedback visível.
+        assert.match(read('php/' + role + '.php'), /requireValidCsrf\(false\)/); // Seleciona resposta HTML.
+    } // Finaliza páginas.
+}); // Finaliza contrato de erros.

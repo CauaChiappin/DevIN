@@ -45,3 +45,8 @@ composer.phar
 
 # Migration versionada; demais exports SQL continuam ignorados.
 !database/migrations/*.sql
+
+# Fotos de perfil são dados dinâmicos; não adicionar novos uploads ao GitHub.
+php/uploads/*
+!php/uploads/.gitkeep
+!php/uploads/.htaccess
