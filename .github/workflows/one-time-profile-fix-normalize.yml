@@ -1,0 +1,33 @@
+# Normalizador temporário para os comentários inline da correção de fotos/sessão.
+name: DevIN temporary profile upload documentation normalize
+on:
+  push:
+    branches:
+      - fix/profile-photo-upload-login-feedback-20261119
+    paths:
+      - .github/workflows/one-time-profile-fix-normalize.yml
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Normalize inline explanations
+        run: python3 scripts/line_explanations.py --write
+      - name: Publish changed PHP files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add php/config/security.php php/controllers/ProfileController.php php/empresa.php php/pessoa.php
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "docs: normalize profile and session failure explanations"
+            git push origin HEAD:fix/profile-photo-upload-login-feedback-20261119
+          fi
