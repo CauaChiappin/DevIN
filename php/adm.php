@@ -31,7 +31,7 @@ if (!in_array($categoriaReport, $categoriasReport, true)) { // Explicação DevI
     $categoriaReport = 'vagas'; // Explicação DevIN: Atribui um valor à variável PHP $categoriaReport.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-$paginasPermitidas = ['inicio', 'candidatos', 'posts', 'reports', 'suporte', 'sobre', 'perfil']; // Explicação DevIN: Atribui um valor à variável PHP $paginasPermitidas.
+$paginasPermitidas = ['inicio', 'estatisticas', 'candidatos', 'posts', 'reports', 'suporte', 'sobre', 'perfil']; // Explicação DevIN: Atribui um valor à variável PHP $paginasPermitidas.
 if (!in_array($pagina, $paginasPermitidas, true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Usa uma lista permitida para evitar que a URL selecione páginas arbitrárias.
     $pagina = 'inicio'; // Explicação DevIN: Atribui um valor à variável PHP $pagina.
@@ -340,7 +340,8 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
             <nav class="menu-principal" aria-label="Menu principal"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
-                <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
+                <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a>
+                <a class="<?= ativo($pagina, 'estatisticas') ?>" href="adm.php?pagina=estatisticas"><?= dashboardIcon('file') ?><span class="menu-text">Estatísticas</span></a> <!-- Explicação DevIN: Oferece painel de indicadores sem operações de escrita. --> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Vagas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Pessoas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'reports') ?>" href="adm.php?pagina=reports"><?= dashboardIcon('flag') ?><span class="menu-text">Reports</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
@@ -376,7 +377,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
             <?php endif; ?>
 
-            <?php if (!in_array($pagina, ['sobre', 'suporte'], true)): ?>
+            <?php if (!in_array($pagina, ['sobre', 'suporte', 'estatisticas'], true)): ?>
                 <?= dashboardListHeader( // Explicação DevIN: Combina execução de código com conteúdo HTML gerado dinamicamente.
                     $pagina, // Explicação DevIN: Continua expressão ou bloco pertencente a marcação button.
                     $pagina === 'candidatos' ? 'Pessoas' : ($pagina === 'posts' ? 'Vagas' : ($pagina === 'reports' ? 'Reports de ' . $categoriaReport : ($pagina === 'perfil' ? 'Perfil' : 'Empresas'))), // Explicação DevIN: Atribui um valor à variável PHP $pagina.
@@ -403,7 +404,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php if ($pagina === 'suporte'): ?>
+            <?php if ($pagina === 'estatisticas'): ?>
+                <?php require __DIR__ . '/components/admin-overview.php'; ?> <!-- Explicação DevIN: Carrega as métricas somente na página de estatísticas. -->
+            <?php elseif ($pagina === 'suporte'): ?>
                 <?php require __DIR__ . '/components/support-admin.php'; ?>
             <?php elseif ($pagina === 'sobre'): ?>
                 <?= aboutPage() ?>
@@ -633,7 +636,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             </dialog> <!-- Explicação DevIN: Fecha elemento dialog do documento. -->
         <?php endif; ?>
 
-        <?php if ($pagina !== 'sobre' && $pagina !== 'perfil'): ?>
+        <?php if ($pagina === 'estatisticas'): ?>
+            <!-- Estatísticas ocupam toda a área sem painel de detalhes de registros. -->
+        <?php elseif ($pagina !== 'sobre' && $pagina !== 'perfil'): ?>
             <?= dashboardDetailPanel() ?>
         <?php else: ?>
         <aside class="detalhe-area"> <!-- Explicação DevIN: Declara conteúdo auxiliar. -->

@@ -31,6 +31,13 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'php/empresa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/components/profile-tools.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/ProfileController.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/ChatStorage.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/AdminOverview.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/components/admin-overview.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'database/migrations/2026_11_19_007_chat_mysql_state.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/chat_mysql_storage.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/admin-overview.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - '.env.example' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/profile_email_change_mysql.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/profile-email-ui.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/EmploymentWorkflow.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -87,6 +94,10 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           php -v # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/adm.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/ChatStorage.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/AdminOverview.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/components/admin-overview.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/chat_mysql_storage.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/suporte.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/support_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/controllers/SupportDesk.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -131,6 +142,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           node --check js/dashboard.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/ui-consistency.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/admin-dashboard-sections.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/admin-overview.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/support-ui.test.cjs tests/support-i18n.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/profile-email-ui.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/mobile-arcade-secret.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -238,3 +250,15 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_profile_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/profile_email_change_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+
+      - name: Chat persistence - disposable MySQL and historical import # Explicação DevIN: Testa migração de mensagens sem banco real.
+        env: # Explicação DevIN: Define configurações de teste isolado.
+          CHAT_TEST_HOST: 127.0.0.1 # Explicação DevIN: Conecta ao serviço MySQL descartável.
+          CHAT_TEST_DB: devin_chat_ci # Explicação DevIN: Evita uso de dados de produção.
+          CHAT_TEST_USER: root # Explicação DevIN: Usa conta do ambiente temporário.
+          CHAT_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Senha fictícia do banco de CI.
+          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Autoriza migração do banco temporário.
+        run: | # Explicação DevIN: Executa instalação e teste de importação.
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_chat_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Cria banco temporário dedicado.
+          mysql -h 127.0.0.1 -u root devin_chat_ci < database/migrations/2026_11_19_007_chat_mysql_state.sql # Explicação DevIN: Aplica somente a nova migration.
+          php tests/chat_mysql_storage.php # Explicação DevIN: Confere importação, persistência e rollback do histórico.
