@@ -340,8 +340,8 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
 
             <nav class="menu-principal" aria-label="Menu principal"> <!-- Explicação DevIN: Declara navegação. Inclui atributos de acessibilidade. -->
-                <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a>
-                <a class="<?= ativo($pagina, 'estatisticas') ?>" href="adm.php?pagina=estatisticas"><?= dashboardIcon('file') ?><span class="menu-text">Estatísticas</span></a> <!-- Explicação DevIN: Oferece painel de indicadores sem operações de escrita. --> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
+                <a class="<?= ativo($pagina, 'inicio') ?>" href="adm.php?pagina=inicio"><?= dashboardIcon('building') ?><span class="menu-text">Empresas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
+                <a class="<?= ativo($pagina, 'estatisticas') ?>" href="adm.php?pagina=estatisticas"><?= dashboardIcon('file') ?><span class="menu-text">Estatísticas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'posts') ?>" href="adm.php?pagina=posts"><?= dashboardIcon('briefcase') ?><span class="menu-text">Vagas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'candidatos') ?>" href="adm.php?pagina=candidatos"><?= dashboardIcon('user') ?><span class="menu-text">Pessoas</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
                 <a class="<?= ativo($pagina, 'reports') ?>" href="adm.php?pagina=reports"><?= dashboardIcon('flag') ?><span class="menu-text">Reports</span></a> <!-- Explicação DevIN: Declara link de navegação. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
@@ -405,7 +405,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             <?php endif; ?>
 
             <?php if ($pagina === 'estatisticas'): ?>
-                <?php require __DIR__ . '/components/admin-overview.php'; ?> <!-- Explicação DevIN: Carrega as métricas somente na página de estatísticas. -->
+                <?php require __DIR__ . '/components/admin-overview.php'; ?>
             <?php elseif ($pagina === 'suporte'): ?>
                 <?php require __DIR__ . '/components/support-admin.php'; ?>
             <?php elseif ($pagina === 'sobre'): ?>
