@@ -927,7 +927,21 @@
     const query = event.target.value.trim(); // Explicação DevIN: Declara variável JavaScript query para reutilizar valor ou resultado.
     searchTimer = window.setTimeout(() => loadConversations(query).catch(error => {status.textContent = error.message;}), 350); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-  $('[data-jarvis-summary]').addEventListener('click', () => chat('summary')); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+  $('[data-jarvis-summary]').addEventListener('click', async () => { // Explicação DevIN: Exibe métricas reais no resumo do JARVIS quando a ferramenta administrativa está disponível.
+    if (busy) return; // Explicação DevIN: Evita múltiplas consultas simultâneas.
+    if (root.dataset.toolsEnabled !== '1') { void chat('summary'); return; } // Explicação DevIN: Preserva o resumo anterior quando ferramentas ainda não foram ativadas.
+    busy = true; // Explicação DevIN: Bloqueia requisição paralela durante a consulta.
+    try { // Explicação DevIN: Busca dados agregados em endpoint GET autenticado.
+      const data = await api(root.dataset.tools + '?action=overview'); // Explicação DevIN: Consulta números do MySQL sem alterar registros.
+      const overview = data.overview || {}; // Explicação DevIN: Obtém métricas protegidas pelo backend.
+      const captions = [['empresas','Empresas'], ['pessoas','Pessoas'], ['vagas','Vagas'], ['candidaturas','Candidaturas'], ['contratacoes','Contratações confirmadas'], ['denuncias_pendentes','Denúncias pendentes'], ['suporte_aberto','Chamados abertos']]; // Explicação DevIN: Usa apenas métricas da lista permitida.
+      const text = 'Resumo verificado do DevIN (MySQL):\n' + captions.map(([key,label]) => label + ': ' + (Number.isFinite(overview[key]) ? new Intl.NumberFormat('pt-BR').format(overview[key]) : 'indisponível')).join('\n'); // Explicação DevIN: Não inventa valores quando faltar uma tabela.
+      addMessage('assistant', text, {source:'local'}); // Explicação DevIN: Identifica a fonte real dos dados apresentados.
+    } catch (error) { // Explicação DevIN: Explica falhas sem substituir números por estimativas do modelo.
+      addMessage('assistant', 'Não foi possível consultar agora as estatísticas do MySQL: ' + error.message); // Explicação DevIN: Mantém o administrador informado da indisponibilidade.
+    } finally { busy = false; } // Explicação DevIN: Libera o assistente após a operação.
+  }); // Explicação DevIN: Finaliza integração do resumo com as métricas.
+ // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
   input.addEventListener('input', resize); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
   input.addEventListener('keydown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
