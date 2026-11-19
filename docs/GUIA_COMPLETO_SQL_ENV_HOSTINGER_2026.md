@@ -6,7 +6,7 @@
 
 | Arquivo | Descrição | Onde utilizar |
 |---|---|---|
-| [SQL_COMPLEMENTAR_DEVIN_2026.sql](SQL_COMPLEMENTAR_DEVIN_2026.sql) | Reúne as **sete migrations exclusivamente aditivas**, com 20 tabelas complementares de LGPD, JARVIS, suporte, contratação e chat | phpMyAdmin, após backup e teste em homologação |
+| [SQL_COMPLEMENTAR_DEVIN_2026.sql](SQL_COMPLEMENTAR_DEVIN_2026.sql) | Reúne as **sete migrations exclusivamente aditivas**, com 21 tabelas complementares de LGPD, JARVIS, suporte, contratação e chat | phpMyAdmin, após backup e teste em homologação |
 | [SQL_ADMIN_ALTER_MANUAL_DEVIN_2026.sql](SQL_ADMIN_ALTER_MANUAL_DEVIN_2026.sql) | Alterações de colunas em `administrador` para Token 2 e níveis de permissão | Executar individualmente só se colunas não existirem |
 | [SQL_DIAGNOSTICO_LEITURA_DEVIN.sql](SQL_DIAGNOSTICO_LEITURA_DEVIN.sql) | Verificação de versão, banco, tabelas e colunas **sem modificar dados** | Executar antes dos demais comandos no phpMyAdmin |
 | [ENV_HOSTINGER_MODELO_PREENCHER.txt](ENV_HOSTINGER_MODELO_PREENCHER.txt) | As **32 variáveis** do `.env.example`, com valores fictícios `SUBSTITUIR_...` | Copiar conteúdo para `.env` **privado** na raiz do DevIN depois de trocar os exemplos |
