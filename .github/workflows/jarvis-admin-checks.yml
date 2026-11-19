@@ -251,14 +251,15 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_profile_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/profile_email_change_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
-      - name: Chat persistence - disposable MySQL and historical import # Explicação DevIN: Testa migração de mensagens sem banco real.
-        env: # Explicação DevIN: Define configurações de teste isolado.
-          CHAT_TEST_HOST: 127.0.0.1 # Explicação DevIN: Conecta ao serviço MySQL descartável.
-          CHAT_TEST_DB: devin_chat_ci # Explicação DevIN: Evita uso de dados de produção.
-          CHAT_TEST_USER: root # Explicação DevIN: Usa conta do ambiente temporário.
-          CHAT_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Senha fictícia do banco de CI.
-          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Autoriza migração do banco temporário.
-        run: | # Explicação DevIN: Executa instalação e teste de importação.
-          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_chat_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Cria banco temporário dedicado.
-          mysql -h 127.0.0.1 -u root devin_chat_ci < database/migrations/2026_11_19_007_chat_mysql_state.sql # Explicação DevIN: Aplica somente a nova migration.
-          TMPDIR="$(mktemp -d)" php tests/chat_mysql_storage.php # Explicação DevIN: Executa importação com diretório temporário isolado da suíte.
+      - name: Chat persistence - disposable MySQL and historical import # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+        env: # Explicação DevIN: Configura variáveis de ambiente (campo env).
+          CHAT_TEST_HOST: 127.0.0.1 # Explicação DevIN: Configura propriedade YAML (campo CHAT_TEST_HOST).
+          CHAT_TEST_DB: devin_chat_ci # Explicação DevIN: Configura propriedade YAML (campo CHAT_TEST_DB).
+          APP_ENV: development # Explicação DevIN: Configura propriedade YAML (campo APP_ENV).
+          CHAT_TEST_USER: root # Explicação DevIN: Configura propriedade YAML (campo CHAT_TEST_USER).
+          CHAT_TEST_PASSWORD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo CHAT_TEST_PASSWORD).
+          MYSQL_PWD: jarvis-ci-only # Explicação DevIN: Configura propriedade YAML (campo MYSQL_PWD).
+        run: | # Explicação DevIN: Configura comando de execução (campo run).
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_chat_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          mysql -h 127.0.0.1 -u root devin_chat_ci < database/migrations/2026_11_19_007_chat_mysql_state.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          TMPDIR="$(mktemp -d)" php tests/chat_mysql_storage.php # Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.

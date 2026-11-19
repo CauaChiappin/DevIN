@@ -17,8 +17,8 @@ require_once __DIR__ . '/../../controllers/Jarvis/ModelProvider.php'; // Explica
 require_once __DIR__ . '/../../controllers/Security/AdminRolePolicy.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 require_once __DIR__ . '/../../controllers/Jarvis/JarvisModeration.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 // Leitura somente de chamados autenticada para o ADM/JARVIS.
-require_once __DIR__ . '/../../controllers/SupportDesk.php';
-require_once __DIR__ . '/../../controllers/AdminOverview.php'; // Explicação DevIN: Permite ao JARVIS consultar estatísticas agregadas sem editar o banco. // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/../../controllers/SupportDesk.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once __DIR__ . '/../../controllers/AdminOverview.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 $method=$_SERVER['REQUEST_METHOD'] ?? ''; // Explicação DevIN: Atribui um valor à variável PHP $method.
 if (!in_array($method,['GET','POST'],true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -58,9 +58,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
                 jarvisJson(200, ['success'=>true, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
                     'tickets'=>array_slice(SupportDesk::listAdmin($db), 0, 30)]); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-            if ($action==='overview') { // Explicação DevIN: Disponibiliza somente números agregados ao JARVIS de ADM autenticado.
-                jarvisJson(200, ['success'=>true, 'overview'=>devinAdminOverview($db)]); // Explicação DevIN: Não envia informações individuais nem autoriza operações de escrita.
-            } // Explicação DevIN: Finaliza rota administrativa somente de leitura.
+            if ($action==='overview') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                jarvisJson(200, ['success'=>true, 'overview'=>devinAdminOverview($db)]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             if ($action==='history') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 $rows=JarvisAdminActivity::latestAll($db); // Explicação DevIN: Atribui um valor à variável PHP $rows.
                 jarvisJson(200,['success'=>true,'events'=>$rows]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.

@@ -176,22 +176,22 @@
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* DevIN ADM — indicadores de administração com leitura ampla e acessível. */
-.dashboard-shell.page-estatisticas { grid-template-columns: var(--sidebar-width) minmax(0, 1fr); } /* Explicação DevIN: Usa somente navegação e métricas, sem painel de detalhe de uma vaga. */
-.dashboard-shell.page-estatisticas .lista-area { min-width: 0; padding: clamp(18px, 2.4vw, 42px); overflow-y: auto; } /* Explicação DevIN: Permite rolar estatísticas extensas em qualquer display. */
-.admin-overview { width: min(100%, 1800px); margin-inline: auto; display: grid; gap: clamp(18px, 2vw, 30px); } /* Explicação DevIN: Limita linhas muito longas em TVs e monitores ultrawide. */
-.admin-overview-header { padding: clamp(18px, 2.8vw, 38px); background: linear-gradient(115deg, #084d91, #197bc1); color: #fff; border-radius: 20px; } /* Explicação DevIN: Mantém a identidade azul do portal. */
-.admin-overview-header h1 { margin: 0 0 10px; font-size: clamp(24px, 2vw, 42px); color: #fff; } /* Explicação DevIN: Destaca o resumo de indicadores. */
-.admin-overview-header p { margin: 0; font-size: clamp(14px, 1.1vw, 20px); line-height: 1.5; color: #e5f3ff; } /* Explicação DevIN: Explica que o relatório é atualizado ao abrir a página. */
-.admin-overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: clamp(12px, 1.4vw, 22px); } /* Explicação DevIN: Distribui indicadores automaticamente em celulares, desktops e lousas. */
-.admin-metric { padding: clamp(20px, 2vw, 34px); background: #fff; border: 1px solid #d9e5f0; border-radius: 18px; box-shadow: 0 6px 22px rgba(2, 55, 109, .06); min-width: 0; } /* Explicação DevIN: Separa métricas sem criar rolagem horizontal. */
-.admin-metric h2 { margin: 0 0 12px; color: #345a7a; font-size: clamp(15px, 1.03vw, 22px); line-height: 1.4; } /* Explicação DevIN: Torna cada indicador fácil de identificar. */
-.admin-metric strong { display: block; font-size: clamp(27px, 2.8vw, 58px); line-height: 1.15; color: #00549f; overflow-wrap: anywhere; } /* Explicação DevIN: Evidencia contagens e estados indisponíveis. */
-.admin-overview-ranking { border: 1px solid #d9e5f0; background: #fff; padding: clamp(20px, 2.2vw, 36px); border-radius: 18px; } /* Explicação DevIN: Apresenta ranking em container de leitura confortável. */
-.admin-overview-ranking h2 { margin: 0 0 18px; font-size: clamp(20px, 1.5vw, 30px); color: #12548d; } /* Explicação DevIN: Nomeia as empresas com mais vagas cadastradas. */
-.admin-overview-ranking ol { padding-left: 28px; margin: 0; display: grid; gap: 12px; } /* Explicação DevIN: Dá espaçamento para navegação por toque. */
-.admin-overview-ranking li { padding: 10px 8px; border-bottom: 1px solid #e8edf3; color: #273e53; overflow-wrap: anywhere; font-size: clamp(15px, 1vw, 20px); } /* Explicação DevIN: Evita transbordamento de nomes empresariais. */
-.admin-overview-ranking li strong { float: right; color: #0b5caa; margin-left: 16px; } /* Explicação DevIN: Destaca quantidade de vagas por empresa. */
-@media (max-width: 720px) { /* Explicação DevIN: Ajusta indicadores para smartphones e tablets estreitos. */
-    .admin-overview-grid { grid-template-columns: minmax(0, 1fr); } /* Explicação DevIN: Mostra um indicador por linha para leitura. */
-    .admin-overview-ranking li strong { float: none; display: block; margin: 6px 0 0; } /* Explicação DevIN: Evita sobreposição de números com nomes longos. */
-} /* Explicação DevIN: Encerra regras de estatísticas móveis. */
+.dashboard-shell.page-estatisticas { grid-template-columns: var(--sidebar-width) minmax(0, 1fr); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.dashboard-shell.page-estatisticas .lista-area { min-width: 0; padding: clamp(18px, 2.4vw, 42px); overflow-y: auto; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview { width: min(100%, 1800px); margin-inline: auto; display: grid; gap: clamp(18px, 2vw, 30px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-header { padding: clamp(18px, 2.8vw, 38px); background: linear-gradient(115deg, #084d91, #197bc1); color: #fff; border-radius: 20px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-header h1 { margin: 0 0 10px; font-size: clamp(24px, 2vw, 42px); color: #fff; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-header p { margin: 0; font-size: clamp(14px, 1.1vw, 20px); line-height: 1.5; color: #e5f3ff; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: clamp(12px, 1.4vw, 22px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-metric { padding: clamp(20px, 2vw, 34px); background: #fff; border: 1px solid #d9e5f0; border-radius: 18px; box-shadow: 0 6px 22px rgba(2, 55, 109, .06); min-width: 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-metric h2 { margin: 0 0 12px; color: #345a7a; font-size: clamp(15px, 1.03vw, 22px); line-height: 1.4; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-metric strong { display: block; font-size: clamp(27px, 2.8vw, 58px); line-height: 1.15; color: #00549f; overflow-wrap: anywhere; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-ranking { border: 1px solid #d9e5f0; background: #fff; padding: clamp(20px, 2.2vw, 36px); border-radius: 18px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-ranking h2 { margin: 0 0 18px; font-size: clamp(20px, 1.5vw, 30px); color: #12548d; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-ranking ol { padding-left: 28px; margin: 0; display: grid; gap: 12px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-ranking li { padding: 10px 8px; border-bottom: 1px solid #e8edf3; color: #273e53; overflow-wrap: anywhere; font-size: clamp(15px, 1vw, 20px); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.admin-overview-ranking li strong { float: right; color: #0b5caa; margin-left: 16px; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+@media (max-width: 720px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .admin-overview-grid { grid-template-columns: minmax(0, 1fr); } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .admin-overview-ranking li strong { float: none; display: block; margin: 6px 0 0; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
