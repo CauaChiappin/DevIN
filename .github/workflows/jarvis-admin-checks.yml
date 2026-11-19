@@ -261,4 +261,4 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Executa instalação e teste de importação.
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_chat_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Cria banco temporário dedicado.
           mysql -h 127.0.0.1 -u root devin_chat_ci < database/migrations/2026_11_19_007_chat_mysql_state.sql # Explicação DevIN: Aplica somente a nova migration.
-          php tests/chat_mysql_storage.php # Explicação DevIN: Confere importação, persistência e rollback do histórico.
+          TMPDIR="$(mktemp -d)" php tests/chat_mysql_storage.php # Explicação DevIN: Executa importação com diretório temporário isolado da suíte.
