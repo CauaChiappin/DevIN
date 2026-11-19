@@ -9,8 +9,8 @@ $_ENV['DB_HOST'] = getenv('DB_HOST'); // Explicação DevIN: Atribui propriedade
 $_ENV['DB_USER'] = getenv('DB_USER'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 $_ENV['DB_PASS'] = getenv('DB_PASS'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 $_ENV['DB_NAME'] = 'devin_chat_ci'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-putenv('APP_ENV=development'); // Explicação DevIN: Executa apenas com ambiente descartável de testes.
-$_ENV['APP_ENV'] = 'development'; // Explicação DevIN: Evita exigir segredo JWT de produção para o teste isolado.
+putenv('APP_ENV=development'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+$_ENV['APP_ENV'] = 'development'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 putenv('DEVIN_CHAT_MYSQL_ENABLED=1'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 $_ENV['DEVIN_CHAT_MYSQL_ENABLED'] = '1'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 require_once __DIR__ . '/../php/controllers/ChatStorage.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
