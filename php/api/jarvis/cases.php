@@ -40,7 +40,7 @@ if ($method === 'GET') { // Explicação DevIN: Inicia desvio condicional: execu
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
         $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-            if ($action === 'list') jarvisJson(200, ['success' => true] + JarvisCaseDesk::listing($db, $adminId)); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if ($action === 'list') jarvisJson(200, ['success' => true] + JarvisCaseDesk::listing($db, $adminId, ($_GET['scope'] ?? 'all') === 'mine' ? 'mine' : 'all')); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             if ($action === 'detail') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 jarvisJson(200, ['success' => true, // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
                     'case' => JarvisCaseDesk::detail($db, $adminId, $type, $id)]); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
@@ -56,6 +56,31 @@ if ($method === 'GET') { // Explicação DevIN: Inicia desvio condicional: execu
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     jarvisJson(404, ['success' => false, 'message' => 'Consulta não reconhecida.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+if ($action === 'assign') {
+    if ($type !== 'support') {
+        jarvisJson(400, ['success'=>false, 'message'=>'Representação individual disponível apenas para chamados de suporte.']);
+    }
+    try {
+        $db = getDatabaseConnection();
+        try {
+            $mode = is_string($payload['assignment_action'] ?? null)
+                ? $payload['assignment_action'] : '';
+            $result = SupportRepresentative::assign($db, $id, $adminId, $mode);
+            jarvisJson(200, ['success'=>true, 'assignment'=>$result,
+                'message'=>$mode === 'release'
+                    ? 'Seu atendimento foi liberado.'
+                    : 'Você agora é o representante deste chamado.']);
+        } finally {
+            $db->close();
+        }
+    } catch (DomainException | InvalidArgumentException $error) {
+        jarvisJson(409, ['success'=>false, 'message'=>$error->getMessage()]);
+    } catch (Throwable $error) {
+        error_log('JARVIS support ownership: ' . get_class($error));
+        jarvisJson(503, ['success'=>false, 'message'=>'Não foi possível atualizar o representante.']);
+    }
+}
 
 if ($action === 'confirm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     $proposal = $_SESSION['devin_jarvis_case_pending'] ?? null; // Explicação DevIN: Atribui um valor à variável PHP $proposal.
