@@ -57,30 +57,30 @@ if ($method === 'GET') { // Explicação DevIN: Inicia desvio condicional: execu
     jarvisJson(404, ['success' => false, 'message' => 'Consulta não reconhecida.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-if ($action === 'assign') {
-    if ($type !== 'support') {
-        jarvisJson(400, ['success'=>false, 'message'=>'Representação individual disponível apenas para chamados de suporte.']);
-    }
-    try {
-        $db = getDatabaseConnection();
-        try {
-            $mode = is_string($payload['assignment_action'] ?? null)
-                ? $payload['assignment_action'] : '';
-            $result = SupportRepresentative::assign($db, $id, $adminId, $mode);
-            jarvisJson(200, ['success'=>true, 'assignment'=>$result,
-                'message'=>$mode === 'release'
-                    ? 'Seu atendimento foi liberado.'
-                    : 'Você agora é o representante deste chamado.']);
-        } finally {
-            $db->close();
-        }
-    } catch (DomainException | InvalidArgumentException $error) {
-        jarvisJson(409, ['success'=>false, 'message'=>$error->getMessage()]);
-    } catch (Throwable $error) {
-        error_log('JARVIS support ownership: ' . get_class($error));
-        jarvisJson(503, ['success'=>false, 'message'=>'Não foi possível atualizar o representante.']);
-    }
-}
+if ($action === 'assign') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    if ($type !== 'support') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        jarvisJson(400, ['success'=>false, 'message'=>'Representação individual disponível apenas para chamados de suporte.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        $db = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $db.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            $mode = is_string($payload['assignment_action'] ?? null) // Explicação DevIN: Atribui um valor à variável PHP $mode.
+                ? $payload['assignment_action'] : ''; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            $result = SupportRepresentative::assign($db, $id, $adminId, $mode); // Explicação DevIN: Atribui um valor à variável PHP $result.
+            jarvisJson(200, ['success'=>true, 'assignment'=>$result, // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+                'message'=>$mode === 'release' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    ? 'Seu atendimento foi liberado.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    : 'Você agora é o representante deste chamado.']); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+            $db->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    } catch (DomainException | InvalidArgumentException $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        jarvisJson(409, ['success'=>false, 'message'=>$error->getMessage()]); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+    } catch (Throwable $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        error_log('JARVIS support ownership: ' . get_class($error)); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+        jarvisJson(503, ['success'=>false, 'message'=>'Não foi possível atualizar o representante.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 if ($action === 'confirm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     $proposal = $_SESSION['devin_jarvis_case_pending'] ?? null; // Explicação DevIN: Atribui um valor à variável PHP $proposal.

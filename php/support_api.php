@@ -93,15 +93,15 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         if ($actor['tipo'] !== 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             supportJson(403, ['sucesso'=>false,'mensagem'=>'Apenas ADMs podem responder ou encerrar chamados.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        if (in_array($action, ['claim', 'takeover', 'release'], true)) {
+        if (in_array($action, ['claim', 'takeover', 'release'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // O servidor determina o ADM pela sessão; nunca aceita assignee_id arbitrário.
-            $assigned = SupportRepresentative::assign($db,
-                $idValue($_POST['id'] ?? null), (int) $actor['id'], $action);
-            supportJson(200, ['sucesso'=>true] + $assigned + [
-                'mensagem'=>$action === 'release' ? 'Chamado liberado para outro ADM.'
-                    : 'Você agora é o representante responsável pelo chamado.'
-            ]);
-        }
+            $assigned = SupportRepresentative::assign($db, // Explicação DevIN: Atribui um valor à variável PHP $assigned.
+                $idValue($_POST['id'] ?? null), (int) $actor['id'], $action); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+            supportJson(200, ['sucesso'=>true] + $assigned + [ // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+                'mensagem'=>$action === 'release' ? 'Chamado liberado para outro ADM.' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    : 'Você agora é o representante responsável pelo chamado.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if ($action === 'reply') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // O texto é validado pelo serviço e sua autoria fica registrada pelo ID ADM.
             $result = SupportDesk::reply($db, (int)$actor['id'], // Explicação DevIN: Atribui um valor à variável PHP $result.

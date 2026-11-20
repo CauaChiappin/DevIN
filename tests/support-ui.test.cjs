@@ -223,19 +223,19 @@ test('suporte ADM no celular ocupa a largura, chat tem seus próprios controles'
     assert.match(css, /safe-area-inset-bottom/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('caixa de suporte permite representação explícita e filtro minha responsabilidade', () => {
-    const html = read('php/components/support-admin.php');
-    const js = read('js/support-ui.js');
-    const php = read('php/support_api.php');
-    const service = read('php/controllers/SupportRepresentative.php');
-    assert.match(html, /data-support-representative-filter/);
-    assert.match(html, /Sob minha responsabilidade/);
-    assert.match(js, /assigned_to_me/);
-    assert.match(js, /Assumir atendimento/);
-    assert.match(js, /window\.confirm/);
-    assert.match(php, /SupportRepresentative::assign/);
-    assert.match(php, /SupportRepresentative::close/);
-    assert.match(service, /FOR UPDATE/);
-    assert.match(service, /auditAssignment|function log/);
-    assert.match(service, /event_type/);
-});
+test('caixa de suporte permite representação explícita e filtro minha responsabilidade', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const html = read('php/components/support-admin.php'); // Explicação DevIN: Declara variável JavaScript html para reutilizar valor ou resultado.
+    const js = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript js para reutilizar valor ou resultado.
+    const php = read('php/support_api.php'); // Explicação DevIN: Declara variável JavaScript php para reutilizar valor ou resultado.
+    const service = read('php/controllers/SupportRepresentative.php'); // Explicação DevIN: Declara variável JavaScript service para reutilizar valor ou resultado.
+    assert.match(html, /data-support-representative-filter/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(html, /Sob minha responsabilidade/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /assigned_to_me/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /Assumir atendimento/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /window\.confirm/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(php, /SupportRepresentative::assign/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(php, /SupportRepresentative::close/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(service, /FOR UPDATE/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(service, /auditAssignment|function log/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(service, /event_type/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

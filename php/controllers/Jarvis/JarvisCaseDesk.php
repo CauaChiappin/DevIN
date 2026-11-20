@@ -32,25 +32,25 @@ final class JarvisCaseDesk // Explicação DevIN: Declara o tipo JarvisCaseDesk 
         $unavailable = []; // Explicação DevIN: Atribui um valor à variável PHP $unavailable.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             self::requireAccess($db, $adminId, 'support'); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
-            $supportTickets = $scope === 'mine'
-                ? SupportRepresentative::myTickets($db, $adminId)
-                : SupportDesk::listAdmin($db, $adminId);
-            if ($scope === 'mine' && !SupportRepresentative::ready($db)) {
-                $unavailable[] = 'Atribuição individual de suporte requer a migração 008.';
-            }
+            $supportTickets = $scope === 'mine' // Explicação DevIN: Atribui um valor à variável PHP $supportTickets.
+                ? SupportRepresentative::myTickets($db, $adminId) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                : SupportDesk::listAdmin($db, $adminId); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            if ($scope === 'mine' && !SupportRepresentative::ready($db)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                $unavailable[] = 'Atribuição individual de suporte requer a migração 008.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             foreach (array_slice($supportTickets, 0, $scope === 'mine' ? 100 : 35) as $ticket) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
                 $items[] = [ // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                     'type' => 'support', 'id' => (int) $ticket['id'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'title' => 'Suporte #' . $ticket['id'] . ' · ' . $ticket['category'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                    'status' => (string) $ticket['status'],
-                'assigned_admin_id' => isset($ticket['assigned_admin_id'])
-                    ? (int) $ticket['assigned_admin_id'] : null,
-                'assigned_to_me' => (bool) ($ticket['assigned_to_me'] ?? false),
+                    'status' => (string) $ticket['status'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'assigned_admin_id' => isset($ticket['assigned_admin_id']) // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    ? (int) $ticket['assigned_admin_id'] : null, // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                'assigned_to_me' => (bool) ($ticket['assigned_to_me'] ?? false), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
  // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'preview' => mb_substr(trim((string) $ticket['description']), 0, 180, 'UTF-8'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                    'assigned_admin_id' => $ticket['assigned_admin_id'] === null
-                        ? null : (int) $ticket['assigned_admin_id'],
-                    'assigned_to_me' => (bool) ($ticket['assigned_to_me'] ?? false),
+                    'assigned_admin_id' => $ticket['assigned_admin_id'] === null // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                        ? null : (int) $ticket['assigned_admin_id'], // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    'assigned_to_me' => (bool) ($ticket['assigned_to_me'] ?? false), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'date' => (string) $ticket['created_at'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
