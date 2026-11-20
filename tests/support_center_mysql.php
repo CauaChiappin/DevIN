@@ -34,6 +34,7 @@ final class MailerHelper // Explicação DevIN: Declara o tipo MailerHelper e in
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 require_once dirname(__DIR__) . '/php/controllers/SupportDesk.php'; // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
+require_once dirname(__DIR__) . '/php/controllers/Jarvis/JarvisCaseDesk.php'; // Explicação DevIN: Carrega leitura do caso para comparar fila e detalhe do JARVIS. // Explicação DevIN: Inclui dependência PHP necessária à execução do módulo.
 
 // Falhar com mensagem clara se qualquer requisito deixar de ser atendido.
 function supportAssert(bool $condition, string $why): void // Explicação DevIN: Declara função/método supportAssert, com seus parâmetros e comportamento.
@@ -122,7 +123,14 @@ supportDenied(static fn()=>SupportRepresentative::assign($db,$other,102,'claim')
 supportDenied(static fn()=>SupportDesk::reply($db,102,$other,'Tentativa indevida'), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
     'resposta pública somente pelo representante'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 $transfer = SupportRepresentative::assign($db,$other,102,'takeover'); // Explicação DevIN: Atribui um valor à variável PHP $transfer.
-supportAssert($transfer['assigned_admin_id'] === 102,'transferência explícita com auditoria'); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+supportAssert($transfer['assigned_admin_id'] === 102,'transferência explícita com auditoria');
+$jarvisB = JarvisCaseDesk::detail($db,102,'support',$other); // Explicação DevIN: Consulta o mesmo caso pela API de detalhes do JARVIS.
+supportAssert($jarvisB['assigned_admin_id'] === 102 && $jarvisB['assigned_to_me'] === true,
+    'JARVIS reconhece representante atual após a transferência'); // Explicação DevIN: Compara a atribuição persistida após o novo responsável.
+$jarvisA = JarvisCaseDesk::detail($db,101,'support',$other); // Explicação DevIN: Consulta caso com outro ADM autorizado a acompanhar.
+supportAssert($jarvisA['assigned_admin_id'] === 102 && $jarvisA['assigned_to_me'] === false,
+    'JARVIS mostra o mesmo responsável a outro ADM, sem confundi-lo com o usuário'); // Explicação DevIN: Confirma a distinção entre titular e observador.
+ // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
 supportDenied(static fn()=>SupportRepresentative::close($db,$other,101), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
     'ADM anterior não pode encerrar após transferência'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 supportDenied(static fn()=>SupportRepresentative::assign($db,$other,101,'release'), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
