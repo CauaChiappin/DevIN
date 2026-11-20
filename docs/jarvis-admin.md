@@ -145,3 +145,16 @@ Consultas reconhecidas: (1) meus chamados atribuídos; (2) fila geral de suporte
 O interpretador não gera SQL, não escolhe alvos arbitrários, não executa ações administrativas e não recebe credenciais. O backend permanece responsável por validar sessão, CSRF, propriedade do chamado e RBAC. Decisões, respostas e exclusões continuam exigindo a confirmação explícita do ADM nos fluxos já existentes. Pedidos de análise por IA continuam sujeitos à autorização de compartilhamento do contexto do caso.
 
 Para verificar, abra o JARVIS na Hostinger, tente as frases de `tests/jarvis-intents.test.cjs` e confirme que listagens funcionam **mesmo com o provedor indisponível**. Perguntas de opinião devem continuar indo para o modelo externo; perguntas ambíguas devem pedir esclarecimento, sem adivinhar. Os testes Node são executados pelo GitHub Actions. Não há novo SQL nem novas variáveis de ambiente.
+
+
+## Interpretação natural de ferramentas administrativas (20/11/2026)
+
+O módulo `js/jarvis-admin-natural.js`, carregado antes do chat ADM, reconhece múltiplas formulações sem chamar OpenRouter. Operações suportadas pelo backend atual: pesquisa de pessoas, empresas e vagas por nome/título/ID; listagem de até 12 cadastros recentes por tipo; detalhamento de registros; preparação de rascunhos de mensagens para pessoa ou empresa; listagem de rascunhos; leitura do histórico de auditoria; leitura das conversas salvas pelo ADM; leitura/criação/atualização da própria fila de tarefas.
+
+Exemplos de leitura: "mostre todas as vagas", "ache a empresa Acme", "localize o candidato João Silva", "quais tarefas estão pendentes?", "mostre meus rascunhos", "quero ver o histórico das ações", "abra as conversas antigas". A interpretação não inventa filtros SQL: buscas genéricas apresentam um máximo explícito de 12 resultados por categoria, e pesquisas por nomes mostram escolhas com ID.
+
+Exemplos de ação: "crie uma tarefa para revisar anúncios", "conclua tarefa #7", "mande mensagem para a candidata Maria com o texto: Olá", "remova a vaga Desenvolvedor PHP". **Nenhuma dessas frases executa a ação imediatamente.** A tarefa exige botão e confirmação; mensagens são rascunhos, enviados apenas após seleção do destinatário, revisão do conteúdo e confirmação explícita com a palavra ENVIAR; exclusões exigem a escolha do registro, prévia, confirmação e a palavra EXCLUIR. Os fluxos atuais do backend continuam responsáveis por RBAC, autenticação, CSRF, auditoria e isolamento dos dados. A IA externa não recebe nem escolhe identificadores de ações administrativas.
+
+Consultas a chamados e denúncias continuam sob `js/jarvis-intents.js` e `js/jarvis-cases.js`, respeitando "minha jurisdição" como o suporte do ADM representante. Conversas sobre conceitos e perguntas sem intenção administrativa identificável continuam no chat normal. O módulo não é um modelo de linguagem universal; pedidos ambíguos solicitam mais detalhes em vez de executar ações.
+
+Testes: `node --test tests/jarvis-admin-natural.test.cjs` e `node --test tests/jarvis-chat-commands.test.cjs`; validar no celular, após atualizar a hospedagem com `main`. Nenhuma migração SQL nova. `.env` e chaves devem continuar fora do GitHub.
