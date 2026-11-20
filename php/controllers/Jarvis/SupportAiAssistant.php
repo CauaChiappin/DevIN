@@ -24,6 +24,25 @@ final class SupportAiAssistant // Explicação DevIN: Declara o tipo SupportAiAs
         return mb_substr($text, 0, $limit, 'UTF-8'); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    /** Garante que dados do ticket não virem comandos privilegiados da IA. */
+    public static function scrub(string $value, int $limit = 1700): string
+    {
+        return self::sanitized($value, $limit);
+    }
+
+    /** Resumo textual sem campos cadastrais e sem anexos. */
+    public static function caseContext(array $case): string
+    {
+        $category = self::scrub((string) ($case['category'] ?? 'outro'), 60);
+        $description = self::scrub((string) ($case['description'] ?? ''), 1700);
+        $context = "Tipo: " . self::scrub((string) ($case['type'] ?? 'support'), 30)
+            . "\nCategoria: {$category}\nRelato: {$description}\n";
+        foreach (array_slice((array) ($case['previous_replies'] ?? []), -5) as $reply) {
+            $context .= "Resposta anterior: " . self::scrub((string) $reply, 380) . "\n";
+        }
+        return $context;
+    }
+
     /** @return array<int, array{role:string,content:string}> */
     public static function messages(array $detail): array // Explicação DevIN: Declara função/método messages, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
