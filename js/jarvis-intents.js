@@ -32,9 +32,9 @@
     denuncia: ['denuncia', 'denuncias', 'denuncas', 'denunciaa'],
     report: ['report', 'reports', 'reporte', 'reportes'],
     jurisdicao: ['jurisdicao', 'jurisdicoes', 'jurisdiscao'],
-    representante: ['representante', 'representantes', 'represntante', 'representates'],
+    representante: ['representante', 'representantes', 'represntante', 'representates', 'represento', 'representando'],
     responsabilidade: ['responsabilidade', 'responsabilidades'],
-    atribuido: ['atribuido', 'atribuidos', 'atribuida', 'atribuidas', 'atribuid'],
+    atribuido: ['atribuido', 'atribuidos', 'atribuida', 'atribuidas', 'atribuid', 'designado', 'designados', 'designada', 'designadas'],
   };
   const safeFuzzy = ['suporte', 'chamado', 'atendimento', 'ticket', 'denuncia', 'report'];
   function canonical(word) {
@@ -54,13 +54,13 @@
     const words = tokens(value);
     const word = (...choices) => words.some(term => choices.includes(term));
     const text = words.join(' ');
-    const hasSupport = word('suporte','chamado','atendimento','ticket','helpdesk','ocorrencia','solicitacao');
+    const hasSupport = word('suporte','chamado','atendimento','ticket','helpdesk','ocorrencia','ocorrencias','solicitacao','solicitacoes','reclamacao','reclamacoes');
     const hasReport = word('denuncia','report','sinalizacao','infracao','moderacao');
     const my = word('meu','meus','minha','minhas','mim','eu','sou','estou','to','tenho','cuido','cuidando','responsavel',
-      'representante','responsabilidade','jurisdicao','atribuido','carteira','assumi','assumidos')
+      'representante','responsabilidade','jurisdicao','atribuido','carteira','assumi','assumidos','atendo','atendendo','cuidados','designado')
       || /\b(pra mim|para mim|sob meus cuidados|a meu cargo|sob minha conta|comigo)\b/.test(text);
     const assigned = word('jurisdicao','representante','responsavel','responsabilidade','atribuido','carteira','assumi',
-      'assumidos') || /\b(estou atendendo|to atendendo|eu atendo|eu cuido|meu atendimento|meus atendimentos|pra mim|para mim|sob meus cuidados)\b/.test(text);
+      'assumidos','atendo','atendendo','designado') || /\b(estou atendendo|to atendendo|eu atendo|eu cuido|meu atendimento|meus atendimentos|pra mim|para mim|sob meus cuidados)\b/.test(text);
     const read = word('qual','quais','quantos','quantas','mostra','mostre','mostrar','liste','lista','listar',
       'veja','ver','consulte','consultar','quero','preciso','procure','buscar','busque','encontre','tenho','tem',
       'estao','estou','fiquei','sao','abertos','pendentes','acompanho','cuidando','abrir','abra',
@@ -68,11 +68,11 @@
       || /\b(da uma olhada|me passa|me diz|pra mim|para mim)\b/.test(text);
     const destructive = word('exclua','excluir','delete','deletar','remova','remover','apague','apagar',
       'encerre','encerrar','feche','fechar','publique','aprovar','rejeitar','reprove','responda','enviar');
-    const explanation = /\b(como funciona|como fazer|o que e|o que significa|explique|exemplos de|melhorar o|conceito de)\b/.test(text);
+    const explanation = /\b(como funciona|como fazer|o que e|o que significa|explique|exemplos de|melhorar o|conceito de|tirar duvidas|tenho duvida sobre|dicas para)\b/.test(text);
     const activeCase = options.activeCase || null;
     const isAnalysis = word('analise','analisar','analisa','analisei','avalie','avaliar','investigue','investigar',
       'parecer','veredito','evidencia','evidencias','redija','redigir','escreva','escrever',
-      'resposta','responder','sugestao','sugira','ajude','ajuda');
+      'resposta','responder','sugestao','sugira','ajude','ajuda','print','imagem','interprete','interpretar','investigacao');
     const wantsDraft = word('redija','redigir','escreva','escrever','parecer','veredito','resposta','responder','sugestao','sugira');
 
     // Operações de vagas/contas usam o parser de segurança existente, nunca este roteador.
@@ -101,12 +101,15 @@
       return {type:'list', filter:'mine'};
     }
     if (hasSupport && (read || words.length <= 2 || word('todos','todas','meus','minhas'))) {
-      return {type:'list', filter: my && assigned ? 'mine' : 'support'};
+      return {type:'list', filter: my && (assigned || word('meu','meus','minha','minhas')) ? 'mine' : 'support'};
     }
     if (hasReport && (read || words.length <= 2 || word('todos','todas'))) {
       return {type:'list', filter:'report'};
     }
     if (assigned && my && read) return {type:'list', filter:'mine'};
+    if (my && (word('pendencia','pendencias','demanda','demandas')) && read) {
+      return {type:'clarify', message:'Você quer ver os chamados que representa, a fila geral ou as denúncias pendentes?'};
+    }
 
     const stats = word('estatistica','estatisticas','indicador','indicadores','numeros','resumo','painel')
       || (word('quantos','quantas','total','contagem') && word('empresa','empresas','pessoa','pessoas',
