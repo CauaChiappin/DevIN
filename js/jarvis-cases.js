@@ -250,19 +250,19 @@
     async function handle(value) { // Explicação DevIN: Declara função/método handle, com seus parâmetros e comportamento.
       addMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
       const plain = value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); // Explicação DevIN: Declara variável JavaScript plain para reutilizar valor ou resultado.
-      const direct = /(?:chamado|suporte|ticket|report|denuncia)(?:\s+de\s+(vaga|perfil))?\s*#?\s*(\d{1,9})/.exec(plain); // Explicação DevIN: Reconhece IDs explícitos sem decidir a categoria ambígua.
-      if (direct) { // Explicação DevIN: Abre um caso somente quando a categoria é inequívoca.
-        const id = Number(direct[2]); // Explicação DevIN: Identifica o caso selecionado pelo ADM.
-        const category = direct[1] === 'vaga' ? 'job_report' : (direct[1] === 'perfil' ? 'profile_report' : (/chamado|suporte|ticket/.test(direct[0]) ? 'support' : null)); // Explicação DevIN: Impede confusão entre IDs iguais de tabelas diferentes.
-        if (category) { // Explicação DevIN: Exige tipo de caso conhecido.
-          await selectCase(category, id); // Explicação DevIN: O backend confirma a permissão e a existência.
-          return true; // Explicação DevIN: Conclui a seleção direta.
-        } // Explicação DevIN: Fecha verificação de categoria.
-        if (activeCase && activeCase.id === id) { // Explicação DevIN: Reutiliza apenas a categoria já escolhida explicitamente.
-          await selectCase(activeCase.type, id); // Explicação DevIN: Atualiza informações antes de propor ações.
-          return true; // Explicação DevIN: Finaliza consulta de caso.
-        } // Explicação DevIN: Fecha seleção anterior.
-      } // Explicação DevIN: O pedido ambíguo volta à listagem para escolha manual.
+      const direct = /(?:chamado|suporte|ticket|report|denuncia)(?:\s+de\s+(vaga|perfil))?\s*#?\s*(\d{1,9})/.exec(plain); // Explicação DevIN: Declara variável JavaScript direct para reutilizar valor ou resultado.
+      if (direct) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const id = Number(direct[2]); // Explicação DevIN: Declara variável JavaScript id para reutilizar valor ou resultado.
+        const category = direct[1] === 'vaga' ? 'job_report' : (direct[1] === 'perfil' ? 'profile_report' : (/chamado|suporte|ticket/.test(direct[0]) ? 'support' : null)); // Explicação DevIN: Declara variável JavaScript category para reutilizar valor ou resultado.
+        if (category) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          await selectCase(category, id); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+          return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (activeCase && activeCase.id === id) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          await selectCase(activeCase.type, id); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+          return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       if (activeCase && !/\b(liste|listar|mostre|mostrar|quais|todos|pendentes|jurisdicao)\b/.test(plain) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         && /\b(analise|analisar|avalie|investigue|redija|escreva|redigir|parecer|veredito|resposta|me ajuda|ajude|o que acha)\b/.test(plain)) { // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         if (!currentConsent?.checked) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -276,8 +276,8 @@
       } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       return listing(value); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    const reset = () => { activeCase = null; currentConsent = null; currentDraft = null; }; // Explicação DevIN: Limpa contexto de um chat anterior para não misturar casos.
-    return {matches,handle,reset}; // Explicação DevIN: Retorna operações controladas do chat de casos.
+    const reset = () => { activeCase = null; currentConsent = null; currentDraft = null; }; // Explicação DevIN: Declara variável JavaScript reset para reutilizar valor ou resultado.
+    return {matches,handle,reset}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   window.DevInJarvisCases = {init}; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
 })(); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
