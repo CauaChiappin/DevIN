@@ -14,33 +14,26 @@
       return el; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // O interpretador local retorna uma intenção estruturada, sem SQL ou chamadas à IA.
+    function route(value) { // Explicação DevIN: Declara função/método route, com seus parâmetros e comportamento.
+      return window.DevInJarvisIntents?.classify(value, {activeCase}) || null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
     function matches(value) { // Explicação DevIN: Declara função/método matches, com seus parâmetros e comportamento.
-      const normalized = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); // Explicação DevIN: Declara variável JavaScript normalized para reutilizar valor ou resultado.
-      if (/\b(reports?|denuncias?|chamados?|tickets?|suportes?|atendimentos?)\b/.test(normalized)) return true; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      // "Eu sou representante" e "minha jurisdição" consultam o MySQL, nunca um modelo externo.
-      if (/\b(representante|responsavel|responsabilidade|jurisdicao|atribuid[oa]s?)\b/.test(normalized) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        && /\b(eu|minha|meus|sou|estou|tenho)\b/.test(normalized)) return true; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-      return Boolean(activeCase && /\b(analise|analisar|avalie|investigue|redija|escreva|redigir|parecer|veredito|responder|resposta|me ajuda|ajude|o que acha|print|imagem|evidencia)\b/.test(normalized)); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      return route(value) !== null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // "Minha jurisdição" significa os chamados atribuídos ao ADM, não a permissão RBAC.
     function scopeFilter(value) { // Explicação DevIN: Declara função/método scopeFilter, com seus parâmetros e comportamento.
-      const plain = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); // Explicação DevIN: Declara variável JavaScript plain para reutilizar valor ou resultado.
-      // Minha jurisdição é a carteira de chamados de suporte deste representante.
-      if (/\b(jurisdicao|responsabilidade|responsavel|representante|atribuid[oa]s?|estou atendendo|meus chamados|meus tickets)\b/.test(plain) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-          && /\b(minha|meu|meus|sou|estou|atribuid[oa]s?|jurisdicao|responsabilidade)\b/.test(plain)) return 'mine'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-
-      if (/\b(suporte|chamado|ticket|atendimento)\b/.test(plain) && // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-          !/\b(report|denuncia)\b/.test(plain)) return 'support'; // Explicação DevIN: Continua expressão ou bloco pertencente a função scopeFilter.
-      if (/\b(report|denuncia)\b/.test(plain) && !/\b(suporte|chamado|ticket)\b/.test(plain)) return 'report'; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      return 'all'; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      return route(value)?.filter || 'all'; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    async function listing(original) { // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
+    async function listing(original, requestedFilter = null) { // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
       activeCase = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       currentConsent = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       currentDraft = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       root.classList.remove('is-case-focused'); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
-      const filter = scopeFilter(original); // Explicação DevIN: Declara variável JavaScript filter para reutilizar valor ou resultado.
+      const filter = requestedFilter || scopeFilter(original); // Explicação DevIN: Declara variável JavaScript filter para reutilizar valor ou resultado.
       const response = await api(endpoint + '?action=list&scope=' + (filter === 'mine' ? 'mine' : 'all')); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
       const records = (response.cases || []).filter(item => // Explicação DevIN: Declara variável JavaScript records para reutilizar valor ou resultado.
         filter === 'all' || filter === 'mine' || (filter === 'support' ? item.type === 'support' : item.type !== 'support')); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -295,32 +288,54 @@
 
     async function handle(value) { // Explicação DevIN: Declara função/método handle, com seus parâmetros e comportamento.
       addMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
-      const plain = value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); // Explicação DevIN: Declara variável JavaScript plain para reutilizar valor ou resultado.
-      const direct = /(?:chamado|suporte|ticket|report|denuncia)(?:\s+de\s+(vaga|perfil))?\s*#?\s*(\d{1,9})/.exec(plain); // Explicação DevIN: Declara variável JavaScript direct para reutilizar valor ou resultado.
-      if (direct) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        const id = Number(direct[2]); // Explicação DevIN: Declara variável JavaScript id para reutilizar valor ou resultado.
-        const category = direct[1] === 'vaga' ? 'job_report' : (direct[1] === 'perfil' ? 'profile_report' : (/chamado|suporte|ticket/.test(direct[0]) ? 'support' : null)); // Explicação DevIN: Declara variável JavaScript category para reutilizar valor ou resultado.
-        if (category) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-          await selectCase(category, id); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
-          return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        if (activeCase && activeCase.id === id) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-          await selectCase(activeCase.type, id); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
-          return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-      if (activeCase && !/\b(liste|listar|mostre|mostrar|quais|todos|pendentes|jurisdicao)\b/.test(plain) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-        && /\b(analise|analisar|avalie|investigue|redija|escreva|redigir|parecer|veredito|resposta|me ajuda|ajude|o que acha)\b/.test(plain)) { // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        if (!currentConsent?.checked) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-          addMessage('assistant', 'Marque a autorização de contexto no cartão do caso selecionado antes de falar sobre ele com a IA. Também é possível escrever e confirmar manualmente.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
-          return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        const draft = /\b(redija|escreva|redigir|parecer|veredito|resposta)\b/.test(plain); // Explicação DevIN: Declara variável JavaScript draft para reutilizar valor ou resultado.
-        const button = actionButton('Aguarde',async()=>{}); // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
-        await analyze(activeCase.type, activeCase.id, currentConsent, value, draft, button); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+      const intent = route(value); // Explicação DevIN: Declara variável JavaScript intent para reutilizar valor ou resultado.
+      if (!intent) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        addMessage('assistant', 'Não identifiquei uma consulta de dados. Experimente perguntar por seus atendimentos, a fila de suporte, as denúncias ou os indicadores do DevIN.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
         return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
       } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-      return listing(value); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      if (intent.type === 'clarify') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        addMessage('assistant', intent.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+        return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      if (intent.type === 'detail') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        await selectCase(intent.caseType, intent.id); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+        return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      if (intent.type === 'list') return listing(value, intent.filter); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      if (intent.type === 'overview') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (!root.dataset.tools || root.dataset.toolsEnabled !== '1') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          addMessage('assistant', 'A consulta de indicadores está indisponível nesta sessão ADM.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+          return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+          const response = await api(root.dataset.tools + '?action=overview'); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
+          const totals = response.overview || {}; // Explicação DevIN: Declara variável JavaScript totals para reutilizar valor ou resultado.
+          const labels = [ // Explicação DevIN: Declara variável JavaScript labels para reutilizar valor ou resultado.
+            ['empresas', 'Empresas'], ['pessoas', 'Pessoas'], // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+            ['vagas', 'Vagas'], ['candidaturas', 'Candidaturas'], // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+            ['contratacoes', 'Contratações confirmadas'], // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+            ['denuncias_pendentes', 'Denúncias pendentes'], // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+            ['suporte_aberto', 'Chamados de suporte abertos'], // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+          ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+          addMessage('assistant', 'Dados do DevIN (consulta direta ao MySQL):\n' // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+            + labels.map(([key, label]) => label + ': ' // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+              + (typeof totals[key] === 'number' ? new Intl.NumberFormat('pt-BR').format(totals[key]) : 'indisponível')).join('\n')); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+        } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+          addMessage('assistant', 'Não foi possível consultar os indicadores: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      if (intent.type === 'analyze' && activeCase) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (!currentConsent?.checked) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          addMessage('assistant', 'Para pedir uma análise deste caso à IA, primeiro marque a autorização no cartão selecionado. Consultar os dados no banco não exige esse envio externo.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+          return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        const disabledButton = actionButton('Consultando...', async () => {}); // Explicação DevIN: Declara variável JavaScript disabledButton para reutilizar valor ou resultado.
+        await analyze(activeCase.type, activeCase.id, currentConsent, value, intent.draft, disabledButton); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+        return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      addMessage('assistant', 'Escolha um caso da fila antes de solicitar uma análise.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     const reset = () => { activeCase = null; currentConsent = null; currentDraft = null; root.classList.remove('is-case-focused'); }; // Explicação DevIN: Declara variável JavaScript reset para reutilizar valor ou resultado.
     return {matches,handle,reset}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
