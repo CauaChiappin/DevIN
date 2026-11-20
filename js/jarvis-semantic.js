@@ -26,7 +26,7 @@
       || /[\w.+-]+@[\w.-]+\.[a-z]{2,}/.test(text)) return false;
     if (/\b(?:como funciona|como fazer|como melhorar|explique|o que significa|por que|porque|qual sua opiniao|me aconselhe)\b/.test(text)) return false;
     const domain = /\b(?:devin|portal|plataforma|sistema|banco de dados|empresa|empresas|vaga|vagas|candidato|candidatos|pessoa|pessoas|usuario|usuarios|recrutamento|suporte|chamados|atendimento|atendimentos|tickets|denuncias|reports|estatisticas|indicadores|painel|tarefas|atividades|rascunhos|mensagens|conversas|historico|auditoria|registro|registros)\b/.test(text);
-    const reading = /\b(?:qual|quais|quem|quantos|quantas|mostre|mostrar|mostra|consulte|consultar|listar|liste|lista|busque|buscar|veja|ver|encontre|encontrar|encontre|ache|achar|procure|procurar|pesquise|pesquisar|tenho|temos|estao|sao|estou|pode|poderia|preciso|queria|quero|consegue|fazer um levantamento|panorama|situacao|resumo)\b/.test(text);
+    const reading = /\b(?:qual|quais|quem|quantos|quantas|mostre|mostrar|mostra|consulte|consultar|listar|liste|lista|busque|buscar|veja|ver|encontre|encontrar|encontre|ache|achar|procure|procurar|pesquise|pesquisar|tenho|temos|estao|sao|estou|existem|existe|sera|pode|poderia|preciso|queria|quero|consegue|fazer um levantamento|panorama|situacao|resumo)\b/.test(text);
     return domain && reading;
   }
   function proposed(name) {
