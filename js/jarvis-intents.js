@@ -60,9 +60,9 @@
       'representante','responsabilidade','jurisdicao','atribuido','carteira','assumi','assumidos','atendo','atendendo','cuidados','designado')
       || /\b(pra mim|para mim|sob meus cuidados|a meu cargo|sob minha conta|comigo)\b/.test(text);
     const assigned = word('jurisdicao','representante','responsavel','responsabilidade','atribuido','carteira','assumi',
-      'assumidos','atendo','atendendo','designado','cuidando','cuido') || /\b(estou atendendo|to atendendo|to cuidando|eu atendo|eu cuido|meu atendimento|meus atendimentos|pra mim|para mim|comigo|sob meus cuidados)\b/.test(text);
+      'assumidos','atendo','atendendo','designado','cuidando','cuido','acompanho','acompanhando','peguei','tomei') || /\b(estou atendendo|to atendendo|to cuidando|eu atendo|eu cuido|meu atendimento|meus atendimentos|pra mim|para mim|comigo|sob meus cuidados)\b/.test(text);
     const read = word('qual','quais','quantos','quantas','mostra','mostre','mostrar','liste','lista','listar',
-      'veja','ver','consulte','consultar','quero','preciso','procure','buscar','busque','encontre','tenho','tem',
+      'veja','ver','consulte','consultar','quero','preciso','quem','procure','buscar','busque','encontre','tenho','tem',
       'estao','estou','fiquei','sao','abertos','pendentes','acompanho','cuidando','abrir','abra',
       'abre','detalhe','detalhes','visualizar','exiba','exibir','puxa','puxar','ajuda','ajude','ajudar')
       || /\b(da uma olhada|me passa|me diz|pra mim|para mim)\b/.test(text);
@@ -80,12 +80,6 @@
     // Consultas abstratas são conversas; não abrir uma fila por mencionar "suporte".
     if (explanation && !assigned && !/\b(id|numero|#)\b/.test(text)) return null;
 
-    // Pedido de análise sobre o caso já selecionado continua protegido por consentimento.
-    if (activeCase && isAnalysis && !/\b(todos|todas|liste|listar|outros|outras|quais)\b/.test(text)
-      && (!hasSupport || !my || /\b(este|esse|deste|desse|atual|caso)\b/.test(text))) {
-      return {type: 'analyze', draft: Boolean(wantsDraft)};
-    }
-
     const kindByContext = word('perfil','perfis') ? 'profile_report'
       : word('vaga','vagas') && hasReport ? 'job_report' : null;
     const idMatch = /(?:^| )(?:#|id |numero |n |nro )(\d{1,9})(?: |$)/.exec(text)
@@ -96,6 +90,16 @@
       return {type:'clarify', message:'Esse número pode identificar diferentes tipos de casos. É suporte, denúncia de vaga ou denúncia de perfil?'};
     }
 
+    // Pedido de análise sobre o caso já selecionado continua protegido por consentimento.
+    if (activeCase && isAnalysis && !/\b(todos|todas|liste|listar|outros|outras|quais)\b/.test(text)
+      && (!hasSupport || !my || /\b(este|esse|deste|desse|atual|caso)\b/.test(text))) {
+      return {type: 'analyze', draft: Boolean(wantsDraft)};
+    }
+
+    // Denúncias explícitas não possuem titular individual no banco atual.
+    if (hasReport && word('denuncia') && !hasSupport && assigned && my) {
+      return {type:'clarify', message:'Atribuição individual existe para chamados de suporte; denúncias são revisadas pela equipe conforme permissão. Quer ver os chamados que representa ou as denúncias pendentes?'};
+    }
     // "Meus reports na minha jurisdição" historicamente significam suporte representado.
     if (assigned && my && (hasSupport || hasReport || word('caso','casos','pendencia','pendencias','demanda','demandas') || word('jurisdicao'))) {
       return {type:'list', filter:'mine'};
