@@ -9,9 +9,9 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     error_log('DevIN ADM: estatísticas indisponíveis (' . get_class($error) . ').'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 $words = [ // Explicação DevIN: Atribui um valor à variável PHP $words.
-    'pt-BR' => ['title'=>'Visão geral do DevIN', 'intro'=>'Dados atualizados ao abrir esta página; informações sem migration aparecem como indisponíveis.', 'companies'=>'Empresas', 'people'=>'Pessoas', 'jobs'=>'Vagas', 'applications'=>'Candidaturas', 'hired'=>'Contratações confirmadas', 'reports'=>'Denúncias pendentes', 'support'=>'Suporte aberto', 'rank'=>'Empresas com mais vagas', 'none'=>'Nenhuma empresa cadastrada.', 'missing'=>'Indisponível'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-    'en' => ['title'=>'DevIN overview', 'intro'=>'Data is refreshed when this page opens; missing database tables appear as unavailable.', 'companies'=>'Companies', 'people'=>'People', 'jobs'=>'Jobs', 'applications'=>'Applications', 'hired'=>'Confirmed hires', 'reports'=>'Pending reports', 'support'=>'Open support tickets', 'rank'=>'Companies with the most jobs', 'none'=>'No companies registered.', 'missing'=>'Unavailable'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-    'es' => ['title'=>'Resumen de DevIN', 'intro'=>'Los datos se actualizan al abrir esta página; las tablas ausentes aparecen como no disponibles.', 'companies'=>'Empresas', 'people'=>'Personas', 'jobs'=>'Empleos', 'applications'=>'Postulaciones', 'hired'=>'Contrataciones confirmadas', 'reports'=>'Denuncias pendientes', 'support'=>'Soporte abierto', 'rank'=>'Empresas con más empleos', 'none'=>'No hay empresas registradas.', 'missing'=>'No disponible'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'pt-BR' => ['title'=>'Visão geral do DevIN', 'intro'=>'Indicadores atualizados ao abrir a página. Recursos que ainda não estão configurados aparecem como indisponíveis.', 'companies'=>'Empresas', 'people'=>'Pessoas', 'jobs'=>'Vagas', 'applications'=>'Candidaturas', 'hired'=>'Contratações confirmadas', 'reports'=>'Denúncias pendentes', 'support'=>'Suporte aberto', 'rank'=>'Empresas com mais vagas', 'none'=>'Nenhuma empresa cadastrada.', 'missing'=>'Indisponível'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'en' => ['title'=>'DevIN overview', 'intro'=>'Indicators refresh when you open this page. Features not yet configured are marked unavailable.', 'companies'=>'Companies', 'people'=>'People', 'jobs'=>'Jobs', 'applications'=>'Applications', 'hired'=>'Confirmed hires', 'reports'=>'Pending reports', 'support'=>'Open support tickets', 'rank'=>'Companies with the most jobs', 'none'=>'No companies registered.', 'missing'=>'Unavailable'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'es' => ['title'=>'Resumen de DevIN', 'intro'=>'Los indicadores se actualizan al abrir esta página. Los recursos sin configurar se muestran como no disponibles.', 'companies'=>'Empresas', 'people'=>'Personas', 'jobs'=>'Empleos', 'applications'=>'Postulaciones', 'hired'=>'Contrataciones confirmadas', 'reports'=>'Denuncias pendientes', 'support'=>'Soporte abierto', 'rank'=>'Empresas con más empleos', 'none'=>'No hay empresas registradas.', 'missing'=>'No disponible'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 $labels = $words[$idiomaAtual] ?? $words['pt-BR']; // Explicação DevIN: Atribui um valor à variável PHP $labels.
 $metrics = [ // Explicação DevIN: Atribui um valor à variável PHP $metrics.
@@ -26,10 +26,15 @@ $metrics = [ // Explicação DevIN: Atribui um valor à variável PHP $metrics.
     </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
     <div class="admin-overview-grid"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         <?php foreach ($metrics as [$caption, $key]): ?>
-            <article class="admin-metric"> <!-- Explicação DevIN: Declara conteúdo independente. -->
-                <h2><?= h($labels[$caption]) ?></h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. Contém dado dinâmico processado pelo PHP. -->
-                <strong><?= isset($adminOverview[$key]) ? number_format((int) $adminOverview[$key], 0, ',', '.') : h($labels['missing']) ?></strong> <!-- Explicação DevIN: Declara elemento de marcação. Contém dado dinâmico processado pelo PHP. -->
-            </article> <!-- Explicação DevIN: Fecha elemento article do documento. -->
+            <?php $metricAvailable = isset($adminOverview[$key]); // Distingue métrica ausente de valor numérico zero. ?>
+            <article class="admin-metric<?= $metricAvailable ? '' : ' admin-metric--unavailable' ?>">
+                <h2><?= h($labels[$caption]) ?></h2>
+                <?php if ($metricAvailable): ?>
+                    <strong class="admin-metric__value"><?= number_format((int) $adminOverview[$key], 0, ',', '.') ?></strong>
+                <?php else: ?>
+                    <span class="admin-metric__unavailable" role="status"><?= h($labels['missing']) ?></span>
+                <?php endif; ?>
+            </article>
         <?php endforeach; ?>
     </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
     <section class="admin-overview-ranking"> <!-- Explicação DevIN: Declara seção temática. -->
