@@ -49,10 +49,10 @@ test('estatísticas não estreitam o dashboard mobile nem quebram estado indispo
     assert.match(markup, /isset\(\$adminOverview\[\$key\]\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('comentários de documentação não aparecem como texto nos cards ADM', () => { // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
-    const markup = read('php/components/admin-overview.php'); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
-    assert.doesNotMatch(markup, />\s*\/\/ Explicação DevIN:/); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
-    assert.doesNotMatch(markup, /<\!\s*\n\s*-->/); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
-    assert.match(markup, /<article class="admin-metric/); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
-    assert.match(markup, /<\!-- Explicação DevIN: Declara conteúdo independente/); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
-}); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
+test('comentários de documentação não aparecem como texto nos cards ADM', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const markup = read('php/components/admin-overview.php'); // Explicação DevIN: Declara variável JavaScript markup para reutilizar valor ou resultado.
+    assert.doesNotMatch(markup, />\s*\/\/ Explicação DevIN:/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.doesNotMatch(markup, /<\!\s*\n\s*-->/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(markup, /<article class="admin-metric/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(markup, /<\! // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
