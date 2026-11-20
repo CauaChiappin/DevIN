@@ -64,7 +64,7 @@
     const read = word('qual','quais','quantos','quantas','mostra','mostre','mostrar','liste','lista','listar', // Explicação DevIN: Declara variável JavaScript read para reutilizar valor ou resultado.
       'veja','ver','consulte','consultar','quero','preciso','quem','procure','buscar','busque','encontre','tenho','tem', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
       'estao','estou','fiquei','sao','abertos','pendentes','acompanho','cuidando','abrir','abra', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-      'abre','detalhe','detalhes','visualizar','exiba','exibir','puxa','puxar','ajuda','ajude','ajudar') // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+      'abre','detalhe','detalhes','visualizar','exiba','exibir','puxa','puxar','traga','traz','fila','ajuda','ajude','ajudar') // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
       || /\b(da uma olhada|me passa|me diz|pra mim|para mim)\b/.test(text); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     const destructive = word('exclua','excluir','delete','deletar','remova','remover','apague','apagar', // Explicação DevIN: Declara variável JavaScript destructive para reutilizar valor ou resultado.
       'encerre','encerrar','feche','fechar','publique','aprovar','rejeitar','reprove','responda','enviar'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
@@ -91,7 +91,7 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Pedido de análise sobre o caso já selecionado continua protegido por consentimento.
-    if (activeCase && isAnalysis && !/\b(todos|todas|liste|listar|outros|outras|quais)\b/.test(text) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    if (activeCase && isAnalysis && !(assigned && my) && (!hasReport || /\b(este|esta|essa|esse|atual|caso)\b/.test(text)) && !/\b(todos|todas|liste|listar|outros|outras|quais)\b/.test(text) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       && (!hasSupport || !my || /\b(este|esse|deste|desse|atual|caso)\b/.test(text))) { // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
       return {type: 'analyze', draft: Boolean(wantsDraft)}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
