@@ -48,3 +48,11 @@ test('estatísticas não estreitam o dashboard mobile nem quebram estado indispo
     assert.match(markup, /admin-metric__unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /isset\(\$adminOverview\[\$key\]\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('comentários de documentação não aparecem como texto nos cards ADM', () => {
+    const markup = read('php/components/admin-overview.php');
+    assert.doesNotMatch(markup, />\s*\/\/ Explicação DevIN:/);
+    assert.doesNotMatch(markup, /<\!\s*\n\s*-->/);
+    assert.match(markup, /<article class="admin-metric/);
+    assert.match(markup, /<\!-- Explicação DevIN: Declara conteúdo independente/);
+});
