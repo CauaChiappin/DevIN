@@ -198,3 +198,40 @@ test('suporte ADM diferencia migração pendente de erro comum sem criar tabelas
     assert.match(css, /\.dashboard-shell\.page-suporte \.support-setup-notice/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(css, /\.dashboard-shell\.page-suporte \.support-admin-head/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('JARVIS só sugere rascunhos sob pedido de ADM, sem envio automático', () => {
+    const endpoint = read('php/api/jarvis/support_assist.php');
+    const helper = read('php/controllers/Jarvis/SupportAiAssistant.php');
+    const ui = read('js/support-ui.js');
+    const page = read('php/components/support-admin.php');
+    assert.match(endpoint, /jarvisAdmin\(\)/);
+    assert.match(endpoint, /jarvisCsrf\(\)/);
+    assert.match(endpoint, /jarvisLimit\(\$adminId, 'support-draft'/);
+    assert.match(endpoint, /SupportDesk::detail\(/);
+    assert.match(endpoint, /ModelProvider::chatWithMeta\(/);
+    assert.match(endpoint, /'requires_approval' => true/);
+    assert.doesNotMatch(endpoint, /SupportDesk::reply\(/);
+    assert.doesNotMatch(endpoint, /SupportDesk::close\(/);
+    assert.match(helper, /dado ocultado/);
+    assert.match(helper, /não confiável/);
+    assert.match(page, /data-support-ai-consent/);
+    assert.match(page, /data-support-ai-generate/);
+    assert.match(page, /data-support-ai-apply/);
+    assert.match(page, /não será enviado automaticamente/);
+    assert.match(ui, /async \(\) =>/);
+    assert.match(ui, /function resetAi\(\)/);
+    assert.match(ui, /aiConsent\?\.checked/);
+    assert.match(ui, /aiApply\?\.addEventListener/);
+    assert.match(ui, /X-CSRF-Token/);
+    assert.match(ui, /controller\.signal\.aborted/);
+});
+
+test('suporte ADM no celular ocupa a largura e mantém consentimento acessível', () => {
+    const css = read('css/support.css');
+    assert.match(css, /\.dashboard-shell\.page-suporte > \.lista-area/);
+    assert.match(css, /\.dashboard-shell\.page-suporte > \.sidebar/);
+    assert.match(css, /@media \(max-width: 767px\)/);
+    assert.match(css, /\.support-ai__consent/);
+    assert.match(css, /\.support-ai__draft/);
+    assert.match(css, /safe-area-inset-bottom/);
+});
