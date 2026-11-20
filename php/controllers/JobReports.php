@@ -202,7 +202,7 @@ function dispatchJobReportNotifications(mysqli $conn): bool // Explicação DevI
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 // Detalhe DevIN: Método decideJobReport: encapsula uma responsabilidade reutilizável do módulo no contexto de processar denúncias relativas a anúncios. Consultar argumentos da assinatura; erros devem ser tratados pelo chamador.
-function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $adminId): bool // Explicação DevIN: Declara função/método decideJobReport, com seus parâmetros e comportamento.
+function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $adminId, ?string $customParecer = null): bool // Explicação DevIN: Declara função/método decideJobReport, com seus parâmetros e comportamento.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if ($reportId < 1 || !in_array($verdict, ['manter', 'excluir'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         throw new InvalidArgumentException('Decisão de moderação inválida.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
@@ -232,7 +232,16 @@ function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $admi
         $status = $verdict === 'excluir' ? 'excluida' : 'mantida'; // Explicação DevIN: Atribui um valor à variável PHP $status.
         $parecer = $verdict === 'excluir' // Explicação DevIN: Atribui um valor à variável PHP $parecer.
             ? 'A vaga foi removida após análise da denúncia.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-            : 'A vaga foi mantida após análise da denúncia.'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            : 'A vaga foi mantida após análise da denúncia.';
+        if ($customParecer !== null) { // Parecer escrito e aprovado pelo ADM via chat.
+            $customParecer = trim($customParecer); // Remove apenas espaços.
+            if (mb_strlen($customParecer, 'UTF-8') < 5
+                || mb_strlen($customParecer, 'UTF-8') > 3000) {
+                throw new InvalidArgumentException('O parecer deve ter entre 5 e 3.000 caracteres.');
+            }
+            $parecer = $customParecer; // Persiste a sentença revisada, sem modificar o veredito.
+        } // Fecha a escolha de parecer.
+ // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
         $stmt = $conn->prepare('
             UPDATE reports_vagas
