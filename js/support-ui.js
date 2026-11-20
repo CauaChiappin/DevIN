@@ -126,7 +126,7 @@
         if (!response.ok || !data?.sucesso) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             const failure = new Error(t(data?.mensagem || 'O servidor não conseguiu atender agora.')); // Apresenta erro amigável.
             failure.code = String(data?.codigo || ''); // Preserva código interno para o estado de instalação.
-            throw failure; // Interrompe atualização incompleta. // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+            throw failure; // Interrompe atualização incompleta.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return data; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

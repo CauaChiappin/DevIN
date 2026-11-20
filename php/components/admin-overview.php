@@ -27,14 +27,14 @@ $metrics = [ // Explicação DevIN: Atribui um valor à variável PHP $metrics.
     <div class="admin-overview-grid"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         <?php foreach ($metrics as [$caption, $key]): ?>
             <?php $metricAvailable = isset($adminOverview[$key]); // Distingue métrica ausente de valor numérico zero. ?>
-            <article class="admin-metric<?= $metricAvailable ? '' : ' admin-metric--unavailable' ?>">
+            <article class="admin-metric<?= $metricAvailable ? '' : ' admin-metric--unavailable' ?>"> // Explicação DevIN: Declara conteúdo independente. Contém dado dinâmico processado pelo PHP.
                 <h2><?= h($labels[$caption]) ?></h2>
                 <?php if ($metricAvailable): ?>
-                    <strong class="admin-metric__value"><?= number_format((int) $adminOverview[$key], 0, ',', '.') ?></strong>
+                    <strong class="admin-metric__value"><?= number_format((int) $adminOverview[$key], 0, ',', '.') ?></strong> <!-- Explicação DevIN: Declara elemento de marcação. Contém dado dinâmico processado pelo PHP. -->
                 <?php else: ?>
-                    <span class="admin-metric__unavailable" role="status"><?= h($labels['missing']) ?></span>
+                    <span class="admin-metric__unavailable" role="status"><?= h($labels['missing']) ?></span> <!-- Explicação DevIN: Declara trecho em linha. Contém dado dinâmico processado pelo PHP. -->
                 <?php endif; ?>
-            </article>
+            </article> <!-- Explicação DevIN: Fecha elemento article do documento. -->
         <?php endforeach; ?>
     </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
     <section class="admin-overview-ranking"> <!-- Explicação DevIN: Declara seção temática. -->

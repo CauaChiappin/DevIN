@@ -94,177 +94,177 @@
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* O aprimoramento visual abaixo fica restrito à tela de estatísticas ADM. */
-.dashboard-shell.page-estatisticas .lista-area {
-    box-sizing: border-box;
-    background: #f7f9fc;
-}
-.page-estatisticas .admin-overview {
-    width: min(100%, 1540px);
-    gap: 18px;
-}
-.page-estatisticas .admin-overview-header {
-    padding: clamp(22px, 2.2vw, 32px);
-    border-radius: 18px;
-    box-shadow: 0 10px 24px rgba(10, 72, 131, .09);
-}
-.page-estatisticas .admin-overview-header h1 {
-    font-size: clamp(24px, 2vw, 34px);
-    line-height: 1.18;
-    letter-spacing: -.025em;
-}
-.page-estatisticas .admin-overview-header p {
-    max-width: 800px;
-    font-size: clamp(13px, 1vw, 16px);
-    line-height: 1.55;
-}
-.page-estatisticas .admin-overview-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    align-items: stretch;
-}
-.page-estatisticas .admin-metric {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 14px;
-    box-sizing: border-box;
-    min-height: 150px;
-    padding: clamp(18px, 1.5vw, 24px);
-    border-radius: 17px;
-    box-shadow: 0 4px 15px rgba(10, 66, 116, .055);
-    transition: box-shadow .2s ease, border-color .2s ease;
-}
-.page-estatisticas .admin-metric:hover {
-    border-color: #a9cde9;
-    box-shadow: 0 9px 23px rgba(10, 66, 116, .095);
-}
-.page-estatisticas .admin-metric h2 {
-    margin: 0;
-    font-size: clamp(14px, 1vw, 17px);
-    line-height: 1.4;
-    font-weight: 700;
-}
-.page-estatisticas .admin-metric__value {
-    display: block;
-    font-size: clamp(34px, 2.9vw, 50px);
-    line-height: 1.1;
-    font-variant-numeric: tabular-nums;
-    overflow-wrap: normal;
-}
-.page-estatisticas .admin-metric--unavailable {
-    justify-content: space-between;
-    background: #fbfcff;
-}
-.page-estatisticas .admin-metric__unavailable {
-    align-self: flex-start;
-    display: inline-flex;
-    max-width: 100%;
-    padding: 7px 11px;
-    border: 1px solid #d3e0ec;
-    border-radius: 999px;
-    background: #eef4fa;
-    color: #536f88;
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1.3;
-    white-space: normal;
-    overflow-wrap: normal;
-    word-break: normal;
-}
-.page-estatisticas .admin-overview-ranking {
-    padding: clamp(18px, 2vw, 28px);
-    border-radius: 17px;
-}
-.page-estatisticas .admin-overview-ranking li {
-    min-width: 0;
-}
-@media (min-width: 1800px) {
-    .page-estatisticas .admin-overview-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-}
-@media (max-width: 1400px) {
-    .page-estatisticas .admin-overview-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-@media (max-width: 1100px) {
-    .page-estatisticas .admin-overview-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
+.dashboard-shell.page-estatisticas .lista-area { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+    background: #f7f9fc; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-overview { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: min(100%, 1540px); /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    gap: 18px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-overview-header { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding: clamp(22px, 2.2vw, 32px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 18px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    box-shadow: 0 10px 24px rgba(10, 72, 131, .09); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-overview-header h1 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: clamp(24px, 2vw, 34px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.18; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    letter-spacing: -.025em; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS letter-spacing. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-overview-header p { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    max-width: 800px; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    font-size: clamp(13px, 1vw, 16px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.55; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-overview-grid { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    gap: 16px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    align-items: stretch; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-metric { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    flex-direction: column; /* Explicação DevIN: Define direção dos itens por meio da propriedade CSS flex-direction. */
+    justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    gap: 14px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+    min-height: 150px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    padding: clamp(18px, 1.5vw, 24px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 17px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    box-shadow: 0 4px 15px rgba(10, 66, 116, .055); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+    transition: box-shadow .2s ease, border-color .2s ease; /* Explicação DevIN: Define transição animada por meio da propriedade CSS transition. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-metric:hover { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    border-color: #a9cde9; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-color. */
+    box-shadow: 0 9px 23px rgba(10, 66, 116, .095); /* Explicação DevIN: Define sombra por meio da propriedade CSS box-shadow. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-metric h2 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    font-size: clamp(14px, 1vw, 17px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.4; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-metric__value { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    font-size: clamp(34px, 2.9vw, 50px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.1; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    font-variant-numeric: tabular-nums; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font-variant-numeric. */
+    overflow-wrap: normal; /* Explicação DevIN: Define quebra de texto longo por meio da propriedade CSS overflow-wrap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-metric--unavailable { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    background: #fbfcff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-metric__unavailable { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    align-self: flex-start; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS align-self. */
+    display: inline-flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    padding: 7px 11px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 1px solid #d3e0ec; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 999px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #eef4fa; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #536f88; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 700; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    line-height: 1.3; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    white-space: normal; /* Explicação DevIN: Define tratamento de espaços e quebras de linha por meio da propriedade CSS white-space. */
+    overflow-wrap: normal; /* Explicação DevIN: Define quebra de texto longo por meio da propriedade CSS overflow-wrap. */
+    word-break: normal; /* Explicação DevIN: Define regras de quebra de palavras por meio da propriedade CSS word-break. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-overview-ranking { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding: clamp(18px, 2vw, 28px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 17px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.page-estatisticas .admin-overview-ranking li { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (min-width: 1800px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .page-estatisticas .admin-overview-grid { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-template-columns: repeat(5, minmax(0, 1fr)); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (max-width: 1400px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .page-estatisticas .admin-overview-grid { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-template-columns: repeat(3, minmax(0, 1fr)); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (max-width: 1100px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .page-estatisticas .admin-overview-grid { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-template-columns: repeat(2, minmax(0, 1fr)); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 /* A declaração desktop original vinha após as media queries e estreitava o mobile. */
-@media (max-width: 720px) {
-    .dashboard-shell.page-estatisticas {
-        grid-template-columns: minmax(0, 1fr);
-        grid-auto-rows: max-content;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        height: auto;
-        overflow: visible;
-    }
-    .dashboard-shell.page-estatisticas > .sidebar {
-        grid-column: 1 / -1;
-        box-sizing: border-box;
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-    }
-    .dashboard-shell.page-estatisticas > .lista-area {
-        grid-column: 1 / -1;
-        box-sizing: border-box;
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-        height: auto;
-        min-height: 0;
-        overflow: visible;
-        padding: 18px 14px 30px;
-    }
-    .page-estatisticas .admin-overview {
-        width: 100%;
-        min-width: 0;
-        gap: 14px;
-    }
-    .page-estatisticas .admin-overview-header {
-        padding: 21px 19px;
-        border-radius: 16px;
-    }
-    .page-estatisticas .admin-overview-header h1 {
-        font-size: clamp(23px, 6vw, 30px);
-    }
-    .page-estatisticas .admin-overview-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-    }
-    .page-estatisticas .admin-metric {
-        min-height: 136px;
-        padding: 17px;
-    }
-    .page-estatisticas .admin-metric h2 {
-        font-size: 14px;
-    }
-    .page-estatisticas .admin-metric__value {
-        font-size: clamp(30px, 6.5vw, 42px);
-    }
-    .page-estatisticas .admin-overview-ranking ol {
-        padding-left: 20px;
-    }
-}
-@media (max-width: 470px) {
-    .page-estatisticas .admin-overview-grid {
-        grid-template-columns: minmax(0, 1fr);
-    }
-    .page-estatisticas .admin-metric {
-        min-height: 115px;
-        gap: 10px;
-        padding: 17px 19px;
-    }
-    .page-estatisticas .admin-metric__unavailable {
-        font-size: 13px;
-    }
-}
-@media (prefers-reduced-motion: reduce) {
-    .page-estatisticas .admin-metric { transition: none; }
-}
+@media (max-width: 720px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .dashboard-shell.page-estatisticas { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-template-columns: minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+        grid-auto-rows: max-content; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-auto-rows. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+        min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+        height: auto; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        overflow: visible; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-estatisticas > .sidebar { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-column: 1 / -1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+        box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+        max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-estatisticas > .lista-area { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-column: 1 / -1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+        box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+        max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+        height: auto; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        overflow: visible; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+        padding: 18px 14px 30px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-overview { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+        gap: 14px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-overview-header { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        padding: 21px 19px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        border-radius: 16px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-overview-header h1 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: clamp(23px, 6vw, 30px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-overview-grid { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-template-columns: repeat(2, minmax(0, 1fr)); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+        gap: 12px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-metric { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        min-height: 136px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 17px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-metric h2 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-metric__value { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: clamp(30px, 6.5vw, 42px); /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-overview-ranking ol { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        padding-left: 20px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS padding-left. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (max-width: 470px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .page-estatisticas .admin-overview-grid { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        grid-template-columns: minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-metric { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        min-height: 115px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        gap: 10px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+        padding: 17px 19px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .page-estatisticas .admin-metric__unavailable { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+@media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .page-estatisticas .admin-metric { transition: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */

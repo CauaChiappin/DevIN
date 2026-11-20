@@ -85,14 +85,14 @@ test('ajustes móveis não modificam grades globais nem dependem de lousas', () 
     assert.doesNotMatch(css, /@media screen and \(min-width: 1024px\) and \(pointer: coarse\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('rodapé da tela Sobre nós fica compacto no celular sem afetar outros painéis', () => {
-    const css = read('css/dashboard.css');
-    const footer = read('php/components/dashboard-footer.php');
-    assert.match(css, /@media \(max-width: 560px\)/);
-    assert.match(css, /\.dashboard-shell\.page-sobre \.dashboard-footer__inner/);
-    assert.match(css, /\.dashboard-shell\.page-sobre \.dashboard-footer__brand/);
-    assert.match(css, /\.dashboard-shell\.page-sobre \.dashboard-footer__column:last-of-type/);
-    assert.match(css, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
-    assert.match(footer, /dashboard-footer__social/);
-    assert.match(footer, /dashboard-footer__copyright/);
-});
+test('rodapé da tela Sobre nós fica compacto no celular sem afetar outros painéis', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    const css = read('css/dashboard.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    const footer = read('php/components/dashboard-footer.php'); // Explicação DevIN: Declara variável JavaScript footer para reutilizar valor ou resultado.
+    assert.match(css, /@media \(max-width: 560px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-sobre \.dashboard-footer__inner/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-sobre \.dashboard-footer__brand/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-sobre \.dashboard-footer__column:last-of-type/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(footer, /dashboard-footer__social/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(footer, /dashboard-footer__copyright/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
