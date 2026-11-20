@@ -43,7 +43,7 @@ test('estatísticas não estreitam o dashboard mobile nem quebram estado indispo
     assert.match(css, /@media \(max-width: 470px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(css, /grid-template-columns: minmax\(0, 1fr\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(css, /\.page-estatisticas \.admin-metric__unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(markup, /admin-metric--unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(markup, /admin-metric__unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /admin-metric__value/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /admin-metric__unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /isset\(\$adminOverview\[\$key\]\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
