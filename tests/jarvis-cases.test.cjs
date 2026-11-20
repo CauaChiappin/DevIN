@@ -117,16 +117,16 @@ test('revisão mobile do JARVIS destaca representante e libera espaço na conver
   assert.match(ui, /root\.classList\.remove\('is-case-focused'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('suportes e representante são interpretados sem rede pelo novo módulo local', () => {
-  const intent = require('../js/jarvis-intents.js');
-  const chat = read('js/jarvis-cases.js');
-  assert.deepEqual(intent.classify('Quais são os suportes que eu estou de representante?'),
-    {type:'list',filter:'mine'});
-  assert.deepEqual(intent.classify('Quais chamados estão na minha jurisdição?'),
-    {type:'list',filter:'mine'});
-  assert.match(chat, /DevInJarvisIntents\?\.classify/);
-  assert.match(chat, /const filter = requestedFilter \|\| scopeFilter/);
-});
+test('suportes e representante são interpretados sem rede pelo novo módulo local', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  const intent = require('../js/jarvis-intents.js'); // Explicação DevIN: Declara variável JavaScript intent para reutilizar valor ou resultado.
+  const chat = read('js/jarvis-cases.js'); // Explicação DevIN: Declara variável JavaScript chat para reutilizar valor ou resultado.
+  assert.deepEqual(intent.classify('Quais são os suportes que eu estou de representante?'), // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+    {type:'list',filter:'mine'}); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.deepEqual(intent.classify('Quais chamados estão na minha jurisdição?'), // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+    {type:'list',filter:'mine'}); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(chat, /DevInJarvisIntents\?\.classify/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(chat, /const filter = requestedFilter \|\| scopeFilter/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 test('histórico do chat de casos utiliza API protegida e preserva conta ADM', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
   const widget = read('js/jarvis-admin.js'); // Explicação DevIN: Declara variável JavaScript widget para reutilizar valor ou resultado.
