@@ -99,7 +99,7 @@ test('minha jurisdição é suporte atribuído ao representante, não todos os r
 test('detalhes do JARVIS retornam representante igual à fila do suporte', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   const source = read('php/controllers/Jarvis/JarvisCaseDesk.php'); // Explicação DevIN: Declara variável JavaScript source para reutilizar valor ou resultado.
   const method = source.slice(source.indexOf('public static function detail(')); // Explicação DevIN: Declara função/método detail, com seus parâmetros e comportamento.
-  const body = method.slice(0, method.indexOf("        $table =")); // Explicação DevIN: Isola o bloco completo de detalhes sem cortar anotações PHP.
+  const body = method.slice(0, method.indexOf("        $table =")); // Explicação DevIN: Declara variável JavaScript body para reutilizar valor ou resultado.
   assert.match(body, /'assigned_admin_id'\s*=>\s*isset\(\$ticket\['assigned_admin_id'\]\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
   assert.match(body, /'assigned_to_me'\s*=>\s*\(bool\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
   const listBlock = source.slice(source.indexOf('public static function listing('), source.indexOf('public static function detail(')); // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
