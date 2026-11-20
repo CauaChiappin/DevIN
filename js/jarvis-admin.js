@@ -1183,110 +1183,110 @@
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   // Fallback somente para consultas administrativas não reconhecidas pelos parsers locais.
   // Nunca usamos a decisão do modelo para autorização, SQL ou qualquer escrita.
-  async function semanticFallback(value) {
-    const semantic = window.DevInJarvisSemantic;
-    if (!semantic?.eligible(value) || !root.dataset.semantic) {
-      await chat('chat', value);
-      return;
-    }
-    busy = true;
-    send.disabled = true;
-    status.textContent = 'Identificando a consulta...';
-    try {
-      const response = await api(root.dataset.semantic, {message: value});
-      const suggestion = semantic.proposed(response.intent);
-      if (!suggestion) {
-        const text = response.status === 'unavailable'
-          ? 'A interpretação adicional não está disponível. As consultas locais continuam funcionando. Indique: chamados, vagas, empresas, candidatos, tarefas ou estatísticas.'
-          : 'Não identifiquei uma consulta administrativa com segurança. Reformule indicando o tipo de informação ou faça uma pergunta geral ao JARVIS.';
-        addMessage('user', value);
-        addMessage('assistant', text);
-        saveVisibleMessage('user', value);
-        saveVisibleMessage('assistant', text);
-        return;
-      }
-      if (suggestion.target === 'case') {
-        if (!caseChat) {
-          addMessage('user', value);
-          addMessage('assistant', 'A consulta de casos está indisponível nesta página.');
-          return;
-        }
-        await caseChat.handle(value, {type: suggestion.type, filter: suggestion.filter});
-        return;
-      }
+  async function semanticFallback(value) { // Explicação DevIN: Declara função/método semanticFallback, com seus parâmetros e comportamento.
+    const semantic = window.DevInJarvisSemantic; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    if (!semantic?.eligible(value) || !root.dataset.semantic) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      await chat('chat', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    busy = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    send.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    status.textContent = 'Identificando a consulta...'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      const response = await api(root.dataset.semantic, {message: value}); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
+      const suggestion = semantic.proposed(response.intent); // Explicação DevIN: Declara variável JavaScript suggestion para reutilizar valor ou resultado.
+      if (!suggestion) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const text = response.status === 'unavailable' // Explicação DevIN: Declara variável JavaScript text para reutilizar valor ou resultado.
+          ? 'A interpretação adicional não está disponível. As consultas locais continuam funcionando. Indique: chamados, vagas, empresas, candidatos, tarefas ou estatísticas.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+          : 'Não identifiquei uma consulta administrativa com segurança. Reformule indicando o tipo de informação ou faça uma pergunta geral ao JARVIS.'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        addMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+        addMessage('assistant', text); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+        saveVisibleMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+        saveVisibleMessage('assistant', text); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+        return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      if (suggestion.target === 'case') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (!caseChat) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          addMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+          addMessage('assistant', 'A consulta de casos está indisponível nesta página.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+          return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        await caseChat.handle(value, {type: suggestion.type, filter: suggestion.filter}); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+        return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       // O LLM devolve apenas tipo fixo. Identificadores e nomes jamais são aceitos dele.
-      addMessage('user', value);
-      saveVisibleMessage('user', value);
-      await handleAdminCommand(value, {type: suggestion.type, kind: suggestion.kind});
-    } catch (error) {
-      addMessage('user', value);
-      const warning = 'Não foi possível interpretar a frase. Nenhuma ação administrativa foi executada. Tente uma consulta mais específica.';
-      addMessage('assistant', warning);
-      saveVisibleMessage('user', value);
-      saveVisibleMessage('assistant', warning);
-    } finally {
-      status.textContent = '';
-      busy = false;
-      send.disabled = false;
-    }
-  }
+      addMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      saveVisibleMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      await handleAdminCommand(value, {type: suggestion.type, kind: suggestion.kind}); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+    } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+      addMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      const warning = 'Não foi possível interpretar a frase. Nenhuma ação administrativa foi executada. Tente uma consulta mais específica.'; // Explicação DevIN: Declara variável JavaScript warning para reutilizar valor ou resultado.
+      addMessage('assistant', warning); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      saveVisibleMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      saveVisibleMessage('assistant', warning); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+    } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+      status.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      busy = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      send.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
   $('[data-jarvis-form]').addEventListener('submit', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     const value = input.value.trim(); // Explicação DevIN: Declara variável JavaScript value para reutilizar valor ou resultado.
     if (!value || busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     input.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-    resize(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    resize(); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     if (caseChat?.matches(value)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       busy = true; send.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       void caseChat.handle(value).catch(error => { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-        addMessage('assistant', 'Não foi possível consultar o caso: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      }).finally(() => { busy = false; send.disabled = false; }); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        addMessage('assistant', 'Não foi possível consultar o caso: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      }).finally(() => { busy = false; send.disabled = false; }); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     } else if (parseAdminCommand(value)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       if (busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       busy=true;send.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       void handleAdminCommand(value).catch(error=>{ // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-        addMessage('assistant','Não foi possível processar o comando: '+error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      }).finally(()=>{busy=false;send.disabled=false;}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+        addMessage('assistant','Não foi possível processar o comando: '+error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      }).finally(()=>{busy=false;send.disabled=false;}); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
-      void semanticFallback(value); // Explicação DevIN: Tenta interpretar uma consulta não reconhecida antes de chamar o chat comum.
+      void semanticFallback(value); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   const taskExamples = { // Explicação DevIN: Declara variável JavaScript taskExamples para reutilizar valor ou resultado.
-    reports: { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      title: 'Analisar denúncias pendentes', // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      description: 'Abrir a aba Reports, revisar os fatos de cada denúncia e registrar uma decisão humana.' // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    reports: { // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      title: 'Analisar denúncias pendentes', // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      description: 'Abrir a aba Reports, revisar os fatos de cada denúncia e registrar uma decisão humana.' // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    jobs: { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      title: 'Revisar vagas publicadas', // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      description: 'Verificar descrições incompletas, anúncios repetidos e informações inconsistentes na lista de vagas.' // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    jobs: { // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      title: 'Revisar vagas publicadas', // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      description: 'Verificar descrições incompletas, anúncios repetidos e informações inconsistentes na lista de vagas.' // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    metrics: { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      title: 'Preparar resumo de indicadores', // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      description: 'Conferir a contagem de candidatos, empresas, vagas e denúncias; preparar um relatório para a equipe.' // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    metrics: { // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      title: 'Preparar resumo de indicadores', // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      description: 'Conferir a contagem de candidatos, empresas, vagas e denúncias; preparar um relatório para a equipe.' // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-  root.querySelectorAll('[data-jarvis-task-example]').forEach(button => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+  root.querySelectorAll('[data-jarvis-task-example]').forEach(button => { // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     button.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
       const example = taskExamples[button.dataset.jarvisTaskExample]; // Explicação DevIN: Declara variável JavaScript example para reutilizar valor ou resultado.
       if (!example) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      $('[data-jarvis-task-title]').value = example.title; // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      $('[data-jarvis-task-description]').value = example.description; // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      $('[data-jarvis-task-title]').value = example.title; // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      $('[data-jarvis-task-description]').value = example.description; // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
       taskStatus.textContent = 'Exemplo preenchido. Revise e toque em Adicionar à fila.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-      $('[data-jarvis-task-title]').focus(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      $('[data-jarvis-task-title]').focus(); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   $('[data-jarvis-task-form]').addEventListener('submit', async (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     const title = $('[data-jarvis-task-title]').value.trim(); // Explicação DevIN: Declara variável JavaScript title para reutilizar valor ou resultado.
     const description = $('[data-jarvis-task-description]').value.trim(); // Explicação DevIN: Declara variável JavaScript description para reutilizar valor ou resultado.
     if (!title) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     const button = $('[data-jarvis-task-add]'); // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
     button.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-      await api(root.dataset.tasks, {action: 'create', title, description}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      event.target.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      await loadTasks(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      await api(root.dataset.tasks, {action: 'create', title, description}); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      event.target.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      await loadTasks(); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     } catch (error) {taskStatus.textContent = error.message;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     finally {button.disabled = false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -1298,12 +1298,12 @@
     if (!actionLabel || !window.confirm('Confirmar: ' + actionLabel + '? Isto não modifica vagas ou contas.')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     button.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-      await api(root.dataset.tasks, {action, task_id: Number(button.dataset.taskId)}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      await loadTasks(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      await api(root.dataset.tasks, {action, task_id: Number(button.dataset.taskId)}); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
+      await loadTasks(); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
     } catch (error) {taskStatus.textContent = error.message;button.disabled = false;} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   document.addEventListener('keydown', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     if (event.key === 'Escape' && !panel.hidden) open(false); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   // O chat, histórico e a fila exigem sessão ADM no backend.
-})(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+})(); // Explicação DevIN: Continua expressão ou bloco pertencente a função semanticFallback.
