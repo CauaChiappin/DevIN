@@ -1,5 +1,6 @@
 <?php // Explicação DevIN: Abre código PHP interpretado no servidor.
-declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
+declare(strict_types=1);
+require_once __DIR__ . '/SupportRepresentative.php'; // Explicação DevIN: Habilita a verificação estrita de tipos no PHP.
 
 /**
  * Central de Suporte DevIN — persistência, validação e entrega.
@@ -190,14 +191,11 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Lista de chamados visível aos ADMs, limitada para não sobrecarregar a página.
-    public static function listAdmin(mysqli $db): array // Explicação DevIN: Declara função/método listAdmin, com seus parâmetros e comportamento.
-    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        self::requireSchema($db); // Explicação DevIN: Continua expressão ou bloco pertencente a função listAdmin.
-        return $db->query('SELECT id,requester_name,requester_email,requester_type,
-            category,description,status,attachment_name,created_at,updated_at
-            FROM support_tickets ORDER BY FIELD(status,"aberto","respondido","fechado"),
-            updated_at DESC LIMIT 150')->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    public static function listAdmin(mysqli $db, ?int $adminId = null): array
+    {
+        self::requireSchema($db);
+        return SupportRepresentative::listAdmin($db, $adminId);
+    }
 
     // Só retorna chamados da conta autenticada, mesmo que outros IDs sejam conhecidos.
     public static function listOwn(mysqli $db, array $actor): array // Explicação DevIN: Declara função/método listOwn, com seus parâmetros e comportamento.
@@ -238,6 +236,10 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         $replies = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
         $stmt->close(); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
         // Token interno e caminhos do filesystem jamais são enviados ao navegador.
+        if (($actor['tipo'] ?? '') === 'adm') {
+            $ticket['assigned_to_me'] = (int) ($ticket['assigned_admin_id'] ?? 0)
+                === (int) ($actor['id'] ?? 0);
+        }
         unset($ticket['attachment_token']); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
         // ADMs podem ver a autoria de cada resposta, mas os usuários não.
         if (($actor['tipo'] ?? '') !== 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -261,7 +263,7 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $db->begin_transaction(); // Explicação DevIN: Continua expressão ou bloco pertencente a função reply.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-            $stmt = $db->prepare('SELECT id,status FROM support_tickets WHERE id=? FOR UPDATE'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmt = $db->prepare('SELECT * FROM support_tickets WHERE id=? FOR UPDATE'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $ticketId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $ticket = $stmt->get_result()->fetch_assoc(); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
@@ -269,6 +271,7 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
             if (!$ticket || $ticket['status'] === 'fechado') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 throw new DomainException('O chamado não existe ou já está fechado.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            SupportRepresentative::verifyOwnerOrClaim($db, $ticket, $adminId);
             $stmt = $db->prepare('INSERT INTO support_replies(ticket_id,admin_id,message)
                 VALUES (?,?,?)'); // Explicação DevIN: Continua expressão ou bloco pertencente a função reply.
             $stmt->bind_param('iis', $ticketId, $adminId, $message); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
