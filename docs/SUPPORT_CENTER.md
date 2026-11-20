@@ -39,7 +39,7 @@
 - SQL utiliza declarações preparadas; anexos usam token aleatório de 48 caracteres sem extensão e download com autenticação de proprietário/ADM.
 - A interface apresenta conteúdo fornecido pelo usuário com `textContent`, evitando interpretação como HTML.
 - A abertura é limitada a 8 chamados por dia por conta e 1 chamado a cada 60 segundos.
-- Há limite de 150 chamados na lista ADM e 60 na lista do usuário. Anexos não são executados, interpretados nem enviados ao modelo de IA.
+- Há limite de 150 chamados na lista ADM e 60 na lista do usuário. Anexos não são executados; prints elegíveis podem ser enviados ao modelo de visão apenas com autorização específica no chat do JARVIS ADM.
 - Sem integração com antivírus, a equipe deve tratar ZIP, PDF e DOCX como arquivos potencialmente perigosos e nunca executar conteúdo recebido.
 - Notificações são persistentes no MySQL, com horário de entrega por canal e até cinco tentativas SMTP por resposta. Não há agendador de reentrega automática; usar o botão de reenvio no painel.
 - Os chamados podem conter dados pessoais. Aplicar política de retenção/expurgo, controle de acesso e direitos LGPD antes de uso real amplo.
@@ -62,23 +62,20 @@
 | `tests/support_center_mysql.php` | Integração com MySQL descartável, permissões e notificações simuladas |
 | `tests/support-ui.test.cjs` | Contratos de UI, proteção e ícones |
 
-## JARVIS como copiloto de atendimento (sob solicitação)
+## JARVIS: suporte e denúncias exclusivamente pelo chat
 
-O painel **ADM → Suporte** oferece **Pedir sugestão ao JARVIS** somente depois de selecionar um chamado aberto. A ferramenta não é um atendimento automático: nunca responde ao usuário, não fecha chamados e não altera contas ou dados do banco.
+O botão "Ajuda do JARVIS" foi removido do formulário ADM → Suporte. O atendimento manual continua funcionando normalmente. A assistência agora fica somente na janela de conversas do JARVIS ADM.
 
-Fluxo: abrir chamado → ler e revisar o relato → marcar autorização de envio de contexto ao provedor → gerar sugestão → **Usar no campo de resposta** → editar → enviar manualmente como Suporte DevIN. Trocar de chamado cancela a sugestão e limpa a autorização anterior.
+Exemplos de pedidos: "Mostre os reports na minha jurisdição", "Liste os chamados de suporte", "Analise esta denúncia" depois de selecionar um caso. O JARVIS apresenta cartões do MySQL, o ADM escolhe pelo ID e lê o contexto. O ADM pode escrever o parecer sozinho, solicitar uma análise ou um rascunho (com consentimento) e preparar uma decisão no próprio chat.
 
-Segurança e privacidade:
-- Apenas administradores autenticados acessam o endpoint privado php/api/jarvis/support_assist.php. A API valida existência da conta, sessão, CSRF e, quando habilitado, o desbloqueio AI de Token 1/Token 2.
-- O servidor lê o ticket autorizado diretamente do banco. O navegador não envia descrição, email, anexo, nome nem histórico arbitrário.
-- São enviados somente categoria, trecho da descrição e até cinco mensagens anteriores, com remoção de padrões comuns de e-mail, telefone, links, CPF/CNPJ e credenciais. **A anonimização é limitada e não garante remover todos os dados pessoais**, portanto o ADM deve revisar antes de autorizar. Nenhum arquivo anexo é transmitido ao modelo.
-- Não são incluídos nomes, e-mails ou IDs cadastrais do solicitante. Instruções escritas nos chamados são tratadas como conteúdo não confiável.
-- Limite: 10 solicitações de rascunho por administrador/hora. O retorno é exibido apenas como rascunho no navegador e não é gravado automaticamente como resposta.
-- O sistema registra somente ADM e ID do chamado no log técnico para diagnosticar solicitações, sem copiar o texto enviado à IA.
-- O JARVIS depende das configurações existentes DEVIN_JARVIS_PROVIDER, DEVIN_JARVIS_MODEL e DEVIN_JARVIS_API_KEY e do desbloqueio adicional quando estiver ativado.
+**Jurisdição:** atualmente não há um campo de atribuição por ADM. Chamados de suporte são compartilhados entre ADMs. Quando RBAC está habilitado, denúncias são mostradas apenas aos perfis administrativos que podem moderá-las; sem RBAC, vale o acesso ADM existente. Isso NÃO significa que os reports estejam distribuídos individualmente.
 
-**Deploy:** essa funcionalidade não exige migração SQL nova. Preserve .env, bancos, fotos e anexos privados. Teste no ambiente de homologação, depois publique o código validado. O envio ao GitHub não publica automaticamente na Hostinger.
+**Aprovação humana:** uma ação só é realizada após o ADM revisar o texto, solicitar a prévia e confirmar em um segundo POST autenticado com token de uso único de até 180 s e palavra ENVIAR, DECIDIR ou EXCLUIR. A decisão pode manter ou remover uma vaga/perfil; a remoção é uma ação destrutiva e exige confirmação reforçada. O parecer final é armazenado nas colunas já existentes dos reports. O JARVIS não escolhe sozinho um veredito e não faz mudanças por meio da resposta do modelo. Respostas de suporte usam a infraestrutura existente de mensagens e e-mail.
 
-**Validação:** como ADM, abra um chamado de teste e confirme que sem marcar o consentimento não ocorre pedido, que uma sugestão não é enviada sem clicar em Responder ao usuário, e que trocar de chamado elimina o rascunho. Teste celulares de 360, 390, 430 e 768 px, teclado aberto e menu recolhido/expandido. Em cada caso, confirme ausência de scroll horizontal.
+**Prints:** no cartão do caso há um seletor opcional PNG/JPG/WebP (até 4 MB), ou um anexo de imagem já existente do chamado de suporte, para analisar com um modelo compatível com visão. O ADM deve autorizar expressamente a transmissão do print a um provedor externo. O servidor reconverte a imagem com PHP GD para remover metadados (como EXIF/GPS), reduz a resolução e não salva o arquivo anexado no chat. A imagem ainda pode conter dados pessoais visíveis e a anonimização visual não é garantida. Arquivos PDF, DOCX, ZIP e outros formatos não são tratados como print pelo JARVIS.
 
-**Observação:** a fila de chamados já é compartilhada entre ADMs; atribuição exclusiva de responsável e notas internas são uma funcionalidade diferente e não são ativadas por esse copiloto.
+**Limitações:** as análises e pareceres dependem da API JARVIS existente e do modelo configurado. Se ele não aceitar imagens, a leitura visual falhará com aviso. Selecionar o caso e conferir seu conteúdo não exige enviar dados ao provedor. O contexto textual enviado ao modelo é reduzido e remove padrões comuns de contatos e credenciais; essa remoção não garante anonimização completa. A UI não mantém um histórico separado de pareceres não enviados após recarregamento. Casos já concluídos ficam disponíveis somente para leitura.
+
+**Implantação:** não há migração SQL nova para este fluxo. Preserve .env, uploads, armazenamento privado e banco da Hostinger. Os endpoints exigem sessão ADM, CSRF, limite de uso e Token 2 se a etapa de IA estiver habilitada. Validar o desktop e celulares 360/390/430 px, especialmente cards de chat, teclado, seleção de prints e atualização depois de um veredito.
+
+Arquivos principais: php/api/jarvis/cases.php, php/controllers/Jarvis/JarvisCaseDesk.php, js/jarvis-cases.js, css/jarvis-admin.css e testes/jarvis-cases.test.cjs.
