@@ -16,7 +16,10 @@
 
     function matches(value) { // Explicação DevIN: Declara função/método matches, com seus parâmetros e comportamento.
       const normalized = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); // Explicação DevIN: Declara variável JavaScript normalized para reutilizar valor ou resultado.
-      if (/\b(reports?|denuncias?|chamados?|tickets?|suporte|atendimentos?)\b/.test(normalized)) return true; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      if (/\b(reports?|denuncias?|chamados?|tickets?|suportes?|atendimentos?)\b/.test(normalized)) return true; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      // "Eu sou representante" e "minha jurisdição" consultam o MySQL, nunca um modelo externo.
+      if (/\b(representante|responsavel|responsabilidade|jurisdicao|atribuid[oa]s?)\b/.test(normalized)
+        && /\b(eu|minha|meus|sou|estou|tenho)\b/.test(normalized)) return true;
       return Boolean(activeCase && /\b(analise|analisar|avalie|investigue|redija|escreva|redigir|parecer|veredito|responder|resposta|me ajuda|ajude|o que acha|print|imagem|evidencia)\b/.test(normalized)); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
