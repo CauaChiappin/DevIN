@@ -200,25 +200,25 @@ test('suporte ADM diferencia migração pendente de erro comum sem criar tabelas
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 
-test('ajuda do JARVIS fica exclusivamente no chat', () => {
-    const page = read('php/components/support-admin.php');
-    const ui = read('js/support-ui.js');
-    const chat = read('js/jarvis-cases.js');
-    assert.doesNotMatch(page, /data-support-ai/);
-    assert.doesNotMatch(ui, /resetAi\\(/);
-    assert.match(page, /data-support-reply/);
-    assert.match(chat, /Pedir parecer ao JARVIS/);
-    assert.match(chat, /action:'confirm'/);
-    assert.match(chat, /consent/);
-});
+test('ajuda do JARVIS fica exclusivamente no chat', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const page = read('php/components/support-admin.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
+    const ui = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript ui para reutilizar valor ou resultado.
+    const chat = read('js/jarvis-cases.js'); // Explicação DevIN: Declara variável JavaScript chat para reutilizar valor ou resultado.
+    assert.doesNotMatch(page, /data-support-ai/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.doesNotMatch(ui, /resetAi\\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-support-reply/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(chat, /Pedir parecer ao JARVIS/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(chat, /action:'confirm'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(chat, /consent/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('suporte ADM no celular ocupa a largura, chat tem seus próprios controles', () => {
-    const css = read('css/support.css');
-    const jarvis = read('css/jarvis-admin.css');
-    assert.match(css, /\\.dashboard-shell\\.page-suporte > \\.lista-area/);
-    assert.match(css, /\\.dashboard-shell\\.page-suporte > \\.sidebar/);
-    assert.match(css, /@media \\(max-width: 767px\\)/);
-    assert.match(jarvis, /jarvis-admin__case-editor/);
-    assert.match(jarvis, /jarvis-admin__case-consent/);
-    assert.match(css, /safe-area-inset-bottom/);
-});
+test('suporte ADM no celular ocupa a largura, chat tem seus próprios controles', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const css = read('css/support.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    const jarvis = read('css/jarvis-admin.css'); // Explicação DevIN: Declara variável JavaScript jarvis para reutilizar valor ou resultado.
+    assert.match(css, /\\.dashboard-shell\\.page-suporte > \\.lista-area/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /\\.dashboard-shell\\.page-suporte > \\.sidebar/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /@media \\(max-width: 767px\\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(jarvis, /jarvis-admin__case-editor/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(jarvis, /jarvis-admin__case-consent/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /safe-area-inset-bottom/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

@@ -232,13 +232,13 @@ function decideJobReport(mysqli $conn, int $reportId, string $verdict, int $admi
         $status = $verdict === 'excluir' ? 'excluida' : 'mantida'; // Explicação DevIN: Atribui um valor à variável PHP $status.
         $parecer = $verdict === 'excluir' // Explicação DevIN: Atribui um valor à variável PHP $parecer.
             ? 'A vaga foi removida após análise da denúncia.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-            : 'A vaga foi mantida após análise da denúncia.';
+            : 'A vaga foi mantida após análise da denúncia.'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
         if ($customParecer !== null) { // Parecer escrito e aprovado pelo ADM via chat.
             $customParecer = trim($customParecer); // Remove apenas espaços.
-            if (mb_strlen($customParecer, 'UTF-8') < 5
-                || mb_strlen($customParecer, 'UTF-8') > 3000) {
-                throw new InvalidArgumentException('O parecer deve ter entre 5 e 3.000 caracteres.');
-            }
+            if (mb_strlen($customParecer, 'UTF-8') < 5 // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                || mb_strlen($customParecer, 'UTF-8') > 3000) { // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                throw new InvalidArgumentException('O parecer deve ter entre 5 e 3.000 caracteres.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             $parecer = $customParecer; // Persiste a sentença revisada, sem modificar o veredito.
         } // Fecha a escolha de parecer.
  // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
