@@ -23,6 +23,8 @@
   const conversationSelect = $('[data-jarvis-conversation]'); // Explicação DevIN: Declara variável JavaScript conversationSelect para reutilizar valor ou resultado.
   const taskList = $('[data-jarvis-tasks-list]'); // Explicação DevIN: Declara variável JavaScript taskList para reutilizar valor ou resultado.
   let conversationId = null; // Explicação DevIN: Declara variável JavaScript conversationId para reutilizar valor ou resultado.
+  let historyRestored = false; // Restaura o último chat salvo uma única vez por abertura de página.
+  let localCaseLog = null; // Fila de mensagens locais associadas à conversa atualmente aberta.
   let busy = false; // Explicação DevIN: Declara variável JavaScript busy para reutilizar valor ou resultado.
   let activeTab = 'chat'; // Explicação DevIN: Declara variável JavaScript activeTab para reutilizar valor ou resultado.
   let searchTimer = null; // Explicação DevIN: Declara variável JavaScript searchTimer para reutilizar valor ou resultado.
@@ -242,6 +244,32 @@
     input.style.height = 'auto'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     input.style.height = Math.min(input.scrollHeight, 150) + 'px'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // Os cartões de casos e mensagens de erro eram apenas elementos temporários do navegador.
+  // Este registro é um transcript do chat, NÃO uma trilha de auditoria de decisões oficiais.
+  function saveVisibleMessage(role, content) { // Explicação DevIN: Declara função/método saveVisibleMessage, com seus parâmetros e comportamento.
+    const value = String(content || '').trim().slice(0, 5000); // Explicação DevIN: Declara variável JavaScript value para reutilizar valor ou resultado.
+    if (!value || (role !== 'user' && role !== 'assistant')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    historyRestored = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    const session = localCaseLog || (localCaseLog = { // Explicação DevIN: Declara variável JavaScript session para reutilizar valor ou resultado.
+      id: conversationId, // Explicação DevIN: Continua expressão ou bloco pertencente a função saveVisibleMessage.
+      title: role === 'user' ? value.slice(0, 80) : 'Atendimento JARVIS', // Explicação DevIN: Continua expressão ou bloco pertencente a função saveVisibleMessage.
+      pending: Promise.resolve() // Explicação DevIN: Continua expressão ou bloco pertencente a função saveVisibleMessage.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    session.pending = session.pending.then(async () => { // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      const saved = await api(root.dataset.conversations, { // Explicação DevIN: Declara variável JavaScript saved para reutilizar valor ou resultado.
+        action: 'append', conversation_id: session.id, title: session.title, // Explicação DevIN: Continua expressão ou bloco pertencente a função saveVisibleMessage.
+        entries: [{role, content: value}] // Explicação DevIN: Continua expressão ou bloco pertencente a função saveVisibleMessage.
+      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      session.id = Number(saved.conversation_id); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      if (localCaseLog === session) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        conversationId = session.id; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        await loadConversations(''); // Explicação DevIN: Continua expressão ou bloco pertencente a função saveVisibleMessage.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }).catch(error => { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+      if (localCaseLog === session) status.textContent = 'Histórico não salvo: ' + error.message; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
   async function loadConversations(search = '') { // Explicação DevIN: Declara função/método loadConversations, com seus parâmetros e comportamento.
     const data = await api(root.dataset.conversations + '?q=' + encodeURIComponent(search)); // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
     const previous = String(conversationId ?? ''); // Explicação DevIN: Declara variável JavaScript previous para reutilizar valor ou resultado.
@@ -257,8 +285,13 @@
       conversationSelect.append(option); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadConversations.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     conversationSelect.value = previous; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    const restore = !historyRestored && !search && !conversationId && data.conversations.length > 0; // Explicação DevIN: Declara variável JavaScript restore para reutilizar valor ou resultado.
+    historyRestored = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    if (restore) await loadConversation(String(data.conversations[0].id)); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   async function loadConversation(id) { // Explicação DevIN: Declara função/método loadConversation, com seus parâmetros e comportamento.
+    if (localCaseLog) await localCaseLog.pending; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    localCaseLog = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     caseChat?.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadConversation.
     if (!id) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -398,7 +431,18 @@
    * A aprovação de uma ação ocorre em outra chamada, depois da prévia.
    */
   // Detalhe DevIN: Orquestra consulta, seleção e confirmação no frontend, utilizando apenas endpoints autenticados da aplicação.
-  const caseChat = window.DevInJarvisCases?.init({root, api, addMessage, chatActionCard, actionButton}) || null; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+  // Todas as mensagens dos casos são exibidas e persistidas em ordem no MySQL do ADM.
+  const addCaseMessage = (role, text, metadata = null) => { // Explicação DevIN: Declara variável JavaScript addCaseMessage para reutilizar valor ou resultado.
+    addMessage(role, text, metadata); // Explicação DevIN: Continua expressão ou bloco pertencente a função actionButton.
+    saveVisibleMessage(role, text); // Explicação DevIN: Continua expressão ou bloco pertencente a função actionButton.
+  }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  const caseCard = text => { // Explicação DevIN: Declara variável JavaScript caseCard para reutilizar valor ou resultado.
+    addCaseMessage('assistant', text); // Explicação DevIN: Continua expressão ou bloco pertencente a função actionButton.
+    return messages.lastElementChild; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+  }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  const caseChat = window.DevInJarvisCases?.init({ // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    root, api, addMessage: addCaseMessage, chatActionCard: caseCard, actionButton // Explicação DevIN: Continua expressão ou bloco pertencente a função actionButton.
+  }) || null; // Explicação DevIN: Continua expressão ou bloco pertencente a função actionButton.
 
   async function handleAdminCommand(message, selected=null) { // Explicação DevIN: Declara função/método handleAdminCommand, com seus parâmetros e comportamento.
     // Detalhe DevIN: Um resultado já escolhido prevalece sobre a interpretação original da frase: usa o ID da seleção para evitar ambiguidade.
@@ -613,6 +657,7 @@
     status.textContent = 'Consultando...'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     if (mode === 'chat') addMessage('user', message); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+      if (mode === 'chat' && localCaseLog) await localCaseLog.pending; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       const data = await api(root.dataset.endpoint, { // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
         mode, message, page: root.dataset.page || 'inicio', conversation_id: conversationId, // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
         use_history: $('[data-jarvis-use-history]').checked // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
@@ -625,7 +670,12 @@
       status.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
       // O erro não é salvo no histórico, pois o provedor não confirmou a resposta.
-      addMessage('assistant', 'Falha: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
+      const visibleError = 'Falha: ' + error.message; // Explicação DevIN: Declara variável JavaScript visibleError para reutilizar valor ou resultado.
+      addMessage('assistant', visibleError); // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
+      if (mode === 'chat') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        saveVisibleMessage('user', message); // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
+        saveVisibleMessage('assistant', visibleError); // Explicação DevIN: Continua expressão ou bloco pertencente a função chat.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       status.textContent = 'Solicitação não concluída.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
       busy = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -905,6 +955,8 @@
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   root.querySelectorAll('[data-jarvis-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.jarvisTab))); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
   $('[data-jarvis-new]').addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    historyRestored = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+    localCaseLog = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     caseChat?.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
     conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     conversationSelect.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -917,6 +969,8 @@
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
       await api(root.dataset.conversations, {action: 'delete', conversation_id: conversationId}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
       conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      localCaseLog = null; // Isola os registros da conversa recém-excluída.
+      caseChat?.reset(); // Não reutiliza o caso selecionado após excluir a conversa.
       clearMessages(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
       await loadConversations($('[data-jarvis-search]').value.trim()); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
       status.textContent = 'Conversa excluída.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.

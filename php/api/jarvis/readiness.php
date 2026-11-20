@@ -14,6 +14,20 @@ $adminId=jarvisAdmin(); // O servidor revalida sessão e confirmação adicional
 jarvisLimit($adminId,'readiness',30); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 $enabled=static fn(string $key): bool => // Explicação DevIN: Atribui um valor à variável PHP $enabled.
     (string)($_ENV[$key] ?? $_SERVER[$key] ?? getenv($key) ?: '0')==='1'; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+// Diagnóstico de modelo autorizado a ADM; nunca incluir qualquer API key.
+$modelProvider=strtolower(trim((string)($_ENV['DEVIN_JARVIS_PROVIDER'] // Explicação DevIN: Atribui um valor à variável PHP $modelProvider.
+    ?? $_SERVER['DEVIN_JARVIS_PROVIDER'] ?? getenv('DEVIN_JARVIS_PROVIDER') ?: ''))); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+$modelId=trim((string)($_ENV['DEVIN_JARVIS_MODEL'] // Explicação DevIN: Atribui um valor à variável PHP $modelId.
+    ?? $_SERVER['DEVIN_JARVIS_MODEL'] ?? getenv('DEVIN_JARVIS_MODEL') ?: '')); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+$modelDiagnostic=[ // Explicação DevIN: Atribui um valor à variável PHP $modelDiagnostic.
+    'provider'=>$modelProvider, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'model'=>mb_substr($modelId,0,120,'UTF-8'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'model_identifier_valid'=>ModelRouter::validModel($modelId), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'free_only_policy'=>$modelProvider === 'openrouter', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'free_router_recovery'=>$modelProvider === 'openrouter' && $modelId !== 'openrouter/free', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'curl_available'=>function_exists('curl_init'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+    'live_provider_checked'=>false, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
 $flags=[ // Explicação DevIN: Atribui um valor à variável PHP $flags.
     'chat_model_configured'=>ModelProvider::configured(), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     'tools_enabled'=>$enabled('DEVIN_JARVIS_ACTIONS_ENABLED'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
@@ -39,7 +53,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     $missing=array_values(array_filter($required,static fn($table)=>!isset($present[$table]))); // Explicação DevIN: Atribui um valor à variável PHP $missing.
     $flags['schema_ready']=$missing===[]; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-    jarvisJson(200,['success'=>true,'flags'=>$flags,'missing_tables'=>$missing, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    jarvisJson(200,['success'=>true,'flags'=>$flags,'model_diagnostic'=>$modelDiagnostic,'missing_tables'=>$missing, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         'ready_for_controlled_actions'=>$flags['tools_enabled'] && $flags['schema_ready'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         'note'=>'Diagnóstico de configuração; não testa SMTP, disponibilidade da IA nem autorização granular.']); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 } catch(Throwable $error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.

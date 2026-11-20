@@ -65,7 +65,7 @@ final class ConversationRepository // Explicação DevIN: Declara o tipo Convers
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
         // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
-        $stmt = $db->prepare('SELECT role, content FROM jarvis_messages WHERE conversation_id = ? ORDER BY id DESC LIMIT 20'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+        $stmt = $db->prepare('SELECT role, content FROM jarvis_messages WHERE conversation_id = ? ORDER BY id DESC LIMIT 100'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->bind_param('i', $id); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         $items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
@@ -104,7 +104,7 @@ final class ConversationRepository // Explicação DevIN: Declara o tipo Convers
         if ($query === '') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // Detalhamento DevIN: SQL parametrizado: os dados variáveis devem ser vinculados por bind_param, impedindo SQL arbitrário.
             // Detalhe DevIN: Prepara SQL para receber valores vinculados; evita interpolar dados do usuário na consulta.
-            $stmt = $db->prepare('SELECT id, title, updated_at FROM jarvis_conversations WHERE admin_id = ? ORDER BY updated_at DESC, id DESC LIMIT 25'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
+            $stmt = $db->prepare('SELECT id, title, updated_at FROM jarvis_conversations WHERE admin_id = ? ORDER BY updated_at DESC, id DESC LIMIT 100'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
             $stmt->bind_param('i', $adminId); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
         } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
             // Pesquisa por termos individuais; não exige coincidência da frase inteira.
