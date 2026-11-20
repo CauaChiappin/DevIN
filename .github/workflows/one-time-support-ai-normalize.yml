@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add php/controllers/Jarvis/SupportAiAssistant.php php/api/jarvis/support_assist.php php/components/support-admin.php js/support-ui.js css/support.css tests/support_ai_assistant.php tests/support-ui.test.cjs .github/workflows/jarvis-admin-checks.yml
+          git add php/controllers/Jarvis/SupportAiAssistant.php php/api/jarvis/support_assist.php php/components/support-admin.php js/support-ui.js css/support.css tests/support_ai_assistant.php tests/support-ui.test.cjs
           if ! git diff --cached --quiet; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
