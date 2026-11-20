@@ -9,7 +9,7 @@ $case = [
     'category' => 'erro',
     'description' => 'Meu e-mail é joao@example.com. Minha senha: minhaSenha123. '
         . 'Meu telefone +55 (11) 91234-5678. Erro ao anexar currículo.',
-    'previous_replies' => [['unused'], 'Falei com ajuda@example.org'],
+    'previous_replies' => ['Mensagem anterior', 'Falei com ajuda@example.org'],
 ];
 $messages = JarvisCaseDesk::aiMessages($case, 'Como orientar o usuário?', true);
 if (($messages[0]['role'] ?? '') !== 'system' || ($messages[1]['role'] ?? '') !== 'user') {
