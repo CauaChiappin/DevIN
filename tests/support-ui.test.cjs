@@ -182,3 +182,19 @@ test('erro do banco identifica migração pendente sem duplicar alerta de formul
     assert.match(ui, /mobilePanels\?\.dataset\.mobileView !== 'create'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(read('database/migrations/2026_11_17_005_support_center.sql'), /CREATE TABLE IF NOT EXISTS support_tickets/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('suporte ADM diferencia migração pendente de erro comum sem criar tabelas pela interface', () => {
+    const js = read('js/support-ui.js');
+    const css = read('css/support.css');
+    const api = read('php/support_api.php');
+    assert.match(api, /SUPPORT_SCHEMA_MISSING/);
+    assert.match(js, /failure\.code = String\(data\?\.codigo/);
+    assert.match(js, /error\.code === 'SUPPORT_SCHEMA_MISSING'/);
+    assert.match(js, /support-setup-notice/);
+    assert.match(js, /support-setup-actions/);
+    assert.match(js, /2026_11_17_005_support_center\.sql/);
+    assert.match(js, /Chamados indisponíveis/);
+    assert.doesNotMatch(js, /CREATE TABLE|ALTER TABLE|DROP TABLE/);
+    assert.match(css, /\.dashboard-shell\.page-suporte \.support-setup-notice/);
+    assert.match(css, /\.dashboard-shell\.page-suporte \.support-admin-head/);
+});
