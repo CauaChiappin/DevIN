@@ -1,0 +1,32 @@
+name: DevIN temporary JARVIS support explanation normalize
+on:
+  push:
+    branches:
+      - feature/jarvis-support-on-demand-mobile-20261120
+    paths:
+      - .github/workflows/one-time-support-ai-normalize.yml
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Normalize explanations
+        run: python3 scripts/line_explanations.py --write
+      - name: Commit changed source files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add php/controllers/Jarvis/SupportAiAssistant.php php/api/jarvis/support_assist.php php/components/support-admin.php js/support-ui.js css/support.css tests/support_ai_assistant.php tests/support-ui.test.cjs .github/workflows/jarvis-admin-checks.yml
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "docs: normalize JARVIS support and mobile explanations"
+            git push origin HEAD:feature/jarvis-support-on-demand-mobile-20261120
+          fi
