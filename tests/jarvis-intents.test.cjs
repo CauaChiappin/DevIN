@@ -22,10 +22,10 @@ const sameOwner = [
   'Me diz os suportes atribuídos a mim',
   'Me mostra os atendimetos que estou atendendo',
   'Traz os chamdos que assumi',
-  'Quais denúncias estão na minha jurisdição?',
   'O que eu to cuidando no suporte?',
   'Lista minhas ocorrências abertas',
   'Quais tickets eu tenho para resolver?',
+  'Quais chamados eu estou acompanhando?',
   'Puxa os reportes da minha responsabilidade',
 ];
 for (const question of sameOwner) {
@@ -115,6 +115,7 @@ for (const question of negative) {
 test('perguntas ambíguas não consultam banco nem acionam uma decisão', () => {
   assert.equal(intents.classify('Quais pendências eu tenho?')?.type, 'clarify');
   assert.equal(intents.classify('Denúncia #1')?.type, 'clarify');
+  assert.equal(intents.classify('Quais denúncias estão na minha jurisdição?')?.type, 'clarify');
   assert.equal(intents.classify('Encerre o chamado')?.type, 'clarify');
 });
 test('análises sobre caso selecionado continuam exigindo autorização via interface', () => {
@@ -122,6 +123,7 @@ test('análises sobre caso selecionado continuam exigindo autorização via inte
   assert.deepEqual(intents.classify('Analise este caso', {activeCase:selected}), {type:'analyze',draft:false});
   assert.deepEqual(intents.classify('Escreva uma resposta para este atendimento', {activeCase:selected}), {type:'analyze',draft:true});
   assert.equal(intents.classify('Bom dia!', {activeCase:selected}), null);
+  assert.deepEqual(intents.classify('Analise o chamado #4', {activeCase:selected}), {type:'detail',caseType:'support',id:4});
 });
 test('integração: roteador de intenção é carregado antes do módulo de casos e do chat', () => {
   const php = read('php/adm.php');
