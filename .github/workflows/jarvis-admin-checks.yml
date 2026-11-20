@@ -21,6 +21,8 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'php/adm.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/suporte.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/support_api.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/Jarvis/SupportAiAssistant.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/support_ai_assistant.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/SupportDesk.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/components/support-admin.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'js/support-ui.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -100,6 +102,10 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php -l tests/chat_mysql_storage.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/suporte.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/support_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/api/jarvis/support_assist.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/Jarvis/SupportAiAssistant.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/support_ai_assistant.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/support_ai_assistant.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/controllers/SupportDesk.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/components/support-admin.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/mensagens_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.

@@ -61,3 +61,24 @@
 | `php/api/jarvis/admin_tools.php` | Consulta autenticada e somente de leitura para JARVIS |
 | `tests/support_center_mysql.php` | Integração com MySQL descartável, permissões e notificações simuladas |
 | `tests/support-ui.test.cjs` | Contratos de UI, proteção e ícones |
+
+## JARVIS como copiloto de atendimento (sob solicitação)
+
+O painel **ADM → Suporte** oferece **Pedir sugestão ao JARVIS** somente depois de selecionar um chamado aberto. A ferramenta não é um atendimento automático: nunca responde ao usuário, não fecha chamados e não altera contas ou dados do banco.
+
+Fluxo: abrir chamado → ler e revisar o relato → marcar autorização de envio de contexto ao provedor → gerar sugestão → **Usar no campo de resposta** → editar → enviar manualmente como Suporte DevIN. Trocar de chamado cancela a sugestão e limpa a autorização anterior.
+
+Segurança e privacidade:
+- Apenas administradores autenticados acessam o endpoint privado php/api/jarvis/support_assist.php. A API valida existência da conta, sessão, CSRF e, quando habilitado, o desbloqueio AI de Token 1/Token 2.
+- O servidor lê o ticket autorizado diretamente do banco. O navegador não envia descrição, email, anexo, nome nem histórico arbitrário.
+- São enviados somente categoria, trecho da descrição e até cinco mensagens anteriores, com remoção de padrões comuns de e-mail, telefone, links, CPF/CNPJ e credenciais. **A anonimização é limitada e não garante remover todos os dados pessoais**, portanto o ADM deve revisar antes de autorizar. Nenhum arquivo anexo é transmitido ao modelo.
+- Não são incluídos nomes, e-mails ou IDs cadastrais do solicitante. Instruções escritas nos chamados são tratadas como conteúdo não confiável.
+- Limite: 10 solicitações de rascunho por administrador/hora. O retorno é exibido apenas como rascunho no navegador e não é gravado automaticamente como resposta.
+- O sistema registra somente ADM e ID do chamado no log técnico para diagnosticar solicitações, sem copiar o texto enviado à IA.
+- O JARVIS depende das configurações existentes DEVIN_JARVIS_PROVIDER, DEVIN_JARVIS_MODEL e DEVIN_JARVIS_API_KEY e do desbloqueio adicional quando estiver ativado.
+
+**Deploy:** essa funcionalidade não exige migração SQL nova. Preserve .env, bancos, fotos e anexos privados. Teste no ambiente de homologação, depois publique o código validado. O envio ao GitHub não publica automaticamente na Hostinger.
+
+**Validação:** como ADM, abra um chamado de teste e confirme que sem marcar o consentimento não ocorre pedido, que uma sugestão não é enviada sem clicar em Responder ao usuário, e que trocar de chamado elimina o rascunho. Teste celulares de 360, 390, 430 e 768 px, teclado aberto e menu recolhido/expandido. Em cada caso, confirme ausência de scroll horizontal.
+
+**Observação:** a fila de chamados já é compartilhada entre ADMs; atribuição exclusiva de responsável e notas internas são uma funcionalidade diferente e não são ativadas por esse copiloto.
