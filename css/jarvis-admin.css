@@ -218,3 +218,57 @@
 @media(prefers-reduced-motion:reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
   .jarvis-admin__case-editor button { transition:none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* O botão de atribuição faz parte do cartão do caso, não do formulário de resposta. */
+.jarvis-admin__message button.jarvis-admin__case-assignment {
+  display:flex;align-items:center;justify-content:center;
+  box-sizing:border-box;width:100%;max-width:100%;
+  min-height:46px;margin:9px 0 0;padding:11px 14px;
+  border:1px solid #b0cfe7;border-radius:12px;
+  background:#eef6ff;color:#07558e;
+  font:inherit;font-size:13px;font-weight:700;
+  line-height:1.45;white-space:normal;overflow-wrap:anywhere;
+  cursor:pointer;
+}
+.jarvis-admin__message button.jarvis-admin__case-assignment:hover {background:#e2f0ff;border-color:#8ebcde}
+.jarvis-admin__message button.jarvis-admin__case-assignment:disabled {opacity:.55;cursor:wait}
+.jarvis-admin__message button.jarvis-admin__case-assignment:focus-visible {outline:3px solid #63a7df;outline-offset:2px}
+
+/* Ao selecionar um caso, conserva a entrada principal e privilegia o espaço de análise. */
+@media(max-width:600px) {
+  .jarvis-admin.is-case-focused .jarvis-admin__tabs {
+    display:flex;grid-template-columns:none;flex-wrap:nowrap;
+    align-items:stretch;gap:5px;overflow-x:auto;
+    padding:5px 9px;
+    scrollbar-width:thin;scrollbar-gutter:stable;
+  }
+  .jarvis-admin.is-case-focused .jarvis-admin__tabs button {
+    flex:0 0 auto;min-width:94px;max-width:160px;
+    min-height:42px;padding:8px 12px;
+  }
+  .jarvis-admin.is-case-focused .jarvis-admin__search-wrap,
+  .jarvis-admin.is-case-focused .jarvis-admin__quick-actions,
+  .jarvis-admin.is-case-focused .jarvis-admin__context-option {
+    display:none;
+  }
+  .jarvis-admin.is-case-focused .jarvis-admin__messages {
+    flex:1 1 auto;min-height:0;
+    padding:12px 11px 22px;
+    scroll-padding-bottom:18px;
+    overscroll-behavior:contain;
+  }
+  .jarvis-admin.is-case-focused .jarvis-admin__message {
+    width:100%;max-width:100%;min-width:0;
+  }
+  .jarvis-admin.is-case-focused .jarvis-admin__case-editor {
+    padding:12px;gap:12px;
+  }
+  .jarvis-admin.is-case-focused .jarvis-admin__composer {
+    flex:0 0 auto;
+    padding:8px 11px calc(8px + env(safe-area-inset-bottom,0px));
+    border-top:1px solid #e0e9f2;
+  }
+  .jarvis-admin.is-case-focused .jarvis-admin__disclaimer {
+    display:none;
+  }
+}
