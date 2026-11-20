@@ -43,6 +43,51 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             $id = ConversationRepository::create($db, $adminId); // Explicação DevIN: Atribui um valor à variável PHP $id.
             jarvisJson(200, ['success' => true, 'conversation_id' => $id]); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        // Logs de chat local (chamados, respostas em tela e falhas): não são auditoria de ações oficiais.
+        if ($action === 'append') {
+            $entries = $body['entries'] ?? null;
+            if (!is_array($entries) || !array_is_list($entries)
+                || count($entries) < 1 || count($entries) > 4) {
+                jarvisJson(400, ['success' => false, 'message' => 'Mensagens de histórico inválidas.']);
+            }
+            $clean = [];
+            foreach ($entries as $entry) {
+                if (!is_array($entry) || !in_array($entry['role'] ?? null, ['user', 'assistant'], true)
+                    || !is_string($entry['content'] ?? null)) {
+                    jarvisJson(400, ['success' => false, 'message' => 'Formato de mensagem inválido.']);
+                }
+                $content = trim($entry['content']);
+                if ($content === '' || mb_strlen($content, 'UTF-8') > 5000) {
+                    jarvisJson(400, ['success' => false, 'message' => 'Mensagem fora do limite de 5.000 caracteres.']);
+                }
+                $clean[] = ['role' => $entry['role'], 'content' => $content];
+            }
+            $given = $body['conversation_id'] ?? null;
+            $conversationId = $given === null ? null : filter_var($given, FILTER_VALIDATE_INT);
+            if ($given !== null && (!$conversationId || $conversationId < 1)) {
+                jarvisJson(400, ['success' => false, 'message' => 'ID de conversa inválido.']);
+            }
+            if ($conversationId !== null && !ConversationRepository::belongsTo($db, $adminId, $conversationId)) {
+                jarvisJson(404, ['success' => false, 'message' => 'Conversa não encontrada.']);
+            }
+            $db->begin_transaction();
+            try {
+                if ($conversationId === null) {
+                    $title = is_string($body['title'] ?? null)
+                        ? mb_substr(trim($body['title']), 0, 80, 'UTF-8') : '';
+                    $conversationId = ConversationRepository::create($db, $adminId,
+                        $title !== '' ? $title : 'Atendimento JARVIS');
+                }
+                foreach ($clean as $entry) {
+                    ConversationRepository::append($db, $conversationId, $entry['role'], $entry['content']);
+                }
+                $db->commit();
+            } catch (Throwable $exception) {
+                $db->rollback();
+                throw $exception;
+            }
+            jarvisJson(200, ['success' => true, 'conversation_id' => (int) $conversationId]);
+        }
         if ($action === 'delete') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             $id = filter_var($body['conversation_id'] ?? null, FILTER_VALIDATE_INT); // Explicação DevIN: Atribui um valor à variável PHP $id.
             if (!$id || $id < 1 || !ConversationRepository::delete($db, $adminId, $id)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
