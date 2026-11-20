@@ -101,3 +101,13 @@ Os endpoints JARVIS exigem autenticação ADM (sessão válida e existência da 
 ## Ferramentas administrativas supervisionadas
 
 O JARVIS incorpora ferramentas adicionais descritas em `docs/jarvis-controlled-actions.md`: **Consultar** candidatos/empresas/vagas/denúncias (leitura restrita), **Analisar** um registro apenas mediante seleção humana, **Mensagens** com rascunho individual gerado por IA e **Histórico** compartilhado de eventos por ADM responsável. A IA NÃO executa banimentos, deleções, alterações de cadastro ou decisões automáticas sobre denúncias. A entrega de mensagens exige POST separado, aprovação explícita e quotas no backend, não apenas no JavaScript. Para ativar a fase, instalar a migration adicional e usar `DEVIN_JARVIS_ACTIONS_ENABLED=1` somente após testes em desenvolvimento. O canal oficial de mensagens usa atualmente arquivos temporários; a outbox e a auditoria novas são persistidas em MySQL. Acesse o guia técnico para riscos e limitações.
+
+## Casos de suporte e reports pelo chat do JARVIS
+
+O assistente pode listar os casos existentes, selecionar um chamado ou denúncia, ajudar a analisar o texto ou prints com consentimento e preparar um parecer que o ADM poderá editar integralmente. A interface principal é a aba Conversas do JARVIS, não o formulário de resposta do Suporte.
+
+A jurisdição aplicada é a permissão de moderação quando RBAC está habilitado; não há vínculo individual formal entre ADM e report. O suporte permanece numa fila compartilhada. A prévia de envio ou moderação não é uma decisão: exige uma segunda requisição autenticada e confirmação específica, com palavra diferenciada para exclusões. Exclusões de vagas e perfis continuam irreversíveis e exigem respaldo humano.
+
+Os prints são opcionais e somente imagens PNG/JPG/WebP são aceitas (até 4 MB). A extensão GD do PHP precisa estar ativa para recodificar a imagem e descartar metadados. A conta JARVIS precisa ter um modelo que suporte visão; não se promete que todos os modelos gratuitos aceitem imagens. O consentimento abrange o envio ao provedor externo, inclusive informações eventualmente visíveis no próprio print.
+
+A geração e a revisão de currículo **não usam** o mesmo provedor do JARVIS: elas têm endpoints Gemini próprios. Para inspecionar as dependências da Hostinger com a conta de candidato, use php/resume_ai_readiness.php. O diagnóstico verifica presença de chave e extensões, não prova conectividade, quota ou qualidade do modelo. Teste efetivo requer gerar currículo fictício e revisar PDF/DOCX consentidos; consulte tests/resume_abnt_contract.php.
