@@ -96,23 +96,23 @@ test('minha jurisdição é suporte atribuído ao representante, não todos os r
   assert.match(migration, /assigned_admin_id/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('detalhes do JARVIS retornam representante igual à fila do suporte', () => { // Explicação DevIN: Testa a equivalência entre titular exibido no chat e na central ADM.
-  const source = read('php/controllers/Jarvis/JarvisCaseDesk.php'); // Explicação DevIN: Lê o serviço real em busca do contrato de detalhe.
-  const method = source.slice(source.indexOf('public static function detail(')); // Explicação DevIN: Isola o método que monta o caso selecionado.
-  const body = method.slice(0, method.indexOf("if ($type !== 'support')") > 0 ? method.indexOf("if ($type !== 'support')") : 1900); // Explicação DevIN: Mantém a inspeção dentro do bloco de detalhe.
-  assert.match(body, /'assigned_admin_id'\s*=>\s*isset\(\$ticket\['assigned_admin_id'\]\)/); // Explicação DevIN: Exige ID de representante presente no detalhe.
-  assert.match(body, /'assigned_to_me'\s*=>\s*\(bool\)/); // Explicação DevIN: Garante comparação contextual com ADM logado.
-  const listBlock = source.slice(source.indexOf('public static function listing('), source.indexOf('public static function detail(')); // Explicação DevIN: Isola lista dos casos.
-  assert.equal((listBlock.match(/'assigned_admin_id'\s*=>/g) || []).length, 1); // Explicação DevIN: Impede campos de proprietário duplicados.
-});
+test('detalhes do JARVIS retornam representante igual à fila do suporte', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  const source = read('php/controllers/Jarvis/JarvisCaseDesk.php'); // Explicação DevIN: Declara variável JavaScript source para reutilizar valor ou resultado.
+  const method = source.slice(source.indexOf('public static function detail(')); // Explicação DevIN: Declara função/método detail, com seus parâmetros e comportamento.
+  const body = method.slice(0, method.indexOf("if ($type !== 'support')") > 0 ? method.indexOf("if ($type !== 'support')") : 1900); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+  assert.match(body, /'assigned_admin_id'\s*=>\s*isset\(\$ticket\['assigned_admin_id'\]\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
+  assert.match(body, /'assigned_to_me'\s*=>\s*\(bool\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
+  const listBlock = source.slice(source.indexOf('public static function listing('), source.indexOf('public static function detail(')); // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
+  assert.equal((listBlock.match(/'assigned_admin_id'\s*=>/g) || []).length, 1); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('revisão mobile do JARVIS destaca representante e libera espaço na conversa', () => { // Explicação DevIN: Protege correção de usabilidade no celular.
-  const css = read('css/jarvis-admin.css'); // Explicação DevIN: Examina o CSS isolado do JARVIS.
-  const ui = read('js/jarvis-cases.js'); // Explicação DevIN: Examina evento ao selecionar o caso.
-  assert.match(css, /jarvis-admin__case-assignment/); // Explicação DevIN: Exige botão de assumir com visual personalizado.
-  assert.match(css, /\.jarvis-admin\.is-case-focused \.jarvis-admin__tabs/); // Explicação DevIN: As abas passam a usar uma fileira navegável.
-  assert.match(css, /\.jarvis-admin\.is-case-focused \.jarvis-admin__search-wrap/); // Explicação DevIN: Busca é ocultada apenas enquanto o caso está selecionado.
-  assert.match(css, /overflow-x:auto/); // Explicação DevIN: Conserva navegação em telas estreitas.
-  assert.match(ui, /root\.classList\.add\('is-case-focused'\)/); // Explicação DevIN: Ativa o modo de foco.
-  assert.match(ui, /root\.classList\.remove\('is-case-focused'\)/); // Explicação DevIN: Garante restauração da interface.
-});
+test('revisão mobile do JARVIS destaca representante e libera espaço na conversa', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  const css = read('css/jarvis-admin.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+  const ui = read('js/jarvis-cases.js'); // Explicação DevIN: Declara variável JavaScript ui para reutilizar valor ou resultado.
+  assert.match(css, /jarvis-admin__case-assignment/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(css, /\.jarvis-admin\.is-case-focused \.jarvis-admin__tabs/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(css, /\.jarvis-admin\.is-case-focused \.jarvis-admin__search-wrap/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(css, /overflow-x:auto/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(ui, /root\.classList\.add\('is-case-focused'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(ui, /root\.classList\.remove\('is-case-focused'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
