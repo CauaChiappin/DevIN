@@ -1,4 +1,4 @@
-name: DevIN temporary natural-language intent annotations
+name: DevIN temporary natural-language intent annotations (rerun)
 on:
   push:
     branches:
