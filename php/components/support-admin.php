@@ -56,6 +56,27 @@
                           placeholder="Escreva uma resposta clara e respeitosa. Não solicite senhas ou tokens."></textarea>
                 <!-- Contador acessível: ajuda a evitar respostas cortadas pelo limite de 3.000 caracteres. -->
                 <div class="support-counter" data-support-reply-counter aria-live="off">0 / 3000 caracteres</div> <!-- Explicação DevIN: Declara agrupamento de elementos. Inclui atributos de acessibilidade. -->
+                <!-- JARVIS só prepara uma sugestão após consentimento; enviar continua exclusivo do ADM. -->
+                <section class="support-ai" data-support-ai aria-label="Ajuda do JARVIS">
+                    <div class="support-ai__heading">
+                        <strong>Ajuda do JARVIS</strong>
+                        <span class="support-ai__pill">Sob solicitação</span>
+                    </div>
+                    <p class="support-ai__description">O JARVIS pode sugerir uma resposta. Somente a categoria, parte da descrição e respostas anteriores, com dados pessoais comuns ocultados, serão enviados ao provedor de IA. Revise o conteúdo antes de autorizar.</p>
+                    <label class="support-ai__consent">
+                        <input type="checkbox" data-support-ai-consent>
+                        <span>Autorizo o envio desse contexto ao provedor de IA para gerar uma sugestão.</span>
+                    </label>
+                    <button type="button" class="support-secondary support-ai__ask" data-support-ai-generate>Pedir sugestão ao JARVIS</button>
+                    <p class="support-ai__status" data-support-ai-status role="status" aria-live="polite"></p>
+                    <div class="support-ai__suggestion" data-support-ai-result hidden>
+                        <h3>Rascunho sugerido</h3>
+                        <p data-support-ai-model class="support-hint"></p>
+                        <p data-support-ai-draft class="support-ai__draft"></p>
+                        <button type="button" class="support-secondary" data-support-ai-apply>Usar no campo de resposta</button>
+                        <p class="support-hint">O texto não será enviado automaticamente. Revise e clique em “Responder ao usuário” para enviar.</p>
+                    </div>
+                </section>
                 <div class="support-actions"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                     <button type="submit" class="support-primary">Responder ao usuário</button> <!-- Explicação DevIN: Declara botão de ação. -->
                     <button type="button" data-support-close class="support-secondary">Encerrar chamado</button> <!-- Explicação DevIN: Declara botão de ação. -->
