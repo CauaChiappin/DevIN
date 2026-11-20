@@ -1,0 +1,31 @@
+name: DevIN temporary history and model annotation normalizer
+on:
+  push:
+    branches:
+      - fix/jarvis-history-free-model-fallback-20261120
+    paths:
+      - .github/workflows/one-time-jarvis-history-normalize.yml
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Normalize required source comments
+        run: python3 scripts/line_explanations.py --write
+      - name: Publish source annotations
+        run: |
+          set -euo pipefail
+          git add php/api/jarvis/conversations.php php/api/jarvis/readiness.php php/controllers/Jarvis/ConversationRepository.php php/controllers/Jarvis/ModelProvider.php js/jarvis-admin.js js/jarvis-cases.js .env.example tests/jarvis_openrouter_router.php tests/jarvis_admin_mysql.php tests/jarvis-cases.test.cjs
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "docs: normalize JARVIS conversation history and model fallback comments"
+            git push origin HEAD:fix/jarvis-history-free-model-fallback-20261120
+          fi
