@@ -22,7 +22,18 @@
     const statusFilter = root.querySelector('[data-support-status-filter]'); // Explicação DevIN: Declara variável JavaScript statusFilter para reutilizar valor ou resultado.
     const historyPane = root.querySelector('.support-history-pane'); // Explicação DevIN: Declara variável JavaScript historyPane para reutilizar valor ou resultado.
     const historyBack = root.querySelector('[data-support-history-back]'); // Explicação DevIN: Declara variável JavaScript historyBack para reutilizar valor ou resultado.
-    const replyField = messageForm?.querySelector('[name="message"]'); // Explicação DevIN: Declara variável JavaScript replyField para reutilizar valor ou resultado.
+    const replyField = messageForm?.querySelector('[name="message"]');
+    const aiPanel = admin ? root.querySelector('[data-support-ai]') : null;
+    const aiConsent = aiPanel?.querySelector('[data-support-ai-consent]');
+    const aiGenerate = aiPanel?.querySelector('[data-support-ai-generate]');
+    const aiStatus = aiPanel?.querySelector('[data-support-ai-status]');
+    const aiResult = aiPanel?.querySelector('[data-support-ai-result]');
+    const aiDraft = aiPanel?.querySelector('[data-support-ai-draft]');
+    const aiModel = aiPanel?.querySelector('[data-support-ai-model]');
+    const aiApply = aiPanel?.querySelector('[data-support-ai-apply]');
+    let aiAbort = null; // Cancela uma sugestão antiga ao trocar de chamado.
+    let aiTicketId = null; // Associa a sugestão ao chamado selecionado.
+ // Explicação DevIN: Declara variável JavaScript replyField para reutilizar valor ou resultado.
     const replyCounter = messageForm?.querySelector('[data-support-reply-counter]'); // Explicação DevIN: Declara variável JavaScript replyCounter para reutilizar valor ou resultado.
     const categories = { // Explicação DevIN: Declara variável JavaScript categories para reutilizar valor ou resultado.
         erro:'Erro no site', duvida:'Dúvida', conta:'Conta e acesso', // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
@@ -202,6 +213,89 @@
         }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    // Nunca manter o rascunho de outro chamado nem reaproveitar autorização anterior.
+    function resetAi() {
+        if (aiAbort) aiAbort.abort();
+        aiAbort = null;
+        aiTicketId = null;
+        if (aiConsent) aiConsent.checked = false;
+        if (aiGenerate) {
+            aiGenerate.disabled = false;
+            aiGenerate.textContent = t('Pedir sugestão ao JARVIS');
+        }
+        if (aiStatus) aiStatus.textContent = '';
+        if (aiDraft) aiDraft.textContent = '';
+        if (aiModel) aiModel.textContent = '';
+        if (aiResult) aiResult.hidden = true;
+    }
+
+    // A resposta remota entra somente no painel de rascunho e jamais é enviada sozinha.
+    aiGenerate?.addEventListener('click', async () => {
+        const ticketId = Number(messageForm?.dataset.ticketId || 0);
+        if (!admin || !ticketId || selectedId !== ticketId || messageForm.hidden) {
+            if (aiStatus) aiStatus.textContent = t('Selecione um chamado aberto antes de pedir ajuda.');
+            return;
+        }
+        if (!aiConsent?.checked) {
+            if (aiStatus) aiStatus.textContent = t('Autorize o envio do contexto anonimizado ao provedor de IA.');
+            aiConsent?.focus();
+            return;
+        }
+        if (aiAbort) aiAbort.abort();
+        const controller = new AbortController();
+        aiAbort = controller;
+        aiTicketId = ticketId;
+        aiGenerate.disabled = true;
+        aiGenerate.textContent = t('Gerando sugestão...');
+        if (aiStatus) aiStatus.textContent = t('JARVIS preparando rascunho. Nenhuma resposta será enviada.');
+        if (aiResult) aiResult.hidden = true;
+        try {
+            const response = await fetch(new URL('api/jarvis/support_assist.php', location.href), {
+                method: 'POST',
+                credentials: 'same-origin',
+                cache: 'no-store',
+                redirect: 'error',
+                signal: controller.signal,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrf
+                },
+                body: JSON.stringify({ action: 'draft', ticket_id: ticketId, consent: true })
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok || !data?.success) {
+                throw new Error(t(data?.message || 'Não foi possível gerar uma sugestão.'));
+            }
+            // Um retorno tardio não pode sobrescrever o chamado aberto em outra aba.
+            if (controller.signal.aborted || selectedId !== ticketId ||
+                Number(messageForm?.dataset.ticketId || 0) !== ticketId ||
+                Number(data.ticket_id) !== ticketId) return;
+            if (aiDraft) aiDraft.textContent = String(data.draft || '').slice(0, 3000);
+            if (aiModel) aiModel.textContent = t('Modelo:') + ' ' + (data.model || 'JARVIS');
+            if (aiResult) aiResult.hidden = false;
+            if (aiStatus) aiStatus.textContent = t('Sugestão pronta para revisão. O usuário não recebeu mensagem.');
+        } catch (error) {
+            if (error.name !== 'AbortError' && aiStatus) aiStatus.textContent =
+                t('JARVIS indisponível:') + ' ' + error.message;
+        } finally {
+            if (aiAbort === controller) {
+                aiAbort = null;
+                aiGenerate.disabled = false;
+                aiGenerate.textContent = t('Pedir sugestão ao JARVIS');
+            }
+        }
+    });
+
+    aiApply?.addEventListener('click', () => {
+        if (!aiDraft?.textContent || !replyField || aiTicketId !== selectedId ||
+            Number(messageForm?.dataset.ticketId || 0) !== selectedId || messageForm.hidden) return;
+        replyField.value = aiDraft.textContent.slice(0, 3000);
+        replyField.dispatchEvent(new Event('input', { bubbles: true }));
+        replyField.focus();
+        replyField.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+        if (aiStatus) aiStatus.textContent = t('Rascunho copiado. Revise o texto antes de enviar.');
+    });
+
     // Reconsulta detalhes com verificação de propriedade no PHP.
     async function loadDetail(id, revealMobile = false) { // Explicação DevIN: Declara função/método loadDetail, com seus parâmetros e comportamento.
         // Ao tocar em um cartão, mostrar o detalhe na segunda aba do celular.
@@ -209,6 +303,7 @@
             if (!admin) setHistoryView('detail'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             setMobileView(admin ? 'detail' : 'history', true); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        resetAi(); // Não levar consentimento ou sugestão de outro chamado.
         selectedId = id; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         renderList(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
         detail.hidden = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -348,7 +443,8 @@
             payload.set('action','reply'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             payload.set('id',messageForm.dataset.ticketId); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             const result = await request({},payload); // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
-            messageForm.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+            messageForm.reset();
+            resetAi(); // Envio humano concluído: limpa consentimento e rascunho. // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             updateReplyCounter(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             status(t('Resposta registrada. Mensagem interna:') + ' ' + t(result.chat_sent ? 'enviada' : 'pendente') // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
                 + '. ' + t('E-mail:') + ' ' + t(result.email_sent ? 'enviado' : 'pendente') + '.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
