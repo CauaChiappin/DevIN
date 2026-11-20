@@ -76,3 +76,22 @@ test('diagnóstico da IA de currículo não consulta chave nem expõe documento'
   assert.match(review, /resume_abnt_consent/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   assert.match(review, /ResumeReviewResult::normalize/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('minha jurisdição é suporte atribuído ao representante, não todos os reports', () => {
+  const svc = read('php/controllers/Jarvis/JarvisCaseDesk.php');
+  const api = read('php/api/jarvis/cases.php');
+  const js = read('js/jarvis-cases.js');
+  const migration = read('database/migrations/2026_11_20_008_support_representatives.sql');
+  assert.match(svc, /SupportRepresentative::myTickets/);
+  assert.match(svc, /\$scope === 'mine'/);
+  assert.match(svc, /\$scope === 'mine' \? \[\]/);
+  assert.match(api, /\$_GET\['scope'\]/);
+  assert.match(api, /SupportRepresentative::assign/);
+  assert.match(js, /jurisdicao/);
+  assert.match(js, /scope=/);
+  assert.match(js, /representante/);
+  assert.match(js, /'takeover'/);
+  assert.match(js, /'release'/);
+  assert.match(migration, /support_assignment_events/);
+  assert.match(migration, /assigned_admin_id/);
+});
