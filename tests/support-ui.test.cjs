@@ -205,7 +205,7 @@ test('ajuda do JARVIS fica exclusivamente no chat', () => { // Explicação DevI
     const ui = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript ui para reutilizar valor ou resultado.
     const chat = read('js/jarvis-cases.js'); // Explicação DevIN: Declara variável JavaScript chat para reutilizar valor ou resultado.
     assert.doesNotMatch(page, /data-support-ai/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
-    assert.doesNotMatch(ui, /resetAi\\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.doesNotMatch(ui, /resetAi\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(page, /data-support-reply/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(chat, /Pedir parecer ao JARVIS/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(chat, /action:'confirm'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
@@ -215,9 +215,9 @@ test('ajuda do JARVIS fica exclusivamente no chat', () => { // Explicação DevI
 test('suporte ADM no celular ocupa a largura, chat tem seus próprios controles', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     const css = read('css/support.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
     const jarvis = read('css/jarvis-admin.css'); // Explicação DevIN: Declara variável JavaScript jarvis para reutilizar valor ou resultado.
-    assert.match(css, /\\.dashboard-shell\\.page-suporte > \\.lista-area/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
-    assert.match(css, /\\.dashboard-shell\\.page-suporte > \\.sidebar/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
-    assert.match(css, /@media \\(max-width: 767px\\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /\.dashboard-shell\.page-suporte > \.lista-area/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /\.dashboard-shell\.page-suporte > \.sidebar/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /@media \(max-width: 767px\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(jarvis, /jarvis-admin__case-editor/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(jarvis, /jarvis-admin__case-consent/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(css, /safe-area-inset-bottom/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
