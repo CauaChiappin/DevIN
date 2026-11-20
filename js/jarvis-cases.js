@@ -22,6 +22,10 @@
 
     function scopeFilter(value) { // Explicação DevIN: Declara função/método scopeFilter, com seus parâmetros e comportamento.
       const plain = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); // Explicação DevIN: Declara variável JavaScript plain para reutilizar valor ou resultado.
+      // Minha jurisdição é a carteira de chamados de suporte deste representante.
+      if (/\b(jurisdicao|responsabilidade|responsavel|representante|atribuid[oa]s?|estou atendendo|meus chamados|meus tickets)\b/.test(plain)
+          && /\b(minha|meu|meus|sou|estou|atribuid[oa]s?|jurisdicao|responsabilidade)\b/.test(plain)) return 'mine';
+
       if (/\b(suporte|chamado|ticket|atendimento)\b/.test(plain) && // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
           !/\b(report|denuncia)\b/.test(plain)) return 'support'; // Explicação DevIN: Continua expressão ou bloco pertencente a função scopeFilter.
       if (/\b(report|denuncia)\b/.test(plain) && !/\b(suporte|chamado|ticket)\b/.test(plain)) return 'report'; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -29,13 +33,15 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     async function listing(original) { // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
-      const response = await api(endpoint + '?action=list'); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
-      const filter = scopeFilter(original); // Explicação DevIN: Declara variável JavaScript filter para reutilizar valor ou resultado.
-      const records = (response.cases || []).filter(item => // Explicação DevIN: Declara variável JavaScript records para reutilizar valor ou resultado.
-        filter === 'all' || (filter === 'support' ? item.type === 'support' : item.type !== 'support')); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-      const heading = records.length // Explicação DevIN: Declara variável JavaScript heading para reutilizar valor ou resultado.
-        ? 'Casos disponíveis conforme suas permissões: ' + records.length + '. A fila é compartilhada; não há atribuição individual por ADM.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        : 'Nenhum caso pendente corresponde a essa consulta.'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+      const filter = scopeFilter(original);
+      const response = await api(endpoint + '?action=list&scope=' + (filter === 'mine' ? 'mine' : 'all'));
+      const records = (response.cases || []).filter(item =>
+        filter === 'all' || filter === 'mine' || (filter === 'support' ? item.type === 'support' : item.type !== 'support'));
+      const heading = filter === 'mine'
+        ? (records.length ? 'Chamados sob sua responsabilidade: ' + records.length + '.'
+            : 'Você ainda não representa nenhum chamado. Escolha um na fila compartilhada e assuma o atendimento.')
+        : (records.length ? 'Casos disponíveis: ' + records.length + '. O suporte é compartilhado e possui representantes individuais.'
+            : 'Nenhum caso disponível nessa consulta.');
       const card = chatActionCard(heading); // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
       const list = node('div', '', 'jarvis-admin__case-list'); // Explicação DevIN: Declara variável JavaScript list para reutilizar valor ou resultado.
       card.append(list); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
@@ -43,6 +49,9 @@
         const container = node('article', '', 'jarvis-admin__case-item'); // Explicação DevIN: Declara variável JavaScript container para reutilizar valor ou resultado.
         container.append(node('strong', item.title)); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
         container.append(node('small', item.status + ' · ' + (item.date || ''))); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+        if (item.type === 'support') container.append(node('small',
+          item.assigned_admin_id ? (item.assigned_to_me ? 'Representante: você'
+            : 'Representante: ADM #' + item.assigned_admin_id) : 'Aguardando representante'));
         container.append(node('p', String(item.preview || '').slice(0, 180))); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
         const select = actionButton('Selecionar caso #' + item.id, async button => { // Explicação DevIN: Declara variável JavaScript select para reutilizar valor ou resultado.
           button.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
@@ -182,6 +191,34 @@
         + '\n\nRelato:\n' + selected.description // Explicação DevIN: Continua expressão ou bloco pertencente a função selectCase.
         + (selected.previous_replies?.length ? '\n\nRespostas anteriores:\n' // Explicação DevIN: Continua expressão ou bloco pertencente a função selectCase.
           + selected.previous_replies.join('\n---\n') : '')); // Explicação DevIN: Continua expressão ou bloco pertencente a função selectCase.
+      if (selected.type === 'support') {
+        const owner = selected.assigned_admin_id || null;
+        card.append(node('p', owner
+          ? (selected.assigned_to_me ? 'Você é o representante deste chamado.'
+              : 'Este chamado é representado pelo ADM #' + owner + '.')
+          : 'Sem representante: você pode assumir o atendimento.', 'jarvis-admin__case-note'));
+        if (selected.status !== 'fechado') {
+          const assignment = owner === null ? 'claim' : (selected.assigned_to_me ? 'release' : 'takeover');
+          const caption = assignment === 'claim' ? 'Assumir suporte'
+            : assignment === 'release' ? 'Liberar atendimento' : 'Assumir de outro ADM';
+          const choose = actionButton(caption, async button => {
+            if (assignment === 'takeover' && !window.confirm('Assumir este chamado do ADM #' + owner + '? A transferência ficará registrada.')) return;
+            if (assignment === 'release' && !window.confirm('Liberar este chamado para outro ADM?')) return;
+            button.disabled = true;
+            try {
+              const result = await api(endpoint, {
+                action:'assign', type:'support', id:selected.id, assignment_action:assignment
+              });
+              addMessage('assistant', result.message);
+              await selectCase('support', selected.id);
+            } catch(error) {
+              addMessage('assistant', 'Não foi possível trocar o representante: ' + error.message);
+              button.disabled = false;
+            }
+          });
+          card.append(choose);
+        }
+      }
       if (selected.has_attachment) card.append(node('p', // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         'Há anexo protegido neste chamado: ' + selected.attachment_name // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         + '. Prints podem ser analisados com autorização explícita.', 'jarvis-admin__case-note')); // Explicação DevIN: Continua expressão ou bloco pertencente a função selectCase.
