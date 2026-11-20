@@ -1,0 +1,31 @@
+name: DevIN temporary natural admin annotations
+on:
+  push:
+    branches:
+      - feat/jarvis-natural-intents-all-admin-20261120
+    paths:
+      - .github/workflows/one-time-natural-admin-annotations.yml
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/line_explanations.py --write
+      - name: Commit normalized source annotations only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add js/jarvis-admin-natural.js js/jarvis-admin.js tests/jarvis-admin-natural.test.cjs php/adm.php
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "docs: normalize natural admin command annotations"
+            git push origin HEAD:feat/jarvis-natural-intents-all-admin-20261120
+          fi
