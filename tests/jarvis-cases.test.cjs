@@ -116,3 +116,47 @@ test('revisão mobile do JARVIS destaca representante e libera espaço na conver
   assert.match(ui, /root\.classList\.add\('is-case-focused'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
   assert.match(ui, /root\.classList\.remove\('is-case-focused'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('suportes no plural e representante resolvem localmente mesmo sem modelo externo', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  const chat = read('js/jarvis-cases.js'); // Explicação DevIN: Declara variável JavaScript chat para reutilizar valor ou resultado.
+  assert.match(chat, /suportes\?/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(chat, /representante\|responsavel/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(chat, /return 'mine'/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  const normalizer = str => str.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); // Explicação DevIN: Declara variável JavaScript normalizer para reutilizar valor ou resultado.
+  const intent = /\b(reports?|denuncias?|chamados?|tickets?|suportes?|atendimentos?)\b/; // Explicação DevIN: Declara variável JavaScript intent para reutilizar valor ou resultado.
+  assert.equal(intent.test(normalizer('Quais são os suportes que eu estou de representante?')),true); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('histórico do chat de casos utiliza API protegida e preserva conta ADM', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  const widget = read('js/jarvis-admin.js'); // Explicação DevIN: Declara variável JavaScript widget para reutilizar valor ou resultado.
+  const api = read('php/api/jarvis/conversations.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+  const store = read('php/controllers/Jarvis/ConversationRepository.php'); // Explicação DevIN: Declara variável JavaScript store para reutilizar valor ou resultado.
+  assert.match(widget, /function saveVisibleMessage\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(widget, /action: 'append'/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(widget, /saveVisibleMessage\('user', message\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(widget, /addMessage: addCaseMessage/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(widget, /if \(restore\) await loadConversation/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(api, /if \(\$action === 'append'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(api, /ConversationRepository::belongsTo\(\$db, \$adminId, \$conversationId\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(api, /jarvisCsrf\(\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(api, /jarvisLimit\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(api, /\$db->begin_transaction\(\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(store, /LIMIT 100/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('modelo gratuito indisponível é recuperado apenas pelo roteador gratuito', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  const provider = read('php/controllers/Jarvis/ModelProvider.php'); // Explicação DevIN: Declara variável JavaScript provider para reutilizar valor ou resultado.
+  const env = read('.env.example'); // Explicação DevIN: Declara variável JavaScript env para reutilizar valor ou resultado.
+  assert.match(provider, /\$recovery\['model'\] = 'openrouter\/free'/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(provider, /unset\(\$recovery\['models'\]\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(provider, /\$routeIndex > 0 && \$lastReason !== 'model'/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(env, /DEVIN_JARVIS_MODEL=openrouter\/free/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('diagnóstico do modelo expõe somente metadados não secretos ao ADM autenticado', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  const status = read('php/api/jarvis/readiness.php'); // Explicação DevIN: Declara variável JavaScript status para reutilizar valor ou resultado.
+  assert.match(status, /jarvisAdmin\(\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(status, /model_diagnostic/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.match(status, /live_provider_checked/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+  assert.doesNotMatch(status, /'api_key'\s*=>|\['DEVIN_JARVIS_API_KEY'\]/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
