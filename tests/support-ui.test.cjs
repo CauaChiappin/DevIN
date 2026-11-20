@@ -182,3 +182,19 @@ test('erro do banco identifica migração pendente sem duplicar alerta de formul
     assert.match(ui, /mobilePanels\?\.dataset\.mobileView !== 'create'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(read('database/migrations/2026_11_17_005_support_center.sql'), /CREATE TABLE IF NOT EXISTS support_tickets/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('suporte ADM diferencia migração pendente de erro comum sem criar tabelas pela interface', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const js = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript js para reutilizar valor ou resultado.
+    const css = read('css/support.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    const api = read('php/support_api.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+    assert.match(api, /SUPPORT_SCHEMA_MISSING/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /failure\.code = String\(data\?\.codigo/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /error\.code === 'SUPPORT_SCHEMA_MISSING'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /support-setup-notice/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /support-setup-actions/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /2026_11_17_005_support_center\.sql/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(js, /Chamados indisponíveis/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.doesNotMatch(js, /CREATE TABLE|ALTER TABLE|DROP TABLE/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /\.dashboard-shell\.page-suporte \.support-setup-notice/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /\.dashboard-shell\.page-suporte \.support-admin-head/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
