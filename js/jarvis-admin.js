@@ -262,6 +262,7 @@
     caseChat?.reset(); // Explicação DevIN: Remove seleção anterior ao trocar de conversa. // Explicação DevIN: Declara função/método loadConversation, com seus parâmetros e comportamento.
     if (!id) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      caseChat?.reset(); // Explicação DevIN: Limpa caso selecionado após exclusão da conversa.
       clearMessages(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadConversation.
       status.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
