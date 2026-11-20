@@ -222,3 +222,20 @@ test('suporte ADM no celular ocupa a largura, chat tem seus próprios controles'
     assert.match(jarvis, /jarvis-admin__case-consent/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
     assert.match(css, /safe-area-inset-bottom/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('caixa de suporte permite representação explícita e filtro minha responsabilidade', () => {
+    const html = read('php/components/support-admin.php');
+    const js = read('js/support-ui.js');
+    const php = read('php/support_api.php');
+    const service = read('php/controllers/SupportRepresentative.php');
+    assert.match(html, /data-support-representative-filter/);
+    assert.match(html, /Sob minha responsabilidade/);
+    assert.match(js, /assigned_to_me/);
+    assert.match(js, /Assumir atendimento/);
+    assert.match(js, /window\.confirm/);
+    assert.match(php, /SupportRepresentative::assign/);
+    assert.match(php, /SupportRepresentative::close/);
+    assert.match(service, /FOR UPDATE/);
+    assert.match(service, /auditAssignment|function log/);
+    assert.match(service, /event_type/);
+});
