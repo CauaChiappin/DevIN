@@ -104,8 +104,8 @@
     if (assigned && my && (hasSupport || hasReport || word('caso','casos','pendencia','pendencias','demanda','demandas') || word('jurisdicao'))) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       return {type:'list', filter:'mine'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    if (hasSupport && (read || words.length <= 2 || word('todos','todas','meus','minhas') // Explicação DevIN: Continua a expressão lógica para formas equivalentes da consulta local.
-      || /^(?:os |as )?(?:chamado|suporte|atendimento|ticket)(?: de (?:suporte|atendimento))?$/.test(text))) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    if (hasSupport && (read || words.length <= 2 || word('todos','todas','meus','minhas') // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      || /^(?:os |as )?(?:chamado|suporte|atendimento|ticket)(?: de (?:suporte|atendimento))?$/.test(text))) { // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
       return {type:'list', filter: my && (assigned || word('meu','meus','minha','minhas')) ? 'mine' : 'support'}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (hasReport && (read || words.length <= 2 || word('todos','todas'))) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
