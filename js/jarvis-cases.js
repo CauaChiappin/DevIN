@@ -33,6 +33,9 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     async function listing(original) { // Explicação DevIN: Exibe novamente a fila completa ao ADM.
+      activeCase = null; // Explicação DevIN: Descarta a seleção anterior para impedir análise de caso não selecionado.
+      currentConsent = null; // Explicação DevIN: Requer consentimento específico ao selecionar outro caso.
+      currentDraft = null; // Explicação DevIN: Descarta o formulário de parecer temporário da seleção anterior.
       root.classList.remove('is-case-focused'); // Explicação DevIN: Exibe navegação completa ao sair do caso. // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
       const filter = scopeFilter(original); // Explicação DevIN: Declara variável JavaScript filter para reutilizar valor ou resultado.
       const response = await api(endpoint + '?action=list&scope=' + (filter === 'mine' ? 'mine' : 'all')); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
