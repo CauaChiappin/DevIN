@@ -32,7 +32,8 @@
       return 'all'; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    async function listing(original) { // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
+    async function listing(original) { // Explicação DevIN: Exibe novamente a fila completa ao ADM.
+      root.classList.remove('is-case-focused'); // Explicação DevIN: Exibe navegação completa ao sair do caso. // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
       const filter = scopeFilter(original); // Explicação DevIN: Declara variável JavaScript filter para reutilizar valor ou resultado.
       const response = await api(endpoint + '?action=list&scope=' + (filter === 'mine' ? 'mine' : 'all')); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
       const records = (response.cases || []).filter(item => // Explicação DevIN: Declara variável JavaScript records para reutilizar valor ou resultado.
@@ -186,6 +187,7 @@
       const selected = result.case; // Explicação DevIN: Declara variável JavaScript selected para reutilizar valor ou resultado.
       if (!selected) throw new Error('Caso não retornado pela API.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       activeCase = selected; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      root.classList.add('is-case-focused'); // Explicação DevIN: Compacta controles de navegação enquanto o ADM analisa o caso.
       const card = chatActionCard('Caso selecionado: ' + selected.title // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
         + '\nEstado: ' + selected.status + '\nCategoria: ' + selected.category // Explicação DevIN: Continua expressão ou bloco pertencente a função selectCase.
         + '\n\nRelato:\n' + selected.description // Explicação DevIN: Continua expressão ou bloco pertencente a função selectCase.
@@ -216,6 +218,7 @@
               button.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
           }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          choose.classList.add('jarvis-admin__case-assignment'); // Explicação DevIN: Aplica o padrão visual às ações de representação.
           card.append(choose); // Explicação DevIN: Continua expressão ou bloco pertencente a função selectCase.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -313,7 +316,7 @@
       } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       return listing(value); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    const reset = () => { activeCase = null; currentConsent = null; currentDraft = null; }; // Explicação DevIN: Declara variável JavaScript reset para reutilizar valor ou resultado.
+    const reset = () => { activeCase = null; currentConsent = null; currentDraft = null; root.classList.remove('is-case-focused'); }; // Explicação DevIN: Declara variável JavaScript reset para reutilizar valor ou resultado.
     return {matches,handle,reset}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   window.DevInJarvisCases = {init}; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
