@@ -19,6 +19,7 @@
     const search = root.querySelector('[data-support-search]'); // Explicação DevIN: Declara variável JavaScript search para reutilizar valor ou resultado.
     const createForm = root.querySelector('[data-support-create]'); // Explicação DevIN: Declara variável JavaScript createForm para reutilizar valor ou resultado.
     // A seleção da fila ADM e o retorno ao histórico são controles apenas de apresentação.
+    const representativeFilter = root.querySelector('[data-support-representative-filter]');
     const statusFilter = root.querySelector('[data-support-status-filter]'); // Explicação DevIN: Declara variável JavaScript statusFilter para reutilizar valor ou resultado.
     const historyPane = root.querySelector('.support-history-pane'); // Explicação DevIN: Declara variável JavaScript historyPane para reutilizar valor ou resultado.
     const historyBack = root.querySelector('[data-support-history-back]'); // Explicação DevIN: Declara variável JavaScript historyBack para reutilizar valor ou resultado.
@@ -171,7 +172,10 @@
         const term = (search?.value || '').trim().toLocaleLowerCase(locale); // Explicação DevIN: Declara variável JavaScript term para reutilizar valor ou resultado.
         // O filtro por situação é local aos chamados autorizados já retornados pela API.
         const desiredStatus = statusFilter?.value || 'all'; // Explicação DevIN: Declara variável JavaScript desiredStatus para reutilizar valor ou resultado.
+        const desiredOwner = representativeFilter?.value || 'all';
         const visible = tickets.filter(item => (desiredStatus === 'all' || item.status === desiredStatus) && // Explicação DevIN: Declara variável JavaScript visible para reutilizar valor ou resultado.
+            (desiredOwner === 'all' || (desiredOwner === 'mine' && item.assigned_to_me === true)
+                || (desiredOwner === 'unassigned' && !item.assigned_admin_id)) &&
             (!term || [ // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                 item.id, item.requester_name || '', item.requester_email || '', // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
                 label(item), item.description || '' // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
@@ -198,6 +202,12 @@
                     : ticket.status === 'respondido' ? 'Respondido' : 'Encerrado'), // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                     'support-ticket-state state-' + ticket.status) // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
             ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            if (admin) {
+                const responsibility = ticket.assigned_admin_id
+                    ? (ticket.assigned_to_me ? 'Você é o representante' : 'Representante: ADM #' + ticket.assigned_admin_id)
+                    : 'Sem representante';
+                item.append(node('small', responsibility, 'support-representative-hint'));
+            }
             list.append(item); // Explicação DevIN: Continua expressão ou bloco pertencente a função renderList.
         }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -225,6 +235,37 @@
                     node('p', t('Conta:') + ' ' + t(ticket.requester_type === 'pessoa' ? 'Candidato' : 'Empresa')) // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
                 ); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            if (admin) {
+                const owner = ticket.assigned_admin_id ? Number(ticket.assigned_admin_id) : null;
+                const isMine = ticket.assigned_to_me === true;
+                const ownerPanel = node('section', '', 'support-representative-panel');
+                ownerPanel.append(node('strong', owner
+                    ? (isMine ? 'Representante: você' : 'Representante: ADM #' + owner)
+                    : 'Sem representante definido'));
+                ownerPanel.append(node('p', 'Todos os ADMs acompanham o histórico. O representante responde e encerra; outro ADM pode assumir explicitamente.', 'support-hint'));
+                if (ticket.status !== 'fechado') {
+                    const action = owner === null ? 'claim' : (isMine ? 'release' : 'takeover');
+                    const label = action === 'claim' ? 'Atender chamado'
+                        : action === 'release' ? 'Liberar chamado' : 'Assumir atendimento';
+                    ownerPanel.append(button(label, async control => {
+                        if (action === 'takeover' && !window.confirm('Este chamado já é atendido por outro ADM. Assumir a responsabilidade e registrar a transferência?')) return;
+                        if (action === 'release' && !window.confirm('Liberar esse chamado para outro administrador assumir?')) return;
+                        control.disabled = true;
+                        try {
+                            const payload = new FormData();
+                            payload.set('action', action);
+                            payload.set('id', String(id));
+                            const result = await request({}, payload);
+                            await refresh();
+                            status(result.mensagem || 'Representante atualizado.');
+                        } catch(error) {
+                            status(error.message, true);
+                            control.disabled = false;
+                        }
+                    }, 'support-secondary'));
+                }
+                detail.append(ownerPanel);
+            }
             detail.append(node('p', t('Aberto em:') + ' ' + ticket.created_at, 'support-hint')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             detail.append(node('h4',t('Descrição enviada'))); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
             detail.append(node('p', ticket.description, 'support-description')); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDetail.
@@ -366,7 +407,8 @@
         catch(error){status(error.message,true);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     search?.addEventListener('input', renderList); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-    statusFilter?.addEventListener('change', renderList); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    statusFilter?.addEventListener('change', renderList);
+    representativeFilter?.addEventListener('change', renderList); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     root.querySelector('[data-support-refresh]')?.addEventListener('click', refresh); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     refresh(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
 })(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
