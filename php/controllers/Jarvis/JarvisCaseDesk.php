@@ -26,18 +26,31 @@ final class JarvisCaseDesk // Explicação DevIN: Declara o tipo JarvisCaseDesk 
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    public static function listing(mysqli $db, int $adminId): array // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
+    public static function listing(mysqli $db, int $adminId, string $scope = 'all'): array // Explicação DevIN: Declara função/método listing, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         $items = []; // Explicação DevIN: Atribui um valor à variável PHP $items.
         $unavailable = []; // Explicação DevIN: Atribui um valor à variável PHP $unavailable.
         try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
             self::requireAccess($db, $adminId, 'support'); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
-            foreach (array_slice(SupportDesk::listAdmin($db), 0, 35) as $ticket) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            $supportTickets = $scope === 'mine'
+                ? SupportRepresentative::myTickets($db, $adminId)
+                : SupportDesk::listAdmin($db, $adminId);
+            if ($scope === 'mine' && !SupportRepresentative::ready($db)) {
+                $unavailable[] = 'Atribuição individual de suporte requer a migração 008.';
+            }
+            foreach (array_slice($supportTickets, 0, $scope === 'mine' ? 100 : 35) as $ticket) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
                 $items[] = [ // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
                     'type' => 'support', 'id' => (int) $ticket['id'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'title' => 'Suporte #' . $ticket['id'] . ' · ' . $ticket['category'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                    'status' => (string) $ticket['status'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'status' => (string) $ticket['status'],
+                'assigned_admin_id' => isset($ticket['assigned_admin_id'])
+                    ? (int) $ticket['assigned_admin_id'] : null,
+                'assigned_to_me' => (bool) ($ticket['assigned_to_me'] ?? false),
+ // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'preview' => mb_substr(trim((string) $ticket['description']), 0, 180, 'UTF-8'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'assigned_admin_id' => $ticket['assigned_admin_id'] === null
+                        ? null : (int) $ticket['assigned_admin_id'],
+                    'assigned_to_me' => (bool) ($ticket['assigned_to_me'] ?? false),
                     'date' => (string) $ticket['created_at'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -45,7 +58,8 @@ final class JarvisCaseDesk // Explicação DevIN: Declara o tipo JarvisCaseDesk 
             $unavailable[] = 'Suporte ainda não está disponível.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        foreach (['job_report', 'profile_report'] as $type) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+        // "Minha jurisdição" = chamados de suporte atribuídos, não acesso geral aos reports.
+        foreach ($scope === 'mine' ? [] : ['job_report', 'profile_report'] as $type) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
             try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
                 self::requireAccess($db, $adminId, $type); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
             } catch (DomainException $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
@@ -74,7 +88,7 @@ final class JarvisCaseDesk // Explicação DevIN: Declara o tipo JarvisCaseDesk 
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         usort($items, static fn(array $a, array $b): int => strcmp($b['date'], $a['date'])); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
         return ['cases' => array_slice($items, 0, 100), 'unavailable' => $unavailable, // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-            'scope' => 'fila compartilhada com permissões administrativas; não existe atribuição individual por caso']; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+            'scope' => $scope === 'mine' ? 'chamados atribuídos ao ADM autenticado' : 'fila compartilhada de suporte e denúncias com permissão ADM']; // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     public static function detail(mysqli $db, int $adminId, string $type, int $id): array // Explicação DevIN: Declara função/método detail, com seus parâmetros e comportamento.
