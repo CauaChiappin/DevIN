@@ -30,6 +30,11 @@
     if (typeof message !== 'string' || !message.trim() || message.length > 1400) return null;
     const input = stripPrefix(message);
     const plain = normalized(input);
+    // Suporte e moderação pertencem ao roteador de casos, que valida a titularidade.
+    // Evita que um comando sobre chamado seja tratado como busca genérica por nome.
+    if (/\b(?:suportes?|chamados?|tickets?|atendimentos?|den[uú]ncias?|reports?)\b/i.test(input)
+        && !/\b(?:tarefas?|atividades?)\b/i.test(input)) return null;
+
     if (/\b(como funciona|como fazer|o que significa|o que e|explique|tutorial|como posso)\b/.test(plain)
         && !/^(?:me mostre|mostre|liste|consulte)\b/.test(plain)) return null;
 
