@@ -26,9 +26,9 @@ $metrics = [ // Explicação DevIN: Atribui um valor à variável PHP $metrics.
     </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
     <div class="admin-overview-grid"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         <?php foreach ($metrics as [$caption, $key]): ?>
-            <?php $metricAvailable = isset($adminOverview[$key]); ?> <!-- Explicação DevIN: Verifica se a métrica está disponível. -->
+            <?php $metricAvailable = isset($adminOverview[$key]); ?>
             <article class="admin-metric"> <!-- Explicação DevIN: Declara conteúdo independente. -->
-                <h2><?= h($labels[$caption]) ?></h2>
+                <h2><?= h($labels[$caption]) ?></h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. Contém dado dinâmico processado pelo PHP. -->
                 <?php if ($metricAvailable): ?>
                     <strong class="admin-metric__value"><?= number_format((int) $adminOverview[$key], 0, ',', '.') ?></strong> <!-- Explicação DevIN: Declara elemento de marcação. Contém dado dinâmico processado pelo PHP. -->
                 <?php else: ?>
