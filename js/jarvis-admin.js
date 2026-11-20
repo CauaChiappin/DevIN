@@ -1181,6 +1181,56 @@
       $('[data-jarvis-form]').requestSubmit(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // Fallback somente para consultas administrativas não reconhecidas pelos parsers locais.
+  // Nunca usamos a decisão do modelo para autorização, SQL ou qualquer escrita.
+  async function semanticFallback(value) {
+    const semantic = window.DevInJarvisSemantic;
+    if (!semantic?.eligible(value) || !root.dataset.semantic) {
+      await chat('chat', value);
+      return;
+    }
+    busy = true;
+    send.disabled = true;
+    status.textContent = 'Identificando a consulta...';
+    try {
+      const response = await api(root.dataset.semantic, {message: value});
+      const suggestion = semantic.proposed(response.intent);
+      if (!suggestion) {
+        const text = response.status === 'unavailable'
+          ? 'A interpretação adicional não está disponível. As consultas locais continuam funcionando. Indique: chamados, vagas, empresas, candidatos, tarefas ou estatísticas.'
+          : 'Não identifiquei uma consulta administrativa com segurança. Reformule indicando o tipo de informação ou faça uma pergunta geral ao JARVIS.';
+        addMessage('user', value);
+        addMessage('assistant', text);
+        saveVisibleMessage('user', value);
+        saveVisibleMessage('assistant', text);
+        return;
+      }
+      if (suggestion.target === 'case') {
+        if (!caseChat) {
+          addMessage('user', value);
+          addMessage('assistant', 'A consulta de casos está indisponível nesta página.');
+          return;
+        }
+        await caseChat.handle(value, {type: suggestion.type, filter: suggestion.filter});
+        return;
+      }
+      // O LLM devolve apenas tipo fixo. Identificadores e nomes jamais são aceitos dele.
+      addMessage('user', value);
+      saveVisibleMessage('user', value);
+      await handleAdminCommand(value, {type: suggestion.type, kind: suggestion.kind});
+    } catch (error) {
+      addMessage('user', value);
+      const warning = 'Não foi possível interpretar a frase. Nenhuma ação administrativa foi executada. Tente uma consulta mais específica.';
+      addMessage('assistant', warning);
+      saveVisibleMessage('user', value);
+      saveVisibleMessage('assistant', warning);
+    } finally {
+      status.textContent = '';
+      busy = false;
+      send.disabled = false;
+    }
+  }
+
   $('[data-jarvis-form]').addEventListener('submit', (event) => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
     const value = input.value.trim(); // Explicação DevIN: Declara variável JavaScript value para reutilizar valor ou resultado.
@@ -1199,7 +1249,7 @@
         addMessage('assistant','Não foi possível processar o comando: '+error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
       }).finally(()=>{busy=false;send.disabled=false;}); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
     } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
-      chat('chat', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      void semanticFallback(value); // Explicação DevIN: Tenta interpretar uma consulta não reconhecida antes de chamar o chat comum.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   const taskExamples = { // Explicação DevIN: Declara variável JavaScript taskExamples para reutilizar valor ou resultado.
