@@ -62,6 +62,8 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'tests/arcade-mobile-secret.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/arcade-konami-reset.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'database/migrations/2026_11_17_005_support_center.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'database/migrations/2026_11_20_008_support_representatives.sql' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/SupportRepresentative.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/support*.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/support*.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - '.github/workflows/jarvis-admin-checks.yml' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -118,6 +120,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php -l tests/support_ai_assistant.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/support_ai_assistant.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/controllers/SupportDesk.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/SupportRepresentative.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/components/support-admin.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/mensagens_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/pessoa.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -244,6 +247,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
         run: | # Explicação DevIN: Configura comando de execução (campo run).
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE devin_support_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           mysql -h 127.0.0.1 -u root devin_support_ci < database/migrations/2026_11_17_005_support_center.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          mysql -h 127.0.0.1 -u root devin_support_ci < database/migrations/2026_11_20_008_support_representatives.sql # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/support_center_mysql.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
       - name: Employment confirmation - disposable MySQL database # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
