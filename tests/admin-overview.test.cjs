@@ -53,6 +53,6 @@ test('comentários de documentação não aparecem como texto nos cards ADM', ()
     const markup = read('php/components/admin-overview.php'); // Explicação DevIN: Declara variável JavaScript markup para reutilizar valor ou resultado.
     assert.doesNotMatch(markup, />\s*\/\/ Explicação DevIN:/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.doesNotMatch(markup, /<\!\s*\n\s*-->/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(markup, /<article class="admin-metric/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(markup, /echo '<article class="admin-metric'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /<\! // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
