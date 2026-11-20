@@ -60,7 +60,7 @@
       'representante','responsabilidade','jurisdicao','atribuido','carteira','assumi','assumidos','atendo','atendendo','cuidados','designado')
       || /\b(pra mim|para mim|sob meus cuidados|a meu cargo|sob minha conta|comigo)\b/.test(text);
     const assigned = word('jurisdicao','representante','responsavel','responsabilidade','atribuido','carteira','assumi',
-      'assumidos','atendo','atendendo','designado') || /\b(estou atendendo|to atendendo|eu atendo|eu cuido|meu atendimento|meus atendimentos|pra mim|para mim|sob meus cuidados)\b/.test(text);
+      'assumidos','atendo','atendendo','designado','cuidando','cuido') || /\b(estou atendendo|to atendendo|to cuidando|eu atendo|eu cuido|meu atendimento|meus atendimentos|pra mim|para mim|comigo|sob meus cuidados)\b/.test(text);
     const read = word('qual','quais','quantos','quantas','mostra','mostre','mostrar','liste','lista','listar',
       'veja','ver','consulte','consultar','quero','preciso','procure','buscar','busque','encontre','tenho','tem',
       'estao','estou','fiquei','sao','abertos','pendentes','acompanho','cuidando','abrir','abra',
