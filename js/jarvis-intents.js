@@ -59,7 +59,7 @@
     const my = word('meu','meus','minha','minhas','mim','eu','sou','estou','to','tenho','cuido','cuidando','responsavel',
       'representante','responsabilidade','jurisdicao','atribuido','carteira','assumi','assumidos','atendo','atendendo','cuidados','designado')
       || /\b(pra mim|para mim|sob meus cuidados|a meu cargo|sob minha conta|comigo)\b/.test(text);
-    const assigned = word('jurisdicao','representante','responsavel','responsabilidade','atribuido','carteira','assumi',
+    const assigned = /\b(tenho para resolver|tenho que atender|tenho pra resolver|me compete)\b/.test(text) || word('jurisdicao','representante','responsavel','responsabilidade','atribuido','carteira','assumi',
       'assumidos','atendo','atendendo','designado','cuidando','cuido','acompanho','acompanhando','peguei','tomei') || /\b(estou atendendo|to atendendo|to cuidando|eu atendo|eu cuido|meu atendimento|meus atendimentos|pra mim|para mim|comigo|sob meus cuidados)\b/.test(text);
     const read = word('qual','quais','quantos','quantas','mostra','mostre','mostrar','liste','lista','listar',
       'veja','ver','consulte','consultar','quero','preciso','quem','procure','buscar','busque','encontre','tenho','tem',
@@ -111,7 +111,7 @@
       return {type:'list', filter:'report'};
     }
     if (assigned && my && read) return {type:'list', filter:'mine'};
-    if (my && (word('pendencia','pendencias','demanda','demandas')) && read) {
+    if (my && (word('pendencia','pendencias','demanda','demandas')) && (read || words.length <= 3)) {
       return {type:'clarify', message:'Você quer ver os chamados que representa, a fila geral ou as denúncias pendentes?'};
     }
 
