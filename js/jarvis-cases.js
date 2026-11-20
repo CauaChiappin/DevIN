@@ -18,8 +18,8 @@
       const normalized = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); // Explicação DevIN: Declara variável JavaScript normalized para reutilizar valor ou resultado.
       if (/\b(reports?|denuncias?|chamados?|tickets?|suportes?|atendimentos?)\b/.test(normalized)) return true; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       // "Eu sou representante" e "minha jurisdição" consultam o MySQL, nunca um modelo externo.
-      if (/\b(representante|responsavel|responsabilidade|jurisdicao|atribuid[oa]s?)\b/.test(normalized)
-        && /\b(eu|minha|meus|sou|estou|tenho)\b/.test(normalized)) return true;
+      if (/\b(representante|responsavel|responsabilidade|jurisdicao|atribuid[oa]s?)\b/.test(normalized) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        && /\b(eu|minha|meus|sou|estou|tenho)\b/.test(normalized)) return true; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
       return Boolean(activeCase && /\b(analise|analisar|avalie|investigue|redija|escreva|redigir|parecer|veredito|responder|resposta|me ajuda|ajude|o que acha|print|imagem|evidencia)\b/.test(normalized)); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 

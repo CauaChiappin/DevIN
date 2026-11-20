@@ -62,16 +62,16 @@ assertJarvis(count(ConversationRepository::list($db, $admin2, 'vagas')) === 0, /
     'pesquisa isolada por ADM'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 
 // O histórico local do suporte deve recuperar mais de 20 entradas sem ocultar as antigas.
-for ($index = 0; $index < 30; $index++) {
-    ConversationRepository::append($db, $conversationId, 'assistant',
-        'Nota local #' . $index);
-}
-$extended = ConversationRepository::latest($db, $admin1, $conversationId);
-assertJarvis(count($extended) === 32 && $extended[0]['content'] === 'Preciso de um resumo das vagas.'
-    && $extended[31]['content'] === 'Nota local #29',
-    'histórico recupera 32 mensagens em ordem para o ADM titular');
-assertJarvis(ConversationRepository::list($db, $admin1, 'Nota local #29') !== [],
-    'pesquisa encontra mensagens locais antigas do atendimento');
+for ($index = 0; $index < 30; $index++) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+    ConversationRepository::append($db, $conversationId, 'assistant', // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
+        'Nota local #' . $index); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+$extended = ConversationRepository::latest($db, $admin1, $conversationId); // Explicação DevIN: Atribui um valor à variável PHP $extended.
+assertJarvis(count($extended) === 32 && $extended[0]['content'] === 'Preciso de um resumo das vagas.' // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
+    && $extended[31]['content'] === 'Nota local #29', // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    'histórico recupera 32 mensagens em ordem para o ADM titular'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+assertJarvis(ConversationRepository::list($db, $admin1, 'Nota local #29') !== [], // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
+    'pesquisa encontra mensagens locais antigas do atendimento'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 
 expectJarvisRejection( // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
     static fn () => ConversationRepository::latest($db, $admin2, $conversationId), // Explicação DevIN: Continua expressão ou bloco pertencente a função expectJarvisRejection.
