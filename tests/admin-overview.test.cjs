@@ -49,10 +49,10 @@ test('estatísticas não estreitam o dashboard mobile nem quebram estado indispo
     assert.match(markup, /isset\(\$adminOverview\[\$key\]\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('comentários de documentação não aparecem como texto nos cards ADM', () => {
-    const markup = read('php/components/admin-overview.php');
-    assert.doesNotMatch(markup, />\s*\/\/ Explicação DevIN:/);
-    assert.doesNotMatch(markup, /<\!\s*\n\s*-->/);
-    assert.match(markup, /<article class="admin-metric/);
-    assert.match(markup, /<\!-- Explicação DevIN: Declara conteúdo independente/);
-});
+test('comentários de documentação não aparecem como texto nos cards ADM', () => { // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
+    const markup = read('php/components/admin-overview.php'); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
+    assert.doesNotMatch(markup, />\s*\/\/ Explicação DevIN:/); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
+    assert.doesNotMatch(markup, /<\!\s*\n\s*-->/); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
+    assert.match(markup, /<article class="admin-metric/); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
+    assert.match(markup, /<\!-- Explicação DevIN: Declara conteúdo independente/); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
+}); // Explicação DevIN: Verifica que comentários de documentação não aparecem na interface.
