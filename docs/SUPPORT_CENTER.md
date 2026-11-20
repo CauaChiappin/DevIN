@@ -90,3 +90,12 @@ Arquivos principais: php/api/jarvis/cases.php, php/controllers/Jarvis/JarvisCase
 **Como implantar sem quebrar a hospedagem:** crie backup do MySQL e execute **uma vez** `database/migrations/2026_11_20_008_support_representatives.sql` no banco DevIN da Hostinger antes de atualizar o PHP. O script não preenche titulares antigos automaticamente e pode ser executado novamente se necessário; contém verificações de coluna e índice existentes. Enquanto a migration ainda não tiver sido aplicada, o suporte legado segue operante, mas não será possível usar as atribuições; o JARVIS avisará que falta a migration. Após executar, atualize a `main` na hospedagem. Não é necessário adicionar variáveis novas ao `.env`.
 
 **Validação no celular/desktop:** dois ADMs autenticados devem enxergar o mesmo chamado. ADM A assume; ADM B deve ver "Responsável: ADM #..." e não pode enviar resposta sem antes confirmar a transferência. Após B assumir, o JARVIS de A deve deixar de listar esse chamado em "minha jurisdição", enquanto o JARVIS de B passa a exibi-lo. Verifique histórico e nome do responsável sem expor ID ADM para a pessoa/empresa solicitante. Confirme que as outras telas e dashboards não mudaram de tamanho.
+
+
+## Correção visual JARVIS: seleção do caso e representante (20/11/2026)
+
+A fila de suporte e o detalhe do mesmo chamado devem indicar o **mesmo ADM representante**. O serviço `JarvisCaseDesk::detail` agora retorna `assigned_admin_id` e `assigned_to_me` calculados pelo backend, como já acontece na lista. A seleção do chamado deve oferecer **Liberar atendimento** quando o titular é o ADM da sessão; **Assumir suporte** apenas quando estiver livre; e **Assumir de outro ADM** somente quando houver outro titular, com confirmação e auditoria.
+
+No celular, o modo de análise de casos do JARVIS ocupa a altura útil da tela com abas em uma linha rolável horizontalmente e esconde temporariamente busca de histórico, atalho de resumo e opção genérica de histórico. O chat e o botão de envio continuam disponíveis, e a navegação completa retorna ao listar novamente os casos ou trocar de conversa. Nenhum outro dashboard é alterado.
+
+Teste na Hostinger após atualizar o código: abra no Suporte o chamado cujo representante já é você, confira o botão **Liberar chamado**, depois selecione o mesmo caso pelo JARVIS. Ele deve informar "Você é o representante" e oferecer **Liberar atendimento** (não **Assumir suporte**). Compare com um segundo ADM que visualiza, mas não pode responder sem transferência. Não conclua envio nem transferência durante o teste de layout.
