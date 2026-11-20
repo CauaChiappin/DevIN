@@ -198,3 +198,89 @@
 .support-file-picker-action { border:1px solid #b6d3e8; border-radius:9px; background:#e8f3ff; color:#07588b; padding:8px 12px; font-weight:650; } /* Exibe ação traduzível nas cores DevIN. */
 .support-file-picker-name { min-width:0; flex:1; color:#425e74; overflow-wrap:anywhere; font-size:14px; } /* Evita corte do nome de arquivos longos. */
 .support-panel input.support-file-native:focus-visible + .support-file-picker { outline:3px solid #478cc0; outline-offset:2px; } /* Mantém foco visível para acessibilidade. */
+
+/* Atendimento administrativo: estado de migração pendente e cabeçalho compacto. */
+.dashboard-shell.page-suporte .support-setup-notice {
+    display: grid;
+    gap: 11px;
+    padding: 18px;
+    border: 1px solid #e4c9a3;
+    border-radius: 14px;
+    background: #fff9ef;
+    color: #654719;
+}
+.dashboard-shell.page-suporte .support-setup-notice h3 {
+    margin: 0;
+    color: #754e12;
+    font-size: 16px;
+    line-height: 1.3;
+}
+.dashboard-shell.page-suporte .support-setup-notice p {
+    margin: 0;
+    color: #73592f;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.dashboard-shell.page-suporte .support-setup-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+.dashboard-shell.page-suporte .support-setup-actions .support-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+@media (max-width: 767px) {
+    .dashboard-shell.page-suporte .support-admin-view {
+        padding: 10px 12px calc(28px + env(safe-area-inset-bottom, 0px));
+    }
+    .dashboard-shell.page-suporte .support-admin-head {
+        padding: 21px 19px;
+        margin-bottom: 12px;
+        border-radius: 18px;
+    }
+    .dashboard-shell.page-suporte .support-admin-head h1 {
+        margin: 7px 0 10px;
+        font-size: clamp(25px, 6.3vw, 33px);
+        line-height: 1.14;
+    }
+    .dashboard-shell.page-suporte .support-admin-head p {
+        margin: 0 0 15px;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+    .dashboard-shell.page-suporte .support-status-row {
+        gap: 10px;
+        justify-content: space-between;
+    }
+    .dashboard-shell.page-suporte .support-status-row > span {
+        flex: 1 1 145px;
+        min-width: 0;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+    .dashboard-shell.page-suporte .support-status-row .support-secondary {
+        margin: 0;
+    }
+    .dashboard-shell.page-suporte .support-admin-grid {
+        min-width: 0;
+    }
+    .dashboard-shell.page-suporte .support-admin-grid .support-panel {
+        padding: 19px 17px;
+    }
+    .dashboard-shell.page-suporte .support-mobile-tabs {
+        margin: 10px 0 12px;
+        top: 6px;
+    }
+    .dashboard-shell.page-suporte .support-setup-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .dashboard-shell.page-suporte .support-setup-actions > * {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
