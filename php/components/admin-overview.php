@@ -26,9 +26,9 @@ $metrics = [ // Explicação DevIN: Atribui um valor à variável PHP $metrics.
     </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
     <div class="admin-overview-grid"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         <?php foreach ($metrics as [$caption, $key]): ?>
-            <?php $metricAvailable = isset($adminOverview[$key]); // Distingue métrica ausente de valor numérico zero. ?>
-            <article class="admin-metric<?= $metricAvailable ? '' : ' admin-metric--unavailable' ?>"> // Explicação DevIN: Declara conteúdo independente. Contém dado dinâmico processado pelo PHP.
-                <h2><?= h($labels[$caption]) ?></h2>
+            <?php $metricAvailable = isset($adminOverview[$key]); ?>
+            <article class="admin-metric"> <!-- Explicação DevIN: Declara conteúdo independente. -->
+                <h2><?= h($labels[$caption]) ?></h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. Contém dado dinâmico processado pelo PHP. -->
                 <?php if ($metricAvailable): ?>
                     <strong class="admin-metric__value"><?= number_format((int) $adminOverview[$key], 0, ',', '.') ?></strong> <!-- Explicação DevIN: Declara elemento de marcação. Contém dado dinâmico processado pelo PHP. -->
                 <?php else: ?>
@@ -41,8 +41,8 @@ $metrics = [ // Explicação DevIN: Atribui um valor à variável PHP $metrics.
         <h2><?= h($labels['rank']) ?></h2> <!-- Explicação DevIN: Declara subtítulo de segundo nível. Contém dado dinâmico processado pelo PHP. -->
         <?php if (empty($adminOverview['top_empresas'])): ?>
             <p><?= h($labels['none']) ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
-        <?php else: ?> <!
-            --> <ol> <!-- Explicação DevIN: Declara elemento de marcação. -->
+        <?php else: ?>
+            <ol> <!-- Explicação DevIN: Declara elemento de marcação. -->
             <?php foreach ($adminOverview['top_empresas'] as $row): ?>
                 <li><span><?= h((string) $row['nome']) ?></span><strong><?= (int) $row['vagas'] ?> <?= h($labels['jobs']) ?></strong></li> <!-- Explicação DevIN: Declara item da lista. Contém dado dinâmico processado pelo PHP. A linha reúne múltiplos elementos. -->
             <?php endforeach; ?>
