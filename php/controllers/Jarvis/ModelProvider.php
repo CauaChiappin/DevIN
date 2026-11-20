@@ -168,59 +168,70 @@ final class ModelProvider // Explicação DevIN: Declara o tipo ModelProvider e 
             $keys[] = ['label' => 'backup', 'key' => $backup]; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-        $lastStatus = 0; // Explicação DevIN: Atribui um valor à variável PHP $lastStatus.
-        $lastReason = 'provider'; // Explicação DevIN: Atribui um valor à variável PHP $lastReason.
-        foreach ($keys as $index => $credential) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
-            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-                // Não registrar corpo ou credenciais; logs contêm apenas categorias.
-                $result = $transport // Explicação DevIN: Atribui um valor à variável PHP $result.
-                    ? $transport($endpoint, $credential['key'], $body) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-                    : self::send($endpoint, $credential['key'], $json); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-                $status = (int) ($result['status'] ?? 0); // Explicação DevIN: Atribui um valor à variável PHP $status.
-                $response = (string) ($result['body'] ?? ''); // Explicação DevIN: Atribui um valor à variável PHP $response.
-            } catch (Throwable $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-                $status = 0; // Explicação DevIN: Atribui um valor à variável PHP $status.
-                $response = ''; // Explicação DevIN: Atribui um valor à variável PHP $response.
-            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-            if ($status >= 200 && $status < 300) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-                    $data = json_decode($response, true, 20, JSON_THROW_ON_ERROR); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
-                } catch (JsonException $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-                    $data = null; // Explicação DevIN: Atribui um valor à variável PHP $data.
-                } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-                $answer = is_array($data) // Explicação DevIN: Atribui um valor à variável PHP $answer.
-                    ? ($data['choices'][0]['message']['content'] ?? null) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-                    : null; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-                if (is_string($answer) && trim($answer) !== '') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                    $reportedModel = $data['model'] ?? $models[0]; // Explicação DevIN: Atribui um valor à variável PHP $reportedModel.
-                    // Retornar exatamente um identificador plausível ou o modelo escolhido.
-                    $reportedModel = is_string($reportedModel) // Explicação DevIN: Atribui um valor à variável PHP $reportedModel.
-                        && ModelRouter::validModel($reportedModel) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-                        ? $reportedModel : $models[0]; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-
-                    return [ // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-                        'reply' => mb_substr(trim($answer), 0, 12000, 'UTF-8'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                        'model' => $reportedModel, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                        'provider' => $provider, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                        'fallback_used' => $reportedModel !== $models[0], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                        'key_used' => $credential['label'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                    ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
-                } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-                $lastStatus = $status; // Explicação DevIN: Atribui um valor à variável PHP $lastStatus.
-                $lastReason = 'invalid_response'; // Explicação DevIN: Atribui um valor à variável PHP $lastReason.
-                error_log('JARVIS OpenRouter: invalid_response, credential=' . $credential['label']); // Explicação DevIN: Continua expressão ou bloco pertencente a função chatWithMeta.
-            } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
-                $lastStatus = $status; // Explicação DevIN: Atribui um valor à variável PHP $lastStatus.
-                $lastReason = self::category($status); // Explicação DevIN: Atribui um valor à variável PHP $lastReason.
-                error_log('JARVIS provider=' . $provider . ' status=' . $status // Explicação DevIN: Continua expressão ou bloco pertencente a função chatWithMeta.
-                    . ' reason=' . $lastReason . ' credential=' . $credential['label']); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-
-            if (!isset($keys[$index + 1])) break; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            if ($lastReason !== 'invalid_response' // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                && !ModelRouter::shouldTrySecondKey($lastStatus)) break; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $lastStatus = 0;
+        $lastReason = 'provider';
+        // Os modelos gratuitos podem desaparecer. Uma única recuperação usa o
+        // roteador gratuito oficial da OpenRouter, sem ativar modelos pagos.
+        $attempts = [$body];
+        if ($provider === 'openrouter' && $models[0] !== 'openrouter/free') {
+            $recovery = $body;
+            $recovery['model'] = 'openrouter/free';
+            unset($recovery['models']);
+            $attempts[] = $recovery;
+        }
+        foreach ($keys as $index => $credential) {
+            foreach ($attempts as $routeIndex => $attemptBody) {
+                // Não repetir chamadas em erros de conta, cota ou rede.
+                if ($routeIndex > 0 && $lastReason !== 'model') break;
+                try {
+                    $attemptJson = json_encode($attemptBody,
+                        JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR);
+                    $result = $transport
+                        ? $transport($endpoint, $credential['key'], $attemptBody)
+                        : self::send($endpoint, $credential['key'], $attemptJson);
+                    $status = (int) ($result['status'] ?? 0);
+                    $response = (string) ($result['body'] ?? '');
+                } catch (Throwable $exception) {
+                    $status = 0;
+                    $response = '';
+                }
+                if ($status >= 200 && $status < 300) {
+                    try {
+                        $data = json_decode($response, true, 20, JSON_THROW_ON_ERROR);
+                    } catch (JsonException $exception) {
+                        $data = null;
+                    }
+                    $answer = is_array($data)
+                        ? ($data['choices'][0]['message']['content'] ?? null) : null;
+                    if (is_string($answer) && trim($answer) !== '') {
+                        $reportedModel = $data['model'] ?? $attemptBody['model'];
+                        $reportedModel = is_string($reportedModel)
+                            && ModelRouter::validModel($reportedModel)
+                            ? $reportedModel : $attemptBody['model'];
+                        return [
+                            'reply' => mb_substr(trim($answer), 0, 12000, 'UTF-8'),
+                            'model' => $reportedModel,
+                            'provider' => $provider,
+                            'fallback_used' => $routeIndex > 0 || $reportedModel !== $models[0],
+                            'key_used' => $credential['label'],
+                        ];
+                    }
+                    $lastStatus = $status;
+                    $lastReason = 'invalid_response';
+                    error_log('JARVIS provider=' . $provider . ' reason=invalid_response'
+                        . ' credential=' . $credential['label']);
+                } else {
+                    $lastStatus = $status;
+                    $lastReason = self::category($status);
+                    error_log('JARVIS provider=' . $provider . ' status=' . $status
+                        . ' reason=' . $lastReason . ' credential=' . $credential['label']
+                        . ' recovery=' . ($routeIndex > 0 ? 'free' : 'no'));
+                }
+            }
+            if (!isset($keys[$index + 1])) break;
+            if ($lastReason !== 'invalid_response'
+                && !ModelRouter::shouldTrySecondKey($lastStatus)) break;
+        }
         throw new JarvisModelException($lastReason, $lastStatus); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
