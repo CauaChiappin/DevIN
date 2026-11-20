@@ -1,0 +1,31 @@
+name: DevIN temporary chat cases documentation normalizer
+on:
+  push:
+    branches:
+      - feature/jarvis-case-chat-reports-vision-resume-audit-20261120
+    paths:
+      - .github/workflows/one-time-casechat-normalize.yml
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Add canonical inline comments
+        run: python3 scripts/line_explanations.py --write
+      - name: Publish source changes only
+        run: |
+          set -euo pipefail
+          git add php/api/jarvis/cases.php php/controllers/Jarvis/JarvisCaseDesk.php php/controllers/Jarvis/SupportAiAssistant.php php/controllers/JobReports.php php/controllers/ProfileReports.php php/resume_ai_readiness.php php/components/support-admin.php php/components/jarvis-admin-widget.php php/adm.php js/jarvis-admin.js js/jarvis-cases.js js/support-ui.js css/jarvis-admin.css css/support.css tests/support-ui.test.cjs tests/jarvis-cases.test.cjs tests/jarvis_case_context.php
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "docs: normalize case chat, screenshot and resume diagnostics"
+            git push origin HEAD:feature/jarvis-case-chat-reports-vision-resume-audit-20261120
+          fi
