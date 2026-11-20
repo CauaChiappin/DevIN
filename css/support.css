@@ -284,3 +284,172 @@
         box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
     } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+
+/* Copiloto JARVIS para suporte: nunca sobrepõe o botão humano de enviar. */
+.support-admin-view .support-ai {
+    box-sizing: border-box;
+    min-width: 0;
+    display: grid;
+    gap: 12px;
+    margin: 22px 0 16px;
+    padding: clamp(14px, 2vw, 20px);
+    border: 1px solid #bed7ed;
+    border-radius: 17px;
+    background: linear-gradient(155deg, #f2f8fe, #fff);
+}
+.support-admin-view .support-ai__heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    color: #164c7c;
+    font-size: 17px;
+}
+.support-admin-view .support-ai__pill {
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #d9ebfa;
+    color: #215a86;
+    font-size: 11px;
+    font-weight: 750;
+}
+.support-admin-view .support-ai__description {
+    color: #426078;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
+}
+.support-admin-view .support-ai__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #d6e5f1;
+    border-radius: 11px;
+    color: #244764;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.55;
+    cursor: pointer;
+}
+.support-admin-view .support-ai__consent input {
+    width: 19px;
+    height: 19px;
+    flex: 0 0 19px;
+    margin: 1px 0 0;
+}
+.support-admin-view .support-ai__ask {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0;
+}
+.support-admin-view .support-ai__ask:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+.support-admin-view .support-ai__status {
+    margin: 0;
+    min-height: 1.2em;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #315b7d;
+    overflow-wrap: anywhere;
+}
+.support-admin-view .support-ai__suggestion {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+    padding: 15px;
+    border-radius: 13px;
+    border: 1px solid #bfd9ee;
+    background: #fff;
+}
+.support-admin-view .support-ai__suggestion h3 {
+    font-size: 16px;
+    margin: 0;
+}
+.support-admin-view .support-ai__suggestion .support-hint {
+    margin: 0;
+    font-size: 12px;
+}
+.support-admin-view .support-ai__draft {
+    margin: 0;
+    color: #1e415e;
+    font-size: 14px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+.support-admin-view .support-ai__suggestion button {
+    justify-self: start;
+    min-height: 44px;
+    margin: 0;
+}
+
+/* Layout mobile apenas para a página Suporte ADM. */
+@media (max-width: 767px) {
+    .dashboard-shell.page-suporte {
+        box-sizing: border-box;
+        grid-template-columns: minmax(0, 1fr);
+        grid-auto-rows: max-content;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+    .dashboard-shell.page-suporte > .sidebar,
+    .dashboard-shell.page-suporte > .lista-area {
+        box-sizing: border-box;
+        grid-column: 1 / -1;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+    .dashboard-shell.page-suporte > .lista-area {
+        height: auto;
+        min-height: 0;
+        padding: 8px 10px 28px;
+        overflow: visible;
+    }
+    .dashboard-shell.page-suporte .support-admin-view {
+        padding: 8px 0 calc(22px + env(safe-area-inset-bottom, 0px));
+        min-width: 0;
+    }
+    .dashboard-shell.page-suporte .support-admin-grid {
+        display: block;
+        min-width: 0;
+        width: 100%;
+    }
+    .dashboard-shell.page-suporte .support-admin-view .support-ai {
+        margin: 17px 0 13px;
+        padding: 14px;
+        gap: 11px;
+        border-radius: 14px;
+    }
+    .dashboard-shell.page-suporte .support-ai__heading {
+        font-size: 15px;
+    }
+    .dashboard-shell.page-suporte .support-ai__consent {
+        padding: 11px;
+    }
+    .dashboard-shell.page-suporte .support-ai__ask,
+    .dashboard-shell.page-suporte .support-ai__suggestion button {
+        width: 100%;
+        min-height: 48px;
+    }
+    .dashboard-shell.page-suporte .support-ai__draft {
+        font-size: 14px;
+    }
+    .dashboard-shell.page-suporte .support-ai__suggestion {
+        padding: 12px;
+    }
+}
