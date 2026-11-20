@@ -188,3 +188,33 @@
     flex-basis:36px;width:36px;min-width:36px;max-width:36px;height:36px /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS flex-basis. */
   } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* Casos do JARVIS: cartões e editor apenas no chat, sem contaminar dashboards. */
+.jarvis-admin__case-list { display:grid; gap:10px; min-width:0; max-height:360px; overflow-y:auto; padding:10px 2px; }
+.jarvis-admin__case-item { display:grid; gap:7px; min-width:0; padding:13px; border-radius:12px; border:1px solid #a8cbe5; background:#f7fbff; color:#254a6d; }
+.jarvis-admin__case-item strong { overflow-wrap:anywhere; font-size:14px; }
+.jarvis-admin__case-item small { color:#597891; font-size:12px; }
+.jarvis-admin__case-item p { margin:0; font-size:12px; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
+.jarvis-admin__case-editor { display:grid; gap:12px; width:100%; min-width:0; box-sizing:border-box; margin-top:13px; padding:13px; border-radius:14px; border:1px solid #b8d5eb; background:#eff7ff; color:#1c4c73; }
+.jarvis-admin__case-editor textarea, .jarvis-admin__case-editor select, .jarvis-admin__case-editor input[type=file] { box-sizing:border-box; display:block; min-width:0; width:100%; max-width:100%; padding:11px; border:1px solid #b6d1e5; border-radius:10px; background:#fff; color:#173f60; font:inherit; font-size:14px; }
+.jarvis-admin__case-editor textarea { min-height:85px; line-height:1.55; resize:vertical; }
+.jarvis-admin__case-editor .jarvis-admin__case-draft { min-height:135px; }
+.jarvis-admin__case-editor .jarvis-admin__case-consent { display:flex; align-items:flex-start; gap:9px; min-width:0; padding:11px; border:1px solid #d8e5ed; border-radius:11px; background:#fff; font-size:12px; line-height:1.5; }
+.jarvis-admin__case-consent input[type=checkbox] { flex:0 0 18px; width:18px; height:18px; margin:1px 0 0; }
+.jarvis-admin__case-editor .jarvis-admin__case-buttons { display:flex; flex-wrap:wrap; gap:8px; min-width:0; }
+.jarvis-admin__case-editor button, .jarvis-admin__case-item button { box-sizing:border-box; max-width:100%; min-height:44px; padding:9px 12px; border:1px solid #a8c7df; border-radius:10px; background:#f8fcff; color:#07548b; font:inherit; font-size:12px; font-weight:700; cursor:pointer; white-space:normal; overflow-wrap:anywhere; }
+.jarvis-admin__case-editor button:disabled, .jarvis-admin__case-item button:disabled { opacity:.55; cursor:wait; }
+.jarvis-admin__case-editor :focus-visible, .jarvis-admin__case-item :focus-visible { outline:3px solid #55a8d2; outline-offset:2px; }
+.jarvis-admin__case-note { font-size:12px; color:#426d8b; line-height:1.5; overflow-wrap:anywhere; }
+.jarvis-admin__case-file { font-size:12px!important; }
+@media(max-width:600px) {
+  .jarvis-admin__case-list { max-height:45vh; }
+  .jarvis-admin__case-editor { gap:10px; padding:11px; }
+  .jarvis-admin__case-editor .jarvis-admin__case-buttons { display:grid; grid-template-columns:minmax(0,1fr); }
+  .jarvis-admin__case-editor button,.jarvis-admin__case-item button { width:100%; min-height:46px; }
+  .jarvis-admin__case-editor textarea,.jarvis-admin__case-editor select { font-size:16px; }
+  .jarvis-admin__case-consent { font-size:13px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .jarvis-admin__case-editor button { transition:none; }
+}
