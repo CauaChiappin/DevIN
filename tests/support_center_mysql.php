@@ -102,6 +102,43 @@ supportAssert(count($chatEvents) === 1 && count($mailEvents) === 1,'sem duplicar
 SupportDesk::close($db,$first); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
 supportAssert(SupportDesk::detail($db,$first,$ana)['ticket']['status'] === 'fechado', // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
     'status de encerramento'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+// A migração 008 adiciona representante, fila individual e trilha auditável.
+supportAssert(SupportRepresentative::ready($db), 'migração 008 pronta');
+supportAssert(SupportRepresentative::myTickets($db,101)[0]['id'] == $first,
+    'resposta inicial atribui representante principal');
+supportAssert(!array_key_exists('assigned_admin_id', SupportDesk::detail($db,$first,$ana)['ticket']),
+    'id interno do ADM ocultado para o solicitante');
+$db->query('CREATE TABLE administrador(id_administrador INT PRIMARY KEY)');
+$db->query('INSERT INTO administrador VALUES (101),(102)');
+$other = SupportDesk::create($db,$bia,'duvida','Não consigo consultar meu histórico de candidaturas.',null);
+$mine = SupportRepresentative::assign($db,$other,101,'claim');
+supportAssert($mine['assigned_admin_id'] === 101 && $mine['assigned_to_me'] === true,
+    'ADM 101 assumiu chamado livre');
+supportAssert(SupportDesk::listAdmin($db,101)[0]['assigned_to_me'] === true
+    || SupportDesk::listAdmin($db,101)[1]['assigned_to_me'] === true,
+    'filtro de atribuição identifica ADM logado');
+supportDenied(static fn()=>SupportRepresentative::assign($db,$other,102,'claim'),
+    'outro ADM não pode tomar sem takeover explícito');
+supportDenied(static fn()=>SupportDesk::reply($db,102,$other,'Tentativa indevida'),
+    'resposta pública somente pelo representante');
+$transfer = SupportRepresentative::assign($db,$other,102,'takeover');
+supportAssert($transfer['assigned_admin_id'] === 102,'transferência explícita com auditoria');
+supportDenied(static fn()=>SupportRepresentative::close($db,$other,101),
+    'ADM anterior não pode encerrar após transferência');
+supportDenied(static fn()=>SupportRepresentative::assign($db,$other,101,'release'),
+    'ADM anterior não pode liberar caso de outro');
+SupportRepresentative::assign($db,$other,102,'release');
+supportAssert(SupportRepresentative::myTickets($db,102) === [],
+    'ADM 102 não retém o chamado liberado');
+SupportRepresentative::assign($db,$other,101,'claim');
+SupportRepresentative::close($db,$other,101);
+supportAssert(SupportDesk::detail($db,$other,$bia)['ticket']['status'] === 'fechado',
+    'responsável pode encerrar');
+supportDenied(static fn()=>SupportRepresentative::assign($db,$other,102,'takeover'),
+    'chamado encerrado não pode ser assumido');
+$events = (int) $db->query('SELECT COUNT(*) AS total FROM support_assignment_events')
+    ->fetch_assoc()['total'];
+supportAssert($events === 5,'cinco eventos de atribuição e transferência registrados');
 supportDenied(static fn()=>SupportDesk::reply($db,101,$first,'Resposta tardia'), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
     'não responder chamado fechado'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 supportDenied(static fn()=>SupportDesk::attachment($db,$first,$bia), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
