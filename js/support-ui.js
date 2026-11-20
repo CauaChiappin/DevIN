@@ -124,7 +124,9 @@
         const response = await fetch(url.toString(), options); // Explicação DevIN: Inicia solicitação HTTP assíncrona a um endereço configurado.
         const data = await response.json().catch(() => null); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
         if (!response.ok || !data?.sucesso) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            throw new Error(t(data?.mensagem || 'O servidor não conseguiu atender agora.')); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+            const failure = new Error(t(data?.mensagem || 'O servidor não conseguiu atender agora.')); // Apresenta erro amigável.
+            failure.code = String(data?.codigo || ''); // Preserva código interno para o estado de instalação.
+            throw failure; // Interrompe atualização incompleta. // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return data; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -284,10 +286,30 @@
             if (selectedId && tickets.some(t=>Number(t.id)===selectedId)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 await loadDetail(selectedId); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-            list.replaceChildren(node('p', t('Não foi possível carregar os chamados.') + ' ' + t(error.message), 'support-error')); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
-            list.append(button(t('Tentar novamente'), () => refresh())); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
-        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        } catch (error) { // Erros de rede e de instalação apresentam estados distintos.
+            const count = root.querySelector('[data-support-stat-open]'); // Localiza o resumo administrativo.
+            if (count) count.textContent = t('Chamados indisponíveis'); // Remove indicador preso em carregamento.
+            if (admin && error.code === 'SUPPORT_SCHEMA_MISSING') { // Falta de tabela exige implantação, não repetidas tentativas.
+                const notice = node('div', '', 'support-setup-notice'); // Cria aviso seguro sem innerHTML.
+                notice.append(node('h3', t('Configuração do suporte pendente'))); // Explica o motivo.
+                notice.append(node('p', t('O banco de dados ainda não possui as tabelas do suporte. Após um backup, um administrador deve executar a migração SQL na Hostinger.'))); // Não executa SQL por HTTP.
+                const actions = node('div', '', 'support-setup-actions'); // Agrupa orientações e ações.
+                const guide = node('a', t('Ver migração SQL'), 'support-secondary'); // Link para instruções versionadas.
+                guide.href = 'https://github.com/CauaChiappin/DevIN/blob/main/database/migrations/2026_11_17_005_support_center.sql'; // Migração existente.
+                guide.target = '_blank'; // Preserva a sessão do dashboard.
+                guide.rel = 'noopener noreferrer'; // Protege nova aba.
+                const docs = node('a', t('Guia de instalação'), 'support-secondary'); // Ajuda para implantação.
+                docs.href = 'https://github.com/CauaChiappin/DevIN/blob/main/docs/SUPPORT_CENTER.md'; // Instruções oficiais do projeto.
+                docs.target = '_blank'; // Não troca a página administrativa.
+                docs.rel = 'noopener noreferrer'; // Protege nova aba.
+                actions.append(guide, docs); // Insere links úteis ao ADM.
+                notice.append(actions); // Monta aviso de configuração.
+                list.replaceChildren(notice); // Substitui erro vermelho solto por estado claro.
+            } else { // Demais falhas mantêm botão de recuperação.
+                list.replaceChildren(node('p', t('Não foi possível carregar os chamados.') + ' ' + t(error.message), 'support-error')); // Mostra causa.
+            } // Finaliza apresentação da falha.
+            list.append(button(t('Tentar novamente'), () => refresh())); // Atualiza após resolver a causa.
+        } // Finaliza tratamento do carregamento.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // O formulário requer categoria, descrição e opcionalmente arquivo <=20MiB.
