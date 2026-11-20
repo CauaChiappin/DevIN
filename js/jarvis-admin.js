@@ -258,7 +258,8 @@
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     conversationSelect.value = previous; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-  async function loadConversation(id) { // Explicação DevIN: Declara função/método loadConversation, com seus parâmetros e comportamento.
+  async function loadConversation(id) {
+    caseChat?.reset(); // Explicação DevIN: Remove seleção anterior ao trocar de conversa. // Explicação DevIN: Declara função/método loadConversation, com seus parâmetros e comportamento.
     if (!id) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       clearMessages(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadConversation.
@@ -902,7 +903,8 @@
     positionPanelNearLauncher(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   root.querySelectorAll('[data-jarvis-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.jarvisTab))); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-  $('[data-jarvis-new]').addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+  $('[data-jarvis-new]').addEventListener('click', () => {
+    caseChat?.reset(); // Explicação DevIN: Nova conversa começa sem caso selecionado. // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     conversationSelect.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     clearMessages(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
