@@ -396,6 +396,8 @@
    * A aprovação de uma ação ocorre em outra chamada, depois da prévia.
    */
   // Detalhe DevIN: Orquestra consulta, seleção e confirmação no frontend, utilizando apenas endpoints autenticados da aplicação.
+  const caseChat = window.DevInJarvisCases?.init({root, api, addMessage, chatActionCard, actionButton}) || null;
+
   async function handleAdminCommand(message, selected=null) { // Explicação DevIN: Declara função/método handleAdminCommand, com seus parâmetros e comportamento.
     // Detalhe DevIN: Um resultado já escolhido prevalece sobre a interpretação original da frase: usa o ID da seleção para evitar ambiguidade.
     const command=selected || parseAdminCommand(message); // Explicação DevIN: Declara variável JavaScript command para reutilizar valor ou resultado.
@@ -955,7 +957,12 @@
     if (!value || busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     input.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     resize(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-    if (parseAdminCommand(value)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    if (caseChat?.matches(value)) {
+      busy = true; send.disabled = true;
+      void caseChat.handle(value).catch(error => {
+        addMessage('assistant', 'Não foi possível consultar o caso: ' + error.message);
+      }).finally(() => { busy = false; send.disabled = false; });
+    } else if (parseAdminCommand(value)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       if (busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       busy=true;send.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       void handleAdminCommand(value).catch(error=>{ // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
