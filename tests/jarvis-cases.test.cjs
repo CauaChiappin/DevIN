@@ -152,3 +152,11 @@ test('modelo gratuito indisponível é recuperado apenas pelo roteador gratuito'
   assert.match(provider, /\$routeIndex > 0 && \$lastReason !== 'model'/);
   assert.match(env, /DEVIN_JARVIS_MODEL=openrouter\/free/);
 });
+
+test('diagnóstico do modelo expõe somente metadados não secretos ao ADM autenticado', () => {
+  const status = read('php/api/jarvis/readiness.php');
+  assert.match(status, /jarvisAdmin\(\)/);
+  assert.match(status, /model_diagnostic/);
+  assert.match(status, /live_provider_checked/);
+  assert.doesNotMatch(status, /'api_key'\s*=>|\['DEVIN_JARVIS_API_KEY'\]/);
+});
