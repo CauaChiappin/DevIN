@@ -18,7 +18,7 @@ const sameOwner = [ // Explicação DevIN: Declara variável JavaScript sameOwne
   'Estou atendendo quais chamados?', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
   'Quais casos estão na minha carteira?', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
   'Me ajuda com os reports da minha jurisdição', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-  'Meus chamados pendentes',
+  'Meus chamados pendentes', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
   'Me traga minha fila de suporte', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
   'Me diz os suportes atribuídos a mim', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
   'Me mostra os atendimetos que estou atendendo', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
@@ -123,8 +123,8 @@ test('análises sobre caso selecionado continuam exigindo autorização via inte
   const selected = {type:'support',id:1}; // Explicação DevIN: Declara variável JavaScript selected para reutilizar valor ou resultado.
   assert.deepEqual(intents.classify('Analise este caso', {activeCase:selected}), {type:'analyze',draft:false}); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   assert.deepEqual(intents.classify('Escreva uma resposta para este atendimento', {activeCase:selected}), {type:'analyze',draft:true}); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-  assert.equal(intents.classify('Bom dia!', {activeCase:selected}), null);
-  assert.deepEqual(intents.classify('Me ajuda com reports na minha jurisdição', {activeCase:selected}), {type:'list',filter:'mine'});
+  assert.equal(intents.classify('Bom dia!', {activeCase:selected}), null); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.deepEqual(intents.classify('Me ajuda com reports na minha jurisdição', {activeCase:selected}), {type:'list',filter:'mine'}); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   assert.deepEqual(intents.classify('Mostre meus outros chamados', {activeCase:selected}), {type:'list',filter:'mine'}); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   assert.deepEqual(intents.classify('Analise o chamado #4', {activeCase:selected}), {type:'detail',caseType:'support',id:4}); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
