@@ -67,7 +67,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
 } catch (JarvisModelException $exception) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
     assertRouter($exception->reason === 'model' && $exception->httpStatus === 400, // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
         'classificação de erro do modelo'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-    assertRouter($calls === 1, 'não tenta outra chave para erro de request inválido'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+    assertRouter($calls === 2, 'reconsulta somente uma vez pelo roteador gratuito, sem trocar a chave'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 $calls = 0; // Explicação DevIN: Atribui um valor à variável PHP $calls.
@@ -82,6 +82,36 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         'cota claramente identificada'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
     assertRouter($calls === 2, 'faz apenas uma tentativa por chave'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+// Um ID gratuito encerrado recebe 404; openrouter/free deve recuperar a conversa.
+$_ENV['DEVIN_JARVIS_BACKUP_API_KEY'] = $backupKey;
+$calls = [];
+$result = ModelProvider::chatWithMeta($messages,
+    static function ($url, $key, $body) use (&$calls, $primaryKey): array {
+        $calls[] = $body;
+        assertRouter($key === $primaryKey, 'fallback do modelo usa a mesma chave principal');
+        if (count($calls) === 1) return ['status'=>404, 'body'=>'{"error":"No endpoints found"}'];
+        assertRouter($body['model'] === 'openrouter/free', 'roteador gratuito usado como recuperação');
+        assertRouter(!isset($body['models']), 'recuperação evita repetir a lista de modelos desativados');
+        return ['status'=>200,'body'=>'{"model":"openrouter/free","choices":[{"message":{"content":"Atendimento recuperado"}}]}'];
+    });
+assertRouter(count($calls) === 2, 'no máximo uma recuperação 404 adicional');
+assertRouter($result['reply'] === 'Atendimento recuperado' && $result['fallback_used'] === true,
+    'retorna texto do modelo de reserva sem custo de modelo pago');
+
+$_ENV['DEVIN_JARVIS_MODEL'] = 'openrouter/free';
+$calls = 0;
+try {
+    ModelProvider::chatWithMeta($messages, static function ($url, $key, $body) use (&$calls): array {
+        $calls++;
+        return ['status'=>404,'body'=>'{"error":"Free router unavailable"}'];
+    });
+    throw new RuntimeException('Roteador gratuito deveria reportar erro.');
+} catch (JarvisModelException $exception) {
+    assertRouter($exception->reason === 'model' && $calls === 1,
+        'não repete o próprio roteador gratuito.');
+}
+$_ENV['DEVIN_JARVIS_MODEL'] = 'z-ai/glm-5.3-flash:free';
 
 $_ENV['DEVIN_JARVIS_BACKUP_API_KEY'] = $primaryKey; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 $calls = 0; // Explicação DevIN: Atribui um valor à variável PHP $calls.
