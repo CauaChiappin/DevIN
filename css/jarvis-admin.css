@@ -218,3 +218,57 @@
 @media(prefers-reduced-motion:reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
   .jarvis-admin__case-editor button { transition:none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* O botão de atribuição faz parte do cartão do caso, não do formulário de resposta. */
+.jarvis-admin__message button.jarvis-admin__case-assignment { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+  display:flex;align-items:center;justify-content:center; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+  box-sizing:border-box;width:100%;max-width:100%; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+  min-height:46px;margin:9px 0 0;padding:11px 14px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+  border:1px solid #b0cfe7;border-radius:12px; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+  background:#eef6ff;color:#07558e; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+  font:inherit;font-size:13px;font-weight:700; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS font. */
+  line-height:1.45;white-space:normal;overflow-wrap:anywhere; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+  cursor:pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.jarvis-admin__message button.jarvis-admin__case-assignment:hover {background:#e2f0ff;border-color:#8ebcde} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.jarvis-admin__message button.jarvis-admin__case-assignment:disabled {opacity:.55;cursor:wait} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+.jarvis-admin__message button.jarvis-admin__case-assignment:focus-visible {outline:3px solid #63a7df;outline-offset:2px} /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+
+/* Ao selecionar um caso, conserva a entrada principal e privilegia o espaço de análise. */
+@media(max-width:600px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+  .jarvis-admin.is-case-focused .jarvis-admin__tabs { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display:flex;grid-template-columns:none;flex-wrap:nowrap; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items:stretch;gap:5px;overflow-x:auto; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    padding:5px 9px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    scrollbar-width:thin;scrollbar-gutter:stable; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS scrollbar-width. */
+  } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+  .jarvis-admin.is-case-focused .jarvis-admin__tabs button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    flex:0 0 auto;min-width:94px;max-width:160px; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    min-height:42px;padding:8px 12px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+  } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+  .jarvis-admin.is-case-focused .jarvis-admin__search-wrap, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+  .jarvis-admin.is-case-focused .jarvis-admin__quick-actions, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+  .jarvis-admin.is-case-focused .jarvis-admin__context-option { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display:none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+  } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+  .jarvis-admin.is-case-focused .jarvis-admin__messages { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    flex:1 1 auto;min-height:0; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    padding:12px 11px 22px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    scroll-padding-bottom:18px; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS scroll-padding-bottom. */
+    overscroll-behavior:contain; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS overscroll-behavior. */
+  } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+  .jarvis-admin.is-case-focused .jarvis-admin__message { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width:100%;max-width:100%;min-width:0; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+  } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+  .jarvis-admin.is-case-focused .jarvis-admin__case-editor { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding:12px;gap:12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+  } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+  .jarvis-admin.is-case-focused .jarvis-admin__composer { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    flex:0 0 auto; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    padding:8px 11px calc(8px + env(safe-area-inset-bottom,0px)); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-top:1px solid #e0e9f2; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS border-top. */
+  } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+  .jarvis-admin.is-case-focused .jarvis-admin__disclaimer { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display:none; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+  } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
