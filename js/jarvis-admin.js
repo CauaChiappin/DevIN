@@ -317,12 +317,12 @@
    * Texto livre é mantido no navegador; a IA externa não decide os alvos.
    */
   // Detalhe DevIN: Transforma texto escrito no chat em intenção controlada; não consulta o banco nem permite que um modelo decida qual registro modificar.
-  function parseAdminCommand(message) {
+  function parseAdminCommand(message) { // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
     // Consulta local primeiro; conserva o parser histórico como fallback caso
     // o interpretador ainda não esteja carregado neste tipo de página.
-    const natural = typeof window !== 'undefined'
-      ? window.DevInJarvisAdminNatural?.classify(message) : null;
-    if (natural) return natural;
+    const natural = typeof window !== 'undefined' // Explicação DevIN: Declara variável JavaScript natural para reutilizar valor ou resultado.
+      ? window.DevInJarvisAdminNatural?.classify(message) : null; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+    if (natural) return natural; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
  // Explicação DevIN: Declara função/método parseAdminCommand, com seus parâmetros e comportamento.
     // O pedido explícito de suporte permite ao JARVIS consultar dados
     // autorizados, sem passar nomes/e-mails de usuários ao modelo remoto.
@@ -455,173 +455,173 @@
     const command=selected || parseAdminCommand(message); // Explicação DevIN: Declara variável JavaScript command para reutilizar valor ou resultado.
     if(!command) return false; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Detalhe DevIN: Exibe a pergunta do ADM somente uma vez; a seleção posterior não duplica a mensagem no histórico visual.
-    if(!selected) addMessage('user',message);
+    if(!selected) addMessage('user',message); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
 
     // O roteador natural só utiliza ações já existentes e autorizadas do backend.
     // Mostrar um resultado NÃO autoriza criar tarefas, enviar mensagens ou excluir registros.
-    if (command.type === 'browse') {
-      try {
-        const result = await api(root.dataset.tools + '?action=search&kind='
-          + encodeURIComponent(command.kind) + '&q=');
-        const rows = (result.records || []).slice(0, 12);
-        const card = chatActionCard('Registros recentes encontrados: ' + rows.length
-          + ' (máximo de 12). Para pesquisa específica, informe nome, título ou ID.');
-        const list = document.createElement('div');
-        list.className = 'jarvis-admin__tool-results';
-        card.append(list);
-        for (const record of rows) {
-          const item = document.createElement('article');
-          item.className = 'jarvis-admin__tool-card';
-          const title = document.createElement('strong');
-          title.textContent = (command.kind === 'vaga' ? 'Vaga' : command.kind === 'empresa' ? 'Empresa' : 'Pessoa')
-            + ' #' + record.id + ' — ' + (record.title || '');
-          const inspect = actionButton('Ver detalhes', async button => {
-            button.disabled = true;
-            try {
-              const detail = await api(root.dataset.tools + '?action=inspect&kind='
-                + encodeURIComponent(command.kind) + '&id=' + encodeURIComponent(record.id));
-              addMessage('assistant', 'Registro #' + record.id + ':\n' +
-                Object.entries(detail.record || {}).map(([k,v]) => k + ': ' + String(v)).join('\n').slice(0, 900));
-            } catch (error) {
-              addMessage('assistant', 'Não foi possível abrir os detalhes: ' + error.message);
-            } finally { button.disabled = false; }
-          });
-          item.append(title, inspect); list.append(item);
-        }
-        if (!rows.length) addMessage('assistant', 'Não há resultados disponíveis nessa categoria.');
-      } catch (error) {
-        addMessage('assistant', 'Não foi possível consultar os registros: ' + error.message);
-      }
-      return true;
-    }
-    if (command.type === 'task_list') {
-      try {
-        const result = await api(root.dataset.tasks);
-        const tasks = result.tasks || [];
-        addMessage('assistant', tasks.length
-          ? 'Suas atividades registradas (não são ações automáticas sobre vagas):\n'
-              + tasks.slice(0, 30).map(t => '#' + t.id + ' · ' + t.title + ' · ' + t.status).join('\n')
-          : 'Nenhuma atividade registrada na sua fila.');
-      } catch (error) {
-        addMessage('assistant', 'Não foi possível consultar suas tarefas: ' + error.message);
-      }
-      return true;
-    }
-    if (command.type === 'task_create') {
-      const title = String(command.title || '').trim();
-      if (!title || title.length > 120) {
-        addMessage('assistant', 'Informe um título de tarefa de até 120 caracteres.');
-        return true;
-      }
-      const card = chatActionCard('Nova tarefa sugerida: "' + title
-        + '". Isso apenas cria uma atividade de acompanhamento, sem executar trabalho em vagas ou contas.');
-      const create = actionButton('Confirmar criação da tarefa', async button => {
-        if (!window.confirm('Registrar a tarefa "' + title + '" na sua fila?')) return;
-        button.disabled = true;
-        try {
-          const saved = await api(root.dataset.tasks, {action:'create',title,description:''});
-          addMessage('assistant', 'Tarefa #' + saved.task_id + ' registrada na sua fila.');
-          card.remove();
-        } catch (error) {
-          addMessage('assistant', 'Tarefa não criada: ' + error.message);
-          button.disabled = false;
-        }
-      });
-      card.append(create);
-      return true;
-    }
-    if (command.type === 'task_update') {
-      try {
-        const result = await api(root.dataset.tasks);
-        const task = (result.tasks || []).find(t => Number(t.id) === Number(command.id));
-        if (!task) {
-          addMessage('assistant', 'A tarefa #' + command.id + ' não está na sua fila.');
-          return true;
-        }
-        const captions = {start:'Iniciar',complete:'Concluir',cancel:'Cancelar'};
-        const card = chatActionCard('Tarefa #' + task.id + ' · ' + task.title
-          + '\nEstado atual: ' + task.status + '\nA mudança exige sua confirmação.');
-        const button = actionButton(captions[command.action] + ' tarefa', async control => {
-          if (!window.confirm(captions[command.action] + ' a tarefa #' + task.id + '?')) return;
-          control.disabled = true;
-          try {
-            const saved = await api(root.dataset.tasks, {
-              action:command.action,task_id:Number(task.id)
-            });
-            addMessage('assistant', 'Tarefa #' + task.id + ' atualizada: ' + saved.status);
-            card.remove();
-          } catch (error) {
-            addMessage('assistant', 'Não foi possível atualizar a tarefa: ' + error.message);
-            control.disabled = false;
-          }
-        });
-        card.append(button);
-      } catch (error) {
-        addMessage('assistant', 'Não foi possível verificar a tarefa: ' + error.message);
-      }
-      return true;
-    }
-    if (command.type === 'drafts') {
-      try {
-        const response = await api(root.dataset.tools + '?action=drafts');
-        const rows = (response.drafts || []).slice(0, 25);
-        addMessage('assistant', rows.length
-          ? 'Seus rascunhos e mensagens preparados:\n'
-            + rows.map(row => '#' + row.id + ' · '
-              + (row.recipient_type === 'pessoa' ? 'Pessoa' : 'Empresa')
-              + ' #' + row.recipient_id + ' · ' + row.status + ' · '
-              + String(row.body || '').slice(0, 100)).join('\n')
-            + '\nPara revisar e enviar, abra a aba Consultar > Mensagens.'
-          : 'Você ainda não tem mensagens preparadas.');
-      } catch (error) {
-        addMessage('assistant', 'Não foi possível consultar as mensagens: ' + error.message);
-      }
-      return true;
-    }
-    if (command.type === 'activity') {
-      try {
-        const response = await api(root.dataset.tools + '?action=history');
-        const rows = (response.events || []).slice(0, 20);
-        addMessage('assistant', rows.length
-          ? 'Registro de ações administrativas recentes:\n' + rows.map(row =>
-            (row.created_at || '') + ' · ' + row.event_name + ' · '
-            + row.status + ' · ' + row.target_type
-            + (row.target_id ? ' #' + row.target_id : '')).join('\n')
-          : 'Nenhuma ação registrada no histórico administrativo.');
-      } catch (error) {
-        addMessage('assistant', 'Não foi possível consultar a auditoria: ' + error.message);
-      }
-      return true;
-    }
-    if (command.type === 'conversation_history') {
-      try {
-        const response = await api(root.dataset.conversations);
-        const rows = (response.conversations || []).slice(0, 30);
-        const card = chatActionCard(rows.length
-          ? 'Conversas salvas na sua conta: ' + rows.length + ' recentes.'
-          : 'Você não tem conversas salvas.');
-        const list = document.createElement('div');
-        list.className = 'jarvis-admin__tool-results';
-        card.append(list);
-        for (const row of rows) {
-          const choose = actionButton(String(row.title || 'Conversa') + ' #' + row.id,
-            async button => {
-              button.disabled = true;
-              try { await loadConversation(row.id); }
-              catch (error) { addMessage('assistant', 'Não foi possível abrir a conversa: ' + error.message); }
-              finally { button.disabled = false; }
-            });
-          list.append(choose);
-        }
-      } catch (error) {
-        addMessage('assistant', 'Não foi possível consultar o histórico: ' + error.message);
-      }
-      return true;
-    }
-    if (command.type === 'incomplete' && command.message) {
-      addMessage('assistant', command.message);
-      return true;
-    }
+    if (command.type === 'browse') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        const result = await api(root.dataset.tools + '?action=search&kind=' // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
+          + encodeURIComponent(command.kind) + '&q='); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        const rows = (result.records || []).slice(0, 12); // Explicação DevIN: Declara variável JavaScript rows para reutilizar valor ou resultado.
+        const card = chatActionCard('Registros recentes encontrados: ' + rows.length // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
+          + ' (máximo de 12). Para pesquisa específica, informe nome, título ou ID.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        const list = document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        list.className = 'jarvis-admin__tool-results'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        card.append(list); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        for (const record of rows) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+          const item = document.createElement('article'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          item.className = 'jarvis-admin__tool-card'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          const title = document.createElement('strong'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+          title.textContent = (command.kind === 'vaga' ? 'Vaga' : command.kind === 'empresa' ? 'Empresa' : 'Pessoa') // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            + ' #' + record.id + ' — ' + (record.title || ''); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          const inspect = actionButton('Ver detalhes', async button => { // Explicação DevIN: Declara variável JavaScript inspect para reutilizar valor ou resultado.
+            button.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+              const detail = await api(root.dataset.tools + '?action=inspect&kind=' // Explicação DevIN: Declara variável JavaScript detail para reutilizar valor ou resultado.
+                + encodeURIComponent(command.kind) + '&id=' + encodeURIComponent(record.id)); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+              addMessage('assistant', 'Registro #' + record.id + ':\n' + // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+                Object.entries(detail.record || {}).map(([k,v]) => k + ': ' + String(v)).join('\n').slice(0, 900)); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+            } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+              addMessage('assistant', 'Não foi possível abrir os detalhes: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+            } finally { button.disabled = false; } // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+          }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          item.append(title, inspect); list.append(item); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (!rows.length) addMessage('assistant', 'Não há resultados disponíveis nessa categoria.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        addMessage('assistant', 'Não foi possível consultar os registros: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    if (command.type === 'task_list') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        const result = await api(root.dataset.tasks); // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
+        const tasks = result.tasks || []; // Explicação DevIN: Declara variável JavaScript tasks para reutilizar valor ou resultado.
+        addMessage('assistant', tasks.length // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          ? 'Suas atividades registradas (não são ações automáticas sobre vagas):\n' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+              + tasks.slice(0, 30).map(t => '#' + t.id + ' · ' + t.title + ' · ' + t.status).join('\n') // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          : 'Nenhuma atividade registrada na sua fila.'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+      } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        addMessage('assistant', 'Não foi possível consultar suas tarefas: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    if (command.type === 'task_create') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      const title = String(command.title || '').trim(); // Explicação DevIN: Declara variável JavaScript title para reutilizar valor ou resultado.
+      if (!title || title.length > 120) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        addMessage('assistant', 'Informe um título de tarefa de até 120 caracteres.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      const card = chatActionCard('Nova tarefa sugerida: "' + title // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
+        + '". Isso apenas cria uma atividade de acompanhamento, sem executar trabalho em vagas ou contas.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      const create = actionButton('Confirmar criação da tarefa', async button => { // Explicação DevIN: Declara variável JavaScript create para reutilizar valor ou resultado.
+        if (!window.confirm('Registrar a tarefa "' + title + '" na sua fila?')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        button.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+          const saved = await api(root.dataset.tasks, {action:'create',title,description:''}); // Explicação DevIN: Declara variável JavaScript saved para reutilizar valor ou resultado.
+          addMessage('assistant', 'Tarefa #' + saved.task_id + ' registrada na sua fila.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          card.remove(); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+          addMessage('assistant', 'Tarefa não criada: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          button.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      card.append(create); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    if (command.type === 'task_update') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        const result = await api(root.dataset.tasks); // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
+        const task = (result.tasks || []).find(t => Number(t.id) === Number(command.id)); // Explicação DevIN: Declara variável JavaScript task para reutilizar valor ou resultado.
+        if (!task) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          addMessage('assistant', 'A tarefa #' + command.id + ' não está na sua fila.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        const captions = {start:'Iniciar',complete:'Concluir',cancel:'Cancelar'}; // Explicação DevIN: Declara variável JavaScript captions para reutilizar valor ou resultado.
+        const card = chatActionCard('Tarefa #' + task.id + ' · ' + task.title // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
+          + '\nEstado atual: ' + task.status + '\nA mudança exige sua confirmação.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        const button = actionButton(captions[command.action] + ' tarefa', async control => { // Explicação DevIN: Declara variável JavaScript button para reutilizar valor ou resultado.
+          if (!window.confirm(captions[command.action] + ' a tarefa #' + task.id + '?')) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+          control.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            const saved = await api(root.dataset.tasks, { // Explicação DevIN: Declara variável JavaScript saved para reutilizar valor ou resultado.
+              action:command.action,task_id:Number(task.id) // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            addMessage('assistant', 'Tarefa #' + task.id + ' atualizada: ' + saved.status); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+            card.remove(); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            addMessage('assistant', 'Não foi possível atualizar a tarefa: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+            control.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+          } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        card.append(button); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        addMessage('assistant', 'Não foi possível verificar a tarefa: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    if (command.type === 'drafts') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        const response = await api(root.dataset.tools + '?action=drafts'); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
+        const rows = (response.drafts || []).slice(0, 25); // Explicação DevIN: Declara variável JavaScript rows para reutilizar valor ou resultado.
+        addMessage('assistant', rows.length // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          ? 'Seus rascunhos e mensagens preparados:\n' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            + rows.map(row => '#' + row.id + ' · ' // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+              + (row.recipient_type === 'pessoa' ? 'Pessoa' : 'Empresa') // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+              + ' #' + row.recipient_id + ' · ' + row.status + ' · ' // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+              + String(row.body || '').slice(0, 100)).join('\n') // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+            + '\nPara revisar e enviar, abra a aba Consultar > Mensagens.' // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          : 'Você ainda não tem mensagens preparadas.'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+      } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        addMessage('assistant', 'Não foi possível consultar as mensagens: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    if (command.type === 'activity') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        const response = await api(root.dataset.tools + '?action=history'); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
+        const rows = (response.events || []).slice(0, 20); // Explicação DevIN: Declara variável JavaScript rows para reutilizar valor ou resultado.
+        addMessage('assistant', rows.length // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          ? 'Registro de ações administrativas recentes:\n' + rows.map(row => // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            (row.created_at || '') + ' · ' + row.event_name + ' · ' // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+            + row.status + ' · ' + row.target_type // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+            + (row.target_id ? ' #' + row.target_id : '')).join('\n') // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+          : 'Nenhuma ação registrada no histórico administrativo.'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+      } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        addMessage('assistant', 'Não foi possível consultar a auditoria: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    if (command.type === 'conversation_history') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+        const response = await api(root.dataset.conversations); // Explicação DevIN: Declara variável JavaScript response para reutilizar valor ou resultado.
+        const rows = (response.conversations || []).slice(0, 30); // Explicação DevIN: Declara variável JavaScript rows para reutilizar valor ou resultado.
+        const card = chatActionCard(rows.length // Explicação DevIN: Declara variável JavaScript card para reutilizar valor ou resultado.
+          ? 'Conversas salvas na sua conta: ' + rows.length + ' recentes.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+          : 'Você não tem conversas salvas.'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        const list = document.createElement('div'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+        list.className = 'jarvis-admin__tool-results'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        card.append(list); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        for (const row of rows) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+          const choose = actionButton(String(row.title || 'Conversa') + ' #' + row.id, // Explicação DevIN: Declara variável JavaScript choose para reutilizar valor ou resultado.
+            async button => { // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+              button.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+              try { await loadConversation(row.id); } // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+              catch (error) { addMessage('assistant', 'Não foi possível abrir a conversa: ' + error.message); } // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+              finally { button.disabled = false; } // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+          list.append(choose); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        addMessage('assistant', 'Não foi possível consultar o histórico: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    if (command.type === 'incomplete' && command.message) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      addMessage('assistant', command.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função handleAdminCommand.
+      return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
  // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     // Detalhe DevIN: Recusa categorias incompatíveis com a operação, como tentar enviar mensagem diretamente a uma vaga.
     if(command.type==='support') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
