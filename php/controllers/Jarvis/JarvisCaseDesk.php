@@ -43,10 +43,6 @@ final class JarvisCaseDesk // Explicação DevIN: Declara o tipo JarvisCaseDesk 
                     'type' => 'support', 'id' => (int) $ticket['id'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'title' => 'Suporte #' . $ticket['id'] . ' · ' . $ticket['category'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'status' => (string) $ticket['status'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                'assigned_admin_id' => isset($ticket['assigned_admin_id']) // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-                    ? (int) $ticket['assigned_admin_id'] : null, // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-                'assigned_to_me' => (bool) ($ticket['assigned_to_me'] ?? false), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
- // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'preview' => mb_substr(trim((string) $ticket['description']), 0, 180, 'UTF-8'), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                     'assigned_admin_id' => $ticket['assigned_admin_id'] === null // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                         ? null : (int) $ticket['assigned_admin_id'], // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
@@ -105,6 +101,8 @@ final class JarvisCaseDesk // Explicação DevIN: Declara o tipo JarvisCaseDesk 
                 'title' => 'Chamado de suporte #' . $id, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 'status' => (string) $ticket['status'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 'category' => (string) $ticket['category'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'assigned_admin_id' => isset($ticket['assigned_admin_id']) ? (int) $ticket['assigned_admin_id'] : null, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                'assigned_to_me' => (bool) ($ticket['assigned_to_me'] ?? false), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 'description' => (string) $ticket['description'], // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 'previous_replies' => $messages, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
                 'has_attachment' => !empty($ticket['attachment_name']), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
