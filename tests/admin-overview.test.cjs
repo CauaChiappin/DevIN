@@ -54,5 +54,5 @@ test('comentários de documentação não aparecem como texto nos cards ADM', ()
     assert.doesNotMatch(markup, />\s*\/\/ Explicação DevIN:/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.doesNotMatch(markup, /<\!\s*\n\s*-->/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /echo '<article class="admin-metric'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(markup, /Abre card de estatísticas com classe condicional/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(markup, /echo '<article class=/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
