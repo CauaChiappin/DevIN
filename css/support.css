@@ -322,3 +322,26 @@
     } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
  /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */ /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */ /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */ /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */ /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */ /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* Responsável principal e transferência explícita no atendimento administrativo. */
+.support-admin-view .support-representative-panel {
+    box-sizing:border-box;display:grid;gap:9px;width:100%;min-width:0;
+    padding:15px;margin:12px 0 18px;border:1px solid #bad3e9;
+    background:#f2f8fe;border-radius:13px;color:#1b527b;
+}
+.support-admin-view .support-representative-panel strong {font-size:14px;overflow-wrap:anywhere}
+.support-admin-view .support-representative-panel p {margin:0;font-size:12px;line-height:1.55}
+.support-admin-view .support-representative-panel button {
+    min-height:44px;max-width:100%;justify-self:start;margin:0;
+}
+.support-admin-view .support-representative-hint {
+    color:#315c7b;font-size:12px;line-height:1.4;overflow-wrap:anywhere;
+}
+@media (max-width:767px) {
+    .dashboard-shell.page-suporte .support-representative-panel {
+        padding:12px;gap:10px;border-radius:12px;
+    }
+    .dashboard-shell.page-suporte .support-representative-panel button {
+        min-height:48px;width:100%;justify-self:stretch;white-space:normal;
+    }
+}
