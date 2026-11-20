@@ -17,6 +17,11 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'js/jarvis-intents.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'js/jarvis-admin-natural.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis-admin-natural.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis-semantic.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis_semantic_intent.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'js/jarvis-semantic.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/api/jarvis/intent.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/controllers/Jarvis/JarvisSemanticIntent.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis-intents.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis-cases.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis_case_context.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -164,6 +169,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           node --check js/jarvis-intents.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/jarvis-admin-natural.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/jarvis-admin-natural.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --check js/jarvis-semantic.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/jarvis-semantic.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/jarvis-intents.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/jarvis-cases.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/support-ui.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -191,6 +198,10 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php tests/resume_abnt_contract.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/jarvis_locale_unit.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php tests/jarvis_openrouter_router.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/api/jarvis/intent.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/controllers/Jarvis/JarvisSemanticIntent.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l tests/jarvis_semantic_intent.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php tests/jarvis_semantic_intent.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
 
   mysql: # Explicação DevIN: Configura propriedade YAML (campo mysql).
     runs-on: ubuntu-latest # Explicação DevIN: Configura ambiente executor (campo runs-on).

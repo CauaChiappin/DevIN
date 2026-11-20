@@ -734,6 +734,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     <script src="../js/jarvis-intents.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-intents.js') ?>" defer></script> <!-- Interpreta pedidos do ADM localmente antes de consultar IA. -->
     <script src="../js/jarvis-cases.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-cases.js') ?>" defer></script> <!-- Carrega chat de casos antes do JARVIS. -->
     <script src="../js/jarvis-admin-natural.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-admin-natural.js') ?>" defer></script> <!-- Interpreta comandos administrativos existentes, sem enviar consultas locais ao modelo externo. -->
+    <script src="../js/jarvis-semantic.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-semantic.js') ?>" defer></script> <!-- Roteia apenas intenções de consulta aprovadas pelo servidor. -->
     <script src="../js/jarvis-admin.js?v=<?= filemtime(__DIR__ . '/../js/jarvis-admin.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <!-- Suporte usa estilos isolados para não alterar os componentes existentes. -->
     <?php if ($pagina === 'suporte'): ?>

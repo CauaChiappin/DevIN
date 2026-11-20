@@ -286,9 +286,10 @@
       return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    async function handle(value) { // Explicação DevIN: Declara função/método handle, com seus parâmetros e comportamento.
+    async function handle(value, authorizedReadIntent = null) { // Explicação DevIN: Declara função/método handle, com seus parâmetros e comportamento.
       addMessage('user', value); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
-      const intent = route(value); // Explicação DevIN: Declara variável JavaScript intent para reutilizar valor ou resultado.
+      // O classificador semântico só fornece rótulos de consulta, nunca decisões.
+      const intent = authorizedReadIntent || route(value); // Explicação DevIN: Declara variável JavaScript intent para reutilizar valor ou resultado.
       if (!intent) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         addMessage('assistant', 'Não identifiquei uma consulta de dados. Experimente perguntar por seus atendimentos, a fila de suporte, as denúncias ou os indicadores do DevIN.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função handle.
         return true; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
