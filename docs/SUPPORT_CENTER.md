@@ -79,3 +79,14 @@ Exemplos de pedidos: "Mostre os reports na minha jurisdição", "Liste os chamad
 **Implantação:** não há migração SQL nova para este fluxo. Preserve .env, uploads, armazenamento privado e banco da Hostinger. Os endpoints exigem sessão ADM, CSRF, limite de uso e Token 2 se a etapa de IA estiver habilitada. Validar o desktop e celulares 360/390/430 px, especialmente cards de chat, teclado, seleção de prints e atualização depois de um veredito.
 
 Arquivos principais: php/api/jarvis/cases.php, php/controllers/Jarvis/JarvisCaseDesk.php, js/jarvis-cases.js, css/jarvis-admin.css e testes/jarvis-cases.test.cjs.
+
+
+## Responsável por chamado — migração 008 (20/11/2026)
+
+**Definição:** quando um ADM diz no chat do JARVIS "me ajuda com os chamados da minha jurisdição" ou "sou representante desse suporte", a lista deve mostrar somente `support_tickets.assigned_admin_id = id_administrador` da sessão atual. Não confundir esse vínculo com RBAC ou denúncias de vagas/perfis. Tais denúncias não têm representante individual nesta implementação.
+
+**Fila compartilhada e titular:** todos os ADMs continuam vendo e lendo os chamados. Um chamado novo ou antigo começa sem representante. Na lista/atendimento, o ADM toca em **Atender chamado**; isso se torna vínculo persistente. A primeira resposta ao chamado também o assume automaticamente se estiver livre. Se outro ADM já é responsável, só se pode responder ou encerrar após escolher explicitamente **Assumir atendimento**, com confirmação visual. O titular pode liberar o chamado. As transições e o ADM que realizou cada troca são salvos em `support_assignment_events`.
+
+**Como implantar sem quebrar a hospedagem:** crie backup do MySQL e execute **uma vez** `database/migrations/2026_11_20_008_support_representatives.sql` no banco DevIN da Hostinger antes de atualizar o PHP. O script não preenche titulares antigos automaticamente e pode ser executado novamente se necessário; contém verificações de coluna e índice existentes. Enquanto a migration ainda não tiver sido aplicada, o suporte legado segue operante, mas não será possível usar as atribuições; o JARVIS avisará que falta a migration. Após executar, atualize a `main` na hospedagem. Não é necessário adicionar variáveis novas ao `.env`.
+
+**Validação no celular/desktop:** dois ADMs autenticados devem enxergar o mesmo chamado. ADM A assume; ADM B deve ver "Responsável: ADM #..." e não pode enviar resposta sem antes confirmar a transferência. Após B assumir, o JARVIS de A deve deixar de listar esse chamado em "minha jurisdição", enquanto o JARVIS de B passa a exibi-lo. Verifique histórico e nome do responsável sem expor ID ADM para a pessoa/empresa solicitante. Confirme que as outras telas e dashboards não mudaram de tamanho.

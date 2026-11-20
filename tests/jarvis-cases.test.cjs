@@ -76,3 +76,22 @@ test('diagnóstico da IA de currículo não consulta chave nem expõe documento'
   assert.match(review, /resume_abnt_consent/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   assert.match(review, /ResumeReviewResult::normalize/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('minha jurisdição é suporte atribuído ao representante, não todos os reports', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  const svc = read('php/controllers/Jarvis/JarvisCaseDesk.php'); // Explicação DevIN: Declara variável JavaScript svc para reutilizar valor ou resultado.
+  const api = read('php/api/jarvis/cases.php'); // Explicação DevIN: Declara variável JavaScript api para reutilizar valor ou resultado.
+  const js = read('js/jarvis-cases.js'); // Explicação DevIN: Declara variável JavaScript js para reutilizar valor ou resultado.
+  const migration = read('database/migrations/2026_11_20_008_support_representatives.sql'); // Explicação DevIN: Declara variável JavaScript migration para reutilizar valor ou resultado.
+  assert.match(svc, /SupportRepresentative::myTickets/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(svc, /\$scope === 'mine'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(svc, /\$scope === 'mine' \? \[\]/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(api, /\$_GET\['scope'\]/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(api, /SupportRepresentative::assign/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(js, /jurisdicao/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(js, /scope=/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(js, /representante/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(js, /'takeover'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(js, /'release'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(migration, /support_assignment_events/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.match(migration, /assigned_admin_id/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

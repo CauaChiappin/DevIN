@@ -102,6 +102,43 @@ supportAssert(count($chatEvents) === 1 && count($mailEvents) === 1,'sem duplicar
 SupportDesk::close($db,$first); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
 supportAssert(SupportDesk::detail($db,$first,$ana)['ticket']['status'] === 'fechado', // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
     'status de encerramento'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+// A migração 008 adiciona representante, fila individual e trilha auditável.
+supportAssert(SupportRepresentative::ready($db), 'migração 008 pronta'); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+supportAssert(SupportRepresentative::myTickets($db,101)[0]['id'] == $first, // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'resposta inicial atribui representante principal'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+supportAssert(!array_key_exists('assigned_admin_id', SupportDesk::detail($db,$first,$ana)['ticket']), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'id interno do ADM ocultado para o solicitante'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+$db->query('CREATE TABLE administrador(id_administrador INT PRIMARY KEY)'); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+$db->query('INSERT INTO administrador VALUES (101),(102)'); // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+$other = SupportDesk::create($db,$bia,'duvida','Não consigo consultar meu histórico de candidaturas.',null); // Explicação DevIN: Atribui um valor à variável PHP $other.
+$mine = SupportRepresentative::assign($db,$other,101,'claim'); // Explicação DevIN: Atribui um valor à variável PHP $mine.
+supportAssert($mine['assigned_admin_id'] === 101 && $mine['assigned_to_me'] === true, // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'ADM 101 assumiu chamado livre'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+supportAssert(SupportDesk::listAdmin($db,101)[0]['assigned_to_me'] === true // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    || SupportDesk::listAdmin($db,101)[1]['assigned_to_me'] === true, // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    'filtro de atribuição identifica ADM logado'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+supportDenied(static fn()=>SupportRepresentative::assign($db,$other,102,'claim'), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'outro ADM não pode tomar sem takeover explícito'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+supportDenied(static fn()=>SupportDesk::reply($db,102,$other,'Tentativa indevida'), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'resposta pública somente pelo representante'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+$transfer = SupportRepresentative::assign($db,$other,102,'takeover'); // Explicação DevIN: Atribui um valor à variável PHP $transfer.
+supportAssert($transfer['assigned_admin_id'] === 102,'transferência explícita com auditoria'); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+supportDenied(static fn()=>SupportRepresentative::close($db,$other,101), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'ADM anterior não pode encerrar após transferência'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+supportDenied(static fn()=>SupportRepresentative::assign($db,$other,101,'release'), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'ADM anterior não pode liberar caso de outro'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+SupportRepresentative::assign($db,$other,102,'release'); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+supportAssert(SupportRepresentative::myTickets($db,102) === [], // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'ADM 102 não retém o chamado liberado'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+SupportRepresentative::assign($db,$other,101,'claim'); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+SupportRepresentative::close($db,$other,101); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+supportAssert(SupportDesk::detail($db,$other,$bia)['ticket']['status'] === 'fechado', // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'responsável pode encerrar'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+supportDenied(static fn()=>SupportRepresentative::assign($db,$other,102,'takeover'), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
+    'chamado encerrado não pode ser assumido'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+$events = (int) $db->query('SELECT COUNT(*) AS total FROM support_assignment_events') // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+    ->fetch_assoc()['total']; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
+supportAssert($events === 5,'cinco eventos de atribuição e transferência registrados'); // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
 supportDenied(static fn()=>SupportDesk::reply($db,101,$first,'Resposta tardia'), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
     'não responder chamado fechado'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
 supportDenied(static fn()=>SupportDesk::attachment($db,$first,$bia), // Explicação DevIN: Continua expressão ou bloco pertencente a função supportDenied.
