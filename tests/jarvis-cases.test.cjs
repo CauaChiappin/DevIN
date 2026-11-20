@@ -116,3 +116,39 @@ test('revisão mobile do JARVIS destaca representante e libera espaço na conver
   assert.match(ui, /root\.classList\.add\('is-case-focused'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
   assert.match(ui, /root\.classList\.remove\('is-case-focused'\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a função listing.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('suportes no plural e representante resolvem localmente mesmo sem modelo externo', () => {
+  const chat = read('js/jarvis-cases.js');
+  assert.match(chat, /suportes\?/);
+  assert.match(chat, /representante\|responsavel/);
+  assert.match(chat, /return 'mine'/);
+  const normalizer = str => str.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const intent = /\b(reports?|denuncias?|chamados?|tickets?|suportes?|atendimentos?)\b/;
+  assert.equal(intent.test(normalizer('Quais são os suportes que eu estou de representante?')),true);
+});
+
+test('histórico do chat de casos utiliza API protegida e preserva conta ADM', () => {
+  const widget = read('js/jarvis-admin.js');
+  const api = read('php/api/jarvis/conversations.php');
+  const store = read('php/controllers/Jarvis/ConversationRepository.php');
+  assert.match(widget, /function saveVisibleMessage\(/);
+  assert.match(widget, /action: 'append'/);
+  assert.match(widget, /saveVisibleMessage\('user', message\)/);
+  assert.match(widget, /addMessage: addCaseMessage/);
+  assert.match(widget, /if \(restore\) await loadConversation/);
+  assert.match(api, /if \(\$action === 'append'\)/);
+  assert.match(api, /ConversationRepository::belongsTo\(\$db, \$adminId, \$conversationId\)/);
+  assert.match(api, /jarvisCsrf\(\)/);
+  assert.match(api, /jarvisLimit\(/);
+  assert.match(api, /\$db->begin_transaction\(\)/);
+  assert.match(store, /LIMIT 100/);
+});
+
+test('modelo gratuito indisponível é recuperado apenas pelo roteador gratuito', () => {
+  const provider = read('php/controllers/Jarvis/ModelProvider.php');
+  const env = read('.env.example');
+  assert.match(provider, /\$recovery\['model'\] = 'openrouter\/free'/);
+  assert.match(provider, /unset\(\$recovery\['models'\]\)/);
+  assert.match(provider, /\$routeIndex > 0 && \$lastReason !== 'model'/);
+  assert.match(env, /DEVIN_JARVIS_MODEL=openrouter\/free/);
+});
