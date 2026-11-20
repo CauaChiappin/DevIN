@@ -54,7 +54,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             if ($action === 'list') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 // A consulta de ADM permite visão geral; usuários veem somente os próprios registros.
                 $rows = $actor['tipo'] === 'adm' // Explicação DevIN: Atribui um valor à variável PHP $rows.
-                    ? SupportDesk::listAdmin($db) : SupportDesk::listOwn($db, $actor); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+                    ? SupportDesk::listAdmin($db, (int) $actor['id']) : SupportDesk::listOwn($db, $actor); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
                 supportJson(200, ['sucesso'=>true,'tickets'=>$rows]); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             if ($action === 'detail') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -93,6 +93,15 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         if ($actor['tipo'] !== 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             supportJson(403, ['sucesso'=>false,'mensagem'=>'Apenas ADMs podem responder ou encerrar chamados.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (in_array($action, ['claim', 'takeover', 'release'], true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            // O servidor determina o ADM pela sessão; nunca aceita assignee_id arbitrário.
+            $assigned = SupportRepresentative::assign($db, // Explicação DevIN: Atribui um valor à variável PHP $assigned.
+                $idValue($_POST['id'] ?? null), (int) $actor['id'], $action); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+            supportJson(200, ['sucesso'=>true] + $assigned + [ // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+                'mensagem'=>$action === 'release' ? 'Chamado liberado para outro ADM.' // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    : 'Você agora é o representante responsável pelo chamado.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+            ]); // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if ($action === 'reply') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             // O texto é validado pelo serviço e sua autoria fica registrada pelo ID ADM.
             $result = SupportDesk::reply($db, (int)$actor['id'], // Explicação DevIN: Atribui um valor à variável PHP $result.
@@ -107,7 +116,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
             supportJson(200, ['sucesso'=>true] + $result); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         if ($action === 'close') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            SupportDesk::close($db, $idValue($_POST['id'] ?? null)); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+            SupportRepresentative::close($db, $idValue($_POST['id'] ?? null), (int) $actor['id']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
             supportJson(200, ['sucesso'=>true,'mensagem'=>'Chamado encerrado.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         supportJson(400, ['sucesso'=>false,'mensagem'=>'Operação inválida para esta conta.']); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.

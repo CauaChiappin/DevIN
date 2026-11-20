@@ -106,8 +106,15 @@ O JARVIS incorpora ferramentas adicionais descritas em `docs/jarvis-controlled-a
 
 O assistente pode listar os casos existentes, selecionar um chamado ou denúncia, ajudar a analisar o texto ou prints com consentimento e preparar um parecer que o ADM poderá editar integralmente. A interface principal é a aba Conversas do JARVIS, não o formulário de resposta do Suporte.
 
-A jurisdição aplicada é a permissão de moderação quando RBAC está habilitado; não há vínculo individual formal entre ADM e report. O suporte permanece numa fila compartilhada. A prévia de envio ou moderação não é uma decisão: exige uma segunda requisição autenticada e confirmação específica, com palavra diferenciada para exclusões. Exclusões de vagas e perfis continuam irreversíveis e exigem respaldo humano.
+Após a migração 008, 'minha jurisdição' no suporte significa os chamados cujo ADM da sessão é o representante. A fila geral permanece compartilhada e denúncias de vagas/perfis continuam moderadas por permissão RBAC, sem atribuição individual. A prévia de envio ou moderação não é uma decisão: exige uma segunda requisição autenticada e confirmação específica, com palavra diferenciada para exclusões. Exclusões de vagas e perfis continuam irreversíveis e exigem respaldo humano.
 
 Os prints são opcionais e somente imagens PNG/JPG/WebP são aceitas (até 4 MB). A extensão GD do PHP precisa estar ativa para recodificar a imagem e descartar metadados. A conta JARVIS precisa ter um modelo que suporte visão; não se promete que todos os modelos gratuitos aceitem imagens. O consentimento abrange o envio ao provedor externo, inclusive informações eventualmente visíveis no próprio print.
 
 A geração e a revisão de currículo **não usam** o mesmo provedor do JARVIS: elas têm endpoints Gemini próprios. Para inspecionar as dependências da Hostinger com a conta de candidato, use php/resume_ai_readiness.php. O diagnóstico verifica presença de chave e extensões, não prova conectividade, quota ou qualidade do modelo. Teste efetivo requer gerar currículo fictício e revisar PDF/DOCX consentidos; consulte tests/resume_abnt_contract.php.
+
+
+## Jurisdição = representante do chamado
+
+O comando "JARVIS, me ajuda com os reports/chamados que estão na minha jurisdição" agora solicita **somente suporte atribuído a mim** (`assigned_admin_id`). Não se deve interpretar jurisdição como todos os records do nível de permissão do ADM. Se um chamado não foi assumido, aparece na fila compartilhada e não na carteira individual.
+
+O ADM pode usar **Assumir suporte** ou **Liberar atendimento** no chat do JARVIS. A tomada de um caso de outro ADM pede confirmação explícita. A resposta definitiva e o encerramento só são permitidos ao representante atual; a primeira resposta de um chamado livre cria a atribuição. Todos os ADMs ainda podem consultar o histórico. Banco: `database/migrations/2026_11_20_008_support_representatives.sql`. Sem SQL, o recurso antigo continua disponível, mas a representação não fica habilitada.

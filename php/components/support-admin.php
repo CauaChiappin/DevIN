@@ -36,6 +36,12 @@
                 <option value="respondido">Respondidos</option> <!-- Explicação DevIN: Declara opção selecionável. -->
                 <option value="fechado">Encerrados</option> <!-- Explicação DevIN: Declara opção selecionável. -->
             </select> <!-- Explicação DevIN: Fecha elemento select do documento. -->
+            <label for="support-admin-representative">Responsável pelo chamado</label> <!-- Explicação DevIN: Declara rótulo associado a um campo. -->
+            <select id="support-admin-representative" data-support-representative-filter> <!-- Explicação DevIN: Declara seleção de opções. -->
+                <option value="all">Fila compartilhada — todos os ADMs</option> <!-- Explicação DevIN: Declara opção selecionável. -->
+                <option value="mine">Sob minha responsabilidade</option> <!-- Explicação DevIN: Declara opção selecionável. -->
+                <option value="unassigned">Aguardando representante</option> <!-- Explicação DevIN: Declara opção selecionável. -->
+            </select> <!-- Explicação DevIN: Fecha elemento select do documento. -->
             <div data-support-list class="support-ticket-list"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
                 <p class="support-hint">Carregando solicitações...</p> <!-- Explicação DevIN: Declara parágrafo. -->
             </div> <!-- Explicação DevIN: Fecha elemento div do documento. -->
