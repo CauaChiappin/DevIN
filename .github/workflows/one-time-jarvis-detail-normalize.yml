@@ -1,0 +1,32 @@
+name: DevIN temporary JARVIS detail mobile normalize
+on:
+  push:
+    branches:
+      - fix/jarvis-support-detail-owner-mobile-20261120
+    paths:
+      - .github/workflows/one-time-jarvis-detail-normalize.yml
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Normalize inline annotations
+        run: python3 scripts/line_explanations.py --write
+      - name: Commit source annotations only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add php/controllers/Jarvis/JarvisCaseDesk.php js/jarvis-cases.js css/jarvis-admin.css tests/support_center_mysql.php tests/jarvis-cases.test.cjs
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "docs: normalize representative detail and mobile case UI annotations"
+            git push origin HEAD:fix/jarvis-support-detail-owner-mobile-20261120
+          fi
