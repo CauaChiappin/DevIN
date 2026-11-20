@@ -34,3 +34,17 @@ test('Layout de métricas se adapta aos dispositivos', () => { // Explicação D
     assert.match(css, /\.admin-overview-grid/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(css, /\.dashboard-shell\.page-estatisticas \{ grid-template-columns: var\(--sidebar-width\) minmax\(0, 1fr\); \}/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+test('estatísticas não estreitam o dashboard mobile nem quebram estado indisponível', () => {
+    const css = read('css/ui-consistency.css');
+    const markup = read('php/components/admin-overview.php');
+    assert.match(css, /\.dashboard-shell\.page-estatisticas > \.sidebar/);
+    assert.match(css, /\.dashboard-shell\.page-estatisticas > \.lista-area/);
+    assert.match(css, /@media \(max-width: 470px\)/);
+    assert.match(css, /grid-template-columns: minmax\(0, 1fr\)/);
+    assert.match(css, /\.page-estatisticas \.admin-metric__unavailable/);
+    assert.match(markup, /admin-metric--unavailable/);
+    assert.match(markup, /admin-metric__value/);
+    assert.match(markup, /admin-metric__unavailable/);
+    assert.match(markup, /isset\(\$adminOverview\[\$key\]\)/);
+});
