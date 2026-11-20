@@ -15,6 +15,8 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'js/jarvis-admin.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'js/jarvis-cases.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'js/jarvis-intents.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'js/jarvis-admin-natural.js' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/jarvis-admin-natural.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis-intents.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis-cases.test.cjs' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'tests/jarvis_case_context.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -160,6 +162,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           node --check js/jarvis-admin.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/jarvis-cases.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/jarvis-intents.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --check js/jarvis-admin-natural.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --test tests/jarvis-admin-natural.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/jarvis-intents.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/jarvis-cases.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/support-ui.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
