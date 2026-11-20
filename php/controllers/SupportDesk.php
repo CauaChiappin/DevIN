@@ -242,7 +242,8 @@ final class SupportDesk // Explicação DevIN: Declara o tipo SupportDesk e inic
         }
         unset($ticket['attachment_token']); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
         // ADMs podem ver a autoria de cada resposta, mas os usuários não.
-        if (($actor['tipo'] ?? '') !== 'adm') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (($actor['tipo'] ?? '') !== 'adm') {
+            unset($ticket['assigned_admin_id'], $ticket['assigned_at'], $ticket['assigned_to_me']); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
             foreach ($replies as &$reply) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
                 unset($reply['admin_id'], $reply['chat_sent_at'], $reply['email_sent_at']); // Explicação DevIN: Continua expressão ou bloco pertencente a função detail.
             } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
