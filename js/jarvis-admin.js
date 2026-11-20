@@ -259,8 +259,10 @@
     conversationSelect.value = previous; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   async function loadConversation(id) { // Explicação DevIN: Declara função/método loadConversation, com seus parâmetros e comportamento.
+    caseChat?.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadConversation.
     if (!id) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      caseChat?.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadConversation.
       clearMessages(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadConversation.
       status.textContent = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
@@ -396,6 +398,8 @@
    * A aprovação de uma ação ocorre em outra chamada, depois da prévia.
    */
   // Detalhe DevIN: Orquestra consulta, seleção e confirmação no frontend, utilizando apenas endpoints autenticados da aplicação.
+  const caseChat = window.DevInJarvisCases?.init({root, api, addMessage, chatActionCard, actionButton}) || null; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
+
   async function handleAdminCommand(message, selected=null) { // Explicação DevIN: Declara função/método handleAdminCommand, com seus parâmetros e comportamento.
     // Detalhe DevIN: Um resultado já escolhido prevalece sobre a interpretação original da frase: usa o ID da seleção para evitar ambiguidade.
     const command=selected || parseAdminCommand(message); // Explicação DevIN: Declara variável JavaScript command para reutilizar valor ou resultado.
@@ -901,6 +905,7 @@
   }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   root.querySelectorAll('[data-jarvis-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.jarvisTab))); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
   $('[data-jarvis-new]').addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+    caseChat?.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
     conversationId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     conversationSelect.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     clearMessages(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
@@ -955,7 +960,12 @@
     if (!value || busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     input.value = ''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     resize(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-    if (parseAdminCommand(value)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    if (caseChat?.matches(value)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      busy = true; send.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+      void caseChat.handle(value).catch(error => { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+        addMessage('assistant', 'Não foi possível consultar o caso: ' + error.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+      }).finally(() => { busy = false; send.disabled = false; }); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
+    } else if (parseAdminCommand(value)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       if (busy) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       busy=true;send.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
       void handleAdminCommand(value).catch(error=>{ // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.

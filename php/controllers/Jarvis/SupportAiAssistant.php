@@ -24,6 +24,25 @@ final class SupportAiAssistant // Explicação DevIN: Declara o tipo SupportAiAs
         return mb_substr($text, 0, $limit, 'UTF-8'); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+    /** Garante que dados do ticket não virem comandos privilegiados da IA. */
+    public static function scrub(string $value, int $limit = 1700): string // Explicação DevIN: Declara função/método scrub, com seus parâmetros e comportamento.
+    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        return self::sanitized($value, $limit); // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+    /** Resumo textual sem campos cadastrais e sem anexos. */
+    public static function caseContext(array $case): string // Explicação DevIN: Declara função/método caseContext, com seus parâmetros e comportamento.
+    { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        $category = self::scrub((string) ($case['category'] ?? 'outro'), 60); // Explicação DevIN: Atribui um valor à variável PHP $category.
+        $description = self::scrub((string) ($case['description'] ?? ''), 1700); // Explicação DevIN: Atribui um valor à variável PHP $description.
+        $context = "Tipo: " . self::scrub((string) ($case['type'] ?? 'support'), 30) // Explicação DevIN: Atribui um valor à variável PHP $context.
+            . "\nCategoria: {$category}\nRelato: {$description}\n"; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+        foreach (array_slice((array) ($case['previous_replies'] ?? []), -5) as $reply) { // Explicação DevIN: Inicia repetição ou seleção de casos a partir de expressão de controle.
+            $context .= "Resposta anterior: " . self::scrub((string) $reply, 380) . "\n"; // Explicação DevIN: Continua expressão ou bloco pertencente a função caseContext.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        return $context; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
     /** @return array<int, array{role:string,content:string}> */
     public static function messages(array $detail): array // Explicação DevIN: Declara função/método messages, com seus parâmetros e comportamento.
     { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
