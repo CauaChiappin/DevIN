@@ -22,15 +22,15 @@
     const statusFilter = root.querySelector('[data-support-status-filter]'); // Explicação DevIN: Declara variável JavaScript statusFilter para reutilizar valor ou resultado.
     const historyPane = root.querySelector('.support-history-pane'); // Explicação DevIN: Declara variável JavaScript historyPane para reutilizar valor ou resultado.
     const historyBack = root.querySelector('[data-support-history-back]'); // Explicação DevIN: Declara variável JavaScript historyBack para reutilizar valor ou resultado.
-    const replyField = messageForm?.querySelector('[name="message"]');
-    const aiPanel = admin ? root.querySelector('[data-support-ai]') : null;
-    const aiConsent = aiPanel?.querySelector('[data-support-ai-consent]');
-    const aiGenerate = aiPanel?.querySelector('[data-support-ai-generate]');
-    const aiStatus = aiPanel?.querySelector('[data-support-ai-status]');
-    const aiResult = aiPanel?.querySelector('[data-support-ai-result]');
-    const aiDraft = aiPanel?.querySelector('[data-support-ai-draft]');
-    const aiModel = aiPanel?.querySelector('[data-support-ai-model]');
-    const aiApply = aiPanel?.querySelector('[data-support-ai-apply]');
+    const replyField = messageForm?.querySelector('[name="message"]'); // Explicação DevIN: Declara variável JavaScript replyField para reutilizar valor ou resultado.
+    const aiPanel = admin ? root.querySelector('[data-support-ai]') : null; // Explicação DevIN: Declara variável JavaScript aiPanel para reutilizar valor ou resultado.
+    const aiConsent = aiPanel?.querySelector('[data-support-ai-consent]'); // Explicação DevIN: Declara variável JavaScript aiConsent para reutilizar valor ou resultado.
+    const aiGenerate = aiPanel?.querySelector('[data-support-ai-generate]'); // Explicação DevIN: Declara variável JavaScript aiGenerate para reutilizar valor ou resultado.
+    const aiStatus = aiPanel?.querySelector('[data-support-ai-status]'); // Explicação DevIN: Declara variável JavaScript aiStatus para reutilizar valor ou resultado.
+    const aiResult = aiPanel?.querySelector('[data-support-ai-result]'); // Explicação DevIN: Declara variável JavaScript aiResult para reutilizar valor ou resultado.
+    const aiDraft = aiPanel?.querySelector('[data-support-ai-draft]'); // Explicação DevIN: Declara variável JavaScript aiDraft para reutilizar valor ou resultado.
+    const aiModel = aiPanel?.querySelector('[data-support-ai-model]'); // Explicação DevIN: Declara variável JavaScript aiModel para reutilizar valor ou resultado.
+    const aiApply = aiPanel?.querySelector('[data-support-ai-apply]'); // Explicação DevIN: Declara variável JavaScript aiApply para reutilizar valor ou resultado.
     let aiAbort = null; // Cancela uma sugestão antiga ao trocar de chamado.
     let aiTicketId = null; // Associa a sugestão ao chamado selecionado.
  // Explicação DevIN: Declara variável JavaScript replyField para reutilizar valor ou resultado.
@@ -214,87 +214,87 @@
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Nunca manter o rascunho de outro chamado nem reaproveitar autorização anterior.
-    function resetAi() {
-        if (aiAbort) aiAbort.abort();
-        aiAbort = null;
-        aiTicketId = null;
-        if (aiConsent) aiConsent.checked = false;
-        if (aiGenerate) {
-            aiGenerate.disabled = false;
-            aiGenerate.textContent = t('Pedir sugestão ao JARVIS');
-        }
-        if (aiStatus) aiStatus.textContent = '';
-        if (aiDraft) aiDraft.textContent = '';
-        if (aiModel) aiModel.textContent = '';
-        if (aiResult) aiResult.hidden = true;
-    }
+    function resetAi() { // Explicação DevIN: Declara função/método resetAi, com seus parâmetros e comportamento.
+        if (aiAbort) aiAbort.abort(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        aiAbort = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        aiTicketId = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        if (aiConsent) aiConsent.checked = false; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (aiGenerate) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            aiGenerate.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            aiGenerate.textContent = t('Pedir sugestão ao JARVIS'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (aiStatus) aiStatus.textContent = ''; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (aiDraft) aiDraft.textContent = ''; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (aiModel) aiModel.textContent = ''; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (aiResult) aiResult.hidden = true; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // A resposta remota entra somente no painel de rascunho e jamais é enviada sozinha.
-    aiGenerate?.addEventListener('click', async () => {
-        const ticketId = Number(messageForm?.dataset.ticketId || 0);
-        if (!admin || !ticketId || selectedId !== ticketId || messageForm.hidden) {
-            if (aiStatus) aiStatus.textContent = t('Selecione um chamado aberto antes de pedir ajuda.');
-            return;
-        }
-        if (!aiConsent?.checked) {
-            if (aiStatus) aiStatus.textContent = t('Autorize o envio do contexto anonimizado ao provedor de IA.');
-            aiConsent?.focus();
-            return;
-        }
-        if (aiAbort) aiAbort.abort();
-        const controller = new AbortController();
-        aiAbort = controller;
-        aiTicketId = ticketId;
-        aiGenerate.disabled = true;
-        aiGenerate.textContent = t('Gerando sugestão...');
-        if (aiStatus) aiStatus.textContent = t('JARVIS preparando rascunho. Nenhuma resposta será enviada.');
-        if (aiResult) aiResult.hidden = true;
-        try {
-            const response = await fetch(new URL('api/jarvis/support_assist.php', location.href), {
-                method: 'POST',
-                credentials: 'same-origin',
-                cache: 'no-store',
-                redirect: 'error',
-                signal: controller.signal,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrf
-                },
-                body: JSON.stringify({ action: 'draft', ticket_id: ticketId, consent: true })
-            });
-            const data = await response.json().catch(() => null);
-            if (!response.ok || !data?.success) {
-                throw new Error(t(data?.message || 'Não foi possível gerar uma sugestão.'));
-            }
+    aiGenerate?.addEventListener('click', async () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        const ticketId = Number(messageForm?.dataset.ticketId || 0); // Explicação DevIN: Declara variável JavaScript ticketId para reutilizar valor ou resultado.
+        if (!admin || !ticketId || selectedId !== ticketId || messageForm.hidden) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (aiStatus) aiStatus.textContent = t('Selecione um chamado aberto antes de pedir ajuda.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (!aiConsent?.checked) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (aiStatus) aiStatus.textContent = t('Autorize o envio do contexto anonimizado ao provedor de IA.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            aiConsent?.focus(); // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+            return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        if (aiAbort) aiAbort.abort(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        const controller = new AbortController(); // Explicação DevIN: Declara variável JavaScript controller para reutilizar valor ou resultado.
+        aiAbort = controller; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        aiTicketId = ticketId; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        aiGenerate.disabled = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        aiGenerate.textContent = t('Gerando sugestão...'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        if (aiStatus) aiStatus.textContent = t('JARVIS preparando rascunho. Nenhuma resposta será enviada.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        if (aiResult) aiResult.hidden = true; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
+            const response = await fetch(new URL('api/jarvis/support_assist.php', location.href), { // Explicação DevIN: Inicia solicitação HTTP assíncrona a um endereço configurado.
+                method: 'POST', // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+                credentials: 'same-origin', // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+                cache: 'no-store', // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+                redirect: 'error', // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+                signal: controller.signal, // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+                headers: { // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+                    'Content-Type': 'application/json', // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                    'X-CSRF-Token': csrf // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
+                }, // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+                body: JSON.stringify({ action: 'draft', ticket_id: ticketId, consent: true }) // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
+            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+            const data = await response.json().catch(() => null); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            if (!response.ok || !data?.success) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                throw new Error(t(data?.message || 'Não foi possível gerar uma sugestão.')); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             // Um retorno tardio não pode sobrescrever o chamado aberto em outra aba.
-            if (controller.signal.aborted || selectedId !== ticketId ||
-                Number(messageForm?.dataset.ticketId || 0) !== ticketId ||
-                Number(data.ticket_id) !== ticketId) return;
-            if (aiDraft) aiDraft.textContent = String(data.draft || '').slice(0, 3000);
-            if (aiModel) aiModel.textContent = t('Modelo:') + ' ' + (data.model || 'JARVIS');
-            if (aiResult) aiResult.hidden = false;
-            if (aiStatus) aiStatus.textContent = t('Sugestão pronta para revisão. O usuário não recebeu mensagem.');
-        } catch (error) {
-            if (error.name !== 'AbortError' && aiStatus) aiStatus.textContent =
-                t('JARVIS indisponível:') + ' ' + error.message;
-        } finally {
-            if (aiAbort === controller) {
-                aiAbort = null;
-                aiGenerate.disabled = false;
-                aiGenerate.textContent = t('Pedir sugestão ao JARVIS');
-            }
-        }
-    });
+            if (controller.signal.aborted || selectedId !== ticketId || // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                Number(messageForm?.dataset.ticketId || 0) !== ticketId || // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+                Number(data.ticket_id) !== ticketId) return; // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+            if (aiDraft) aiDraft.textContent = String(data.draft || '').slice(0, 3000); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (aiModel) aiModel.textContent = t('Modelo:') + ' ' + (data.model || 'JARVIS'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (aiResult) aiResult.hidden = false; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (aiStatus) aiStatus.textContent = t('Sugestão pronta para revisão. O usuário não recebeu mensagem.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+        } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            if (error.name !== 'AbortError' && aiStatus) aiStatus.textContent = // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                t('JARVIS indisponível:') + ' ' + error.message; // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+        } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
+            if (aiAbort === controller) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+                aiAbort = null; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                aiGenerate.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+                aiGenerate.textContent = t('Pedir sugestão ao JARVIS'); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-    aiApply?.addEventListener('click', () => {
-        if (!aiDraft?.textContent || !replyField || aiTicketId !== selectedId ||
-            Number(messageForm?.dataset.ticketId || 0) !== selectedId || messageForm.hidden) return;
-        replyField.value = aiDraft.textContent.slice(0, 3000);
-        replyField.dispatchEvent(new Event('input', { bubbles: true }));
-        replyField.focus();
-        replyField.scrollIntoView({ behavior: 'auto', block: 'nearest' });
-        if (aiStatus) aiStatus.textContent = t('Rascunho copiado. Revise o texto antes de enviar.');
-    });
+    aiApply?.addEventListener('click', () => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
+        if (!aiDraft?.textContent || !replyField || aiTicketId !== selectedId || // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            Number(messageForm?.dataset.ticketId || 0) !== selectedId || messageForm.hidden) return; // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+        replyField.value = aiDraft.textContent.slice(0, 3000); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+        replyField.dispatchEvent(new Event('input', { bubbles: true })); // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+        replyField.focus(); // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+        replyField.scrollIntoView({ behavior: 'auto', block: 'nearest' }); // Explicação DevIN: Continua expressão ou bloco pertencente a função resetAi.
+        if (aiStatus) aiStatus.textContent = t('Rascunho copiado. Revise o texto antes de enviar.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     // Reconsulta detalhes com verificação de propriedade no PHP.
     async function loadDetail(id, revealMobile = false) { // Explicação DevIN: Declara função/método loadDetail, com seus parâmetros e comportamento.
@@ -443,8 +443,8 @@
             payload.set('action','reply'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             payload.set('id',messageForm.dataset.ticketId); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             const result = await request({},payload); // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
-            messageForm.reset();
-            resetAi(); // Envio humano concluído: limpa consentimento e rascunho. // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+            messageForm.reset(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
+            resetAi(); // Envio humano concluído: limpa consentimento e rascunho.
             updateReplyCounter(); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
             status(t('Resposta registrada. Mensagem interna:') + ' ' + t(result.chat_sent ? 'enviada' : 'pendente') // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.
                 + '. ' + t('E-mail:') + ' ' + t(result.email_sent ? 'enviado' : 'pendente') + '.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função refresh.

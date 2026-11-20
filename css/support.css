@@ -287,169 +287,169 @@
 
 
 /* Copiloto JARVIS para suporte: nunca sobrepõe o botão humano de enviar. */
-.support-admin-view .support-ai {
-    box-sizing: border-box;
-    min-width: 0;
-    display: grid;
-    gap: 12px;
-    margin: 22px 0 16px;
-    padding: clamp(14px, 2vw, 20px);
-    border: 1px solid #bed7ed;
-    border-radius: 17px;
-    background: linear-gradient(155deg, #f2f8fe, #fff);
-}
-.support-admin-view .support-ai__heading {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 8px;
-    color: #164c7c;
-    font-size: 17px;
-}
-.support-admin-view .support-ai__pill {
-    padding: 5px 10px;
-    border-radius: 999px;
-    background: #d9ebfa;
-    color: #215a86;
-    font-size: 11px;
-    font-weight: 750;
-}
-.support-admin-view .support-ai__description {
-    color: #426078;
-    font-size: 13px;
-    line-height: 1.6;
-    margin: 0;
-}
-.support-admin-view .support-ai__consent {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin: 0;
-    padding: 12px;
-    background: #fff;
-    border: 1px solid #d6e5f1;
-    border-radius: 11px;
-    color: #244764;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.55;
-    cursor: pointer;
-}
-.support-admin-view .support-ai__consent input {
-    width: 19px;
-    height: 19px;
-    flex: 0 0 19px;
-    margin: 1px 0 0;
-}
-.support-admin-view .support-ai__ask {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    width: fit-content;
-    max-width: 100%;
-    margin: 0;
-}
-.support-admin-view .support-ai__ask:disabled {
-    opacity: .65;
-    cursor: wait;
-}
-.support-admin-view .support-ai__status {
-    margin: 0;
-    min-height: 1.2em;
-    font-size: 12px;
-    line-height: 1.5;
-    color: #315b7d;
-    overflow-wrap: anywhere;
-}
-.support-admin-view .support-ai__suggestion {
-    display: grid;
-    gap: 12px;
-    min-width: 0;
-    padding: 15px;
-    border-radius: 13px;
-    border: 1px solid #bfd9ee;
-    background: #fff;
-}
-.support-admin-view .support-ai__suggestion h3 {
-    font-size: 16px;
-    margin: 0;
-}
-.support-admin-view .support-ai__suggestion .support-hint {
-    margin: 0;
-    font-size: 12px;
-}
-.support-admin-view .support-ai__draft {
-    margin: 0;
-    color: #1e415e;
-    font-size: 14px;
-    line-height: 1.65;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    word-break: normal;
-}
-.support-admin-view .support-ai__suggestion button {
-    justify-self: start;
-    min-height: 44px;
-    margin: 0;
-}
+.support-admin-view .support-ai { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    gap: 12px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    margin: 22px 0 16px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    padding: clamp(14px, 2vw, 20px); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border: 1px solid #bed7ed; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 17px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: linear-gradient(155deg, #f2f8fe, #fff); /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__heading { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    flex-wrap: wrap; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS flex-wrap. */
+    justify-content: space-between; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    gap: 8px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    color: #164c7c; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 17px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__pill { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    padding: 5px 10px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 999px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    background: #d9ebfa; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    color: #215a86; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 11px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 750; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__description { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    color: #426078; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.6; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__consent { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: flex-start; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    gap: 10px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    padding: 12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+    border: 1px solid #d6e5f1; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    border-radius: 11px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    color: #244764; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 13px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    font-weight: 500; /* Explicação DevIN: Define peso tipográfico por meio da propriedade CSS font-weight. */
+    line-height: 1.55; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    cursor: pointer; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__consent input { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    width: 19px; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    height: 19px; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+    flex: 0 0 19px; /* Explicação DevIN: Define comportamento de flexibilidade por meio da propriedade CSS flex. */
+    margin: 1px 0 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__ask { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: inline-flex; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    align-items: center; /* Explicação DevIN: Define alinhamento transversal por meio da propriedade CSS align-items. */
+    justify-content: center; /* Explicação DevIN: Define distribuição dos itens por meio da propriedade CSS justify-content. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    width: fit-content; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__ask:disabled { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    opacity: .65; /* Explicação DevIN: Define opacidade por meio da propriedade CSS opacity. */
+    cursor: wait; /* Explicação DevIN: Define aparência do cursor por meio da propriedade CSS cursor. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__status { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    min-height: 1.2em; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.5; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    color: #315b7d; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    overflow-wrap: anywhere; /* Explicação DevIN: Define quebra de texto longo por meio da propriedade CSS overflow-wrap. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__suggestion { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    display: grid; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+    gap: 12px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+    min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    padding: 15px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    border-radius: 13px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    border: 1px solid #bfd9ee; /* Explicação DevIN: Define borda por meio da propriedade CSS border. */
+    background: #fff; /* Explicação DevIN: Define fundo por meio da propriedade CSS background. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__suggestion h3 { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    font-size: 16px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__suggestion .support-hint { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    font-size: 12px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__draft { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+    color: #1e415e; /* Explicação DevIN: Define cor do texto por meio da propriedade CSS color. */
+    font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    line-height: 1.65; /* Explicação DevIN: Define altura de linha por meio da propriedade CSS line-height. */
+    white-space: pre-wrap; /* Explicação DevIN: Define tratamento de espaços e quebras de linha por meio da propriedade CSS white-space. */
+    overflow-wrap: anywhere; /* Explicação DevIN: Define quebra de texto longo por meio da propriedade CSS overflow-wrap. */
+    word-break: normal; /* Explicação DevIN: Define regras de quebra de palavras por meio da propriedade CSS word-break. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+.support-admin-view .support-ai__suggestion button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+    justify-self: start; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS justify-self. */
+    min-height: 44px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    margin: 0; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
 
 /* Layout mobile apenas para a página Suporte ADM. */
-@media (max-width: 767px) {
-    .dashboard-shell.page-suporte {
-        box-sizing: border-box;
-        grid-template-columns: minmax(0, 1fr);
-        grid-auto-rows: max-content;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        overflow: visible;
-    }
-    .dashboard-shell.page-suporte > .sidebar,
-    .dashboard-shell.page-suporte > .lista-area {
-        box-sizing: border-box;
-        grid-column: 1 / -1;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-    }
-    .dashboard-shell.page-suporte > .lista-area {
-        height: auto;
-        min-height: 0;
-        padding: 8px 10px 28px;
-        overflow: visible;
-    }
-    .dashboard-shell.page-suporte .support-admin-view {
-        padding: 8px 0 calc(22px + env(safe-area-inset-bottom, 0px));
-        min-width: 0;
-    }
-    .dashboard-shell.page-suporte .support-admin-grid {
-        display: block;
-        min-width: 0;
-        width: 100%;
-    }
-    .dashboard-shell.page-suporte .support-admin-view .support-ai {
-        margin: 17px 0 13px;
-        padding: 14px;
-        gap: 11px;
-        border-radius: 14px;
-    }
-    .dashboard-shell.page-suporte .support-ai__heading {
-        font-size: 15px;
-    }
-    .dashboard-shell.page-suporte .support-ai__consent {
-        padding: 11px;
-    }
-    .dashboard-shell.page-suporte .support-ai__ask,
-    .dashboard-shell.page-suporte .support-ai__suggestion button {
-        width: 100%;
-        min-height: 48px;
-    }
-    .dashboard-shell.page-suporte .support-ai__draft {
-        font-size: 14px;
-    }
-    .dashboard-shell.page-suporte .support-ai__suggestion {
-        padding: 12px;
-    }
-}
+@media (max-width: 767px) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
+    .dashboard-shell.page-suporte { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+        grid-template-columns: minmax(0, 1fr); /* Explicação DevIN: Define colunas da grade por meio da propriedade CSS grid-template-columns. */
+        grid-auto-rows: max-content; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-auto-rows. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+        height: auto; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        overflow: visible; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte > .sidebar, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell.page-suporte > .lista-area { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        box-sizing: border-box; /* Explicação DevIN: Define cálculo das dimensões por meio da propriedade CSS box-sizing. */
+        grid-column: 1 / -1; /* Explicação DevIN: Define propriedade visual ou de layout por meio da propriedade CSS grid-column. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        max-width: 100%; /* Explicação DevIN: Define largura máxima por meio da propriedade CSS max-width. */
+        min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte > .lista-area { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        height: auto; /* Explicação DevIN: Define altura por meio da propriedade CSS height. */
+        min-height: 0; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+        padding: 8px 10px 28px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        overflow: visible; /* Explicação DevIN: Define tratamento de conteúdo excedente por meio da propriedade CSS overflow. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte .support-admin-view { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        padding: 8px 0 calc(22px + env(safe-area-inset-bottom, 0px)); /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte .support-admin-grid { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        display: block; /* Explicação DevIN: Define modo de layout por meio da propriedade CSS display. */
+        min-width: 0; /* Explicação DevIN: Define largura mínima por meio da propriedade CSS min-width. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte .support-admin-view .support-ai { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        margin: 17px 0 13px; /* Explicação DevIN: Define espaçamento externo por meio da propriedade CSS margin. */
+        padding: 14px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+        gap: 11px; /* Explicação DevIN: Define espaçamento entre itens por meio da propriedade CSS gap. */
+        border-radius: 14px; /* Explicação DevIN: Define arredondamento dos cantos por meio da propriedade CSS border-radius. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte .support-ai__heading { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: 15px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte .support-ai__consent { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        padding: 11px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte .support-ai__ask, /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
+    .dashboard-shell.page-suporte .support-ai__suggestion button { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        width: 100%; /* Explicação DevIN: Define largura por meio da propriedade CSS width. */
+        min-height: 48px; /* Explicação DevIN: Define altura mínima por meio da propriedade CSS min-height. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte .support-ai__draft { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        font-size: 14px; /* Explicação DevIN: Define tamanho da fonte por meio da propriedade CSS font-size. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+    .dashboard-shell.page-suporte .support-ai__suggestion { /* Explicação DevIN: Inicia bloco de estilos associado ao seletor de elemento/classe desta linha. */
+        padding: 12px; /* Explicação DevIN: Define espaçamento interno por meio da propriedade CSS padding. */
+    } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+} /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */

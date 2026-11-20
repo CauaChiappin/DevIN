@@ -199,39 +199,39 @@ test('suporte ADM diferencia migração pendente de erro comum sem criar tabelas
     assert.match(css, /\.dashboard-shell\.page-suporte \.support-admin-head/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('JARVIS só sugere rascunhos sob pedido de ADM, sem envio automático', () => {
-    const endpoint = read('php/api/jarvis/support_assist.php');
-    const helper = read('php/controllers/Jarvis/SupportAiAssistant.php');
-    const ui = read('js/support-ui.js');
-    const page = read('php/components/support-admin.php');
-    assert.match(endpoint, /jarvisAdmin\(\)/);
-    assert.match(endpoint, /jarvisCsrf\(\)/);
-    assert.match(endpoint, /jarvisLimit\(\$adminId, 'support-draft'/);
-    assert.match(endpoint, /SupportDesk::detail\(/);
-    assert.match(endpoint, /ModelProvider::chatWithMeta\(/);
-    assert.match(endpoint, /'requires_approval' => true/);
-    assert.doesNotMatch(endpoint, /SupportDesk::reply\(/);
-    assert.doesNotMatch(endpoint, /SupportDesk::close\(/);
-    assert.match(helper, /dado ocultado/);
-    assert.match(helper, /não confiável/);
-    assert.match(page, /data-support-ai-consent/);
-    assert.match(page, /data-support-ai-generate/);
-    assert.match(page, /data-support-ai-apply/);
-    assert.match(page, /não será enviado automaticamente/);
-    assert.match(ui, /async \(\) =>/);
-    assert.match(ui, /function resetAi\(\)/);
-    assert.match(ui, /aiConsent\?\.checked/);
-    assert.match(ui, /aiApply\?\.addEventListener/);
-    assert.match(ui, /X-CSRF-Token/);
-    assert.match(ui, /controller\.signal\.aborted/);
-});
+test('JARVIS só sugere rascunhos sob pedido de ADM, sem envio automático', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const endpoint = read('php/api/jarvis/support_assist.php'); // Explicação DevIN: Declara variável JavaScript endpoint para reutilizar valor ou resultado.
+    const helper = read('php/controllers/Jarvis/SupportAiAssistant.php'); // Explicação DevIN: Declara variável JavaScript helper para reutilizar valor ou resultado.
+    const ui = read('js/support-ui.js'); // Explicação DevIN: Declara variável JavaScript ui para reutilizar valor ou resultado.
+    const page = read('php/components/support-admin.php'); // Explicação DevIN: Declara variável JavaScript page para reutilizar valor ou resultado.
+    assert.match(endpoint, /jarvisAdmin\(\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(endpoint, /jarvisCsrf\(\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(endpoint, /jarvisLimit\(\$adminId, 'support-draft'/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(endpoint, /SupportDesk::detail\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(endpoint, /ModelProvider::chatWithMeta\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(endpoint, /'requires_approval' => true/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.doesNotMatch(endpoint, /SupportDesk::reply\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.doesNotMatch(endpoint, /SupportDesk::close\(/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(helper, /dado ocultado/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(helper, /não confiável/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-support-ai-consent/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-support-ai-generate/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /data-support-ai-apply/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(page, /não será enviado automaticamente/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /async \(\) =>/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /function resetAi\(\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /aiConsent\?\.checked/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /aiApply\?\.addEventListener/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /X-CSRF-Token/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(ui, /controller\.signal\.aborted/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-test('suporte ADM no celular ocupa a largura e mantém consentimento acessível', () => {
-    const css = read('css/support.css');
-    assert.match(css, /\.dashboard-shell\.page-suporte > \.lista-area/);
-    assert.match(css, /\.dashboard-shell\.page-suporte > \.sidebar/);
-    assert.match(css, /@media \(max-width: 767px\)/);
-    assert.match(css, /\.support-ai__consent/);
-    assert.match(css, /\.support-ai__draft/);
-    assert.match(css, /safe-area-inset-bottom/);
-});
+test('suporte ADM no celular ocupa a largura e mantém consentimento acessível', () => { // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    const css = read('css/support.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-suporte > \.lista-area/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /\.dashboard-shell\.page-suporte > \.sidebar/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /@media \(max-width: 767px\)/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /\.support-ai__consent/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /\.support-ai__draft/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+    assert.match(css, /safe-area-inset-bottom/); // Explicação DevIN: Continua expressão ou bloco pertencente a tipo exige.
+}); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
