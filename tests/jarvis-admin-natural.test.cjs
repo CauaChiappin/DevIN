@@ -13,10 +13,10 @@ const examples=[ // Explicação DevIN: Declara variável JavaScript examples pa
   ['Quero ver as vagas disponíveis',{type:'browse',kind:'vaga'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Liste as empresas cadastradas',{type:'browse',kind:'empresa'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Mostre todos os candidatos',{type:'browse',kind:'pessoa'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-  ['Quais vagas existem?',{type:'browse',kind:'vaga'}],
-  ['Jarvis, consulte as vagas cadastradas no DevIN e mostre os resultados.',{type:'browse',kind:'vaga'}], // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  ['Mostre as vagas do DevIN',{type:'browse',kind:'vaga'}], // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  ['Consulte todas as vagas cadastradas',{type:'browse',kind:'vaga'}], // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+  ['Quais vagas existem?',{type:'browse',kind:'vaga'}], // Detalhe DevIN: Exige listagem de vagas.
+  ['Jarvis, consulte as vagas cadastradas no DevIN e mostre os resultados.',{type:'browse',kind:'vaga'}], // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  ['Mostre as vagas do DevIN',{type:'browse',kind:'vaga'}], // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  ['Consulte todas as vagas cadastradas',{type:'browse',kind:'vaga'}], // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
   ['Quais empresas estão cadastradas?',{type:'browse',kind:'empresa'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Mostre o anúncio #15',{type:'search',kind:'vaga',id:15,name:''}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Encontre João Silva',{type:'search',kind:null,id:null,name:'João Silva'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
@@ -80,22 +80,22 @@ test('página carrega o interpretador antes do JARVIS principal',()=>{ // Explic
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 
-test('formulários JARVIS possuem recuperação de estado, timeout e painel ADM', () => { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  const app=read('js/jarvis-admin.js'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  const ui=read('php/components/jarvis-admin-widget.php'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  const api=read('php/api/jarvis/admin_tools.php'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  assert.match(app,/AbortController/); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  assert.match(app,/submit\.disabled = false/); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  assert.match(app,/submit\.disabled=false/); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  assert.match(app,/loadAdminOverview/); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  assert.match(ui,/data-jarvis-tab="overview"/); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  assert.match(ui,/data-jarvis-pane="overview"/); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  assert.match(api,/session_write_close\(\)/); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-}); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+test('formulários JARVIS possuem recuperação de estado, timeout e painel ADM', () => { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  const app=read('js/jarvis-admin.js'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  const ui=read('php/components/jarvis-admin-widget.php'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  const api=read('php/api/jarvis/admin_tools.php'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  assert.match(app,/AbortController/); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  assert.match(app,/submit\.disabled = false/); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  assert.match(app,/submit\.disabled=false/); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  assert.match(app,/loadAdminOverview/); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  assert.match(ui,/data-jarvis-tab="overview"/); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  assert.match(ui,/data-jarvis-pane="overview"/); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  assert.match(api,/session_write_close\(\)/); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+}); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
 
-test('.env.example contém somente comentários e atribuições dotenv', () => { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  const env=read('.env.example'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  for (const line of env.split(/\r?\n/)) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-    assert.ok(!line.trim() || line.trim().startsWith('#') || /^[A-Za-z_][A-Za-z0-9_]*=/.test(line), line); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-  } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
-}); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+test('.env.example contém somente comentários e atribuições dotenv', () => { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  const env=read('.env.example'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  for (const line of env.split(/\r?\n/)) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    assert.ok(!line.trim() || line.trim().startsWith('#') || /^[A-Za-z_][A-Za-z0-9_]*=/.test(line), line); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+}); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
