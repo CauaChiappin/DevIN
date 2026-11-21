@@ -26,7 +26,8 @@ SUFFIXES = {".php", ".js", ".cjs", ".mjs", ".css", ".html", ".htm", ".sql", # Ex
 SPECIAL_FILES = {".env.example", ".htaccess", ".gitignore", "Dockerfile", "Makefile"} # Explicação DevIN: Atribui resultado à variável Python SPECIAL_FILES.
 IGNORE_SEGMENTS = {"vendor", "node_modules", ".git", "dist", "build", # Explicação DevIN: Atribui resultado à variável Python IGNORE_SEGMENTS.
                    "__pycache__", "coverage", "third_party"} # Explicação DevIN: Executa parte de uma expressão, chamada ou configuração Python.
-EXCLUDED = {"composer.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"} # Explicação DevIN: Atribui resultado à variável Python EXCLUDED.
+# Arquivos consumidos diretamente por Apache/dotenv não aceitam comentários finais sem risco de falha.
+EXCLUDED = {"composer.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", ".env.example", ".htaccess"} # Explicação DevIN: Atribui resultado à variável Python EXCLUDED.
 NON_COMMENTABLE_SUFFIXES = {".json"} # Explicação DevIN: Atribui resultado à variável Python NON_COMMENTABLE_SUFFIXES.
 NON_COMMENTABLE_NAMES = {".gitignore"} # Explicação DevIN: Atribui resultado à variável Python NON_COMMENTABLE_NAMES.
 ANNOTATION_MARKER = "Explicação DevIN:" # Explicação DevIN: Atribui resultado à variável Python ANNOTATION_MARKER.
