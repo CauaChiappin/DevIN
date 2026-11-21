@@ -156,33 +156,33 @@
   initLauncherDocking(); // Explicação DevIN: Continua expressão ou bloco pertencente a função finishDrag.
 
   // Timeout impede consultas e formulários de permanecerem bloqueados indefinidamente.
-  async function api(url, body = null) {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), body === null ? 20000 : 90000);
-    const options = {credentials: 'same-origin', cache: 'no-store',
-      signal: controller.signal, headers: {Accept: 'application/json'}};
-    if (body !== null) {
-      options.method = 'POST';
-      options.headers['Content-Type'] = 'application/json';
-      options.headers['X-CSRF-Token'] = root.dataset.csrf;
-      options.body = JSON.stringify(body);
-    }
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json().catch(() => null);
-      if (!data || !response.ok || data.success !== true) {
-        throw new Error(data?.message || 'Falha ao consultar o servidor. Verifique sua sessão.');
-      }
-      return data;
-    } catch (error) {
-      if (error?.name === 'AbortError') throw new Error(body === null
-        ? 'A consulta demorou demais. Tente novamente.'
-        : 'Tempo limite atingido. Verifique o histórico antes de repetir; a operação pode ter sido concluída.');
-      throw error;
-    } finally {
-      window.clearTimeout(timeout);
-    }
-  }
+  async function api(url, body = null) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const controller = new AbortController(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const timeout = window.setTimeout(() => controller.abort(), body === null ? 20000 : 90000); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const options = {credentials: 'same-origin', cache: 'no-store', // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      signal: controller.signal, headers: {Accept: 'application/json'}}; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    if (body !== null) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      options.method = 'POST'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      options.headers['Content-Type'] = 'application/json'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      options.headers['X-CSRF-Token'] = root.dataset.csrf; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      options.body = JSON.stringify(body); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    try { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const response = await fetch(url, options); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const data = await response.json().catch(() => null); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      if (!data || !response.ok || data.success !== true) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        throw new Error(data?.message || 'Falha ao consultar o servidor. Verifique sua sessão.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      return data; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } catch (error) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      if (error?.name === 'AbortError') throw new Error(body === null // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ? 'A consulta demorou demais. Tente novamente.' // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        : 'Tempo limite atingido. Verifique o histórico antes de repetir; a operação pode ter sido concluída.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      throw error; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } finally { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      window.clearTimeout(timeout); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+  } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
   function open(show) { // Explicação DevIN: Declara função/método open, com seus parâmetros e comportamento.
     panel.hidden = !show; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     launcher.setAttribute('aria-expanded', String(show)); // Explicação DevIN: Continua expressão ou bloco pertencente a função open.
@@ -932,41 +932,41 @@
   function toolNotice(node, text) { node.textContent = String(text); } // Explicação DevIN: Declara função/método toolNotice, com seus parâmetros e comportamento.
 
   // Reutiliza as métricas locais existentes do dashboard, sem duplicar SQL.
-  async function loadAdminOverview() {
-    const info = $('[data-jarvis-overview-status]');
-    const list = $('[data-jarvis-overview-list]');
-    toolNotice(info, 'Carregando indicadores...');
-    try {
-      const response = await api(toolUrl + '?action=overview');
-      const counts = response.overview || {};
-      const fields = [['pessoas','Candidatos'],['empresas','Empresas'],['vagas','Vagas'],
-        ['candidaturas','Candidaturas'],['contratacoes','Contratações'],
-        ['denuncias_pendentes','Denúncias pendentes'],['suporte_aberto','Chamados abertos']];
-      list.replaceChildren();
-      for (const [key,label] of fields) {
-        const card = document.createElement('article');
-        card.className = 'jarvis-admin__tool-card';
-        const heading = document.createElement('strong');
-        heading.textContent = label;
-        const value = document.createElement('p');
-        value.textContent = Number.isFinite(counts[key])
-          ? new Intl.NumberFormat('pt-BR').format(counts[key]) : 'Indisponível';
-        card.append(heading,value);
-        list.append(card);
-      }
-      for (const [page,label] of [['inicio','Visão geral'],['candidatos','Candidatos'],
-        ['posts','Vagas'],['reports','Denúncias'],['suporte','Suporte'],['estatisticas','Estatísticas']]) {
-        const link = document.createElement('a');
-        link.href = 'adm.php?pagina=' + encodeURIComponent(page);
-        link.textContent = 'Abrir ' + label;
-        link.className = 'jarvis-admin__tool-card';
-        list.append(link);
-      }
-      toolNotice(info, 'Indicadores consultados no MySQL.');
-    } catch (error) { toolNotice(info, error.message); }
-  }
+  async function loadAdminOverview() { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const info = $('[data-jarvis-overview-status]'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const list = $('[data-jarvis-overview-list]'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    toolNotice(info, 'Carregando indicadores...'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    try { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const response = await api(toolUrl + '?action=overview'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const counts = response.overview || {}; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const fields = [['pessoas','Candidatos'],['empresas','Empresas'],['vagas','Vagas'], // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ['candidaturas','Candidaturas'],['contratacoes','Contratações'], // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ['denuncias_pendentes','Denúncias pendentes'],['suporte_aberto','Chamados abertos']]; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      list.replaceChildren(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      for (const [key,label] of fields) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const card = document.createElement('article'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        card.className = 'jarvis-admin__tool-card'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const heading = document.createElement('strong'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        heading.textContent = label; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const value = document.createElement('p'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        value.textContent = Number.isFinite(counts[key]) // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          ? new Intl.NumberFormat('pt-BR').format(counts[key]) : 'Indisponível'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        card.append(heading,value); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        list.append(card); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      for (const [page,label] of [['inicio','Visão geral'],['candidatos','Candidatos'], // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ['posts','Vagas'],['reports','Denúncias'],['suporte','Suporte'],['estatisticas','Estatísticas']]) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const link = document.createElement('a'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        link.href = 'adm.php?pagina=' + encodeURIComponent(page); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        link.textContent = 'Abrir ' + label; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        link.className = 'jarvis-admin__tool-card'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        list.append(link); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      toolNotice(info, 'Indicadores consultados no MySQL.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } catch (error) { toolNotice(info, error.message); } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+  } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
 
-  $('[data-jarvis-overview-refresh]').addEventListener('click', () => void loadAdminOverview());
+  $('[data-jarvis-overview-refresh]').addEventListener('click', () => void loadAdminOverview()); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
 
   async function loadDrafts() { // Explicação DevIN: Declara função/método loadDrafts, com seus parâmetros e comportamento.
     toolNotice(outboxStatus, 'Carregando rascunhos...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
@@ -1067,112 +1067,112 @@
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
   $('[data-jarvis-audit-refresh]').addEventListener('click', () => void loadAudit()); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-  $('[data-jarvis-lookup-form]').addEventListener('submit', async event => {
-    event.preventDefault();
-    const submit = event.currentTarget.querySelector('button[type="submit"]');
-    if (submit.disabled) return;
-    submit.disabled = true;
-    submit.textContent = 'Consultando...';
-    toolNotice(lookupStatus,'Consultando registros...');
-    analysisArea.textContent='';
-    recordResults.replaceChildren();
-    const kind=$('[data-jarvis-record-kind]').value;
-    const query=$('[data-jarvis-record-query]').value.trim();
-    try {
-      const data=await api(toolUrl + '?action=search&kind=' + encodeURIComponent(kind)
-        + '&q=' + encodeURIComponent(query));
-      data.records.forEach(record => {
-        const card=document.createElement('article');
-        card.className='jarvis-admin__tool-card';
-        const title=document.createElement('strong');
-        title.textContent='#'+record.id+' · '+(record.title||record.name||kind);
-        const subtitle=document.createElement('small');
-        subtitle.textContent=[record.subtitle,record.motivo,record.status].filter(Boolean).join(' · ');
-        const button=document.createElement('button');
-        button.type='button';button.textContent='Analisar com IA';
-        button.addEventListener('click',async()=>{
-          if (button.disabled) return;
-          button.disabled=true;
-          toolNotice(lookupStatus,'Analisando registro selecionado...');
-          try {
-            const result=await api(toolUrl,{
-              action:'analyze',kind,id:Number(record.id),
-              question:$('[data-jarvis-record-question]').value.trim()
-            });
-            analysisArea.textContent=result.reply;
-            toolNotice(lookupStatus,'Análise concluída. Nenhum dado foi alterado.');
-          } catch (error) {toolNotice(lookupStatus,error.message);}
-          finally {button.disabled=false;}
-        });
-        if (['vaga','pessoa','empresa'].includes(kind)) {
-          const remove=document.createElement('button');
-          remove.type='button';
-          remove.textContent='Solicitar exclusão';
-          remove.addEventListener('click',async()=>{
-            if (remove.disabled) return;
-            remove.disabled=true;
-            try {
-              const result=await api(toolUrl,{
-                action:'preview_delete',kind,id:Number(record.id)
-              });
-              const proposal=result.proposal;
-              const label=proposal.record.kind+' #'+proposal.record.id+' — '+proposal.record.title;
-              const agreed=window.confirm('Confirme o registro que deseja excluir:\n'+label+
-                '\n\nEsta exclusão é definitiva e pode afetar dados relacionados. Continuar?');
-              if (!agreed) {
-                toolNotice(lookupStatus,'Exclusão cancelada; nenhuma alteração realizada.');
-                return;
-              }
-              const typed=window.prompt('Para excluir '+label+', digite EXCLUIR:');
-              if (typed !== 'EXCLUIR') {
-                toolNotice(lookupStatus,'Confirmação recusada. Nenhuma alteração realizada.');
-                return;
-              }
-              const done=await api(toolUrl,{
-                action:'confirm_delete',kind,id:Number(record.id),
-                confirmation:proposal.confirmation,approval:typed
-              });
-              toolNotice(lookupStatus,done.message);
-              card.remove();
-            } catch(error) {toolNotice(lookupStatus,error.message);}
-            finally {remove.disabled=false;}
-          });
-          card.append(title,subtitle,button,remove);
-        } else {
-          card.append(title,subtitle,button);
-        }
-        recordResults.append(card);
-      });
-      if (!data.records.length) toolNotice(lookupStatus,'Nenhum resultado encontrado.');
-      else toolNotice(lookupStatus,'Registros encontrados: '+data.records.length+'.');
-    } catch (error) {toolNotice(lookupStatus,error.message);}
-    finally { submit.disabled = false; submit.textContent = 'Consultar registros'; }
-  });
+  $('[data-jarvis-lookup-form]').addEventListener('submit', async event => { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    event.preventDefault(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const submit = event.currentTarget.querySelector('button[type="submit"]'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    if (submit.disabled) return; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    submit.disabled = true; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    submit.textContent = 'Consultando...'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    toolNotice(lookupStatus,'Consultando registros...'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    analysisArea.textContent=''; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    recordResults.replaceChildren(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const kind=$('[data-jarvis-record-kind]').value; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const query=$('[data-jarvis-record-query]').value.trim(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    try { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const data=await api(toolUrl + '?action=search&kind=' + encodeURIComponent(kind) // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        + '&q=' + encodeURIComponent(query)); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      data.records.forEach(record => { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const card=document.createElement('article'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        card.className='jarvis-admin__tool-card'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const title=document.createElement('strong'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        title.textContent='#'+record.id+' · '+(record.title||record.name||kind); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const subtitle=document.createElement('small'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        subtitle.textContent=[record.subtitle,record.motivo,record.status].filter(Boolean).join(' · '); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const button=document.createElement('button'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        button.type='button';button.textContent='Analisar com IA'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        button.addEventListener('click',async()=>{ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          if (button.disabled) return; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          button.disabled=true; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          toolNotice(lookupStatus,'Analisando registro selecionado...'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          try { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            const result=await api(toolUrl,{ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              action:'analyze',kind,id:Number(record.id), // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              question:$('[data-jarvis-record-question]').value.trim() // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            analysisArea.textContent=result.reply; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            toolNotice(lookupStatus,'Análise concluída. Nenhum dado foi alterado.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          } catch (error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          finally {button.disabled=false;} // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        if (['vaga','pessoa','empresa'].includes(kind)) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          const remove=document.createElement('button'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          remove.type='button'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          remove.textContent='Solicitar exclusão'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          remove.addEventListener('click',async()=>{ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            if (remove.disabled) return; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            remove.disabled=true; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            try { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const result=await api(toolUrl,{ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+                action:'preview_delete',kind,id:Number(record.id) // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const proposal=result.proposal; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const label=proposal.record.kind+' #'+proposal.record.id+' — '+proposal.record.title; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const agreed=window.confirm('Confirme o registro que deseja excluir:\n'+label+ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+                '\n\nEsta exclusão é definitiva e pode afetar dados relacionados. Continuar?'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              if (!agreed) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+                toolNotice(lookupStatus,'Exclusão cancelada; nenhuma alteração realizada.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+                return; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const typed=window.prompt('Para excluir '+label+', digite EXCLUIR:'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              if (typed !== 'EXCLUIR') { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+                toolNotice(lookupStatus,'Confirmação recusada. Nenhuma alteração realizada.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+                return; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const done=await api(toolUrl,{ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+                action:'confirm_delete',kind,id:Number(record.id), // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+                confirmation:proposal.confirmation,approval:typed // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              toolNotice(lookupStatus,done.message); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+              card.remove(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            } catch(error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+            finally {remove.disabled=false;} // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          card.append(title,subtitle,button,remove); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        } else { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+          card.append(title,subtitle,button); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        recordResults.append(card); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      if (!data.records.length) toolNotice(lookupStatus,'Nenhum resultado encontrado.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      else toolNotice(lookupStatus,'Registros encontrados: '+data.records.length+'.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } catch (error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    finally { submit.disabled = false; submit.textContent = 'Consultar registros'; } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+  }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
 
-  $('[data-jarvis-compose-form]').addEventListener('submit',async event=>{
-    event.preventDefault();
-    const submit=event.target.querySelector('button[type="submit"]');
-    if (submit.disabled) return;
-    submit.disabled=true;
-    const originalText = submit.textContent;
-    submit.textContent = 'Gerando rascunho...';
-    toolNotice(outboxStatus,'Gerando rascunho, sem enviar...');
-    try {
-      const result=await api(toolUrl,{
-        action:'generate',
-        recipient_type:$('[data-jarvis-recipient-type]').value,
-        recipient_id:Number($('[data-jarvis-recipient-id]').value),
-        brief:$('[data-jarvis-brief]').value.trim()
-      });
-      await loadDrafts();
-      toolNotice(outboxStatus,'Rascunho para '+result.draft.recipient.name+
-        ' criado. Revise o texto antes de qualquer envio.');
-    } catch(error) {
+  $('[data-jarvis-compose-form]').addEventListener('submit',async event=>{ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    event.preventDefault(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const submit=event.target.querySelector('button[type="submit"]'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    if (submit.disabled) return; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    submit.disabled=true; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const originalText = submit.textContent; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    submit.textContent = 'Gerando rascunho...'; // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    toolNotice(outboxStatus,'Gerando rascunho, sem enviar...'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    try { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const result=await api(toolUrl,{ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        action:'generate', // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        recipient_type:$('[data-jarvis-recipient-type]').value, // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        recipient_id:Number($('[data-jarvis-recipient-id]').value), // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        brief:$('[data-jarvis-brief]').value.trim() // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      await loadDrafts(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+      toolNotice(outboxStatus,'Rascunho para '+result.draft.recipient.name+ // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ' criado. Revise o texto antes de qualquer envio.'); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } catch(error) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
       await loadDrafts(); // Reconciliar possível rascunho criado mesmo após falha de rede.
-      toolNotice(outboxStatus,error.message);
-    }
-    finally {submit.disabled=false;submit.textContent=originalText;}
-  });
+      toolNotice(outboxStatus,error.message); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    finally {submit.disabled=false;submit.textContent=originalText;} // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+  }); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
 
   launcher.addEventListener('click', event => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     if (suppressDragClick && event.detail !== 0) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
