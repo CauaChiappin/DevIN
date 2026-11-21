@@ -966,6 +966,8 @@
     } catch (error) { toolNotice(info, error.message); }
   }
 
+  $('[data-jarvis-overview-refresh]').addEventListener('click', () => void loadAdminOverview());
+
   async function loadDrafts() { // Explicação DevIN: Declara função/método loadDrafts, com seus parâmetros e comportamento.
     toolNotice(outboxStatus, 'Carregando rascunhos...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
