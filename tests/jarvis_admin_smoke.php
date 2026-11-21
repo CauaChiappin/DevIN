@@ -40,8 +40,8 @@ checkJarvis(count(AdminSkillManager::labels($selected)) === count($selected), 'e
 $single = ModelRouter::candidates('groq', 'modelo-primario', 'modelo-secundario:free'); // Explicação DevIN: Atribui um valor à variável PHP $single.
 checkJarvis($single === ['modelo-primario'], 'não alternar em provedor diferente de OpenRouter'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 $default = ModelRouter::candidates('openrouter', 'z-ai/glm-5.3-flash:free'); // Explicação DevIN: Atribui um valor à variável PHP $default.
-checkJarvis(count($default) === 11, 'modelo principal e 10 reservas padrão'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
-checkJarvis($default[10] === 'openrouter/free', 'roteador gratuito como último recurso'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(count($default) === 3, 'modelo principal e 2 reservas padrão'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis($default[1] === 'google/gemma-4-26b-a4b-it:free', 'roteador gratuito como último recurso'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 checkJarvis(count(array_unique($default)) === count($default), 'nenhum modelo duplicado'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 checkJarvis(array_reduce($default, static fn(bool $ok, string $model): bool => $ok && ModelRouter::isFree($model), true), 'todos gratuitos'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 $singleBackup = ModelRouter::candidates('openrouter', 'z-ai/glm-5.3-flash:free', 'google/gemma-4-31b-it:free'); // Explicação DevIN: Atribui um valor à variável PHP $singleBackup.
