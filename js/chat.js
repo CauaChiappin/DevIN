@@ -62,7 +62,8 @@
     let unreadTotal = 0; // Explicação DevIN: Declara variável JavaScript unreadTotal para reutilizar valor ou resultado.
     let notificationTimeout = 0; // Explicação DevIN: Declara variável JavaScript notificationTimeout para reutilizar valor ou resultado.
     let searchTimeout = 0; // Explicação DevIN: Declara variável JavaScript searchTimeout para reutilizar valor ou resultado.
-    let profileReportTarget = null; // Explicação DevIN: Declara variável JavaScript profileReportTarget para reutilizar valor ou resultado.
+    let profileReportTarget = null;
+    let autoReportFromDirectory = false; // Explicação DevIN: Guarda a intenção voluntária de denunciar selecionada pela empresa. // Explicação DevIN: Declara variável JavaScript profileReportTarget para reutilizar valor ou resultado.
 
     const request = async (query, options = {}) => { // Explicação DevIN: Declara variável JavaScript request para reutilizar valor ou resultado.
         const url = new URL(apiUrl, window.location.href); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
@@ -443,14 +444,16 @@
             profileReportTarget = data.perfil; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             profileNameElement.textContent = data.perfil.nome; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             profileTypeElement.textContent = translate(data.perfil.rotulo); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            profileAvatarElement.textContent = initials(data.perfil.nome); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
+            renderAvatar(profileAvatarElement, data.perfil); // Explicação DevIN: Apresenta foto real do contato validado no chat. // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             profileFeedbackToast.hidden = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             profileReportForm.reset(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             profileReportForm.hidden = true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             profileReportButton.hidden = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
             profileSubmitButton.disabled = false; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            profileDialog.showModal(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+            profileDialog.showModal();
+            if (autoReportFromDirectory) { autoReportFromDirectory = false; profileReportButton?.click(); } // Explicação DevIN: Abre o formulário existente sob pedido do usuário. // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         } catch (error) { // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
+            autoReportFromDirectory = false; // Explicação DevIN: Impede retomada de denúncia após erro.
             sendStatus.textContent = error.message; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
             if (messageViewVersion === requestedVersion) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
@@ -695,6 +698,11 @@
                 ultima_mensagem_id: 0, // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
             if (!opened) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (parameters.get('reportar') === '1' && tipo === 'pessoa') { // Explicação DevIN: Reconhece o pedido explícito para reportar candidato.
+                autoReportFromDirectory = true; // Explicação DevIN: Aguarda a autorização de leitura do perfil.
+                profileTrigger?.click(); // Explicação DevIN: Reutiliza o modal protegido de denúncias.
+            } // Explicação DevIN: Finaliza a abertura opcional da denúncia.
+            parameters.delete('reportar'); // Explicação DevIN: Impede repetição involuntária do modal.
             parameters.delete('contato_tipo'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             parameters.delete('contato_id'); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
             const cleanUrl = `${window.location.pathname}?${parameters.toString()}${window.location.hash}`; // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
