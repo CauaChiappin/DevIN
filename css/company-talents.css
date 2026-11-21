@@ -1,43 +1,43 @@
 /* DevIN Empresa — catálogo de talentos responsivo, independente da grade antiga de vagas. */
-.empresa-dashboard .company-talents { margin-block: 28px; padding: clamp(16px, 2vw, 28px); background: #fff; border: 1px solid #d9e5f0; border-radius: 18px; min-width: 0; } /* Explicação DevIN: Define a região principal do catálogo. */
-.empresa-dashboard .company-talents__header { display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; } /* Explicação DevIN: Organiza o cabeçalho e a contagem. */
-.empresa-dashboard .company-talents__header h2 { margin: 0 0 6px; font-size: clamp(21px, 2vw, 28px); color: #11538f; } /* Explicação DevIN: Destaca o título do catálogo. */
-.empresa-dashboard .company-talents__header p { margin: 0; color: #516477; font-size: 14px; line-height: 1.5; } /* Explicação DevIN: Formata o texto de apoio. */
-.empresa-dashboard .company-talents__header strong { color: #00549f; font-size: 13px; background: #eef6fe; border-radius: 999px; padding: 7px 12px; white-space: nowrap; } /* Explicação DevIN: Exibe a quantidade de candidatos. */
-.empresa-dashboard .company-talents__search { display: grid; gap: 8px; margin-block: 18px 22px; } /* Explicação DevIN: Organiza a pesquisa do catálogo. */
-.empresa-dashboard .company-talents__search > label { color: #27485f; font-size: 13px; font-weight: 700; } /* Explicação DevIN: Torna o campo identificável. */
-.empresa-dashboard .company-talents__search-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } /* Explicação DevIN: Permite campo e botões responsivos. */
-.empresa-dashboard .company-talents__search-row input { flex: 1 1 210px; width: auto; min-width: 0; border: 1px solid #bed2e4; border-radius: 10px; min-height: 43px; padding: 9px 12px; } /* Explicação DevIN: Dimensiona pesquisa para celular e desktop. */
-.empresa-dashboard .company-talents__search-row .btn { min-height: 43px; display: inline-flex; align-items: center; justify-content: center; } /* Explicação DevIN: Garante controles acessíveis. */
-.empresa-dashboard .company-talents__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(245px, 100%), 1fr)); gap: 12px; min-width: 0; } /* Explicação DevIN: Exibe candidatos em cartões sem estourar a largura. */
-.empresa-dashboard .company-talent-card { margin: 0; padding: 0; border: 1px solid #d5e2ee; border-radius: 13px; overflow: hidden; background: #fbfdff; } /* Explicação DevIN: Delimita cada perfil profissional. */
-.empresa-dashboard .company-talent-card__open { display: flex; gap: 12px; align-items: center; width: 100%; padding: 14px; text-align: left; border: 0; background: transparent; cursor: pointer; color: inherit; min-height: 114px; } /* Explicação DevIN: Permite abrir perfil por toque ou teclado. */
-.empresa-dashboard .company-talent-card__open:hover { background: #eef7ff; } /* Explicação DevIN: Sinaliza a seleção do cartão. */
-.empresa-dashboard .company-talent-avatar { display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; height: 56px; border-radius: 50%; background: #dceaf7; color: #124c83; font-weight: 800; overflow: hidden; } /* Explicação DevIN: Define o enquadramento da foto do candidato. */
-.empresa-dashboard .company-talent-avatar img, .company-talent-dialog .company-talent-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; } /* Explicação DevIN: Mostra fotos reais sem distorção. */
-.empresa-dashboard .company-talent-card__copy { display: grid; gap: 5px; min-width: 0; flex: 1 1 auto; } /* Explicação DevIN: Evita sobreposição de textos profissionais. */
-.empresa-dashboard .company-talent-card__copy strong { font-size: 15px; color: #164c7b; overflow-wrap: anywhere; } /* Explicação DevIN: Destaca o nome do candidato. */
-.empresa-dashboard .company-talent-card__copy small, .empresa-dashboard .company-talent-card__copy > span { font-size: 12px; line-height: 1.45; color: #546b7d; overflow-wrap: anywhere; } /* Explicação DevIN: Apresenta formação e habilidades. */
-.empresa-dashboard .company-talent-card__cta { font-size: 11px; color: #006ab7; font-weight: 800; white-space: nowrap; } /* Explicação DevIN: Identifica a ação de abrir o perfil. */
-.empresa-dashboard .company-talents__pages { margin-top: 18px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px; font-size: 13px; } /* Explicação DevIN: Organiza navegação entre páginas. */
-.empresa-dashboard .company-talents__pages a { font-weight: 700; color: #00549f; padding: 8px 12px; border: 1px solid #c4d6e8; border-radius: 9px; } /* Explicação DevIN: Garante navegação visível e acessível. */
-.company-talent-dialog { width: min(94vw, 620px); max-height: 85dvh; overflow: auto; border: none; border-radius: 18px; padding: 0; background: #fff; color: #263c51; box-shadow: 0 20px 70px #0004; } /* Explicação DevIN: Dimensiona o perfil aberto. */
-.company-talent-dialog::backdrop { background: #10283d99; } /* Explicação DevIN: Distingue o modal do restante do site. */
-.company-talent-dialog__content { padding: clamp(20px, 3vw, 32px); display: grid; gap: 18px; } /* Explicação DevIN: Mantém espaçamentos consistentes no modal. */
-.company-talent-dialog__close { justify-self: end; font-size: 26px; border: 0; background: transparent; cursor: pointer; color: #344e63; } /* Explicação DevIN: Facilita o fechamento. */
-.company-talent-dialog__identity { display: flex; align-items: center; gap: 16px; min-width: 0; } /* Explicação DevIN: Alinha a identidade do candidato. */
-.company-talent-dialog__identity .company-talent-avatar { flex: 0 0 80px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #dceaf7; color: #124c83; font-size: 22px; overflow: hidden; } /* Explicação DevIN: Amplia a foto de perfil na visualização. */
-.company-talent-dialog__identity h2 { font-size: clamp(19px, 2vw, 27px); margin: 0 0 6px; overflow-wrap: anywhere; } /* Explicação DevIN: Exibe nome legível em telas pequenas. */
-.company-talent-dialog__identity p { margin: 0; color: #54718a; } /* Explicação DevIN: Indica o tipo de perfil. */
-.company-talent-dialog__details { margin: 0; display: grid; gap: 12px; } /* Explicação DevIN: Organiza currículo profissional. */
-.company-talent-dialog__details > div { display: grid; gap: 4px; border-bottom: 1px solid #e5edf5; padding-bottom: 9px; } /* Explicação DevIN: Separa informações do currículo. */
-.company-talent-dialog__details dt { color: #2b608c; font-weight: 750; font-size: 13px; } /* Explicação DevIN: Nomeia os campos profissionais. */
-.company-talent-dialog__details dd { margin: 0; font-size: 14px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; } /* Explicação DevIN: Exibe informações completas com quebra adequada. */
-.company-talent-dialog__actions { display: flex; flex-wrap: wrap; gap: 10px; } /* Explicação DevIN: Agrupa as ações seguras do perfil. */
-.company-talent-dialog__actions a { flex: 1 1 150px; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; text-decoration: none; } /* Explicação DevIN: Oferece alvos de toque suficientes. */
-.company-talent-dialog__privacy { margin: 0; font-size: 12px; line-height: 1.5; color: #66788b; } /* Explicação DevIN: Esclarece o uso de dados profissionais. */
-@media (max-width: 500px) { /* Explicação DevIN: Ajusta o catálogo para celulares. */
-  .empresa-dashboard .company-talents { padding: 14px; margin-block: 18px; } /* Explicação DevIN: Reduz bordas sem comprimir o texto. */
-  .empresa-dashboard .company-talent-card__open { flex-wrap: wrap; } /* Explicação DevIN: Evita sobreposição em telas estreitas. */
-  .company-talent-dialog__identity .company-talent-avatar { flex-basis: 66px; width: 66px; height: 66px; } /* Explicação DevIN: Ajusta a imagem no modal móvel. */
-} /* Explicação DevIN: Finaliza o ajuste responsivo. */
+.empresa-dashboard .company-talents { margin-block: 28px; padding: clamp(16px, 2vw, 28px); background: #fff; border: 1px solid #d9e5f0; border-radius: 18px; min-width: 0; } /* Detalhe DevIN: Define a região principal do catálogo. */
+.empresa-dashboard .company-talents__header { display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; } /* Detalhe DevIN: Organiza o cabeçalho e a contagem. */
+.empresa-dashboard .company-talents__header h2 { margin: 0 0 6px; font-size: clamp(21px, 2vw, 28px); color: #11538f; } /* Detalhe DevIN: Destaca o título do catálogo. */
+.empresa-dashboard .company-talents__header p { margin: 0; color: #516477; font-size: 14px; line-height: 1.5; } /* Detalhe DevIN: Formata o texto de apoio. */
+.empresa-dashboard .company-talents__header strong { color: #00549f; font-size: 13px; background: #eef6fe; border-radius: 999px; padding: 7px 12px; white-space: nowrap; } /* Detalhe DevIN: Exibe a quantidade de candidatos. */
+.empresa-dashboard .company-talents__search { display: grid; gap: 8px; margin-block: 18px 22px; } /* Detalhe DevIN: Organiza a pesquisa do catálogo. */
+.empresa-dashboard .company-talents__search > label { color: #27485f; font-size: 13px; font-weight: 700; } /* Detalhe DevIN: Torna o campo identificável. */
+.empresa-dashboard .company-talents__search-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } /* Detalhe DevIN: Permite campo e botões responsivos. */
+.empresa-dashboard .company-talents__search-row input { flex: 1 1 210px; width: auto; min-width: 0; border: 1px solid #bed2e4; border-radius: 10px; min-height: 43px; padding: 9px 12px; } /* Detalhe DevIN: Dimensiona pesquisa para celular e desktop. */
+.empresa-dashboard .company-talents__search-row .btn { min-height: 43px; display: inline-flex; align-items: center; justify-content: center; } /* Detalhe DevIN: Garante controles acessíveis. */
+.empresa-dashboard .company-talents__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(245px, 100%), 1fr)); gap: 12px; min-width: 0; } /* Detalhe DevIN: Exibe candidatos em cartões sem estourar a largura. */
+.empresa-dashboard .company-talent-card { margin: 0; padding: 0; border: 1px solid #d5e2ee; border-radius: 13px; overflow: hidden; background: #fbfdff; } /* Detalhe DevIN: Delimita cada perfil profissional. */
+.empresa-dashboard .company-talent-card__open { display: flex; gap: 12px; align-items: center; width: 100%; padding: 14px; text-align: left; border: 0; background: transparent; cursor: pointer; color: inherit; min-height: 114px; } /* Detalhe DevIN: Permite abrir perfil por toque ou teclado. */
+.empresa-dashboard .company-talent-card__open:hover { background: #eef7ff; } /* Detalhe DevIN: Sinaliza a seleção do cartão. */
+.empresa-dashboard .company-talent-avatar { display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; height: 56px; border-radius: 50%; background: #dceaf7; color: #124c83; font-weight: 800; overflow: hidden; } /* Detalhe DevIN: Define o enquadramento da foto do candidato. */
+.empresa-dashboard .company-talent-avatar img, .company-talent-dialog .company-talent-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; } /* Detalhe DevIN: Mostra fotos reais sem distorção. */
+.empresa-dashboard .company-talent-card__copy { display: grid; gap: 5px; min-width: 0; flex: 1 1 auto; } /* Detalhe DevIN: Evita sobreposição de textos profissionais. */
+.empresa-dashboard .company-talent-card__copy strong { font-size: 15px; color: #164c7b; overflow-wrap: anywhere; } /* Detalhe DevIN: Destaca o nome do candidato. */
+.empresa-dashboard .company-talent-card__copy small, .empresa-dashboard .company-talent-card__copy > span { font-size: 12px; line-height: 1.45; color: #546b7d; overflow-wrap: anywhere; } /* Detalhe DevIN: Apresenta formação e habilidades. */
+.empresa-dashboard .company-talent-card__cta { font-size: 11px; color: #006ab7; font-weight: 800; white-space: nowrap; } /* Detalhe DevIN: Identifica a ação de abrir o perfil. */
+.empresa-dashboard .company-talents__pages { margin-top: 18px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px; font-size: 13px; } /* Detalhe DevIN: Organiza navegação entre páginas. */
+.empresa-dashboard .company-talents__pages a { font-weight: 700; color: #00549f; padding: 8px 12px; border: 1px solid #c4d6e8; border-radius: 9px; } /* Detalhe DevIN: Garante navegação visível e acessível. */
+.company-talent-dialog { width: min(94vw, 620px); max-height: 85dvh; overflow: auto; border: none; border-radius: 18px; padding: 0; background: #fff; color: #263c51; box-shadow: 0 20px 70px #0004; } /* Detalhe DevIN: Dimensiona o perfil aberto. */
+.company-talent-dialog::backdrop { background: #10283d99; } /* Detalhe DevIN: Distingue o modal do restante do site. */
+.company-talent-dialog__content { padding: clamp(20px, 3vw, 32px); display: grid; gap: 18px; } /* Detalhe DevIN: Mantém espaçamentos consistentes no modal. */
+.company-talent-dialog__close { justify-self: end; font-size: 26px; border: 0; background: transparent; cursor: pointer; color: #344e63; } /* Detalhe DevIN: Facilita o fechamento. */
+.company-talent-dialog__identity { display: flex; align-items: center; gap: 16px; min-width: 0; } /* Detalhe DevIN: Alinha a identidade do candidato. */
+.company-talent-dialog__identity .company-talent-avatar { flex: 0 0 80px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #dceaf7; color: #124c83; font-size: 22px; overflow: hidden; } /* Detalhe DevIN: Amplia a foto de perfil na visualização. */
+.company-talent-dialog__identity h2 { font-size: clamp(19px, 2vw, 27px); margin: 0 0 6px; overflow-wrap: anywhere; } /* Detalhe DevIN: Exibe nome legível em telas pequenas. */
+.company-talent-dialog__identity p { margin: 0; color: #54718a; } /* Detalhe DevIN: Indica o tipo de perfil. */
+.company-talent-dialog__details { margin: 0; display: grid; gap: 12px; } /* Detalhe DevIN: Organiza currículo profissional. */
+.company-talent-dialog__details > div { display: grid; gap: 4px; border-bottom: 1px solid #e5edf5; padding-bottom: 9px; } /* Detalhe DevIN: Separa informações do currículo. */
+.company-talent-dialog__details dt { color: #2b608c; font-weight: 750; font-size: 13px; } /* Detalhe DevIN: Nomeia os campos profissionais. */
+.company-talent-dialog__details dd { margin: 0; font-size: 14px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; } /* Detalhe DevIN: Exibe informações completas com quebra adequada. */
+.company-talent-dialog__actions { display: flex; flex-wrap: wrap; gap: 10px; } /* Detalhe DevIN: Agrupa as ações seguras do perfil. */
+.company-talent-dialog__actions a { flex: 1 1 150px; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; text-decoration: none; } /* Detalhe DevIN: Oferece alvos de toque suficientes. */
+.company-talent-dialog__privacy { margin: 0; font-size: 12px; line-height: 1.5; color: #66788b; } /* Detalhe DevIN: Esclarece o uso de dados profissionais. */
+@media (max-width: 500px) { /* Detalhe DevIN: Ajusta o catálogo para celulares. */
+  .empresa-dashboard .company-talents { padding: 14px; margin-block: 18px; } /* Detalhe DevIN: Reduz bordas sem comprimir o texto. */
+  .empresa-dashboard .company-talent-card__open { flex-wrap: wrap; } /* Detalhe DevIN: Evita sobreposição em telas estreitas. */
+  .company-talent-dialog__identity .company-talent-avatar { flex-basis: 66px; width: 66px; height: 66px; } /* Detalhe DevIN: Ajusta a imagem no modal móvel. */
+} /* Detalhe DevIN: Finaliza o ajuste responsivo. */
