@@ -12,7 +12,7 @@ declare(strict_types=1); // Explicação DevIN: Habilita a verificação estrita
 
 /**
  * Roteador de modelos do JARVIS Admin. Para OpenRouter somente modelos gratuitos,
- * com no máximo 10 reservas em ordem, e fallback nativo em uma chamada HTTP.
+ * com no máximo 2 reservas em ordem, e fallback nativo em uma chamada HTTP.
  */
 final class ModelRouter // Explicação DevIN: Declara o tipo ModelRouter e inicia sua estrutura.
 { // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -42,7 +42,7 @@ final class ModelRouter // Explicação DevIN: Declara o tipo ModelRouter e inic
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
     /**
-     * @return list<string> 1 modelo principal + no máximo 10 backups.
+     * @return list<string> 1 modelo principal + no máximo 2 backups.
      * $legacy é compatível com a variável antiga DEVIN_JARVIS_FALLBACK_MODEL.
      * O CSV novo tem prioridade sobre o legado.
      */
@@ -80,7 +80,7 @@ final class ModelRouter // Explicação DevIN: Declara o tipo ModelRouter e inic
             if (!self::validModel($id) || !self::isFree($id) // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
                 || in_array($id, $result, true)) continue; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
             $result[] = $id; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            if (count($result) >= 11) break; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+            if (count($result) >= 3) break; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
         return $result; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
