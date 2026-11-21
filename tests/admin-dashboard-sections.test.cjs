@@ -32,7 +32,7 @@ test('Vagas permanece como aba exclusiva e consulta sem misturar empresas', () =
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 test('exclusão redireciona para a seção correspondente em sucesso e erro', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.equal(adm.split("($action === 'admin_delete_empresa' ? 'inicio' : 'candidatos')").length - 1, 2); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.equal(adm.split("($action === 'admin_delete_empresa' ? 'empresas' : 'candidatos')").length - 1, 2); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(adm, /'admin_delete_empresa'\s*=> \['empresa', 'id_empresa'\]/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(adm, /'admin_delete_vaga'\s*=> \['vagas', 'id_vaga'\]/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
