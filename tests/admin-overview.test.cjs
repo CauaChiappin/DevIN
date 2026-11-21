@@ -30,19 +30,19 @@ test('Métricas são agregadas e permanecem somente de leitura', () => { // Expl
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 test('Layout de métricas se adapta aos dispositivos', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     const css = read('css/ui-consistency.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
-    assert.match(css, /\.dashboard-shell\.page-inicio\s*\{/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-inicio\[data-tipo="adm"\]\s*\{/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(css, /\.admin-overview-grid/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(css, /\.dashboard-shell\.page-inicio \{ grid-template-columns: var\(--sidebar-width\) minmax\(0, 1fr\); \}/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-inicio\[data-tipo="adm"\] \{ grid-template-columns: var\(--sidebar-width\) minmax\(0, 1fr\); \}/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
 test('estatísticas não estreitam o dashboard mobile nem quebram estado indisponível', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     const css = read('css/ui-consistency.css'); // Explicação DevIN: Declara variável JavaScript css para reutilizar valor ou resultado.
     const markup = read('php/components/admin-overview.php'); // Explicação DevIN: Declara variável JavaScript markup para reutilizar valor ou resultado.
-    assert.match(css, /\.dashboard-shell\.page-inicio > \.sidebar/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(css, /\.dashboard-shell\.page-inicio > \.lista-area/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-inicio\[data-tipo="adm"\] > \.sidebar/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.dashboard-shell\.page-inicio\[data-tipo="adm"\] > \.lista-area/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(css, /@media \(max-width: 470px\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(css, /grid-template-columns: minmax\(0, 1fr\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(css, /\.page-inicio \.admin-metric__unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(css, /\.page-inicio\[data-tipo="adm"\] \.admin-metric__unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /admin-metric__unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /admin-metric__value/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(markup, /admin-metric__unavailable/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
