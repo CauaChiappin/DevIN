@@ -78,3 +78,24 @@ test('página carrega o interpretador antes do JARVIS principal',()=>{ // Explic
   const main=php.indexOf('js/jarvis-admin.js'); // Explicação DevIN: Declara variável JavaScript main para reutilizar valor ou resultado.
   assert.ok(natural>=0 && main>natural); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+
+
+test('formulários JARVIS possuem recuperação de estado, timeout e painel ADM', () => {
+  const app=read('js/jarvis-admin.js');
+  const ui=read('php/components/jarvis-admin-widget.php');
+  const api=read('php/api/jarvis/admin_tools.php');
+  assert.match(app,/AbortController/);
+  assert.match(app,/submit\.disabled = false/);
+  assert.match(app,/submit\.disabled=false/);
+  assert.match(app,/loadAdminOverview/);
+  assert.match(ui,/data-jarvis-tab="overview"/);
+  assert.match(ui,/data-jarvis-pane="overview"/);
+  assert.match(api,/session_write_close\(\)/);
+});
+
+test('.env.example contém somente comentários e atribuições dotenv', () => {
+  const env=read('.env.example');
+  for (const line of env.split(/\r?\n/)) {
+    assert.ok(!line.trim() || line.trim().startsWith('#') || /^[A-Za-z_][A-Za-z0-9_]*=/.test(line), line);
+  }
+});
