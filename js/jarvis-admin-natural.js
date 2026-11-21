@@ -17,11 +17,11 @@
   const kinds = '(vagas?|an[úu]ncios?|oportunidades?|empresas?|empregadores?|candidatos?|candidatas?|pessoas?|usu[áa]rios?|usu[áa]rias?|perfis?)'; // Explicação DevIN: Declara variável JavaScript kinds para reutilizar valor ou resultado.
 
   // Somente expressões de listagem conhecidas; filtros específicos permanecem intactos.
-  function isListingTail(tail) {
-    const value = normalized(tail).replace(/[.!?]+$/g, '').trim();
-    const withoutOutro = value.replace(/\s+e\s+(?:mostre|liste|exiba|apresente)\s+(?:(?:todos?)\s+)?(?:os|as)\s+resultados?$/, '');
-    return /^(?:(?:que\s+)?estao\s+)?(?:(?:disponiveis?|cadastrad[oa]s?|existentes?|existem|publicad[oa]s?|ativ[oa]s?|recentes?)\s*)?(?:(?:no|do|da|na)\s+(?:devin|site|plataforma))?$/.test(withoutOutro.trim());
-  }
+  function isListingTail(tail) { // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const value = normalized(tail).replace(/[.!?]+$/g, '').trim(); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const withoutOutro = value.replace(/\s+e\s+(?:mostre|liste|exiba|apresente)\s+(?:(?:todos?)\s+)?(?:os|as)\s+resultados?$/, ''); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+    return /^(?:(?:que\s+)?estao\s+)?(?:(?:disponiveis?|cadastrad[oa]s?|existentes?|existem|publicad[oa]s?|ativ[oa]s?|recentes?)\s*)?(?:(?:no|do|da|na)\s+(?:devin|site|plataforma))?$/.test(withoutOutro.trim()); // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
+  } // Explicação DevIN: Processa a etapa correspondente do fluxo administrativo.
 
   function kindOf(raw) { // Explicação DevIN: Declara função/método kindOf, com seus parâmetros e comportamento.
     return Object.keys(names).find(k => names[k].test(raw || '')) || null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
