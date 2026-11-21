@@ -457,7 +457,8 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Explicação DevIN: Declara metadado de navegação. -->
     <title>DevIN | Dashboard Empresa</title> <!-- Explicação DevIN: Declara elemento de marcação. -->
     <link rel="icon" type="image/svg+xml" href="../img/favicon.svg"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. -->
-    <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
+    <link rel="stylesheet" href="../css/dashboard.css?v=<?= filemtime(__DIR__ . '/../css/dashboard.css') ?>">
+    <?php if ($pagina === 'inicio'): ?><link rel="stylesheet" href="../css/company-talents.css?v=<?= filemtime(__DIR__ . '/../css/company-talents.css') ?>"><?php endif; ?> <!-- Explicação DevIN: Carrega estilos específicos do catálogo de candidatos. --> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <?php if ($pagina === 'mensagens'): ?>
         <link rel="stylesheet" href="../css/chat.css?v=<?= filemtime(__DIR__ . '/../css/chat.css') ?>"> <!-- Explicação DevIN: Declara dependência ou relação com arquivo externo. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
@@ -877,6 +878,8 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
                     </article> <!-- Explicação DevIN: Fecha elemento article do documento. -->
                 <?php endforeach; ?>
 
+                <?php require __DIR__ . '/components/company-talents.php'; ?> <!-- Explicação DevIN: Exibe o catálogo completo de candidatos abaixo da publicação de vagas. -->
+
             <?php endif; ?>
             <?php if ($pagina === 'sobre'): ?>
                 <?php require __DIR__ . '/components/dashboard-footer.php'; ?>
@@ -990,6 +993,9 @@ foreach ($candidatos as $candidato) { // Explicação DevIN: Inicia repetição 
         <script src="../js/support-ui.js?v=<?= filemtime(__DIR__ . '/../js/support-ui.js') ?>" defer></script> <!-- Inicializa o suporte sem sair do dashboard. -->
     <?php endif; ?>
     <script src="../js/lenis-global.js?v=<?= filemtime(__DIR__ . '/../js/lenis-global.js') ?>"></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
+    <?php if ($pagina === 'inicio'): ?>
+        <script src="../js/company-talents.js?v=<?= filemtime(__DIR__ . '/../js/company-talents.js') ?>" defer></script> <!-- Explicação DevIN: Habilita abertura de perfis e atalhos de conversa ou denúncia. -->
+    <?php endif; ?>
     <?php if ($pagina === 'mensagens'): ?>
         <script src="../js/chat.js?v=<?= filemtime(__DIR__ . '/../js/chat.js') ?>" defer></script> <!-- Explicação DevIN: Declara script ou dependência JavaScript. Contém dado dinâmico processado pelo PHP. -->
     <?php endif; ?>
