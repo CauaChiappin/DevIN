@@ -155,21 +155,34 @@
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   initLauncherDocking(); // Explicação DevIN: Continua expressão ou bloco pertencente a função finishDrag.
 
-  async function api(url, body = null) { // Explicação DevIN: Declara função/método api, com seus parâmetros e comportamento.
-    const options = {credentials: 'same-origin', cache: 'no-store', headers: {Accept: 'application/json'}}; // Explicação DevIN: Declara variável JavaScript options para reutilizar valor ou resultado.
-    if (body !== null) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      options.method = 'POST'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-      options.headers['Content-Type'] = 'application/json'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-      options.headers['X-CSRF-Token'] = root.dataset.csrf; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-      options.body = JSON.stringify(body); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    const response = await fetch(url, options); // Explicação DevIN: Inicia solicitação HTTP assíncrona a um endereço configurado.
-    const data = await response.json().catch(() => null); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-    if (!data || !response.ok || data.success !== true) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      throw new Error(data?.message || 'Falha ao consultar o servidor. Verifique sua sessão.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    return data; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // Timeout impede consultas e formulários de permanecerem bloqueados indefinidamente.
+  async function api(url, body = null) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const controller = new AbortController(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const timeout = window.setTimeout(() => controller.abort(), body === null ? 20000 : 90000); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const options = {credentials: 'same-origin', cache: 'no-store', // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      signal: controller.signal, headers: {Accept: 'application/json'}}; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    if (body !== null) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      options.method = 'POST'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      options.headers['Content-Type'] = 'application/json'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      options.headers['X-CSRF-Token'] = root.dataset.csrf; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      options.body = JSON.stringify(body); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    try { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const response = await fetch(url, options); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const data = await response.json().catch(() => null); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      if (!data || !response.ok || data.success !== true) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        throw new Error(data?.message || 'Falha ao consultar o servidor. Verifique sua sessão.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      return data; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } catch (error) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      if (error?.name === 'AbortError') throw new Error(body === null // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ? 'A consulta demorou demais. Tente novamente.' // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        : 'Tempo limite atingido. Verifique o histórico antes de repetir; a operação pode ter sido concluída.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      throw error; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } finally { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      window.clearTimeout(timeout); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
   function open(show) { // Explicação DevIN: Declara função/método open, com seus parâmetros e comportamento.
     panel.hidden = !show; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     launcher.setAttribute('aria-expanded', String(show)); // Explicação DevIN: Continua expressão ou bloco pertencente a função open.
@@ -180,7 +193,8 @@
       }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       if (activeTab === 'tasks') void loadTasks(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       else if (activeTab === 'outbox') void loadDrafts(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      else if (activeTab === 'audit') void loadAudit(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      else if (activeTab === 'audit') void loadAudit(); // Detalhe DevIN: Atualiza auditoria sob demanda.
+      else if (activeTab === 'overview') void loadAdminOverview(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       else if (activeTab === 'lookup') $('[data-jarvis-record-query]').focus(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       else input.focus(); // Explicação DevIN: Define ramo alternativo para condição anterior.
     } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
@@ -199,7 +213,8 @@
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (name === 'tasks') loadTasks(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     else if (name === 'outbox') void loadDrafts(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    else if (name === 'audit') void loadAudit(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    else if (name === 'audit') void loadAudit(); // Detalhe DevIN: Atualiza auditoria sob demanda.
+    else if (name === 'overview') void loadAdminOverview(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     else if (name === 'lookup') $('[data-jarvis-record-query]').focus(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     else input.focus(); // Explicação DevIN: Define ramo alternativo para condição anterior.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -916,6 +931,43 @@
 
   function toolNotice(node, text) { node.textContent = String(text); } // Explicação DevIN: Declara função/método toolNotice, com seus parâmetros e comportamento.
 
+  // Reutiliza as métricas locais existentes do dashboard, sem duplicar SQL.
+  async function loadAdminOverview() { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const info = $('[data-jarvis-overview-status]'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const list = $('[data-jarvis-overview-list]'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    toolNotice(info, 'Carregando indicadores...'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    try { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const response = await api(toolUrl + '?action=overview'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const counts = response.overview || {}; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const fields = [['pessoas','Candidatos'],['empresas','Empresas'],['vagas','Vagas'], // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ['candidaturas','Candidaturas'],['contratacoes','Contratações'], // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ['denuncias_pendentes','Denúncias pendentes'],['suporte_aberto','Chamados abertos']]; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      list.replaceChildren(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      for (const [key,label] of fields) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const card = document.createElement('article'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        card.className = 'jarvis-admin__tool-card'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const heading = document.createElement('strong'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        heading.textContent = label; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const value = document.createElement('p'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        value.textContent = Number.isFinite(counts[key]) // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          ? new Intl.NumberFormat('pt-BR').format(counts[key]) : 'Indisponível'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        card.append(heading,value); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        list.append(card); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      for (const [page,label] of [['inicio','Visão geral'],['candidatos','Candidatos'], // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ['posts','Vagas'],['reports','Denúncias'],['suporte','Suporte'],['estatisticas','Estatísticas']]) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const link = document.createElement('a'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        link.href = 'adm.php?pagina=' + encodeURIComponent(page); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        link.textContent = 'Abrir ' + label; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        link.className = 'jarvis-admin__tool-card'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        list.append(link); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      toolNotice(info, 'Indicadores consultados no MySQL.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } catch (error) { toolNotice(info, error.message); } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+
+  $('[data-jarvis-overview-refresh]').addEventListener('click', () => void loadAdminOverview()); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+
   async function loadDrafts() { // Explicação DevIN: Declara função/método loadDrafts, com seus parâmetros e comportamento.
     toolNotice(outboxStatus, 'Carregando rascunhos...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
     try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
@@ -1015,102 +1067,112 @@
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
   $('[data-jarvis-audit-refresh]').addEventListener('click', () => void loadAudit()); // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-  $('[data-jarvis-lookup-form]').addEventListener('submit', async event => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-    toolNotice(lookupStatus,'Consultando registros...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-    analysisArea.textContent=''; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-    recordResults.replaceChildren(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-    const kind=$('[data-jarvis-record-kind]').value; // Explicação DevIN: Declara variável JavaScript kind para reutilizar valor ou resultado.
-    const query=$('[data-jarvis-record-query]').value.trim(); // Explicação DevIN: Declara variável JavaScript query para reutilizar valor ou resultado.
-    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-      const data=await api(toolUrl + '?action=search&kind=' + encodeURIComponent(kind) // Explicação DevIN: Declara variável JavaScript data para reutilizar valor ou resultado.
-        + '&q=' + encodeURIComponent(query)); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      data.records.forEach(record => { // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-        const card=document.createElement('article'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-        card.className='jarvis-admin__tool-card'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        const title=document.createElement('strong'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-        title.textContent='#'+record.id+' · '+(record.title||record.name||kind); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        const subtitle=document.createElement('small'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-        subtitle.textContent=[record.subtitle,record.motivo,record.status].filter(Boolean).join(' · '); // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        const button=document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-        button.type='button';button.textContent='Analisar com IA'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-        button.addEventListener('click',async()=>{ // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-          if (button.disabled) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-          button.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-          toolNotice(lookupStatus,'Analisando registro selecionado...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-          try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-            const result=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
-              action:'analyze',kind,id:Number(record.id), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-              question:$('[data-jarvis-record-question]').value.trim() // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-            }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-            analysisArea.textContent=result.reply; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            toolNotice(lookupStatus,'Análise concluída. Nenhum dado foi alterado.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-          } catch (error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-          finally {button.disabled=false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
-        }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        if (['vaga','pessoa','empresa'].includes(kind)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-          const remove=document.createElement('button'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-          remove.type='button'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-          remove.textContent='Solicitar exclusão'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-          remove.addEventListener('click',async()=>{ // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-            if (remove.disabled) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            remove.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-            try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-              const result=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
-                action:'preview_delete',kind,id:Number(record.id) // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-              }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-              const proposal=result.proposal; // Explicação DevIN: Declara variável JavaScript proposal para reutilizar valor ou resultado.
-              const label=proposal.record.kind+' #'+proposal.record.id+' — '+proposal.record.title; // Explicação DevIN: Declara variável JavaScript label para reutilizar valor ou resultado.
-              const agreed=window.confirm('Confirme o registro que deseja excluir:\n'+label+ // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-                '\n\nEsta exclusão é definitiva e pode afetar dados relacionados. Continuar?'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-              if (!agreed) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                toolNotice(lookupStatus,'Exclusão cancelada; nenhuma alteração realizada.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-              } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-              const typed=window.prompt('Para excluir '+label+', digite EXCLUIR:'); // Explicação DevIN: Interage com a página, elementos visíveis ou eventos do navegador.
-              if (typed !== 'EXCLUIR') { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-                toolNotice(lookupStatus,'Confirmação recusada. Nenhuma alteração realizada.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-                return; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-              } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-              const done=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript done para reutilizar valor ou resultado.
-                action:'confirm_delete',kind,id:Number(record.id), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-                confirmation:proposal.confirmation,approval:typed // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-              }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-              toolNotice(lookupStatus,done.message); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-              card.remove(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-            } catch(error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-            finally {remove.disabled=false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
-          }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-          card.append(title,subtitle,button,remove); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-        } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
-          card.append(title,subtitle,button); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-        } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-        recordResults.append(card); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-      if (!data.records.length) toolNotice(lookupStatus,'Nenhum resultado encontrado.'); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      else toolNotice(lookupStatus,'Registros encontrados: '+data.records.length+'.'); // Explicação DevIN: Define ramo alternativo para condição anterior.
-    } catch (error) {toolNotice(lookupStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  $('[data-jarvis-lookup-form]').addEventListener('submit', async event => { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    event.preventDefault(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const submit = event.currentTarget.querySelector('button[type="submit"]'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    if (submit.disabled) return; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    submit.disabled = true; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    submit.textContent = 'Consultando...'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    toolNotice(lookupStatus,'Consultando registros...'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    analysisArea.textContent=''; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    recordResults.replaceChildren(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const kind=$('[data-jarvis-record-kind]').value; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const query=$('[data-jarvis-record-query]').value.trim(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    try { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const data=await api(toolUrl + '?action=search&kind=' + encodeURIComponent(kind) // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        + '&q=' + encodeURIComponent(query)); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      data.records.forEach(record => { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const card=document.createElement('article'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        card.className='jarvis-admin__tool-card'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const title=document.createElement('strong'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        title.textContent='#'+record.id+' · '+(record.title||record.name||kind); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const subtitle=document.createElement('small'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        subtitle.textContent=[record.subtitle,record.motivo,record.status].filter(Boolean).join(' · '); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        const button=document.createElement('button'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        button.type='button';button.textContent='Analisar com IA'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        button.addEventListener('click',async()=>{ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          if (button.disabled) return; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          button.disabled=true; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          toolNotice(lookupStatus,'Analisando registro selecionado...'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          try { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            const result=await api(toolUrl,{ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              action:'analyze',kind,id:Number(record.id), // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              question:$('[data-jarvis-record-question]').value.trim() // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            analysisArea.textContent=result.reply; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            toolNotice(lookupStatus,'Análise concluída. Nenhum dado foi alterado.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          } catch (error) {toolNotice(lookupStatus,error.message);} // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          finally {button.disabled=false;} // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        if (['vaga','pessoa','empresa'].includes(kind)) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          const remove=document.createElement('button'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          remove.type='button'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          remove.textContent='Solicitar exclusão'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          remove.addEventListener('click',async()=>{ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            if (remove.disabled) return; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            remove.disabled=true; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            try { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const result=await api(toolUrl,{ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+                action:'preview_delete',kind,id:Number(record.id) // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const proposal=result.proposal; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const label=proposal.record.kind+' #'+proposal.record.id+' — '+proposal.record.title; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const agreed=window.confirm('Confirme o registro que deseja excluir:\n'+label+ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+                '\n\nEsta exclusão é definitiva e pode afetar dados relacionados. Continuar?'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              if (!agreed) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+                toolNotice(lookupStatus,'Exclusão cancelada; nenhuma alteração realizada.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+                return; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const typed=window.prompt('Para excluir '+label+', digite EXCLUIR:'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              if (typed !== 'EXCLUIR') { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+                toolNotice(lookupStatus,'Confirmação recusada. Nenhuma alteração realizada.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+                return; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              const done=await api(toolUrl,{ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+                action:'confirm_delete',kind,id:Number(record.id), // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+                confirmation:proposal.confirmation,approval:typed // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              toolNotice(lookupStatus,done.message); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+              card.remove(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            } catch(error) {toolNotice(lookupStatus,error.message);} // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+            finally {remove.disabled=false;} // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          card.append(title,subtitle,button,remove); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        } else { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+          card.append(title,subtitle,button); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        recordResults.append(card); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      if (!data.records.length) toolNotice(lookupStatus,'Nenhum resultado encontrado.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      else toolNotice(lookupStatus,'Registros encontrados: '+data.records.length+'.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } catch (error) {toolNotice(lookupStatus,error.message);} // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    finally { submit.disabled = false; submit.textContent = 'Consultar registros'; } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
 
-  $('[data-jarvis-compose-form]').addEventListener('submit',async event=>{ // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
-    event.preventDefault(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-    const submit=event.target.querySelector('button[type="submit"]'); // Explicação DevIN: Declara variável JavaScript submit para reutilizar valor ou resultado.
-    if (submit.disabled) return; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    submit.disabled=true; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-    toolNotice(outboxStatus,'Gerando rascunho, sem enviar...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-    try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
-      const result=await api(toolUrl,{ // Explicação DevIN: Declara variável JavaScript result para reutilizar valor ou resultado.
-        action:'generate', // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-        recipient_type:$('[data-jarvis-recipient-type]').value, // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-        recipient_id:Number($('[data-jarvis-recipient-id]').value), // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-        brief:$('[data-jarvis-brief]').value.trim() // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-      }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-      toolNotice(outboxStatus,'Rascunho para '+result.draft.recipient.name+ // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-        ' criado. Revise o texto antes de qualquer envio.'); // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
-      await loadDrafts(); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadAudit.
-    } catch(error) {toolNotice(outboxStatus,error.message);} // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-    finally {submit.disabled=false;} // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
-  }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  $('[data-jarvis-compose-form]').addEventListener('submit',async event=>{ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    event.preventDefault(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const submit=event.target.querySelector('button[type="submit"]'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    if (submit.disabled) return; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    submit.disabled=true; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const originalText = submit.textContent; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    submit.textContent = 'Gerando rascunho...'; // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    toolNotice(outboxStatus,'Gerando rascunho, sem enviar...'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    try { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      const result=await api(toolUrl,{ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        action:'generate', // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        recipient_type:$('[data-jarvis-recipient-type]').value, // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        recipient_id:Number($('[data-jarvis-recipient-id]').value), // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        brief:$('[data-jarvis-brief]').value.trim() // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      await loadDrafts(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      toolNotice(outboxStatus,'Rascunho para '+result.draft.recipient.name+ // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+        ' criado. Revise o texto antes de qualquer envio.'); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } catch(error) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+      await loadDrafts(); // Reconciliar possível rascunho criado mesmo após falha de rede.
+      toolNotice(outboxStatus,error.message); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    finally {submit.disabled=false;submit.textContent=originalText;} // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  }); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
 
   launcher.addEventListener('click', event => { // Explicação DevIN: Registra callback para responder a uma interação ou evento do navegador.
     if (suppressDragClick && event.detail !== 0) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

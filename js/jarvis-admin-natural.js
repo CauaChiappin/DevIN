@@ -16,6 +16,13 @@
   }; // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   const kinds = '(vagas?|an[úu]ncios?|oportunidades?|empresas?|empregadores?|candidatos?|candidatas?|pessoas?|usu[áa]rios?|usu[áa]rias?|perfis?)'; // Explicação DevIN: Declara variável JavaScript kinds para reutilizar valor ou resultado.
 
+  // Somente expressões de listagem conhecidas; filtros específicos permanecem intactos.
+  function isListingTail(tail) { // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const value = normalized(tail).replace(/[.!?]+$/g, '').trim(); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    const withoutOutro = value.replace(/\s+e\s+(?:mostre|liste|exiba|apresente)\s+(?:(?:todos?)\s+)?(?:os|as)\s+resultados?$/, ''); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+    return /^(?:(?:que\s+)?estao\s+)?(?:(?:disponiveis?|cadastrad[oa]s?|existentes?|existem|publicad[oa]s?|ativ[oa]s?|recentes?)\s*)?(?:(?:no|do|da|na)\s+(?:devin|site|plataforma))?$/.test(withoutOutro.trim()); // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+  } // Detalhe DevIN: Processa a etapa correspondente do fluxo administrativo.
+
   function kindOf(raw) { // Explicação DevIN: Declara função/método kindOf, com seus parâmetros e comportamento.
     return Object.keys(names).find(k => names[k].test(raw || '')) || null; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -95,7 +102,7 @@
     if (picked) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       const kind=kindOf(picked[1]); // Explicação DevIN: Declara variável JavaScript kind para reutilizar valor ou resultado.
       const tail=String(picked[2] || '').trim().replace(/^(?:com\s+(?:o\s+)?nome|de\s+nome|chamad[oa]s?|intitulad[oa]s?|de\s+|por\s+|que\s+se\s+chama)\s+/i,'').trim(); // Explicação DevIN: Declara variável JavaScript tail para reutilizar valor ou resultado.
-      if (!tail || /^(?:disponiveis?|cadastrad[oa]s?|existentes?|existem|publicad[oa]s?|ativos?|ativas?|recentes?|do site|da plataforma)\s*[.!?]?$/i.test(normalized(tail))) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      if (isListingTail(tail)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
         return {type:'browse',kind}; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
       } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       // Evitar interpretar condições complexas como se o backend possuísse filtros arbitrários.

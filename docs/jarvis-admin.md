@@ -28,12 +28,12 @@ O chat JARVIS requer uma sessão ADM válida. A verificação adicional Token 2 
 4. Use PHP 8.1 ou superior com as extensões cURL, `mbstring` e `mysqli`; verifique as dependências Composer e se a hospedagem permite conexões HTTPS com o provedor.
 5. Acesse `php/adm.php` com sessão ADM válida, abra o ícone JARVIS e teste as abas **Conversas** e **Atividades**.
 
-> O ID `z-ai/glm-5.3-flash:free` é um exemplo encontrado no OpenRouter em novembro de 2026. Modelos e cotas podem mudar. A variante gratuita tem limite de uso; revise disponibilidade, termos de dados e custos antes de colocá-la em produção. Alternativamente, escolha outro ID suportado. O roteador OpenRouter usa até **10 modelos gratuitos reserva**, configuráveis em `DEVIN_JARVIS_FALLBACK_MODELS` (lista separada por vírgulas), com defaults no código e último recurso `openrouter/free`. Envia a cadeia no campo `models` em uma chamada, sem tentar cada modelo com requisições separadas. `DEVIN_JARVIS_API_KEY` é a chave principal e `DEVIN_JARVIS_BACKUP_API_KEY` é uma segunda chave opcional usada quando a principal falha por credencial, cota, rede ou indisponibilidade. Duas chaves da mesma conta podem compartilhar cota. A variável antiga `DEVIN_JARVIS_FALLBACK_MODEL` continua aceitando **somente ID de modelo**, nunca chave de API. Consulte `docs/jarvis-openrouter-dual-key.md`.
+> O ID `z-ai/glm-5.3-flash:free` é um exemplo encontrado no OpenRouter em novembro de 2026. Modelos e cotas podem mudar. A variante gratuita tem limite de uso; revise disponibilidade, termos de dados e custos antes de colocá-la em produção. Alternativamente, escolha outro ID suportado. O roteador OpenRouter usa até **2 modelos gratuitos reserva**, configuráveis em `DEVIN_JARVIS_FALLBACK_MODELS` (lista separada por vírgulas), com defaults no código e último recurso `openrouter/free`. Envia a cadeia no campo `models` em uma chamada, sem tentar cada modelo com requisições separadas. `DEVIN_JARVIS_API_KEY` é a chave principal e `DEVIN_JARVIS_BACKUP_API_KEY` é uma segunda chave opcional usada quando a principal falha por credencial, cota, rede ou indisponibilidade. Duas chaves da mesma conta podem compartilhar cota. A variável antiga `DEVIN_JARVIS_FALLBACK_MODEL` continua aceitando **somente ID de modelo**, nunca chave de API. Consulte `docs/jarvis-openrouter-dual-key.md`.
 
 ## Atualização do roteador OpenRouter (duas chaves)
 
 - Configure `DEVIN_JARVIS_API_KEY` e opcionalmente `DEVIN_JARVIS_BACKUP_API_KEY`.
-- `DEVIN_JARVIS_FALLBACK_MODELS` aceita até dez IDs gratuitos priorizados; se ficar vazia, usa dez reservas padrão.
+- `DEVIN_JARVIS_FALLBACK_MODELS` aceita até dois IDs gratuitos priorizados; se ficar vazia, usa no máximo duas reservas padrão.
 - Erros do modelo agora informam `error_code` e `provider_http_status` seguros, sem chave, prompt ou resposta bruta.
 - Metadados das respostas incluem `model`, `fallback_used` e `key_used` (nível `primary` ou `backup`).
 - O login normal ADM continua obrigatório; Token 2 é opcional e segue a seção de acesso abaixo.
@@ -71,7 +71,7 @@ Homologar a arquitetura no servidor, revisar privacidade e testar as ferramentas
 
 Adaptações próprias, sem copiar dependências de terceiros:
 - **SkillManager**: seleção determinística por palavras-chave e até duas especializações do próprio portal; o gerenciador permanece ativo, sem executar scripts ou ações administrativas.
-- **ModelRouter**: fallback nativo entre modelo principal e até dez reservas gratuitas, mais uma chave OpenRouter independente de backup, sem alternar para provedores diferentes nem modelos pagos.
+- **ModelRouter**: fallback nativo entre modelo principal e até duas reservas gratuitas, mais uma chave OpenRouter independente de backup, sem alternar para provedores diferentes nem modelos pagos.
 - **Contexto e memória**: separação entre persistir histórico no MySQL e consentir em enviá-lo ao modelo.
 - **Central de atividades**: três exemplos explicativos e botões para registrar andamento, sem automação, fila executável ou poderes de moderação.
 - **Visibilidade**: metadados de modelo/skill por resposta nova. As mensagens antigas não guardam esses metadados na tabela atual.

@@ -150,7 +150,7 @@ final class ModelProvider // Explicação DevIN: Declara o tipo ModelProvider e 
             'stream' => false, // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
         ]; // Explicação DevIN: Finaliza expressão, lista, função ou bloco sintático.
         if ($provider === 'openrouter' && count($models) > 1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-            // Fallback nativo: 1 solicitação percorre até 11 modelos, sem
+            // Fallback nativo: 1 solicitação percorre até 3 modelos, sem
             // executar chamadas por modelo nem incorrer em custo de modelo pago.
             $body['models'] = $models; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
         } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

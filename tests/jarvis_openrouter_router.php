@@ -33,7 +33,7 @@ $transport = static function (string $url, string $key, array $body) use (&$call
     $calls[] = ['key' => $key, 'models' => $body['models'] ?? [], 'url' => $url]; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     assertRouter($url === 'https://openrouter.ai/api/v1/chat/completions', 'somente endpoint fixo'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
     assertRouter($body['model'] === 'z-ai/glm-5.3-flash:free', 'principal mantido'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
-    assertRouter(count($body['models']) === 11, '10 reservas ativadas por padrão'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
+    assertRouter(count($body['models']) === 3, 'até 2 reservas ativadas por padrão'); // Explicação DevIN: Continua expressão ou bloco pertencente a função anônima.
     assertRouter(!str_contains(json_encode($body), 'sk-or-v1-invalid-field'), 'segredo não vira modelo'); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
     if ($key === $primaryKey) return ['status'=>401,'body'=>'{}']; // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     if ($key === $backupKey) return ['status'=>200,'body'=>json_encode([ // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.

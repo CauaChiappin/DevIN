@@ -1,4 +1,4 @@
-# JARVIS Admin — OpenRouter com duas chaves e 10 modelos reserva
+# JARVIS Admin — OpenRouter com duas chaves e 2 modelos reserva
 
 Configuração do provedor OpenRouter para o JARVIS Admin.
 
@@ -18,7 +18,7 @@ DEVIN_JARVIS_API_KEY=
 # por causa de autenticação, limite, conexão ou indisponibilidade.
 DEVIN_JARVIS_BACKUP_API_KEY=
 
-# Opcional: lista priorizada de até 10 modelos :free, separada por vírgulas.
+# Opcional: lista priorizada de até 2 modelos :free, separada por vírgulas.
 # Deixe vazio para usar os 10 backups gratuitos padrão no código.
 DEVIN_JARVIS_FALLBACK_MODELS=
 
