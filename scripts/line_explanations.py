@@ -870,6 +870,11 @@ def run() -> int: # Explicação DevIN: Declara função Python run, com seus ar
         total_added += added # Explicação DevIN: Continua expressão ou bloco Python pertencente a função run.
         total_skipped += skipped # Explicação DevIN: Continua expressão ou bloco Python pertencente a função run.
         if updated != source: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
+            if options.check and path.name == "company-talents.php": # Detalhe DevIN: Diagnostica diferenças específicas no componente novo.
+                import difflib # Detalhe DevIN: Compara comentários sem alterar os arquivos.
+                differences = difflib.unified_diff(source.splitlines(), updated.splitlines(), fromfile="atual", tofile="esperado", lineterm="") # Detalhe DevIN: Localiza linhas que precisam de explicação.
+                print("\n".join(list(differences)[:85]), file=sys.stderr) # Detalhe DevIN: Exibe apenas o trecho necessário no CI.
+
             if options.write: # Explicação DevIN: Avalia uma condição para decidir se o bloco Python seguinte será executado.
                 absolute.write_text(updated, encoding="utf-8", newline="") # Explicação DevIN: Continua expressão ou bloco Python pertencente a função run.
             else: # Explicação DevIN: Define o caminho alternativo de uma condição anterior.
