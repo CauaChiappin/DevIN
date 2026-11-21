@@ -268,3 +268,9 @@
 @media (prefers-reduced-motion: reduce) { /* Explicação DevIN: Abre regra responsiva: aplica estilos somente sob determinada condição de tela. */
     .page-inicio[data-tipo="adm"] .admin-metric { transition: none; } /* Explicação DevIN: Continua uma declaração de seletor ou valor CSS iniciada no trecho anterior. */
 } /* Explicação DevIN: Fecha o bloco atual de estilos CSS. */
+
+/* DevIN ADM — atalhos do novo Início, sem afetar os demais dashboards. */
+.admin-overview-shortcuts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 10px; } /* Explicação DevIN: Distribui os acessos rápidos de forma responsiva. */
+.admin-overview-shortcuts a { display: inline-flex; gap: 10px; align-items: center; min-width: 0; min-height: 54px; border: 1px solid #d4e4f1; border-radius: 13px; padding: 12px 16px; color: #15588e; background: #fff; font-weight: 750; text-decoration: none; } /* Explicação DevIN: Apresenta menus acessíveis. */
+.admin-overview-shortcuts a:hover, .admin-overview-shortcuts a:focus-visible { background: #edf7ff; border-color: #96c4e5; } /* Explicação DevIN: Realça navegação por mouse ou teclado. */
+.admin-overview-shortcuts a svg { width: 21px; height: 21px; flex: 0 0 21px; } /* Explicação DevIN: Mantém ícones consistentes na página Início. */
