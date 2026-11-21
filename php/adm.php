@@ -24,8 +24,8 @@ $usuarioAtual = requireWebAuth('adm'); // Explicação DevIN: Atribui um valor �
 $tipo    = 'adm'; // Explicação DevIN: Atribui um valor à variável PHP $tipo.
 $nome    = $_SESSION['usuario_nome']  ?? 'Administrador'; // Explicação DevIN: Atribui um valor à variável PHP $nome.
 $email   = $_SESSION['usuario_email'] ?? 'adm@devin.com'; // Explicação DevIN: Atribui um valor à variável PHP $email.
-$pagina  = requestString($_GET, 'pagina');
-if ($pagina === 'estatisticas') $pagina = 'inicio'; // Detalhe DevIN: Links antigos de Estatísticas exibem o novo Início do ADM. // Detalhe DevIN: Atribui um valor à variável PHP $pagina.
+$pagina  = requestString($_GET, 'pagina'); // Detalhe DevIN: Identifica a página solicitada na navegação ADM.
+if ($pagina === 'estatisticas') $pagina = 'inicio'; // Detalhe DevIN: Links antigos de Estatísticas exibem o novo Início do ADM.
 $categoriaReport = requestString($_GET, 'categoria'); // Explicação DevIN: Atribui um valor à variável PHP $categoriaReport.
 $categoriasReport = ['vagas', 'empresas', 'pessoas']; // Explicação DevIN: Atribui um valor à variável PHP $categoriasReport.
 if (!in_array($categoriaReport, $categoriasReport, true)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
