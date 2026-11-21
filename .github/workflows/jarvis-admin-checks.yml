@@ -45,11 +45,11 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'css/support.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/mensagens_api.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/pessoa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
-      - 'php/empresa.php'
+      - 'php/empresa.php' # Detalhe DevIN: Garante a execução da suíte ao modificar o painel das empresas.
       - 'php/components/company-talents.php' # Detalhe DevIN: Executa testes quando o catálogo empresarial mudar.
       - 'css/company-talents.css' # Detalhe DevIN: Inclui correções visuais do catálogo de pessoas.
       - 'js/company-talents.js' # Detalhe DevIN: Verifica a integração de perfis.
-      - 'tests/company-talents.test.cjs' # Detalhe DevIN: Executa contratos de navegação e dados. # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'tests/company-talents.test.cjs' # Detalhe DevIN: Executa contratos de navegação e dados.
       - 'php/components/profile-tools.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/ProfileController.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/ChatStorage.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
