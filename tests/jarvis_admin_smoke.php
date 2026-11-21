@@ -41,13 +41,13 @@ $single = ModelRouter::candidates('groq', 'modelo-primario', 'modelo-secundario:
 checkJarvis($single === ['modelo-primario'], 'não alternar em provedor diferente de OpenRouter'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 $default = ModelRouter::candidates('openrouter', 'z-ai/glm-5.3-flash:free'); // Explicação DevIN: Atribui um valor à variável PHP $default.
 checkJarvis(count($default) === 3, 'modelo principal e 2 reservas padrão'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
-checkJarvis($default[1] === 'google/gemma-4-26b-a4b-it:free', 'roteador gratuito como último recurso'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis($default[1] === 'google/gemma-4-26b-a4b-it:free', 'primeira reserva gratuita configurada'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 checkJarvis(count(array_unique($default)) === count($default), 'nenhum modelo duplicado'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 checkJarvis(array_reduce($default, static fn(bool $ok, string $model): bool => $ok && ModelRouter::isFree($model), true), 'todos gratuitos'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 $singleBackup = ModelRouter::candidates('openrouter', 'z-ai/glm-5.3-flash:free', 'google/gemma-4-31b-it:free'); // Explicação DevIN: Atribui um valor à variável PHP $singleBackup.
 checkJarvis($singleBackup === ['z-ai/glm-5.3-flash:free', 'google/gemma-4-31b-it:free'], 'compatibilidade com fallback legado'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 $badLegacy = ModelRouter::candidates('openrouter', 'openrouter/free', 'sk-or-v1-simulated'); // Explicação DevIN: Atribui um valor à variável PHP $badLegacy.
-checkJarvis(count($badLegacy) === 10 && !in_array('sk-or-v1-simulated', $badLegacy, true), 'ignora chave colada em campo de modelo e mantém reservas'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
+checkJarvis(count($badLegacy) === 3 && !in_array('sk-or-v1-simulated', $badLegacy, true), 'ignora chave colada em campo de modelo e mantém reservas'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 $config = ModelRouter::candidates('openrouter', 'openrouter/free', '', 'google/gemma-4-31b-it:free,openai/gpt-6,google/gemma-4-31b-it:free,liquid/lfm-3-1.7b:free'); // Explicação DevIN: Atribui um valor à variável PHP $config.
 checkJarvis($config === ['openrouter/free','google/gemma-4-31b-it:free','liquid/lfm-3-1.7b:free'], 'CSV filtra modelos pagos, inválidos e repetidos'); // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
 checkJarvis(ModelRouter::shouldTrySecondKey(401) && ModelRouter::shouldTrySecondKey(402) // Explicação DevIN: Continua expressão ou bloco pertencente a função checkJarvis.
