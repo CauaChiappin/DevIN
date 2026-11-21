@@ -1,4 +1,4 @@
-<?php
+<?php // Detalhe DevIN: Abre o componente PHP do diretório de talentos.
 declare(strict_types=1); // Detalhe DevIN: Executa a consulta e organiza os perfis profissionais.
 
 /** Catálogo de talentos: somente dados profissionais e fotos, com paginação. */
@@ -76,14 +76,7 @@ try { // Detalhe DevIN: Executa a consulta e organiza os perfis profissionais.
         <div class="company-talents__grid"> <!-- Detalhe DevIN: Estrutura o catálogo e o perfil dos candidatos. -->
             <?php foreach ($talents as $talent): ?> <!-- Detalhe DevIN: Apresenta dados somente na interface autorizada. -->
                 <article class="company-talent-card"> <!-- Detalhe DevIN: Estrutura o catálogo e o perfil dos candidatos. -->
-                    <button type="button" class="company-talent-card__open" data-talent-open <!-- Detalhe DevIN: Estrutura o catálogo e o perfil dos candidatos. -->
-                        data-talent-id="<?= (int) $talent['id'] ?>"
-                        data-talent-name="<?= h((string) $talent['nome']) ?>"
-                        data-talent-education="<?= h((string) $talent['escolaridade']) ?>"
-                        data-talent-courses="<?= h((string) $talent['cursos']) ?>"
-                        data-talent-experience="<?= h((string) $talent['experiencia']) ?>"
-                        data-talent-languages="<?= h((string) $talent['idiomas']) ?>"
-                        aria-label="Abrir perfil de <?= h((string) $talent['nome']) ?>">
+                    <button type="button" class="company-talent-card__open" data-talent-open data-talent-id="<?= (int) $talent['id'] ?>" data-talent-name="<?= h((string) $talent['nome']) ?>" data-talent-education="<?= h((string) $talent['escolaridade']) ?>" data-talent-courses="<?= h((string) $talent['cursos']) ?>" data-talent-experience="<?= h((string) $talent['experiencia']) ?>" data-talent-languages="<?= h((string) $talent['idiomas']) ?>" aria-label="Abrir perfil de <?= h((string) $talent['nome']) ?>"> <!-- Detalhe DevIN: Abre o perfil profissional com atributos escapados e foto real. -->
                         <?= profileAvatar($talent, 'company-talent-avatar') ?> <!-- Detalhe DevIN: Apresenta dados somente na interface autorizada. -->
                         <span class="company-talent-card__copy"> <!-- Detalhe DevIN: Estrutura o catálogo e o perfil dos candidatos. -->
                             <strong><?= h((string) $talent['nome']) ?></strong> <!-- Detalhe DevIN: Estrutura o catálogo e o perfil dos candidatos. -->
