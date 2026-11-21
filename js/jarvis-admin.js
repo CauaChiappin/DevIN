@@ -1102,7 +1102,6 @@
             analysisArea.textContent=result.reply;
             toolNotice(lookupStatus,'Análise concluída. Nenhum dado foi alterado.');
           } catch (error) {toolNotice(lookupStatus,error.message);}
-    finally { submit.disabled = false; submit.textContent = 'Consultar registros'; }
           finally {button.disabled=false;}
         });
         if (['vaga','pessoa','empresa'].includes(kind)) {
@@ -1147,6 +1146,7 @@
       if (!data.records.length) toolNotice(lookupStatus,'Nenhum resultado encontrado.');
       else toolNotice(lookupStatus,'Registros encontrados: '+data.records.length+'.');
     } catch (error) {toolNotice(lookupStatus,error.message);}
+    finally { submit.disabled = false; submit.textContent = 'Consultar registros'; }
   });
 
   $('[data-jarvis-compose-form]').addEventListener('submit',async event=>{
