@@ -155,21 +155,34 @@
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
   initLauncherDocking(); // Explicação DevIN: Continua expressão ou bloco pertencente a função finishDrag.
 
-  async function api(url, body = null) { // Explicação DevIN: Declara função/método api, com seus parâmetros e comportamento.
-    const options = {credentials: 'same-origin', cache: 'no-store', headers: {Accept: 'application/json'}}; // Explicação DevIN: Declara variável JavaScript options para reutilizar valor ou resultado.
-    if (body !== null) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      options.method = 'POST'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-      options.headers['Content-Type'] = 'application/json'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-      options.headers['X-CSRF-Token'] = root.dataset.csrf; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
-      options.body = JSON.stringify(body); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    const response = await fetch(url, options); // Explicação DevIN: Inicia solicitação HTTP assíncrona a um endereço configurado.
-    const data = await response.json().catch(() => null); // Explicação DevIN: Captura exceção ou erro para tratar a falha de execução.
-    if (!data || !response.ok || data.success !== true) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      throw new Error(data?.message || 'Falha ao consultar o servidor. Verifique sua sessão.'); // Explicação DevIN: Interrompe o fluxo atual levantando exceção ou erro.
-    } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
-    return data; // Explicação DevIN: Retorna ou produz resultado da função, conforme a expressão informada.
-  } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+  // Timeout impede consultas e formulários de permanecerem bloqueados indefinidamente.
+  async function api(url, body = null) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), body === null ? 20000 : 90000);
+    const options = {credentials: 'same-origin', cache: 'no-store',
+      signal: controller.signal, headers: {Accept: 'application/json'}};
+    if (body !== null) {
+      options.method = 'POST';
+      options.headers['Content-Type'] = 'application/json';
+      options.headers['X-CSRF-Token'] = root.dataset.csrf;
+      options.body = JSON.stringify(body);
+    }
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json().catch(() => null);
+      if (!data || !response.ok || data.success !== true) {
+        throw new Error(data?.message || 'Falha ao consultar o servidor. Verifique sua sessão.');
+      }
+      return data;
+    } catch (error) {
+      if (error?.name === 'AbortError') throw new Error(body === null
+        ? 'A consulta demorou demais. Tente novamente.'
+        : 'Tempo limite atingido. Verifique o histórico antes de repetir; a operação pode ter sido concluída.');
+      throw error;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
   function open(show) { // Explicação DevIN: Declara função/método open, com seus parâmetros e comportamento.
     panel.hidden = !show; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
     launcher.setAttribute('aria-expanded', String(show)); // Explicação DevIN: Continua expressão ou bloco pertencente a função open.
@@ -180,7 +193,8 @@
       }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
       if (activeTab === 'tasks') void loadTasks(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       else if (activeTab === 'outbox') void loadDrafts(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-      else if (activeTab === 'audit') void loadAudit(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+      else if (activeTab === 'audit') void loadAudit();
+      else if (activeTab === 'overview') void loadAdminOverview(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       else if (activeTab === 'lookup') $('[data-jarvis-record-query]').focus(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
       else input.focus(); // Explicação DevIN: Define ramo alternativo para condição anterior.
     } else { // Explicação DevIN: Define ramo alternativo para condição anterior.
@@ -199,7 +213,8 @@
     }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
     if (name === 'tasks') loadTasks(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     else if (name === 'outbox') void loadDrafts(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    else if (name === 'audit') void loadAudit(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
+    else if (name === 'audit') void loadAudit();
+    else if (name === 'overview') void loadAdminOverview(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     else if (name === 'lookup') $('[data-jarvis-record-query]').focus(); // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     else input.focus(); // Explicação DevIN: Define ramo alternativo para condição anterior.
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -915,6 +930,41 @@
   const auditList = $('[data-jarvis-audit-list]'); // Explicação DevIN: Declara variável JavaScript auditList para reutilizar valor ou resultado.
 
   function toolNotice(node, text) { node.textContent = String(text); } // Explicação DevIN: Declara função/método toolNotice, com seus parâmetros e comportamento.
+
+  // Reutiliza as métricas locais existentes do dashboard, sem duplicar SQL.
+  async function loadAdminOverview() {
+    const info = $('[data-jarvis-overview-status]');
+    const list = $('[data-jarvis-overview-list]');
+    toolNotice(info, 'Carregando indicadores...');
+    try {
+      const response = await api(toolUrl + '?action=overview');
+      const counts = response.overview || {};
+      const fields = [['pessoas','Candidatos'],['empresas','Empresas'],['vagas','Vagas'],
+        ['candidaturas','Candidaturas'],['contratacoes','Contratações'],
+        ['denuncias_pendentes','Denúncias pendentes'],['suporte_aberto','Chamados abertos']];
+      list.replaceChildren();
+      for (const [key,label] of fields) {
+        const card = document.createElement('article');
+        card.className = 'jarvis-admin__tool-card';
+        const heading = document.createElement('strong');
+        heading.textContent = label;
+        const value = document.createElement('p');
+        value.textContent = Number.isFinite(counts[key])
+          ? new Intl.NumberFormat('pt-BR').format(counts[key]) : 'Indisponível';
+        card.append(heading,value);
+        list.append(card);
+      }
+      for (const [page,label] of [['inicio','Visão geral'],['candidatos','Candidatos'],
+        ['posts','Vagas'],['reports','Denúncias'],['suporte','Suporte'],['estatisticas','Estatísticas']]) {
+        const link = document.createElement('a');
+        link.href = 'adm.php?pagina=' + encodeURIComponent(page);
+        link.textContent = 'Abrir ' + label;
+        link.className = 'jarvis-admin__tool-card';
+        list.append(link);
+      }
+      toolNotice(info, 'Indicadores consultados no MySQL.');
+    } catch (error) { toolNotice(info, error.message); }
+  }
 
   async function loadDrafts() { // Explicação DevIN: Declara função/método loadDrafts, com seus parâmetros e comportamento.
     toolNotice(outboxStatus, 'Carregando rascunhos...'); // Explicação DevIN: Continua expressão ou bloco pertencente a função loadDrafts.
