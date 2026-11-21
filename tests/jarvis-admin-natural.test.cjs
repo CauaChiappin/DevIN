@@ -13,7 +13,11 @@ const examples=[ // Explicação DevIN: Declara variável JavaScript examples pa
   ['Quero ver as vagas disponíveis',{type:'browse',kind:'vaga'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Liste as empresas cadastradas',{type:'browse',kind:'empresa'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Mostre todos os candidatos',{type:'browse',kind:'pessoa'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-  ['Quais vagas existem?',{type:'browse',kind:'vaga'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  ['Quais vagas existem?',{type:'browse',kind:'vaga'}],
+  ['Jarvis, consulte as vagas cadastradas no DevIN e mostre os resultados.',{type:'browse',kind:'vaga'}],
+  ['Mostre as vagas do DevIN',{type:'browse',kind:'vaga'}],
+  ['Consulte todas as vagas cadastradas',{type:'browse',kind:'vaga'}],
+  ['Quais empresas estão cadastradas?',{type:'browse',kind:'empresa'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Mostre o anúncio #15',{type:'search',kind:'vaga',id:15,name:''}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Encontre João Silva',{type:'search',kind:null,id:null,name:'João Silva'}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   ['Exclua a vaga 12',{type:'delete',kind:'vaga',id:12,name:''}], // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
