@@ -24,11 +24,11 @@ $metrics = [ // Explicação DevIN: Atribui um valor à variável PHP $metrics.
         <h1><?= h($labels['title']) ?></h1> <!-- Explicação DevIN: Declara título principal. Contém dado dinâmico processado pelo PHP. -->
         <p><?= h($labels['intro']) ?></p> <!-- Explicação DevIN: Declara parágrafo. Contém dado dinâmico processado pelo PHP. -->
     </header> <!-- Explicação DevIN: Fecha elemento header do documento. -->
-    <nav class="admin-overview-shortcuts" aria-label="Acesso rápido aos menus administrativos"> <!-- Explicação DevIN: Apresenta atalhos acessíveis sem duplicar os indicadores. -->
-        <?php foreach ([['empresas','building','companies'], ['posts','briefcase','jobs'], ['candidatos','user','people'], ['reports','flag','reports'], ['suporte','lifebuoy','support']] as [$shortcutPage, $shortcutIcon, $shortcutLabel]): ?> <!-- Explicação DevIN: Reutiliza as categorias e traduções já existentes. -->
-            <a href="adm.php?pagina=<?= h($shortcutPage) ?>"><?= dashboardIcon($shortcutIcon) ?><span><?= h($labels[$shortcutLabel]) ?></span></a> <!-- Explicação DevIN: Acessa diretamente as seções existentes. -->
+    <nav class="admin-overview-shortcuts" aria-label="Acesso rápido aos menus administrativos"> <!-- Detalhe DevIN: Apresenta atalhos acessíveis sem duplicar os indicadores. -->
+        <?php foreach ([['empresas','building','companies'], ['posts','briefcase','jobs'], ['candidatos','user','people'], ['reports','flag','reports'], ['suporte','lifebuoy','support']] as [$shortcutPage, $shortcutIcon, $shortcutLabel]): ?> <!-- Detalhe DevIN: Reutiliza as categorias e traduções já existentes. -->
+            <a href="adm.php?pagina=<?= h($shortcutPage) ?>"><?= dashboardIcon($shortcutIcon) ?><span><?= h($labels[$shortcutLabel]) ?></span></a> <!-- Detalhe DevIN: Acessa diretamente as seções existentes. -->
         <?php endforeach; ?>
-    </nav> <!-- Explicação DevIN: Encerra a navegação rápida do Início. -->
+    </nav> <!-- Detalhe DevIN: Encerra a navegação rápida do Início. -->
     <div class="admin-overview-grid"> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         <?php foreach ($metrics as [$caption, $key]): ?>
             <?php $metricAvailable = isset($adminOverview[$key]); ?>
