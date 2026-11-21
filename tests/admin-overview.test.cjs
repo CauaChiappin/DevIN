@@ -11,9 +11,9 @@ test('Início ADM mostra estatísticas sem acesso público', () => { // Explica�
     const adm = read('php/adm.php'); // Explicação DevIN: Declara variável JavaScript adm para reutilizar valor ou resultado.
     assert.match(adm, /requireWebAuth\('adm'\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(adm, /'estatisticas'/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(adm, /href="adm\.php\?pagina=estatisticas"/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(adm, /href="adm\.php\?pagina=inicio"/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     assert.match(adm, /components\/admin-overview\.php/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-    assert.match(adm, /\$pagina === 'estatisticas'\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+    assert.match(adm, /\$pagina === 'inicio'\)/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 test('Métricas são agregadas e permanecem somente de leitura', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     const sql = read('php/controllers/AdminOverview.php'); // Explicação DevIN: Declara variável JavaScript sql para reutilizar valor ou resultado.
