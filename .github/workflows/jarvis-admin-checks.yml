@@ -45,7 +45,11 @@ on: # Explicação DevIN: Configura acionadores do workflow (campo on).
       - 'css/support.css' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/mensagens_api.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/pessoa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
-      - 'php/empresa.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
+      - 'php/empresa.php'
+      - 'php/components/company-talents.php' # Detalhe DevIN: Executa testes quando o catálogo empresarial mudar.
+      - 'css/company-talents.css' # Detalhe DevIN: Inclui correções visuais do catálogo de pessoas.
+      - 'js/company-talents.js' # Detalhe DevIN: Verifica a integração de perfis.
+      - 'tests/company-talents.test.cjs' # Detalhe DevIN: Executa contratos de navegação e dados. # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/components/profile-tools.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/ProfileController.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
       - 'php/controllers/ChatStorage.php' # Explicação DevIN: Adiciona item a uma lista da configuração YAML.
@@ -116,6 +120,7 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           php -l php/controllers/ChatStorage.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/controllers/AdminOverview.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/components/admin-overview.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          php -l php/components/company-talents.php # Detalhe DevIN: Valida o novo componente de candidatos.
           php -l tests/chat_mysql_storage.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/suporte.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           php -l php/support_api.php # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
@@ -180,6 +185,8 @@ jobs: # Explicação DevIN: Configura conjunto de trabalhos do workflow (campo j
           node --test tests/ui-consistency.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/admin-dashboard-sections.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/admin-overview.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
+          node --check js/company-talents.js # Detalhe DevIN: Valida ações de perfil.
+          node --test tests/company-talents.test.cjs # Detalhe DevIN: Garante o início ADM e catálogo.
           node --test tests/support-ui.test.cjs tests/support-i18n.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --test tests/profile-email-ui.test.cjs # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
           node --check js/mobile-arcade-secret.js # Explicação DevIN: Executa comando de automação ou configura argumento do shell.
