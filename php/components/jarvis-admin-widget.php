@@ -31,7 +31,7 @@ $toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED'] // Explicação 
             <button type="button" aria-pressed="false" data-jarvis-tab="lookup" <?= $toolsEnabled ? '' : 'disabled title="Exige instalação da migration e ativação no servidor"' ?>>Consultar</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. Contém dado dinâmico processado pelo PHP. -->
             <button type="button" aria-pressed="false" data-jarvis-tab="outbox" <?= $toolsEnabled ? '' : 'disabled title="Exige instalação da migration e ativação no servidor"' ?>>Mensagens</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. Contém dado dinâmico processado pelo PHP. -->
             <button type="button" aria-pressed="false" data-jarvis-tab="audit" <?= $toolsEnabled ? '' : 'disabled title="Exige instalação da migration e ativação no servidor"' ?>>Histórico</button> <!-- Explicação DevIN: Declara botão de ação. Inclui atributos de acessibilidade. Contém dado dinâmico processado pelo PHP. -->
-            <button type="button" aria-pressed="false" data-jarvis-tab="overview" <?= $toolsEnabled ? '' : 'disabled title="Ferramentas administrativas desligadas"' ?>>Painel ADM</button>
+            <button type="button" aria-pressed="false" data-jarvis-tab="overview" <?= $toolsEnabled ? '' : 'disabled title="Ferramentas administrativas desligadas"' ?>>Painel ADM</button> <!-- Explicação DevIN: Elemento da interface administrativa do assistente. -->
         </nav> <!-- Explicação DevIN: Fecha elemento nav do documento. -->
         <?php if ($jarvisStepUpEnabled): ?>
         <p class="jarvis-admin__stepup-link"><a href="admin_security_ai.php">Desbloquear IA com Token 1 e Token 2</a></p> <!-- Explicação DevIN: Declara parágrafo. A linha reúne múltiplos elementos. -->
@@ -121,12 +121,12 @@ $toolsEnabled = (string) ($_ENV['DEVIN_JARVIS_ACTIONS_ENABLED'] // Explicação 
             <p class="jarvis-admin__status" role="status" data-jarvis-audit-status></p> <!-- Explicação DevIN: Declara parágrafo. -->
             <div class="jarvis-admin__tool-results" data-jarvis-audit-list></div> <!-- Explicação DevIN: Declara agrupamento de elementos. -->
         </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
-        <section class="jarvis-admin__pane jarvis-admin__pane--tools" data-jarvis-pane="overview" aria-label="Visão geral administrativa" hidden>
-            <p class="jarvis-admin__tasks-info">Indicadores da página inicial dos administradores, consultados diretamente no banco do DevIN.</p>
-            <button type="button" class="jarvis-admin__tool-refresh" data-jarvis-overview-refresh>Atualizar indicadores</button>
-            <p class="jarvis-admin__status" role="status" data-jarvis-overview-status></p>
-            <div class="jarvis-admin__tool-results" data-jarvis-overview-list></div>
-        </section>
+        <section class="jarvis-admin__pane jarvis-admin__pane--tools" data-jarvis-pane="overview" aria-label="Visão geral administrativa" hidden> <!-- Explicação DevIN: Elemento da interface administrativa do assistente. -->
+            <p class="jarvis-admin__tasks-info">Indicadores da página inicial dos administradores, consultados diretamente no banco do DevIN.</p> <!-- Explicação DevIN: Elemento da interface administrativa do assistente. -->
+            <button type="button" class="jarvis-admin__tool-refresh" data-jarvis-overview-refresh>Atualizar indicadores</button> <!-- Explicação DevIN: Elemento da interface administrativa do assistente. -->
+            <p class="jarvis-admin__status" role="status" data-jarvis-overview-status></p> <!-- Explicação DevIN: Elemento da interface administrativa do assistente. -->
+            <div class="jarvis-admin__tool-results" data-jarvis-overview-list></div> <!-- Explicação DevIN: Elemento da interface administrativa do assistente. -->
+        </section> <!-- Explicação DevIN: Elemento da interface administrativa do assistente. -->
         <p class="jarvis-admin__disclaimer">IA experimental. Não envie senhas, tokens ou dados pessoais desnecessários. Mensagens oficiais exigem aprovação humana.</p> <!-- Explicação DevIN: Declara parágrafo. -->
     </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
 </section> <!-- Explicação DevIN: Fecha elemento section do documento. -->
