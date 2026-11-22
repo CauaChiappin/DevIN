@@ -192,14 +192,35 @@ $httpStatus = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE); // Explicação
 $curlError = curl_error($curl); // Explicação DevIN: Atribui um valor à variável PHP $curlError.
 curl_close($curl); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderGeracaoCurriculo.
 
-if (!is_string($responseBody) || $httpStatus < 200 || $httpStatus >= 300) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
-    error_log('Falha na geração do currículo pelo Gemini: HTTP ' . $httpStatus . ($curlError !== '' ? ' (' . $curlError . ')' : '')); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderGeracaoCurriculo.
-    $status = $httpStatus === 429 ? 429 : 503; // Explicação DevIN: Atribui um valor à variável PHP $status.
-    $message = $httpStatus === 429 // Explicação DevIN: Atribui um valor à variável PHP $message.
-        ? 'O limite de uso da IA foi atingido. Aguarde e tente novamente.' // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-        : 'Não foi possível gerar seu currículo agora. Tente novamente mais tarde.'; // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-    responderGeracaoCurriculo(['sucesso' => false, 'mensagem' => $message], $status); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderGeracaoCurriculo.
-} // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
+if (!is_string($responseBody) || $httpStatus < 200 || $httpStatus >= 300) { // Detalhe DevIN: Classifica respostas de erro do Gemini sem expor a chave ou o currículo.
+    $providerData = is_string($responseBody) ? json_decode($responseBody, true) : null; // Detalhe DevIN: Analisa apenas o código de erro retornado.
+    $providerStatus = is_array($providerData) && is_array($providerData['error'] ?? null) ? (string) ($providerData['error']['status'] ?? '') : ''; // Detalhe DevIN: Recupera o status de erro sem ler dados pessoais.
+    $safeProviderStatus = preg_match('/^[A-Z_]{1,60}$/', $providerStatus) === 1 ? $providerStatus : 'UNKNOWN'; // Detalhe DevIN: Valida metadados antes de registrá-los.
+    error_log('Gemini currículo: HTTP ' . $httpStatus . ' / ' . $safeProviderStatus . ($curlError !== '' ? ' / falha de transporte' : '')); // Detalhe DevIN: Registra somente categorias de falhas.
+    $status = 503; // Detalhe DevIN: Mantém resposta padrão de serviço temporariamente indisponível.
+    $code = 'GEMINI_UNAVAILABLE'; // Detalhe DevIN: Atribui código técnico sem incluir segredo.
+    $message = 'O serviço de IA está indisponível no momento. Seu currículo salvo não foi alterado.'; // Detalhe DevIN: Informa que o currículo não foi afetado.
+    if ($httpStatus === 429) { // Detalhe DevIN: Detecta limite de uso do provedor.
+        $status = 429; $code = 'GEMINI_QUOTA'; // Detalhe DevIN: Preserva resposta de limite de requisições.
+        $message = 'O limite de uso do Gemini foi atingido. Tente novamente mais tarde.'; // Detalhe DevIN: Orienta aguardar.
+    } elseif (in_array($httpStatus, [401, 403], true)) { // Detalhe DevIN: Detecta chave recusada ou acesso restrito ao projeto.
+        $code = 'GEMINI_ACCESS'; // Detalhe DevIN: Identifica bloqueio de credencial ou permissão.
+        $message = 'O acesso ao Gemini foi recusado. Informe o suporte DevIN para verificar a configuração.'; // Detalhe DevIN: Encaminha a falha ao administrador.
+    } elseif ($httpStatus === 404) { // Detalhe DevIN: Detecta modelo ausente ou indisponível.
+        $code = 'GEMINI_MODEL'; // Detalhe DevIN: Identifica possível incompatibilidade do modelo configurado.
+        $message = 'O modelo de IA não está disponível para este projeto. Informe o suporte DevIN.'; // Detalhe DevIN: Não expõe a configuração interna ao candidato.
+    } elseif ($httpStatus === 400) { // Detalhe DevIN: Detecta uma solicitação rejeitada pelo provedor.
+        $code = 'GEMINI_REQUEST'; // Detalhe DevIN: Identifica incompatibilidade de requisição ou chave inválida.
+        $message = 'O Gemini rejeitou a solicitação. Informe o suporte DevIN para verificar a integração.'; // Detalhe DevIN: Evita tentativa repetida sem diagnóstico.
+    } elseif ($httpStatus === 402) { // Detalhe DevIN: Detecta falta de créditos ou configuração de faturamento.
+        $code = 'GEMINI_BILLING'; // Detalhe DevIN: Diferencia faturamento de falhas de rede.
+        $message = 'A conta da IA precisa de verificação de créditos ou faturamento. Informe o suporte DevIN.'; // Detalhe DevIN: Não divulga dados da conta.
+    } elseif ($httpStatus === 0) { // Detalhe DevIN: Detecta timeout ou falha de transporte.
+        $code = 'GEMINI_NETWORK'; // Detalhe DevIN: Classifica erro de conexão.
+        $message = 'Não foi possível conectar ao Gemini. Seu currículo continua salvo; tente novamente mais tarde.'; // Detalhe DevIN: Evita sugerir que o cadastro foi perdido.
+    } // Detalhe DevIN: Finaliza classificação dos casos conhecidos.
+    responderGeracaoCurriculo(['sucesso' => false, 'mensagem' => $message, 'codigo' => $code], $status); // Detalhe DevIN: Retorna código de suporte seguro, sem detalhes privados.
+} // Detalhe DevIN: Conclui tratamento da falha antes de processar o conteúdo da IA.
 
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $providerData = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
