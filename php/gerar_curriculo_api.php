@@ -124,7 +124,7 @@ if ($dadosCurriculo['Nome social'] === '' || $dadosCurriculo['Escolaridade'] ===
     responderGeracaoCurriculo(['sucesso' => false, 'mensagem' => 'Complete o nome social e a escolaridade antes de gerar o currículo.'], 400); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderGeracaoCurriculo.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-$model = (string) ($_ENV['DEVIN_GEMINI_MODEL'] ?? $_SERVER['DEVIN_GEMINI_MODEL'] ?? getenv('DEVIN_GEMINI_MODEL') ?: 'gemini-2.5-flash-lite'); // Explicação DevIN: Atribui um valor à variável PHP $model.
+$model = (string) ($_ENV['DEVIN_GEMINI_MODEL'] ?? $_SERVER['DEVIN_GEMINI_MODEL'] ?? getenv('DEVIN_GEMINI_MODEL') ?: 'gemini-3.5-flash-lite'); // Explicação DevIN: Atribui um valor à variável PHP $model.
 if (!preg_match('/^[A-Za-z0-9._-]{1,100}$/', $model)) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     error_log('Configuração DEVIN_GEMINI_MODEL inválida.'); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderGeracaoCurriculo.
     responderGeracaoCurriculo(['sucesso' => false, 'mensagem' => 'A configuração do modelo de IA está inválida.'], 503); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderGeracaoCurriculo.
