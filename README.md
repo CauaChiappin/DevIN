@@ -52,7 +52,7 @@ O `.env` local deve permanecer fora do Git. Nunca coloque chaves no JavaScript, 
 ```dotenv
 # Gemini: geração e análise de currículos
 DEVIN_GEMINI_API_KEY=
-DEVIN_GEMINI_MODEL=gemini-2.5-flash-lite
+DEVIN_GEMINI_MODEL=gemini-3.5-flash-lite
 
 # JARVIS Admin (um provedor de cada vez: groq, openrouter ou openai)
 DEVIN_JARVIS_PROVIDER=groq
