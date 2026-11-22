@@ -72,11 +72,11 @@ test('diagnóstico da IA de currículo não consulta chave nem expõe documento'
   assert.match(status, /DEVIN_GEMINI_API_KEY/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   assert.doesNotMatch(status, /'key'\s*=>\s*\$key|api_key'\s*=>\s*\$key/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   assert.match(generate, /responseMimeType/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-  assert.match(generate, /ResumeDocument::saveGenerated/);
+  assert.match(generate, /ResumeDocument::saveGenerated/); // Detalhe DevIN: Confirma que o currículo gerado é persistido.
   for (const code of ['GEMINI_MODEL', 'GEMINI_ACCESS', 'GEMINI_QUOTA', 'GEMINI_NETWORK', 'GEMINI_REQUEST']) { // Detalhe DevIN: Exige classificação explícita de falhas do Google.
     assert.ok(generate.includes(code), 'Diagnóstico ausente: ' + code); // Detalhe DevIN: Impede o retorno ao erro genérico.
   } // Detalhe DevIN: Fecha validação de erros do Gemini.
-  assert.doesNotMatch(generate, /error_log\([^\n]*\$responseBody/); // Detalhe DevIN: Evita vazar conteúdo retornado ou dados pessoais nos logs. // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+  assert.doesNotMatch(generate, /error_log\([^\n]*\$responseBody/); // Detalhe DevIN: Evita vazar conteúdo retornado ou dados pessoais nos logs.
   assert.match(review, /resume_abnt_consent/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   assert.match(review, /ResumeReviewResult::normalize/); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
