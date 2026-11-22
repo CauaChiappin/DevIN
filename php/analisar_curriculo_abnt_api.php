@@ -130,7 +130,7 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
     responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'Não foi possível preparar seu arquivo para análise.'], 500); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
-$model = (string) ($_ENV['DEVIN_GEMINI_MODEL'] ?? $_SERVER['DEVIN_GEMINI_MODEL'] ?? getenv('DEVIN_GEMINI_MODEL') ?: 'gemini-2.5-flash-lite'); // Explicação DevIN: Atribui um valor à variável PHP $model.
+$model = (string) ($_ENV['DEVIN_GEMINI_MODEL'] ?? $_SERVER['DEVIN_GEMINI_MODEL'] ?? getenv('DEVIN_GEMINI_MODEL') ?: 'gemini-3.5-flash-lite'); // Explicação DevIN: Atribui um valor à variável PHP $model.
 if (preg_match('/^[A-Za-z0-9._-]{1,100}$/', $model) !== 1) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     responderRevisaoCurriculo(['sucesso' => false, 'mensagem' => 'A configuração do modelo de IA está inválida.'], 503); // Explicação DevIN: Continua expressão ou bloco pertencente a função responderRevisaoCurriculo.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.

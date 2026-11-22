@@ -23,7 +23,7 @@ $key = (string) ($_ENV['DEVIN_GEMINI_API_KEY'] // Explicação DevIN: Atribui um
     ?? getenv('DEVIN_GEMINI_API_KEY') ?: ''); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
 $model = (string) ($_ENV['DEVIN_GEMINI_MODEL'] // Explicação DevIN: Atribui um valor à variável PHP $model.
     ?? $_SERVER['DEVIN_GEMINI_MODEL'] // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-    ?? getenv('DEVIN_GEMINI_MODEL') ?: 'gemini-2.5-flash-lite'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+    ?? getenv('DEVIN_GEMINI_MODEL') ?: 'gemini-3.5-flash-lite'); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
 $curl = function_exists('curl_init'); // Explicação DevIN: Atribui um valor à variável PHP $curl.
 $validModel = preg_match('/^[A-Za-z0-9._-]{1,100}$/', $model) === 1; // Explicação DevIN: Atribui um valor à variável PHP $validModel.
 $configured = $key !== '' && $curl && $validModel; // Explicação DevIN: Atribui um valor à variável PHP $configured.
