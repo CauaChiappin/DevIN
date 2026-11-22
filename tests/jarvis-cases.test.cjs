@@ -64,6 +64,19 @@ test('decisão com sentença humana é preservada nos reports e não muda o flux
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+test('editor do currículo mantém os dados originais quando ainda não há geração pela IA', () => { // Detalhe DevIN: Protege os candidatos que cadastraram o currículo antes de usar IA.
+  const person = read('php/pessoa.php'); // Detalhe DevIN: Confere os dados apresentados no painel do candidato.
+  assert.equal((person.match(/\$resumeContent = json_decode\(/g) || []).length, 1, 'A segunda leitura descartava os dados do currículo original'); // Detalhe DevIN: Impede a antiga sobrescrita do editor.
+  assert.equal((person.match(/ResumeDocument::find\(\$conn, \$idPessoaAtual\)/g) || []).length, 1, 'A consulta duplicada pode ocultar regressões'); // Detalhe DevIN: Elimina leituras redundantes.
+  assert.match(person, /if \(\$resumeContent === \[\] && !empty\(\$curriculoAtual\['id_curriculo'\]\)\)/); // Detalhe DevIN: Exige fallback do currículo manual.
+  for (const legacyField of ['grau_de_escolaridade', 'experiencia', 'cursos', 'idiomas']) { // Detalhe DevIN: Abrange todos os campos profissionais do cadastro.
+    assert.ok(person.includes("$curriculoAtual['" + legacyField + "']"), legacyField); // Detalhe DevIN: Confirma que os dados originais continuam visíveis.
+  } // Detalhe DevIN: Finaliza validação do mapeamento legado.
+  assert.match(person, /<textarea name="resume\[<\?= h\(\$field\) \?>\]" maxlength="6000"><\?= h\(\(string\) \(\$resumeContent\[\$field\] \?\? ''\)\) \?><\/textarea>/); // Detalhe DevIN: As textareas devem receber o conteúdo escapado do servidor.
+  const preview = person.indexOf('$hasResumePreview ='); // Detalhe DevIN: Identifica o ponto em que a prévia já está montada.
+  assert.ok(preview >= 0 && !person.slice(preview).includes('$resumeContent = json_decode(')); // Detalhe DevIN: Impede reintroduzir a limpeza depois do fallback.
+}); // Detalhe DevIN: Encerra o teste de regressão do editor.
+
 test('modelo Gemini funcional aparece nas configurações e na geração/revisão de currículo', () => { // Detalhe DevIN: Evita voltar ao modelo que retornava HTTP 404 no servidor.
   const paths = ['php/gerar_curriculo_api.php', 'php/analisar_curriculo_abnt_api.php', 'php/resume_ai_readiness.php', '.env.example', 'docs/ENV_HOSTINGER_MODELO_PREENCHER.txt', 'README.md']; // Detalhe DevIN: Enumera arquivos que devem concordar sobre o modelo.
   for (const file of paths) { // Detalhe DevIN: Revisa cada referência de configuração.
