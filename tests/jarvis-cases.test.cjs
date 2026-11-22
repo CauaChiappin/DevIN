@@ -64,6 +64,15 @@ test('decisão com sentença humana é preservada nos reports e não muda o flux
   } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 }); // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 
+test('modelo Gemini funcional aparece nas configurações e na geração/revisão de currículo', () => { // Detalhe DevIN: Evita voltar ao modelo que retornava HTTP 404 no servidor.
+  const paths = ['php/gerar_curriculo_api.php', 'php/analisar_curriculo_abnt_api.php', 'php/resume_ai_readiness.php', '.env.example', 'docs/ENV_HOSTINGER_MODELO_PREENCHER.txt', 'README.md']; // Detalhe DevIN: Enumera arquivos que devem concordar sobre o modelo.
+  for (const file of paths) { // Detalhe DevIN: Revisa cada referência de configuração.
+    const content = read(file); // Detalhe DevIN: Recupera o conteúdo local versionado.
+    assert.match(content, /gemini-3\.5-flash-lite/, file + ' deve usar o novo modelo'); // Detalhe DevIN: Exige o modelo validado em homologação pela Hostinger.
+    assert.doesNotMatch(content, /gemini-2\.5-flash-lite/, file + ' ainda menciona o modelo antigo'); // Detalhe DevIN: Impede regressão para modelo indisponível.
+  } // Detalhe DevIN: Finaliza a revisão da lista.
+}); // Detalhe DevIN: Termina teste de sincronização Gemini.
+
 test('diagnóstico da IA de currículo não consulta chave nem expõe documento', () => { // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
   const status = read('php/resume_ai_readiness.php'); // Explicação DevIN: Declara variável JavaScript status para reutilizar valor ou resultado.
   const generate = read('php/gerar_curriculo_api.php'); // Explicação DevIN: Declara variável JavaScript generate para reutilizar valor ou resultado.
