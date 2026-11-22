@@ -69,8 +69,8 @@ DEVIN_SMTP_FROM_NAME="DevIN"
 # ============================================================
 # Chave exclusiva do Gemini. Não compartilhe com o JARVIS Admin.
 DEVIN_GEMINI_API_KEY=SUBSTITUIR_CHAVE_GEMINI_PANDA_LIMAO_93284
-# Modelo de exemplo; confirme disponibilidade e limite de uso no seu projeto.
-DEVIN_GEMINI_MODEL=gemini-2.5-flash-lite
+# Modelo validado em 22/11/2026 no DevIN Hostinger (3 chamadas HTTP 200); teste o seu projeto e a quota.
+DEVIN_GEMINI_MODEL=gemini-3.5-flash-lite
 
 # ============================================================
 # 6) JARVIS ADMIN — PROVEDOR E MODELO
