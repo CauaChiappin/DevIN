@@ -267,8 +267,7 @@ $employmentConfirmations = []; // Estado de confirmação por candidatura perten
 $applicationWithdrawals = []; // Retiradas voluntárias preservam histórico.
 $vagasCandidatadas = []; // Explicação DevIN: Atribui um valor à variável PHP $vagasCandidatadas.
 $curriculoAtual = []; // Explicação DevIN: Atribui um valor à variável PHP $curriculoAtual.
-$resumeDocument = []; // Explicação DevIN: Atribui um valor à variável PHP $resumeDocument.
-$resumeDocument = []; // Explicação DevIN: Atribui um valor à variável PHP $resumeDocument.
+$resumeDocument = []; // Detalhe DevIN: Guarda o currículo gerado ou arquivo enviado, caso exista.
 
 try { // Explicação DevIN: Inicia bloco de operação com tratamento de possíveis falhas.
     $conn = getDatabaseConnection(); // Explicação DevIN: Atribui um valor à variável PHP $conn.
@@ -344,13 +343,6 @@ try { // Explicação DevIN: Inicia bloco de operação com tratamento de possí
         $curriculoAtual = $stmt->get_result()->fetch_assoc() ?? []; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
         $stmt->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
         $resumeDocument = ResumeDocument::find($conn, $idPessoaAtual); // Explicação DevIN: Atribui um valor à variável PHP $resumeDocument.
-
-        $stmt = $conn->prepare('SELECT id_curriculo, nome_social, grau_de_escolaridade, cursos, experiencia, idiomas FROM curriculo WHERE id_pessoa = ? LIMIT 1'); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
-        $stmt->bind_param('i', $idPessoaAtual); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
-        $stmt->execute(); // Explicação DevIN: Prepara, parametriza ou executa operação SQL por interface do banco.
-        $curriculoAtual = $stmt->get_result()->fetch_assoc() ?? []; // Explicação DevIN: Executa ou lê resultados de uma consulta ao banco.
-        $stmt->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
-        $resumeDocument = ResumeDocument::find($conn, $idPessoaAtual); // Explicação DevIN: Atribui um valor à variável PHP $resumeDocument.
     } finally { // Explicação DevIN: Declara limpeza ou finalização executada ao encerrar a tentativa.
         $conn->close(); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
     } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
@@ -363,11 +355,13 @@ foreach ($vagasDisponiveis as &$vaga) { // Explicação DevIN: Inicia repetiçã
     $vaga['detalhe'] = $vaga['descricao'] !== '' ? $vaga['descricao'] : 'Esta vaga ainda não possui uma descrição detalhada.'; // Explicação DevIN: Atribui propriedade, resultado ou associação de chave e valor.
 } // Explicação DevIN: Fecha ou delimita bloco, chamada, lista ou objeto aberto anteriormente.
 unset($vaga); // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
+// Detalhe DevIN: Reaproveita a versão gerada/editada quando existir; sem JSON, usa os dados originais em curriculo.
 $resumeContent = json_decode((string) ($resumeDocument['conteudo_json'] ?? ''), true); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
 $resumeContent = is_array($resumeContent) ? $resumeContent : []; // Explicação DevIN: Atribui um valor à variável PHP $resumeContent.
 $possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN: Atribui um valor à variável PHP $possuiCurriculo.
     || !empty($resumeDocument['arquivo_caminho']) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
     || !empty($resumeDocument['conteudo_json']); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+// Detalhe DevIN: Candidatos com currículo preenchido manualmente devem ver os campos mesmo sem gerar pela IA.
 if ($resumeContent === [] && !empty($curriculoAtual['id_curriculo'])) { // Explicação DevIN: Inicia desvio condicional: executa ramo somente quando a condição for satisfeita.
     $resumeContent = [ // Explicação DevIN: Atribui um valor à variável PHP $resumeContent.
         'nome' => (string) ($curriculoAtual['nome_social'] ?? $nome), // Explicação DevIN: Declara ou continua um valor literal usado pela instrução em andamento.
@@ -384,11 +378,7 @@ $hasResumeText = count(array_filter( // Explicação DevIN: Atribui um valor à 
     static fn (string $field): bool => trim((string) ($resumeContent[$field] ?? '')) !== '' // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 )) > 0; // Explicação DevIN: Participa da instrução atual, ajustando cálculo, condição, dados ou resultado.
 $hasResumePreview = $hasResumeText || !empty($resumeDocument['arquivo_nome']); // Explicação DevIN: Atribui um valor à variável PHP $hasResumePreview.
-$resumeContent = json_decode((string) ($resumeDocument['conteudo_json'] ?? ''), true); // Explicação DevIN: Converte dados entre estrutura interna e representação JSON.
-$resumeContent = is_array($resumeContent) ? $resumeContent : []; // Explicação DevIN: Atribui um valor à variável PHP $resumeContent.
-$possuiCurriculo = !empty($curriculoAtual['id_curriculo']) // Explicação DevIN: Atribui um valor à variável PHP $possuiCurriculo.
-    || !empty($resumeDocument['arquivo_caminho']) // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
-    || !empty($resumeDocument['conteudo_json']); // Explicação DevIN: Continua a expressão lógica, encadeamento ou associação do comando anterior.
+
 
 ?>
 <!DOCTYPE html> <!-- Explicação DevIN: Continua atributos ou conteúdo do elemento de marcação aberto anteriormente. -->
